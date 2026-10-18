@@ -181,3 +181,11 @@ Sie ist keine offizielle deutsche Übersetzung und belegt keine formelle ASD-STE
 Die deutsche KitaConnect-Richtlinie ist eine eigene Adaption. Sie ist keine offizielle Übersetzung und keine formelle Konformitätsaussage.
 **Umsetzung:** Dokumentationsrichtlinie und Fachwortverzeichnis sind verbindlich.
 KC-036 dokumentiert die redaktionelle Prüfung des Bestands als eigenes Arbeitspaket.
+
+## P0-Abnahme und P1-Auftrag
+
+Datum: 18.10.2026. Ausdrückliche Antwort im Projektchat: „P0 abnehmen, und P1 freigeben“.
+Die Projektleitung nimmt P0 auf Grundlage der erfolgreichen Prüfungen und dokumentierten Zurückstellungen ab.
+Sie beauftragt P1. Die Arbeit beginnt mit kleinen Arbeitspaketen aus KC-004.
+Die juristische Lizenzprüfung, die unabhängige Wahlprüfung und alle Sperren aus KC-037 bleiben bestehen.
+Der Abschlussnachweis in PR #49 wird nach erfolgreicher CI integriert.

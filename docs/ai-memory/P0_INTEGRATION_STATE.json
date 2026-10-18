@@ -217,12 +217,18 @@
       ]
     }
   ],
-  "p0_overall_accepted": false,
-  "p1_authorized": false,
+  "p0_overall_accepted": true,
+  "p1_authorized": true,
   "unmerged_dependabot_prs": [
     45,
     46,
     47,
     48
-  ]
+  ],
+  "phase_authorization": {
+    "source": "Projektchat",
+    "date": "2026-10-18",
+    "response": "P0 abnehmen, und P1 freigeben",
+    "scope": "P0-Gesamtabnahme und gesonderter P1-Auftrag; spätere Fachprüfungen behalten ihre Sperren."
+  }
 }

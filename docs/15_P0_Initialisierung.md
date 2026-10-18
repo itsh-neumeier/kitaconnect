@@ -1,7 +1,7 @@
 # P0 – Technische Projektinitialisierung
 
 Stand: 18.10.2026. Grundlage: Spezifikation v5.9.
-Status: Grundgerüst integriert. Die formale P0-Gesamtabnahme steht noch aus.
+Status: P0 am 18.10.2026 ausdrücklich abgenommen. P1 ist gesondert freigegeben.
 
 ## Auftrag und Grenze
 
@@ -158,4 +158,7 @@ Die folgenden Nachweise sind erfüllt. Die formale Gesamtabnahme bleibt eine ges
 - [x] CODEOWNERS und Branchschutz sind bestätigt und nachgewiesen.
 - [x] Lizenzentwurf und Dokumentationsprüfung haben den dokumentierten Prüfstatus.
 - [x] Integrationsnachweise, GitHub-Stand und Checkpoint sind für die Abnahmevorbereitung nachgeführt.
-- [ ] Projektleitung erklärt die formale P0-Gesamtabnahme.
+- [x] Projektleitung erklärt die formale P0-Gesamtabnahme.
+
+Quelle: Projektchat, 18.10.2026: „P0 abnehmen, und P1 freigeben“.
+Die spätere Fachprüfung und ihre Sperren bleiben gemäß KC-037 verbindlich.

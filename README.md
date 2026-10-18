@@ -11,7 +11,7 @@ Die Projektleitung hat die persönliche und sprachliche Durchsicht für PRs #39 
 Der [P0-Plan](docs/15_P0_Initialisierung.md) beschreibt Struktur und Entscheidungen.
 Der [Projektstatus](docs/ai-memory/CURRENT_STATE.md) nennt Nachweise und nächste Schritte.
 Der [technische P0-Prüfbericht](docs/20_P0_Pruefung_und_Abnahme.md) führt die Nachweise aller sechs vorbereiteten PRs zusammen.
-Der [Integrationsnachweis](docs/21_P0_Integration_und_Abnahmevorbereitung.md) dokumentiert ihre Integration und die noch offene P0-Gesamtabnahme.
+Der [Integrationsnachweis](docs/21_P0_Integration_und_Abnahmevorbereitung.md) dokumentiert ihre Integration und die bestätigte P0-Gesamtabnahme. P1 ist freigegeben.
 GitHub ist die verbindliche Quelle für Issues. Der [Backlog](docs/07_GitHub_Issue_Backlog.md)
 erläutert den Importstand und die stabilen KC-Kennungen.
 
@@ -37,7 +37,7 @@ npm audit --audit-level=high
 
 Starten Sie die interne Hinweisseite mit `npm run dev --workspace @kitaconnect/web`.
 Der Rust-Bootstrap startet keinen API-Dienst. Die Infrastruktur ist noch nicht installierbar.
-P0 ist vor Bestätigung offener Entscheidungen und Review nicht abgenommen.
+Die Projektleitung hat P0 am 18.10.2026 abgenommen und P1 freigegeben. Spätere Fachprüfungen bleiben verbindlich.
 Der [Lizenzentwurf](docs/16_Lizenzentwurf.md) erteilt keine neuen Nutzungsrechte.
 
 Die [Prüfmatrix](tests/README.md) beschreibt die reproduzierbare Testdatenerzeugung

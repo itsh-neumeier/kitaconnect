@@ -1,7 +1,7 @@
 # P0 – Integrationsnachweis und vorbereitete Gesamtabnahme
 
 Stand: 18.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
-Status: PRs #39 bis #44 integriert. P0-Gesamtabnahme vorbereitet, noch nicht erklärt.
+Status: PRs #39 bis #44 integriert. P0 ausdrücklich abgenommen; P1 ausdrücklich freigegeben.
 Geprüfter Main-Stand: `68f39f19295b1c723e75b257b73d890dbbe5b9b6`.
 
 ## Auftrag und Durchführung
@@ -43,7 +43,7 @@ Die zusätzlichen Basis- und Merge-Commits verändern die Historie, nicht den fr
 - Es gibt keine Fachfunktionen, Datenbankmigrationen, produktiven Zugangsdaten oder Veröffentlichung.
 
 KC-001, KC-002, KC-003, KC-036 und KC-037 sind nach Integration abgeschlossen.
-KC-038 bleibt für die gesonderte formale P0-Gesamtabnahme offen.
+KC-038 erhält den abschließenden Integrationsnachweis aus PR #49.
 Deren technische Konfiguration und persönliche Prüfung sind nachgewiesen.
 
 ## Schutz und offene Fachfreigaben
@@ -67,19 +67,21 @@ Die P0-Abnahme ersetzt keine dieser Fachprüfungen und erlaubt keine produktive 
 - [x] Lastprofil und Messverfahren bestätigt; fehlende Lastmessungen gekennzeichnet.
 - [x] CODEOWNERS auf main; Branchschutz mit getrennter Konto-Ausnahme nachgewiesen.
 - [x] Lizenzentwurf und Dokumentationsprüfung besitzen den dokumentierten Prüfstatus.
-- [ ] Projektleitung erklärt die P0-Gesamtabnahme.
-- [ ] Projektleitung erteilt einen gesonderten Implementierungsauftrag für P1.
+- [x] Projektleitung erklärt die P0-Gesamtabnahme.
+- [x] Projektleitung erteilt einen gesonderten Implementierungsauftrag für P1.
 
-P0 kann anhand dieses Nachweises gesondert abgenommen werden.
-Ein solcher Beschluss ist zum Stand dieses Dokuments noch nicht erfolgt.
-Er würde P1 nicht automatisch beauftragen.
-Als späteres erstes P1-Arbeitspaket ist KC-004 vorgesehen; es benötigt vor Umsetzung weitere Zerlegung.
+Die Projektleitung hat am 18.10.2026 ausdrücklich geantwortet: „P0 abnehmen, und P1 freigeben“.
+Dies bestätigt die P0-Gesamtabnahme und erteilt den gesonderten P1-Auftrag.
+KC-004 wird vor Umsetzung in kleine Arbeitspakete zerlegt.
+Die Abnahme ersetzt keine der oben genannten Fachprüfungen.
 
 ## Fortsetzung und neue automatische PRs
 
 Der abschließende Checkpoint und dieser Nachweis werden auf einem eigenen Dokumentationsbranch zur Prüfung vorbereitet.
 Sie sind keine nachträgliche Änderung der bereits integrierten Fach- oder Laufzeitgrundlagen.
-Dieser Folge-PR ist vom Merge-Auftrag für #39 bis #44 nicht erfasst und wird nicht eigenmächtig integriert.
+Die ursprüngliche Freigabe #39 bis #44 erfasste diesen Folge-PR nicht.
+Der anschließende Weiterarbeitsauftrag mit ausdrücklicher P0-Abnahme und P1-Freigabe erlaubt den P0-Abschluss.
+PR #49 wird mit aktuellen Pflichtprüfungen integriert.
 
 Dependabot hat nach Aktivierung des Repositorys die PRs #45 bis #48 eröffnet.
 Sie betreffen Actions und Entwicklungsabhängigkeiten, gehören nicht zur freigegebenen Integration und bleiben unverändert offen.

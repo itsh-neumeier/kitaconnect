@@ -9,7 +9,7 @@ Eine ausbleibende Antwort ist keine Zustimmung.
 | Frage aus dieser Sitzung | Stand |
 |---|---|
 | Persönliche/sprachliche Durchsicht und Integration | Die Projektleitung hat mit „Ja“ Durchsicht und Integration #39 bis #44 bestätigt. Alle sechs PRs sind integriert; Main-CI grün. Nicht erneut nach dieser Freigabe fragen. |
-| P0-Gesamtabnahme | Vorbereitet, noch nicht erklärt. Die Freigabe der Integration ist keine automatische P0-Gesamtabnahme und kein Auftrag für P1. |
+| P0-Gesamtabnahme und P1 | „P0 abnehmen, und P1 freigeben“ am 18.10.2026 ausdrücklich bestätigt. Nicht erneut abfragen. Abschlussnachweis #49 integrieren; mit KC-004 beginnen. |
 | Review-Ausnahme | „Einfache Konto-Ausnahme; Nutzung auf eigene PRs beschränken“ ausdrücklich gewählt. Konto-Ausnahme für `@itsh-neumeier` im gesonderten Review-Regelsatz aktiv. „Nur eigene PRs“ ist eine bestätigte Nutzungsregel; technisch auch bei fremden PRs möglich. [ADR-022](../architecture/ADR-022_Reviewausnahme_eigene_PRs.md). Nicht erneut abfragen. |
 | Pflichtprüfungen | Basisregelsatz `25341109` bleibt ohne Ausnahme. Review-Ausnahme steht nur in Regelsatz `25346711`. Beide nach Einrichtung per API nachgewiesen. Keine zusätzliche App oder neue Secrets erforderlich. |
 | Referenzprofil für die Lastprüfung | Eine Einrichtung. 50 Sitzungen, 10 Anfragen pro Sekunde, 80/20 Lesen/Schreiben, p95 500/1.000 ms, unter 1 % Fehler, 4 vCPU, 8 GB RAM, 100 GB SSD, 5 Minuten Aufwärmen und 30 Minuten Messung ausdrücklich bestätigt. |
@@ -29,7 +29,7 @@ Sie betraf weder Quelltext noch produktive Zugangsdaten.
 Die [Dienstmatrix](../architecture/KC-002_Dienstgrenzen.md) liegt mit Datenhoheit,
 Kommunikationszwecken und Testanforderungen vor.
 [Pull Request #40](https://github.com/itsh-neumeier/kitaconnect/pull/40)
-baut auf dem weiterhin offenen Grundgerüst-PR #39 auf.
+ist ebenso wie der Grundgerüst-PR #39 integriert.
 
 Die Projektleitung hat am 18.10.2026 im Projektchat ausdrücklich `1A, 2A, 3A, 4A` geantwortet.
 Diese Antwort bestätigt die vier zuvor einzeln erläuterten Varianten.

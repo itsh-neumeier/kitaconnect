@@ -41,6 +41,10 @@ Observability -> OpenTelemetry/structured logs -> Prometheus/Grafana
 Ein Mandant ist eine Einrichtung; Träger sind Organisationsaggregate mit ausdrücklich freigegebenen Querzugriffen. Schema-Namen nie direkt aus Benutzerangaben interpolieren; nur serverseitig registrierte, gequotete Identifikatoren. Datenbank-`search_path` strikt transaktionsgebunden/qualifiziert, Connection-Pooling mit Isolationstests. Dienstrollen ohne BYPASSRLS; FORCE RLS soweit sinnvoll; Sicherheitsdefinierte Funktionen und Migrationen prüfen. RLS auf jeder sensiblen Mandantentabelle, auch wenn Schema-Trennung vorhanden. Plattformtabellen für Identität/Träger separat; Zuordnung von User/Role/Scope/Policy; keine personenbezogenen Kinderakten im globalen Index. Auditprotokolle mandantengebunden, append-only und getrennt aufbewahrt.
 
 ## Service- und Eventdesign
+
+KC-037 konkretisiert die Dienstidentitäten in [ADR-019](architecture/ADR-019_Dienstidentitaeten.md)
+und die Zustellung von Hintergrundaufträgen in [ADR-020](architecture/ADR-020_Hintergrundauftraege.md).
+Diese technischen Festlegungen ändern keine Benutzerrechte und erteilen keinen Implementierungsauftrag.
 OpenAPI pro Dienst, versionierte Ereignisse (z. B. ChildAdmitted.v1, AttendanceRecorded.v1, ConsentWithdrawn.v1), Transactional Outbox, idempotente Konsumenten, Dead-Letter, Retry-Backoff. Keine synchronen Cross-Service-Transaktionen; Saga/kompensierende Aktionen für Aufnahme, Wechsel und Austritt. Interservice-Authentisierung mit kurzlebigen Service-Identitäten, mTLS wo sinnvoll; Default-Deny und überprüfbare Scopes. Vermeide Microservice-Schnitt pro Bildschirm: fachlich kohärente Bounded Contexts, gemeinsam versionierte API-Verträge.
 
 ## Daten und Dateien
@@ -50,6 +54,9 @@ PostgreSQL je Mandant in eigenem Schema; Migrationen pro Schema mit Schema-Versi
 Argon2id, WebAuthn/Passkeys, TOTP, Recovery, OIDC und SAML; Sitzung mit Secure/HttpOnly/SameSite Cookies und CSRF-Schutz; Step-up für sensible Aktionen. RBAC + objekt-/feldbezogene Policy-Auswertung, deny by default; Rollenwechsel erzeugt neuen geprüften Organisationskontext. Audits für sämtliche Lese-/Schreibzugriffe mit minimierten Metadaten und eigener Retention. Break-glass zeitbegrenzt, begründet, Zweitfreigabe soweit möglich und nachprüfbar.
 
 ## Skalierung und Ausfallsicherheit
+
+Das bestätigte [Referenzprofil und Messverfahren](17_P0_Entscheidungsregister.md) bildet eine Einrichtung ab.
+Die dokumentierten Zielwerte sind noch keine Messergebnisse oder allgemeinen Mindestressourcen.
 Stateless API-Replikate, separate Worker-Pools, verteilte Jobs, Readiness/Liveness, idempotente Operationen. HA Postgres optional; PITR via WAL, verschlüsselte Backups. RPO/RTO jeweils Ziel 24 h (betriebsabhängig nachzuweisen). Mandantenspezifischer Restore via kontrolliertem temporärem Restore + selektiver Übernahme, niemals direktes Zurückrollen der gesamten Datenbank für einen Mandanten.
 
 ## Sicherheitsgrenzen

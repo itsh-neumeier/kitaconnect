@@ -15,4 +15,8 @@ Der spätere Text MUSS folgende Punkte regeln:
 5. Hinweise und Pflichten aus Lizenzen der Abhängigkeiten.
 6. Haftung, Gewährleistung und anwendbare Rechtsordnung.
 
-Die Freigabe ist in O-007 im [P0-Plan](15_P0_Initialisierung.md) offen.
+Die Projektleitung hat am 18.10.2026 Rechteinhaber und juristische Prüfperson ausdrücklich offen gelassen.
+Der bestätigte CODEOWNER ist dadurch nicht automatisch Rechteinhaber.
+Die Projektleitung MUSS die Rollen vor Nutzungsrechtseinräumung oder Softwareveröffentlichung besetzen.
+Bis zur Freigabe dürfen keine neuen Nutzungsrechte zugesagt werden.
+O-007 und die Sperren stehen im [KC-037-Register](17_P0_Entscheidungsregister.md).

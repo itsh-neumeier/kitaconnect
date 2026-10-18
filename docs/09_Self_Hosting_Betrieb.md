@@ -26,13 +26,21 @@ Stable-Version anzeigen, Kompatibilität/Backup prüfen, manueller Installations
 Integrierte Admin-Diagnose plus Prometheus/Grafana, strukturierte Logs, Traces, Alerting, Queue-/Workerzustand, Speicher-/Mandantenquotas, Datenbank-/WAL-/Backupzustand, Login-/Audit-Anomalien. Keine Geheimnisse, Kinder-/Gesundheitsdaten oder Wahlkorrelationen in Logs.
 
 ## Betriebsmatrix
+
+Das [KC-037-Register](17_P0_Entscheidungsregister.md) enthält die am 18.10.2026 recherchierten Versionsstände.
+Diese Planungsbasis ist noch keine getestete Installationsfreigabe.
+KC-032 MUSS konkrete Versionen, Images, Lizenzen und Kompatibilität vor Verwendung nachweisen.
 | Profil | Laufzeit | Speicher | HA |
 |---|---|---|---|
 | Kleine Einrichtung | Docker Compose/Portainer | Lokal oder S3 | optional |
 | Mehrere Träger | Compose oder Kubernetes | bevorzugt S3 | empfohlen |
 | Größere Installation | Kubernetes/Helm | S3, HA-Postgres | empfohlen |
 
-Konkrete CPU/RAM-/Storage-Mindestwerte erst durch P0-Benchmarks belastbar festlegen, insbesondere für lokale Gesichtserkennung.
+Die Projektleitung hat ein [Referenzprofil](17_P0_Entscheidungsregister.md) mit 4 vCPU,
+8 GB RAM und 100 GB SSD für Lastmessungen bestätigt.
+Es ist noch kein Nachweis allgemeiner Mindestressourcen.
+Die tatsächlichen Messungen folgen nach Implementierung repräsentativer Abläufe in KC-034.
+Lokale Medienverarbeitung benötigt eine gesonderte Messung.
 
 
 ## Dokumentationssprache (Ergänzung v5.9)

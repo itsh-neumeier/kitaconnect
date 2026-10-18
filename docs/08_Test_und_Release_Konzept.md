@@ -18,6 +18,11 @@ Blockierende Tests: tenant isolation, Wahlgeheimnis, Gesundheits-/Personalaktenz
 5. Bei einem fehlgeschlagenen Gate kein Tag und kein Publish. Keine öffentlichen Preview-/Nightly-Artefakte.
 
 ## Qualitätskennzahlen (initiale Zielwerte, vor Release festzulegen)
+
+Die Projektleitung hat das [Einrichtungsprofil in KC-037](17_P0_Entscheidungsregister.md) ausdrücklich bestätigt.
+Es legt 50 Sitzungen, 10 Anfragen pro Sekunde, p95-Ziele, Fehlerrate und Referenzressourcen fest.
+KC-034 prüft diese Ziele nach Implementierung repräsentativer Abläufe.
+Die unabhängige Prüfung des Wahlprotokolls bleibt gemäß ADR-017 vor dessen Implementierung erforderlich.
 Keine kritischen bekannten Sicherheitslücken; keine unaufgelösten kritischen Bugs; alle verbindlichen Testfälle erfolgreich. Konkrete Performance-SLOs und Lastszenarien sind in P0 als messbare Werte festzulegen, statt unbelegte Zahlen vorzugeben.
 
 

@@ -1,92 +1,106 @@
 # Projektstatus und Fortsetzung
 
 Aktualisiert: 18.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
-Status: KC-003 ergänzt reproduzierbare Testdaten und die RustSec-Prüfung.
-P0 ist insgesamt nicht abgenommen. P1 bis P9 haben weiterhin keinen Implementierungsauftrag.
+Status: KC-037 dokumentiert bestätigte Ziele, technische Festlegungen und ausdrücklich zurückgestellte Freigaben.
+P0 ist insgesamt nicht abgenommen. P1 bis P9 besitzen keinen Implementierungsauftrag.
 
 ## Arbeitsstand
 
-- `issue_id`: [KC-003 / #3](https://github.com/itsh-neumeier/kitaconnect/issues/3).
-- `branch`: `codex/p0-test-security-foundations`.
-- `head_commit`: Verifizierter Implementierungscommit `3596ba9662b0ecf92eaec542fe5a5d2d228cd429`.
+- `issue_id`: [KC-037 / #37](https://github.com/itsh-neumeier/kitaconnect/issues/37).
+- `branch`: `codex/p0-decision-register`.
+- `head_commit`: Verifizierter Entscheidungscommit `a6d807eda65c48a9492f1fa158f4077fccf5602f`.
   Dieser Checkpoint folgt als gesonderter Dokumentationscommit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
-- `objective`: Reproduzierbare synthetische Organisationsdaten und vollständige P0-Prüfmatrix.
-- `migration_state`: Keine Migrationen, Datenbankrollen oder Fachdatenspeicherung angelegt.
-- `pull_request`: [PR #41](https://github.com/itsh-neumeier/kitaconnect/pull/41) auf Basis von `codex/p0-service-boundaries`.
-- `dependencies`: PR #39 enthält das Grundgerüst. PR #40 enthält die bestätigten Dienstgrenzen.
-  Beide PRs waren beim Start noch offen. Nicht ungeprüft zusammenführen.
+- `objective`: O-001 bis O-008 mit Entscheidungen oder begründeten späteren Prüfterminen dokumentieren.
+- `pull_request`: [PR #42](https://github.com/itsh-neumeier/kitaconnect/pull/42) auf Basis von `codex/p0-test-security-foundations`.
+- `migration_state`: Keine Datenbankrollen, Migrationen, Zertifikate, Zugangsdaten oder Laufzeitdienste angelegt.
+- `dependencies`: Bisherige PRs #39, #40 und #41 zuerst prüfen und integrieren. Kein Merge durch diese Sitzung.
 
-## Bereits bestätigte Architektur
+## Antworten der Projektleitung
 
-Die ausdrückliche Antwort `1A, 2A, 3A, 4A` vom 18.10.2026 bleibt gültig:
-Einrichtungsschemas mit getrennten Dienstrechten, Rust-Gateway, gesonderte Personalbereiche
-und getrennte Datenbanken/Dienstidentitäten für Wahlberechtigung und Stimme.
-ADR-014 bis ADR-017 dokumentieren diese Entscheidungen. Die Fragen nicht erneut stellen.
-Die unabhängige Prüfung des Wahlprotokolls bleibt vor Implementierung verpflichtend.
+Quelle: ausdrückliche Antworten im Projektchat am 18.10.2026.
 
-## Erledigt in KC-003
+1. Das vorgeschlagene Referenzprofil wurde mit „Dieses Referenzprofil bestätigen“ angenommen.
+2. Rechteinhaber, juristische Lizenzprüfung und unabhängige Wahlprüfung sollen ausdrücklich „offen lassen“ bleiben.
+3. Die Antwort „@itsh-neumeier Timo Neumeier“ bestätigt die vorläufige CODEOWNER-Zuordnung.
+4. Der Auftrag „gerne fragen stellen danach autonom weiterarbeiten“ delegiert die technische Weiterarbeit innerhalb der bestehenden Anforderungen.
 
-1. `scripts/fixtures.mjs` erzeugt ausschließlich feste Organisationskennungen ohne externe Eingaben.
-2. `fixtures:check` vergleicht die versionierten Testdaten bytegenau mit dem Generator.
-3. Die Strukturprüfung weist unbekannte Felder, ungültige Datentypen, doppelte Kennungen und falsche Zuordnungen ab.
-4. Neun Testdatenprüfungen ergänzen die vier bisherigen Backlog-Tests. Keine Fach- oder Isolationstests vorgetäuscht.
-5. Der CI-Prüfschritt `structure` prüft zusätzlich die bytegenaue Testdatenerzeugung.
-6. `dependencies` prüft Cargo.lock mit cargo-audit 0.22.2 gegen RustSec.
-   Die bisherige pauschale Sperre externer Rust-Abhängigkeiten ist dadurch ersetzt.
-7. Offizielles Scannerarchiv, feste SHA-256-Prüfsumme, explizite Lockdatei und temporäre Meldungsdatenbank festgelegt.
-8. ADR-018, P0-Plan und [Prüfmatrix](../../tests/README.md) beschreiben Umfang, Befundbehandlung und Grenzen.
+Die CODEOWNER-Antwort ernennt Timo Neumeier nicht zum Rechteinhaber oder unabhängigen Fachprüfer.
+Die frühere Auswahl `1A, 2A, 3A, 4A` bleibt gültig. ADR-014 bis ADR-017 werden nicht erneut abgefragt.
+Die unabhängige Prüfung des Wahlprotokolls bleibt vor dessen Implementierung verpflichtend.
 
-## Lokale Prüfungen
+## Erledigt
 
-| Befehl / Nachweis | Ergebnis |
+1. AGENTS, CLAUDE, Checkpoint, ADRs, relevante Spezifikation sowie Issues #37/#38 gelesen.
+2. Sauberen Arbeitsbaum und erfolgreichen CI-Stand des KC-003-Ausgangs geprüft.
+3. [Entscheidungsregister](../17_P0_Entscheidungsregister.md) mit O-001 bis O-008 und spätesten Prüfterminen erstellt.
+4. Bestätigtes Lastprofil und reproduzierbares Messverfahren dokumentiert.
+5. [ADR-019](../architecture/ADR-019_Dienstidentitaeten.md) konkretisiert Diensttokens, mTLS, Widerruf und aktuelle Rechteprüfung.
+6. [ADR-020](../architecture/ADR-020_Hintergrundauftraege.md) konkretisiert Redis Streams, dauerhafte Zustellnachweise, Wiederholungen und Fehlerablage.
+7. Primärquellen für PostgreSQL, Redis, Helm und Kubernetes recherchiert. Planungsstände sind ausdrücklich keine getestete Installationsfreigabe.
+8. Vorläufigen CODEOWNER eingetragen. Unabhängige Reviews und tatsächlicher Branchschutz bleiben offen.
+9. Architektur, Testkonzept, Betriebshinweise, Lizenzprüfpunkte, Entscheidungsliste und P0-Plan abgeglichen.
+
+## Bestätigtes Lastprofil
+
+Eine Einrichtung, 50 gleichzeitig angemeldete Benutzer und insgesamt 10 Anfragen pro Sekunde.
+80 % Lesen und 20 % Schreiben. p95 höchstens 500 ms beim Lesen und 1.000 ms beim Schreiben.
+Technische Fehlerrate unter 1 %. Referenz: 4 vCPU, 8 GB RAM und 100 GB SSD.
+5 Minuten Aufwärmzeit und 30 Minuten Messung. Medienverarbeitung wird gesondert gemessen.
+Die Zielwerte sind bestätigt. Es gibt noch keine repräsentativen Lastmessergebnisse.
+Der spätere synthetische Testbestand und das genaue Verfahren stehen im Register.
+
+## Technische Quellen und Versionen
+
+Stand vom 18.10.2026: PostgreSQL 18.6, Redis 8.10.2, Helm 4.3.1 und Kubernetes 1.37.1.
+Die Primärquellen sind im Register verknüpft. Versionen, Images, Sicherheitsmeldungen,
+Lizenzwahl und tatsächliche Kompatibilität MÜSSEN vor Infrastrukturimplementierung in KC-032 erneut geprüft werden.
+Compose-/Portainer-Patchstände und konkrete S3-Anbieter sind bewusst noch nicht festgelegt.
+
+## Prüfungen
+
+| Prüfung | Ergebnis |
 |---|---|
-| `node scripts/fixtures.mjs --check` | Ausgabe stimmt bytegenau mit Generator überein |
-| `node scripts/check-project.mjs` | 38 Issues, 24 Dokumente, lokale Verweise und Testdaten geprüft |
+| `node scripts/check-project.mjs` | 38 Issues, 27 Dokumente, lokale Verweise und synthetische Daten geprüft |
+| `node scripts/fixtures.mjs --check` | Bytegenau erfolgreich |
 | `node --test scripts/*.test.mjs` | 13 von 13 Tests erfolgreich |
-| Actionlint 1.7.12 | Beide Workflows ohne Fehler geprüft |
-| `npm run check:web` | Keine Fehler oder Warnungen |
-| `npm run build:web` | Erfolgreich |
-| cargo-audit 0.22.2 | 1338 RustSec-Meldungen geladen; Cargo.lock ohne Befund geprüft |
 | `git diff --check` | Erfolgreich |
+| Ausgangscommit `ec907b8` | [P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39121874227) und [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39121874219) erfolgreich |
 
-Der erste Generatorvergleich erkannte die bisherige abweichende JSON-Formatierung.
-Die Datei wurde danach aus dem Generator neu erzeugt; ihre Organisationsdaten bleiben gleich.
-Der erste lokale RustSec-Aufruf fand Cargo für den Registry-Abgleich nicht.
-Nach Setzen des lokalen Cargo-Pfads war der erneute Scan ohne diese Warnung erfolgreich.
-Es gibt keine bekannten verbleibenden lokalen Prüffehler.
-Gitleaks prüfte den vollständigen Diff und die gesamte Historie ohne Befund.
-[P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39121788898) und
-[P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39121788935)
-sind für den Implementierungscommit erfolgreich. Alle fünf Prüfschritte sind grün.
-Der gesonderte Checkpoint-Commit löst neue Prüfungen aus; deren aktuellen Stand vor Merge im PR prüfen.
-Rust-Quelltext bleibt unverändert. Build und Tests laufen zusätzlich in der Linux-CI.
+Nur Dokumentation und CODEOWNERS geändert. Lokale Frontend-/Rust-Builds werden nicht wiederholt.
+Gitleaks prüfte den vollständigen vorgemerkten Diff ohne Befund.
+[P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39122501875) und
+[P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39122501690)
+sind für den Entscheidungscommit erfolgreich. Der nachfolgende Dokumentationscommit löst eigene Prüfungen aus.
+Vor Merge MUSS der aktuelle Commit grün sein. Die Folge-Issues #6, #28, #32 und #34 sind nachgeführt.
+Keine bekannten neuen Testfehler. Kein Nachweis implementierter Dienst-, Last- oder Wahlsicherheit behauptet.
 
-## Sicherheitsumfang
+## Noch offene Freigaben
 
-Nur P0-Prüfwerkzeuge und erfundene Organisationskennungen. Keine Kinderdaten oder produktiven Secrets.
-Die Testdaten sind kein Nachweis implementierter Mandantenisolation.
-Workflow-Tokens behalten Leserechte. Es gibt keine Veröffentlichung und keine neuen Laufzeitdienste.
-Die vorhandene Erlaubnis für npm audit lokal und in GitHub Actions gilt weiter.
-cargo-audit lädt öffentliche Meldungen und Registry-Metadaten herunter; der Paketabgleich erfolgt lokal.
-Der Rust-Workspace enthält noch keine externen Abhängigkeiten. Die Prüfung gilt auch für spätere Lockfile-Erweiterungen.
+- Projektleitung benennt Rechteinhaber und juristische Fachperson vor Nutzungsrechtseinräumung oder Softwareveröffentlichung.
+- Projektleitung benennt unabhängige Wahlprüfer; ohne geprüften Entwurf keine Implementierung des Wahlprotokolls.
+- Rechtliche Datenschutzfristen und regionale Personalregelwerke bleiben vor betroffener Umsetzung fachlich zu bestätigen.
+- CODEOWNERS ist jetzt zugeordnet. Ein unabhängiger Prüfer und wirksame Branchschutzregeln sind dadurch nicht nachgewiesen.
+- Die frühere Branchschutzabfrage lieferte HTTP 403. Aus der leeren Regelsatzliste wurde kein fehlender Schutz abgeleitet.
+- Juristische Lizenzwahl und geprüfte Versions-/Installationsmatrix bleiben vor tatsächlicher Verwendung erforderlich.
 
-## Offene Aufgaben und nächste drei Aktionen
+Die Zurückstellung der drei angefragten Rollen ist ausdrücklich gewünscht.
+Die gesperrten Aktionen und spätesten Termine sind im Register dokumentiert.
+Sie ist keine Fachfreigabe und keine P0-Gesamtabnahme.
 
-1. KC-003-PR mit aktuellem CI-Stand prüfen. Erst nach Review und Integration Issue #3 schließen.
-2. [KC-037 / #37](https://github.com/itsh-neumeier/kitaconnect/issues/37) fortsetzen:
-   O-003 bis O-008, Lastwerte, Versionen, Lizenzprüfung und unabhängige Fachpersonen klären.
-3. [KC-038 / #38](https://github.com/itsh-neumeier/kitaconnect/issues/38) und KC-036 klären:
-   bestätigte CODEOWNERS, nachweisbarer Branchschutz und sprachliche Bestandsprüfung.
+## Nächste drei Aktionen
 
-Für die Integration zuerst PR #39, danach PR #40, anschließend den KC-003-PR prüfen.
-Nach Integration einer Basis den folgenden PR auf `main` umstellen und erneut prüfen.
-Keine Merge-Freigabe aus diesem Checkpoint ableiten.
-Die Lastprofilangabe `1` bezeichnet eine Einrichtung. Weitere Lastwerte fehlen.
-CODEOWNERS ist noch nicht bestätigt. Bisheriger Branchschutz bleibt wegen HTTP 403 unbekannt.
+1. KC-037-PR mit aktuellem CI- und Review-Stand prüfen. Issue #37 erst nach Review und Integration schließen.
+2. [KC-038 / #38](https://github.com/itsh-neumeier/kitaconnect/issues/38) weiterführen:
+   unabhängige Review-Rollen und nachweisbaren Branchschutz klären. Bestätigten CODEOWNER nicht erneut abfragen.
+3. KC-036 für die sprachliche Bestandsprüfung bearbeiten. Die dokumentierten späteren Fachprüfungen vor ihren Sperrterminen veranlassen.
 
-## Fortsetzungsanleitung
+Die Integrationsreihenfolge ist #39, #40, #41, danach der KC-037-PR.
+Nach Integration einer Basis den nächsten PR auf `main` umstellen und erneut prüfen.
+Die Sitzung erteilt keine eigenständige Merge-Freigabe.
 
-Lesen Sie AGENTS, CLAUDE, diesen Checkpoint, die Entscheidungsliste und die aktuellen GitHub-Issues/PRs.
-Prüfen Sie Branch, Arbeitsbaum, Commits und aktuelle CI, bevor Sie weiterarbeiten.
-Wiederholen Sie weder die bestätigten Architekturfragen noch das vorhandene Grundgerüst.
-Bearbeiten Sie weiter P0. P1 benötigt dessen Abnahme und einen eigenen Auftrag.
+## Sicherheitsumfang und Fortsetzung
+
+Nur Planung und Repository-Zuständigkeit. Keine Echtdaten oder produktiven Secrets.
+Die bestehende Erlaubnis für npm audit lokal und in GitHub Actions bleibt gültig.
+Lesen Sie beim Neustart AGENTS, CLAUDE, diesen Status, die Entscheidungsliste und den aktuellen GitHub-Stand.
+Wiederholen Sie bestätigte Fragen nicht. Arbeiten Sie weiter in P0; P1 benötigt Abnahme und eigenen Auftrag.

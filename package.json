@@ -9,6 +9,8 @@
   "scripts": {
     "check": "node scripts/check-project.mjs",
     "test": "node --test scripts/*.test.mjs",
+    "fixtures:generate": "node scripts/fixtures.mjs",
+    "fixtures:check": "node scripts/fixtures.mjs --check",
     "check:web": "npm run check --workspace @kitaconnect/web",
     "build:web": "npm run build --workspace @kitaconnect/web"
   }

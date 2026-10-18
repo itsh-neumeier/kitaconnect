@@ -1,86 +1,92 @@
 # Projektstatus und Fortsetzung
 
 Aktualisiert: 18.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
-Status: Die Projektleitung hat die vier Architekturvarianten für KC-002 ausdrücklich entschieden.
-Die Dokumentation ist zur Prüfung in PR #40 vorbereitet. P0 ist insgesamt noch nicht abgenommen.
-P1 bis P9 sind nicht implementiert und haben keinen Auftrag.
+Status: KC-003 ergänzt reproduzierbare Testdaten und die RustSec-Prüfung.
+P0 ist insgesamt nicht abgenommen. P1 bis P9 haben weiterhin keinen Implementierungsauftrag.
 
 ## Arbeitsstand
 
-- `issue_id`: [KC-002 / #2](https://github.com/itsh-neumeier/kitaconnect/issues/2).
-- `branch`: `codex/p0-service-boundaries`.
-- `head_commit`: Ausgangsstand dieser Entscheidungsfortsetzung ist `6cc722e6de6ef29cf1437f864e5a039b32546261`.
-  Die bestätigten Entscheidungen folgen als eigener Dokumentationscommit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
-- `objective`: Antwort `1A, 2A, 3A, 4A` dokumentieren und die KC-002-Dienstgrenzen entsprechend konkretisieren.
-- `migration_state`: Keine Datenbankrollen, Tabellen, Migrationen oder Fachdatenspeicherung angelegt.
-- `pull_request`: [PR #40](https://github.com/itsh-neumeier/kitaconnect/pull/40).
-- `base`: `codex/p0-project-initialization`; [PR #39](https://github.com/itsh-neumeier/kitaconnect/pull/39) bleibt Voraussetzung.
+- `issue_id`: [KC-003 / #3](https://github.com/itsh-neumeier/kitaconnect/issues/3).
+- `branch`: `codex/p0-test-security-foundations`.
+- `head_commit`: Verifizierter Implementierungscommit `3596ba9662b0ecf92eaec542fe5a5d2d228cd429`.
+  Dieser Checkpoint folgt als gesonderter Dokumentationscommit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
+- `objective`: Reproduzierbare synthetische Organisationsdaten und vollständige P0-Prüfmatrix.
+- `migration_state`: Keine Migrationen, Datenbankrollen oder Fachdatenspeicherung angelegt.
+- `pull_request`: [PR #41](https://github.com/itsh-neumeier/kitaconnect/pull/41) auf Basis von `codex/p0-service-boundaries`.
+- `dependencies`: PR #39 enthält das Grundgerüst. PR #40 enthält die bestätigten Dienstgrenzen.
+  Beide PRs waren beim Start noch offen. Nicht ungeprüft zusammenführen.
 
-## Bestätigte Entscheidungen
+## Bereits bestätigte Architektur
 
-Quelle: ausdrückliche Antwort der Projektleitung `1A, 2A, 3A, 4A` im Projektchat am 18.10.2026.
+Die ausdrückliche Antwort `1A, 2A, 3A, 4A` vom 18.10.2026 bleibt gültig:
+Einrichtungsschemas mit getrennten Dienstrechten, Rust-Gateway, gesonderte Personalbereiche
+und getrennte Datenbanken/Dienstidentitäten für Wahlberechtigung und Stimme.
+ADR-014 bis ADR-017 dokumentieren diese Entscheidungen. Die Fragen nicht erneut stellen.
+Die unabhängige Prüfung des Wahlprotokolls bleibt vor Implementierung verpflichtend.
 
-| Auswahl | Entscheidung | Nachweis |
-|---|---|---|
-| `1A` | Ein PostgreSQL-Schema je Einrichtung mit getrennten Dienstrechten und Migrationsrollen | [ADR-014](../architecture/ADR-014_Datenhoheit_und_Migrationen.md) |
-| `2A` | Eigenständiges Rust-Gateway; Fachdienste prüfen Rechte zusätzlich selbst | [ADR-015](../architecture/ADR-015_Gateway_Grenze.md) |
-| `3A` | Gesonderter Personalbereich je Träger; eigene Bereiche für trägerlose Einrichtungen; nur erlaubte Einsatzdaten für Einrichtungen | [ADR-016](../architecture/ADR-016_Personalbereich.md) |
-| `4A` | Getrennte Datenbanken und Dienstidentitäten für Wahlberechtigung und Stimme; unabhängige Protokollprüfung vor Implementierung | [ADR-017](../architecture/ADR-017_Wahltrennung.md) |
+## Erledigt in KC-003
 
-O-001, O-002 sowie O-001-HR und O-001-WAHL sind damit auf Architekturebene entschieden.
-Die unabhängige Prüfung des Wahlprotokolls bleibt verpflichtend und ist noch nicht durchgeführt.
-Sie wird nicht durch die Antwort, Datenbanktrennung oder grüne Dokumentationsprüfungen ersetzt.
+1. `scripts/fixtures.mjs` erzeugt ausschließlich feste Organisationskennungen ohne externe Eingaben.
+2. `fixtures:check` vergleicht die versionierten Testdaten bytegenau mit dem Generator.
+3. Die Strukturprüfung weist unbekannte Felder, ungültige Datentypen, doppelte Kennungen und falsche Zuordnungen ab.
+4. Neun Testdatenprüfungen ergänzen die vier bisherigen Backlog-Tests. Keine Fach- oder Isolationstests vorgetäuscht.
+5. Der CI-Prüfschritt `structure` prüft zusätzlich die bytegenaue Testdatenerzeugung.
+6. `dependencies` prüft Cargo.lock mit cargo-audit 0.22.2 gegen RustSec.
+   Die bisherige pauschale Sperre externer Rust-Abhängigkeiten ist dadurch ersetzt.
+7. Offizielles Scannerarchiv, feste SHA-256-Prüfsumme, explizite Lockdatei und temporäre Meldungsdatenbank festgelegt.
+8. ADR-018, P0-Plan und [Prüfmatrix](../../tests/README.md) beschreiben Umfang, Befundbehandlung und Grenzen.
 
-## Erledigt
+## Lokale Prüfungen
 
-1. Anweisungen, Checkpoint, ADRs, Dokumentationsrichtlinie sowie Issue #2 und PR #40 geprüft.
-   Arbeitsbaum war sauber; Basis-CI für `6cc722e` war erfolgreich.
-2. ADR-014 und ADR-015 von Vorschlägen auf bestätigte Entscheidungen umgestellt.
-3. ADR-016 für Datenhoheit, Rechte und Migrationen der Personalbereiche ergänzt.
-4. ADR-017 für Wahlgrenzen und verpflichtende unabhängige Prüfung ergänzt.
-5. [Dienstmatrix](../architecture/KC-002_Dienstgrenzen.md), Architekturübersicht, Datenmodell und P0-Plan abgeglichen.
-6. Dienstrollen und Migrationszuständigkeit erhalten ihre Trennung. Gateway und Frontend haben keine Fachdatenbankrolle.
-7. Negative Testanforderungen für Personal- und Wahlgrenzen ergänzt. Sie sind noch keine ausgeführten Diensttests.
-8. Entscheidungsliste und Fortsetzungsanleitung aktualisiert. GitHub-Issue und PR führen den Review-Stand.
-
-## Prüfungen
-
-| Prüfung | Ergebnis |
+| Befehl / Nachweis | Ergebnis |
 |---|---|
-| `node scripts/check-project.mjs` | 38 Issues, 24 Dokumente, lokale Verweise und synthetische Daten geprüft |
-| `node --test scripts/*.test.mjs` | Vier bestehende Tests erfolgreich |
+| `node scripts/fixtures.mjs --check` | Ausgabe stimmt bytegenau mit Generator überein |
+| `node scripts/check-project.mjs` | 38 Issues, 24 Dokumente, lokale Verweise und Testdaten geprüft |
+| `node --test scripts/*.test.mjs` | 13 von 13 Tests erfolgreich |
+| Actionlint 1.7.12 | Beide Workflows ohne Fehler geprüft |
+| `npm run check:web` | Keine Fehler oder Warnungen |
+| `npm run build:web` | Erfolgreich |
+| cargo-audit 0.22.2 | 1338 RustSec-Meldungen geladen; Cargo.lock ohne Befund geprüft |
 | `git diff --check` | Erfolgreich |
-| Gitleaks auf vorgemerktem Diff | Vollständiger Entscheidungsdiff ohne Befund; finalen Commit zusätzlich in CI prüfen |
-| Ausgangscommit `6cc722e` | [P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39114152989) und [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39114153001) erfolgreich |
 
-Nur Dokumentation geändert. Lokale Frontend-/Rust-Builds werden deshalb nicht wiederholt.
-Der neue Commit löst eigene vollständige CI-Prüfungen aus. Vor Merge MUSS der aktuelle Commit grün sein.
-Die früher fehlenden Windows-Buildwerkzeuge sind unverändert; Rust-Build und Tests sind in Linux-CI nachgewiesen.
-Es gibt keine bekannten neuen Testfehler. Die Implementierungsnachweise folgen erst in späteren Phasen.
+Der erste Generatorvergleich erkannte die bisherige abweichende JSON-Formatierung.
+Die Datei wurde danach aus dem Generator neu erzeugt; ihre Organisationsdaten bleiben gleich.
+Der erste lokale RustSec-Aufruf fand Cargo für den Registry-Abgleich nicht.
+Nach Setzen des lokalen Cargo-Pfads war der erneute Scan ohne diese Warnung erfolgreich.
+Es gibt keine bekannten verbleibenden lokalen Prüffehler.
+Gitleaks prüfte den vollständigen Diff und die gesamte Historie ohne Befund.
+[P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39121788898) und
+[P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39121788935)
+sind für den Implementierungscommit erfolgreich. Alle fünf Prüfschritte sind grün.
+Der gesonderte Checkpoint-Commit löst neue Prüfungen aus; deren aktuellen Stand vor Merge im PR prüfen.
+Rust-Quelltext bleibt unverändert. Build und Tests laufen zusätzlich in der Linux-CI.
 
-## Verbleibende Aufgaben
+## Sicherheitsumfang
 
-- Review und Integration von PR #39, danach PR #40 auf `main` umstellen und erneut prüfen.
-- KC-002 erst nach Integration schließen. Architekturentscheidungen allein sind keine P0-Gesamtabnahme.
-- KC-003: Test- und Sicherheitsgrundlagen weiterführen; vor externen Rust-Abhängigkeiten `cargo audit` einrichten.
-- O-003 bis O-008 über KC-037 klären: Dienstidentitäten, Zustellung, Lastwerte, Versionen, Lizenz und Fachprüfer.
-- KC-038: Zuständige CODEOWNERS und nachgewiesenen Branchschutz klären.
-- KC-036: Bestandsdokumentation sprachlich prüfen. Unabhängige sprachliche Prüfung vor Merge bleibt erforderlich.
+Nur P0-Prüfwerkzeuge und erfundene Organisationskennungen. Keine Kinderdaten oder produktiven Secrets.
+Die Testdaten sind kein Nachweis implementierter Mandantenisolation.
+Workflow-Tokens behalten Leserechte. Es gibt keine Veröffentlichung und keine neuen Laufzeitdienste.
+Die vorhandene Erlaubnis für npm audit lokal und in GitHub Actions gilt weiter.
+cargo-audit lädt öffentliche Meldungen und Registry-Metadaten herunter; der Paketabgleich erfolgt lokal.
+Der Rust-Workspace enthält noch keine externen Abhängigkeiten. Die Prüfung gilt auch für spätere Lockfile-Erweiterungen.
 
-Die frühere Lastangabe `1` bezeichnet das Referenzprofil einer Einrichtung. Weitere Lastwerte fehlen.
-Die frühere CODEOWNER-Rückfrage ist nicht beantwortet. Bisheriger Branchschutz bleibt wegen HTTP 403 unbekannt.
-Die neue Variantenentscheidung beantwortet diese anderen Fragen nicht.
+## Offene Aufgaben und nächste drei Aktionen
 
-## Nächste drei Aktionen
+1. KC-003-PR mit aktuellem CI-Stand prüfen. Erst nach Review und Integration Issue #3 schließen.
+2. [KC-037 / #37](https://github.com/itsh-neumeier/kitaconnect/issues/37) fortsetzen:
+   O-003 bis O-008, Lastwerte, Versionen, Lizenzprüfung und unabhängige Fachpersonen klären.
+3. [KC-038 / #38](https://github.com/itsh-neumeier/kitaconnect/issues/38) und KC-036 klären:
+   bestätigte CODEOWNERS, nachweisbarer Branchschutz und sprachliche Bestandsprüfung.
 
-1. Aktuelle CI und Dokumentationsreview von PR #40 prüfen; Integration in Abhängigkeit von PR #39 vorbereiten.
-2. [KC-003 / #3](https://github.com/itsh-neumeier/kitaconnect/issues/3) als nächstes P0-Arbeitspaket auswählen.
-3. KC-037/KC-038 weiter klären. Vor Umsetzung des Wahlprotokolls die unabhängige Prüfung aus KC-025 durchführen lassen.
+Für die Integration zuerst PR #39, danach PR #40, anschließend den KC-003-PR prüfen.
+Nach Integration einer Basis den folgenden PR auf `main` umstellen und erneut prüfen.
+Keine Merge-Freigabe aus diesem Checkpoint ableiten.
+Die Lastprofilangabe `1` bezeichnet eine Einrichtung. Weitere Lastwerte fehlen.
+CODEOWNERS ist noch nicht bestätigt. Bisheriger Branchschutz bleibt wegen HTTP 403 unbekannt.
 
-## Sicherheitsumfang und Fortsetzung
+## Fortsetzungsanleitung
 
-Nur Architektur- und Projektdokumentation. Keine Echtdaten, Secrets, Laufzeitdienste oder Migrationen.
-Die bestehende Erlaubnis für npm audit lokal und in GitHub Actions gilt weiter.
-GitHub ist die verbindliche Quelle. Die JSON-Dateien unter `backlog/` sind Importnachweise.
-Lesen Sie beim Neustart AGENTS, CLAUDE, diesen Checkpoint, die ADRs und den aktuellen GitHub-Stand.
-Wiederholen Sie die beantworteten Variantenfragen nicht. Beginnen Sie keine weitere Phase ohne Auftrag.
+Lesen Sie AGENTS, CLAUDE, diesen Checkpoint, die Entscheidungsliste und die aktuellen GitHub-Issues/PRs.
+Prüfen Sie Branch, Arbeitsbaum, Commits und aktuelle CI, bevor Sie weiterarbeiten.
+Wiederholen Sie weder die bestätigten Architekturfragen noch das vorhandene Grundgerüst.
+Bearbeiten Sie weiter P0. P1 benötigt dessen Abnahme und einen eigenen Auftrag.

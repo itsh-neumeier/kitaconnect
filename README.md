@@ -19,6 +19,7 @@ Diese Werkzeuge gehören nicht zum Repository. Verwenden Sie nur synthetische Te
 ```sh
 npm ci --ignore-scripts
 npm run check
+npm run fixtures:check
 npm test
 npm run check:web
 npm run build:web
@@ -33,3 +34,6 @@ Starten Sie die interne Hinweisseite mit `npm run dev --workspace @kitaconnect/w
 Der Rust-Bootstrap startet keinen API-Dienst. Die Infrastruktur ist noch nicht installierbar.
 P0 ist vor Bestätigung offener Entscheidungen und Review nicht abgenommen.
 Der [Lizenzentwurf](docs/16_Lizenzentwurf.md) erteilt keine neuen Nutzungsrechte.
+
+Die [Prüfmatrix](tests/README.md) beschreibt die reproduzierbare Testdatenerzeugung
+und die Rust-Abhängigkeitsprüfung mit `cargo-audit` 0.22.2.

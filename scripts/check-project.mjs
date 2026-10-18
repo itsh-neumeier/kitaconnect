@@ -1,6 +1,7 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { validateOrganizationFixtures } from './fixtures.mjs';
 
 export function validateBacklog(items) {
   const byId = new Map();
@@ -45,10 +46,7 @@ export function checkProject(root) {
     }
   }
   const fixture = JSON.parse(readFileSync(join(root, 'tests/fixtures/organizations.json'), 'utf8'));
-  if (fixture.synthetic !== true || new Set(fixture.facilities.map(f => f.id)).size !== fixture.facilities.length) throw new Error('Ungültige Testdaten');
-  for (const facility of fixture.facilities) {
-    if (!facility.id.startsWith('synthetic-') || (facility.carrier !== null && !fixture.carriers.includes(facility.carrier))) throw new Error('Ungültige Organisationszuordnung');
-  }
+  validateOrganizationFixtures(fixture);
   console.log(`${backlog.length} Issues, ${docs.length} Dokumente und synthetische Testdaten geprüft.`);
 }
 

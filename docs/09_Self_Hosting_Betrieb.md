@@ -5,31 +5,66 @@
 > Status: Anforderungsspezifikation, keine implementierte oder rechtsverbindlich geprüfte Software. Die neuesten ausdrücklichen Interviewentscheidungen gelten.
 
 ## Unterstützte Installationen
-(A) Docker Compose/Portainer für Einzel-/kleinere Installationen, (B) Kubernetes/Helm für skalierbare und hochverfügbare Installationen. GHCR versionierte Images; Rust Services, SvelteKit-Web, PostgreSQL, Redis, Worker, lokaler oder S3-kompatibler Speicher. Reverse Proxy Traefik/Nginx, HTTPS. Nur stabile Releases; Admin bestätigt Installation, Release-Publish nach CI automatisch.
+Für einzelne und kleinere Installationen ist Docker Compose mit Portainer vorgesehen.
+Für skalierbare und hochverfügbare Installationen sind Kubernetes und Helm vorgesehen.
+Versionierte Images liegen in der GitHub Container Registry (GHCR).
+Die Installation umfasst Rust-Dienste, SvelteKit-Web, PostgreSQL, Redis und Hintergrunddienste.
+Dateien liegen lokal oder in S3-kompatiblem Speicher.
+Traefik oder Nginx dienen als vorgeschalteter Webserver. Der Zugang verwendet HTTPS.
+Es werden nur stabile Versionen installiert.
+Die Administration bestätigt die Installation. Die Veröffentlichung erfolgt nach erfolgreicher automatisierter Integration (CI) automatisch.
 
 ## Installationsablauf (Soll-Prozess)
-1. DNS, TLS, Serverressourcen, Mailversand, Speicher und Backupziel vorbereiten.
-2. `.env` aus Beispiel erzeugen; Secrets über Docker/Kubernetes Secret Stores bereitstellen, nicht ins Git.
-3. PostgreSQL/Redis/Storage starten, DB-Verbindung und Schema-Rechte prüfen.
-4. Versionierte Images beziehen, Migrationen im Wartungsmodus ausführen.
-5. Ersteinrichtungsassistent: Systemadmin, Träger/Einrichtung, Module, Domains, Datenschutz.
-6. Healthchecks, SMTP, Push, Medienworker, Backup und Restore-Probe prüfen.
-7. Monitoring, Alerts und Log-Retention aktivieren; Dokumentation der Verantwortlichen.
+DNS bezeichnet die Namensauflösung. TLS schützt die Transportverbindung.
+SMTP bezeichnet das Verfahren für den Mailversand.
+Der Ablauf beschreibt den späteren Sollzustand. Das P0-Grundgerüst ist noch nicht installierbar.
 
-## Backup und Recovery
-Konfigurierbare verschlüsselte Backups von Datenbank, Medien, Konfiguration und Schlüsselmaterial; WAL-Archiv/PITR; externe Sicherung; regelmäßige Test-Restores. RPO und RTO jeweils Ziel 24 Stunden, betriebsabhängig zu testen. Mandantenspezifischer Restore über isolierte Restore-Umgebung und geprüfte selektive Datenübernahme. Nach Restore Löschjournal und Consent-Widerrufe erneut durchsetzen.
+1. Bereiten Sie DNS, TLS, Serverressourcen, Mailversand, Speicher und das Ziel der Datensicherung vor.
+2. Erzeugen Sie `.env` aus dem Beispiel. Stellen Sie Secrets über geschützte Docker- oder Kubernetes-Speicher bereit.
+   Speichern Sie Secrets nicht in Git.
+3. Starten Sie PostgreSQL, Redis und Dateispeicher. Prüfen Sie Datenbankverbindung und Schemarechte.
+4. Beziehen Sie versionierte Images. Führen Sie Migrationen im Wartungsmodus aus.
+5. Richten Sie Systemadministrator, Träger beziehungsweise Einrichtung, Module, Domains und Datenschutz über den Assistenten ein.
+6. Prüfen Sie Zustandsprüfungen, SMTP, Push, Medien-Hintergrunddienst, Datensicherung und Wiederherstellungsprobe.
+7. Aktivieren Sie Betriebsüberwachung, Warnmeldungen und Aufbewahrungsregeln für Protokolle.
+   Dokumentieren Sie die Verantwortlichen.
+
+## Datensicherung und Wiederherstellung
+
+Datensicherungen von Datenbank, Medien, Konfiguration und Schlüsselmaterial sind konfigurierbar und verschlüsselt.
+Das PostgreSQL-Schreibprotokoll (WAL) wird archiviert und ermöglicht die Wiederherstellung zu einem Zeitpunkt (PITR).
+Externe Sicherung und regelmäßige Wiederherstellungstests sind vorgesehen.
+Der angestrebte maximale Datenverlustzeitraum (RPO) beträgt 24 Stunden.
+Die angestrebte Wiederherstellungsdauer (RTO) beträgt ebenfalls 24 Stunden.
+Beide Ziele werden betriebsabhängig getestet.
+Eine mandantenspezifische Wiederherstellung verwendet eine isolierte Umgebung und geprüfte selektive Datenübernahme.
+Nach Wiederherstellung werden Löschjournal und widerrufene Einwilligungen erneut durchgesetzt.
 
 ## Updates
-Stable-Version anzeigen, Kompatibilität/Backup prüfen, manueller Installationsfreigabeschritt, Wartungsmodus, Migrationscheck, Rolling/Blue-Green soweit kompatibel, Healthchecks und Wiederanlauf. Schema-Migrationen können irreversibel sein; Rollback ist Restore-/Forward-Fix-Strategie, kein blindes Zurücksetzen.
+1. Zeigen Sie die verfügbare stabile Version an. Prüfen Sie Kompatibilität und Datensicherung.
+2. Holen Sie die manuelle Installationsfreigabe ein. Aktivieren Sie den Wartungsmodus und prüfen Sie die Migration.
+3. Verwenden Sie schrittweise Aktualisierung oder den Wechsel zwischen zwei Betriebsumgebungen, soweit kompatibel.
+4. Prüfen Sie Zustand und Wiederanlauf.
 
-## Monitoring
-Integrierte Admin-Diagnose plus Prometheus/Grafana, strukturierte Logs, Traces, Alerting, Queue-/Workerzustand, Speicher-/Mandantenquotas, Datenbank-/WAL-/Backupzustand, Login-/Audit-Anomalien. Keine Geheimnisse, Kinder-/Gesundheitsdaten oder Wahlkorrelationen in Logs.
+Schema-Migrationen können unumkehrbar sein.
+Der Fehlerplan verwendet Wiederherstellung oder eine nachträgliche Korrektur. Blindes Zurücksetzen ist ausgeschlossen.
+
+## Betriebsüberwachung
+
+Die integrierte Administrationsdiagnose wird durch Prometheus und Grafana ergänzt.
+Strukturierte Protokolle, Ablaufspuren und Warnmeldungen unterstützen die Diagnose.
+Überwacht werden Warteschlangen, Hintergrunddienste, Speichergrenzen und Mandantenkontingente.
+Überwacht werden außerdem Datenbank, WAL, Datensicherungen sowie Auffälligkeiten bei Anmeldung und Datenzugriffen.
+Protokolle enthalten keine Geheimnisse, Kinder- oder Gesundheitsdaten und keine Verknüpfung zwischen Wählern und Stimmen.
 
 ## Betriebsmatrix
 
 Das [KC-037-Register](17_P0_Entscheidungsregister.md) enthält die am 18.10.2026 recherchierten Versionsstände.
 Diese Planungsbasis ist noch keine getestete Installationsfreigabe.
 KC-032 MUSS konkrete Versionen, Images, Lizenzen und Kompatibilität vor Verwendung nachweisen.
+
+HA bezeichnet Hochverfügbarkeit.
+
 | Profil | Laufzeit | Speicher | HA |
 |---|---|---|---|
 | Kleine Einrichtung | Docker Compose/Portainer | Lokal oder S3 | optional |

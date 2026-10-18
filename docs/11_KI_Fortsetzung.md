@@ -5,19 +5,32 @@
 > Status: Anforderungsspezifikation, keine implementierte oder rechtsverbindlich geprüfte Software. Die neuesten ausdrücklichen Interviewentscheidungen gelten.
 
 ## Prinzip
-GitHub ist die einzige verbindliche Quelle für Code, Issues, PRs, Entscheidungen und KI-Checkpoints. Codex und Claude sind austauschbar. Usage-Limits werden nicht umgangen: Arbeit wird so zerlegt und dokumentiert, dass eine neue Sitzung nahtlos fortsetzt.
+GitHub ist die einzige verbindliche Quelle für Code, Issues, Pull Requests (PRs), Entscheidungen und KI-Checkpoints.
+Ein Checkpoint dokumentiert den Arbeitsstand und die Fortsetzung.
+Codex und Claude sind austauschbar. Nutzungsgrenzen werden nicht umgangen.
+Die Arbeit wird so zerlegt und dokumentiert, dass eine neue Sitzung sie ohne Wiederholung fortsetzen kann.
 
 ## Start jeder Sitzung
-1. `AGENTS.md`, `CLAUDE.md`, `docs/ai-memory/CURRENT_STATE.md`, Architekturentscheidungen und relevante Issues lesen.
-2. `git status`, Branch, offene PRs, letzte Commits, CI-Ergebnisse, migrationsbezogene Änderungen prüfen.
-3. Nur ein kleines Issue auswählen, Scope/Tests/Abhängigkeiten verifizieren.
-4. Vor Änderungen Ist-Zustand und erwartetes Ergebnis festhalten.
+1. Lesen Sie `AGENTS.md`, `CLAUDE.md`, `docs/ai-memory/CURRENT_STATE.md`, Architekturentscheidungen und relevante Issues.
+2. Prüfen Sie `git status`, Branch, offene PRs, letzte Commits und Ergebnisse der automatisierten Integration (CI).
+   Prüfen Sie außerdem migrationsbezogene Änderungen.
+3. Wählen Sie nur ein kleines Issue aus. Prüfen Sie Umfang, Tests und Abhängigkeiten.
+4. Halten Sie vor Änderungen den Istzustand und das erwartete Ergebnis fest.
 
 ## Während der Arbeit
-Kleine Commits; API-Contract zuerst; niemals ungetestete Änderung in Main; Tests fortlaufend; bei Scope-Änderung Issue aktualisieren. Keine Geheimnisse oder produktiven Kinderdaten in Prompts, Commits oder Checkpoints.
+Erstellen Sie kleine Commits. Beschreiben Sie den Dienstvertrag vor seiner Implementierung.
+Integrieren Sie keine ungetestete Änderung in `main`. Führen Sie Tests fortlaufend aus.
+Aktualisieren Sie das Issue, wenn sich der Umfang ändert.
+Verwenden Sie keine Geheimnisse oder produktiven Kinderdaten in Prompts, Commits oder Checkpoints.
 
-## Vor Kontext-/Usage-Limit
-Commit/Branch sichern; `CURRENT_STATE.md` mit Issue, Branch, Commit, fertig, offen, Tests, Fehlern, Migrationen und nächsten drei Aktionen aktualisieren; Issue/PR kommentieren. Keine unbegründete Erfolgsmeldung bei fehlenden Tests.
+## Vor Kontext- oder Nutzungsgrenze
+
+1. Sichern Sie Commit und Branch.
+2. Aktualisieren Sie `CURRENT_STATE.md` mit Issue, Branch und Commit.
+   Dokumentieren Sie erledigte und offene Aufgaben, Tests, Fehler, Migrationen und die nächsten drei Aktionen.
+3. Aktualisieren Sie Issue und PR mit dem aktuellen Stand.
+
+Behaupten Sie bei fehlenden Tests keinen unbelegten Erfolg.
 
 ## Neustart-Prompt
 

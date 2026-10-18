@@ -5,25 +5,65 @@
 > Status: Anforderungsspezifikation, keine implementierte oder rechtsverbindlich geprüfte Software. Die neuesten ausdrücklichen Interviewentscheidungen gelten.
 
 ## Verantwortlichkeiten
-Datenschutzverantwortlichkeiten je Träger/Einrichtung konfigurierbar, ohne Verantwortlichkeit automatisch auf Softwarebetreiber zu übertragen. DSGVO-Rechtsgrundlagen, Aufbewahrungsfristen, Verträge, ggf. DSFA und landesrechtliche Kita-Vorschriften müssen vor Produktiveinsatz mit Fachstellen geprüft werden.
+Datenschutzverantwortlichkeiten sind je Träger und Einrichtung konfigurierbar.
+Die Software überträgt diese Verantwortung nicht automatisch auf den Softwarebetreiber.
+Vor produktivem Einsatz prüfen Fachstellen die Rechtsgrundlagen der Datenschutz-Grundverordnung (DSGVO).
+Sie prüfen außerdem Aufbewahrungsfristen, Verträge und landesrechtliche Vorschriften für Kindertageseinrichtungen.
+Eine erforderliche Datenschutz-Folgenabschätzung (DSFA) ist Teil dieser Prüfung.
 
 ## Schutzklassen
-Öffentlich, intern, vertraulich, besonders sensibel. Besonders sensibel: Gesundheitsdaten, Entwicklungsakte, Sorgerechtsbeschränkungen, Personalakten, Beschwerden, Wahlgeheimnis. Datenminimierung, Zweckbindung, Need-to-Know, verschlüsselte Übertragung/Speicherung, zusätzliche feld-/objektbezogene Schutzmaßnahmen.
+Es gibt vier Schutzklassen: öffentlich, intern, vertraulich und besonders sensibel.
+Gesundheitsdaten, Entwicklungsakten, Sorgerechtsbeschränkungen, Personalakten, Beschwerden und Wahlgeheimnis sind besonders sensibel.
+Es gelten Datenminimierung, Zweckbindung und Zugriff nur bei erforderlichem Kenntnisbedarf.
+Übertragung und Speicherung sind verschlüsselt. Zusätzliche Schutzmaßnahmen gelten je Feld und Objekt.
 
-## Rechte und Audit
-Default-Deny, RBAC plus ABAC/Objekt-/Feldregeln, separate Träger-/Einrichtungsscope, zeitlich befristete Rechte, sofortiger Widerruf, regelmäßige Rezertifizierung. Alle personenbezogenen Lese-/Schreibzugriffe protokollieren: Akteur, Zeit, Zweck/Scope, Objektkategorie, Aktion, Entscheidung, technische Korrelations-ID; keine vollständigen Gesundheitsinhalte in Auditdaten. Append-only/tamper-evident Speicherung und getrennte Audit-Retention; Last-/Speicherfolgen testen.
+## Rechte und Zugriffsprotokollierung
+
+Zugriff wird standardmäßig verweigert.
+Rollenbasierte Berechtigungen (RBAC) werden durch attributbasierte (ABAC), objektbezogene und feldbezogene Regeln ergänzt.
+Berechtigungsumfänge für Träger und Einrichtungen bleiben getrennt.
+Rechte sind zeitlich befristbar, sofort widerrufbar und werden regelmäßig erneut geprüft.
+
+Alle personenbezogenen Lese- und Schreibzugriffe werden protokolliert.
+Das Zugriffsprotokoll erfasst Akteur, Zeit, Zweck, Berechtigungsumfang, Objektkategorie, Aktion und Entscheidung.
+Es erfasst außerdem eine technische Korrelationskennung. Vollständige Gesundheitsinhalte gehören nicht in das Zugriffsprotokoll.
+Die Speicherung erlaubt nur Ergänzungen und macht Manipulationen erkennbar.
+Zugriffsprotokolle haben getrennte Aufbewahrungsregeln. Folgen für Last und Speicher werden getestet.
 
 ## Einwilligungen und Medien
-Versionierte Einwilligungen pro Zweck und je Einzelbild/Veröffentlichung; erneute Prüfung bei jeder Nutzung; Widerruf führt zu Sperr-/Entfernungsworkflow. Gesichtserkennung ausschließlich lokal zur Maskierung ohne biometrische Identifikation; verpflichtende manuelle Freigabe, Kontextidentifikation beachten, EXIF/GPS entfernen.
+Einwilligungen sind versioniert und gelten je Zweck sowie je Einzelbild beziehungsweise Veröffentlichung.
+Sie werden bei jeder Nutzung erneut geprüft. Ein Widerruf startet einen Ablauf zur Sperrung oder Entfernung.
+Gesichtserkennung erfolgt ausschließlich lokal zur Maskierung und ohne biometrische Identifikation.
+Eine manuelle Freigabe ist verpflichtend. Die Erkennbarkeit durch den Kontext wird berücksichtigt.
+EXIF-Metadaten und GPS-Standortdaten werden entfernt.
 
 ## Betroffenenrechte und Löschung
-Auskunft, Berichtigung, Export, Einschränkung und Löschprüfung mit Identitätskontrolle, Fristen, Rechtsgrundlagen und nachvollziehbarem Status. Lösch- und Aufbewahrungsregeln je Kategorie/Träger/Einrichtung, gesetzliche Grenzen haben Vorrang. Backup-Restore prüft Löschjournal; Verschlüsselungsschlüssel sicher rotieren. Keine pauschale Behauptung, jede Anfrage müsse stets zur Löschung führen.
+Auskunft, Berichtigung, Export, Einschränkung und Löschprüfung benötigen eine Identitätskontrolle.
+Sie berücksichtigen Fristen und Rechtsgrundlagen. Der Bearbeitungsstatus ist nachvollziehbar.
+Lösch- und Aufbewahrungsregeln gelten je Datenkategorie, Träger und Einrichtung.
+Gesetzliche Grenzen haben Vorrang. Eine Anfrage führt nicht pauschal zur Löschung.
+Bei Wiederherstellung einer Datensicherung wird das Löschjournal geprüft.
+Verschlüsselungsschlüssel werden sicher gewechselt.
 
 ## Notfallzugriff
-Break-glass nur für ausdrücklich definierte Notfälle, Begründung, begrenzte Dauer, Zweitfreigabe soweit möglich, sofortiger Alarm, Audit und verpflichtende Nachkontrolle. Kein Notfall-Bypass des Wahlgeheimnisses.
+Notfallzugriff ist nur für ausdrücklich definierte Notfälle zulässig.
+Er benötigt eine Begründung und ist zeitlich begrenzt. Eine Zweitfreigabe erfolgt, soweit möglich.
+Der Zugriff löst sofort einen Alarm aus und wird protokolliert. Eine Nachkontrolle ist verpflichtend.
+Notfallzugriff darf das Wahlgeheimnis nicht umgehen.
 
 ## Bedrohungsmodell und Prüfungen
-Cross-Tenant-Leakage durch search_path/Pooling, IDOR, gestohlene Sessions, kompromittierte Dienstkonten, Malware-Uploads, fehlerhafte Medienfreigaben, wiederhergestellte gelöschte Daten, Auswertung kleiner Gruppen, Insider-Angriffe, Wahlkorrelation, manipulierte QR-Codes. Gegenmaßnahmen: automatisierte Isolationstests, least privilege, Security Reviews, Rate-Limits, CSRF/CSP, signierte Events, Scans, Restore-Proben und Vorfallmanagement.
+Die Prüfung berücksichtigt folgende Bedrohungen:
+
+- Offenlegung fremder Mandantendaten durch `search_path` oder gemeinsam genutzte Datenbankverbindungen.
+- Unberechtigte direkte Objektzugriffe (IDOR), gestohlene Sitzungen und kompromittierte Dienstkonten.
+- Uploads mit Schadsoftware, fehlerhafte Medienfreigaben und Wiederherstellung bereits gelöschter Daten.
+- Auswertung kleiner Gruppen, Angriffe durch interne berechtigte Personen und Zuordnung von Wählern zu Stimmen.
+- Manipulierte QR-Codes.
+
+Gegenmaßnahmen sind automatisierte Isolationstests, minimale Rechte und Sicherheitsreviews.
+Weitere Gegenmaßnahmen sind Anfragemengenbegrenzung, Schutz gegen gefälschte browserbasierte Anfragen (CSRF)
+und eine Sicherheitsrichtlinie für Browserinhalte (CSP).
+Signierte Ereignisse, automatisierte Sicherheitsprüfungen, Wiederherstellungsproben und Vorfallmanagement ergänzen diese Maßnahmen.
 
 
 ## Dokumentationssprache (Ergänzung v5.9)

@@ -138,7 +138,7 @@ Datum: 18.10.2026. Quelle: ausdrückliche Antwort im Projektchat.
 - Frage 3: „Ich auch als Prüfer“ benennt Timo Neumeier für Sicherheits- und Datenschutzprüfungen.
   Die Zuständigkeit ersetzt keine durchgeführte Prüfung und belegt keine Unabhängigkeit bei eigenen Änderungen.
 
-Die Review-Regeln bleiben bestehen. Eine Ausnahme oder Selbstfreigabe wurde nicht bestätigt und wird nicht eingerichtet.
+Zu diesem Interviewstand blieben die Review-Regeln bestehen. Die spätere ausdrückliche Zielregel steht in ADR-022.
 Die gesonderte juristische Lizenzprüfung und unabhängige Wahlprotokollprüfung bleiben unverändert offen.
 Es wurde keine neue Architekturentscheidung getroffen.
 
@@ -148,6 +148,13 @@ Die aktuellen PRs wurden über den Zugang der Projektleitung erstellt.
 Ihre persönliche Prüfung und das technisch erforderliche genehmigende GitHub-Review bleiben getrennte Nachweise.
 Es wird keine abgeschlossene Prüfung oder erfüllte Pflichtgenehmigung behauptet.
 Die Aufteilung allein verändert weder Branchschutz noch unabhängige Fachprüfungen.
+
+## ADR-022 – Zielregel für eigene Pull Requests
+
+Die Projektleitung hat anschließend ausdrücklich eine Reviewausnahme nur für eigene PRs von `@itsh-neumeier` bestätigt.
+Fremde PRs und sämtliche Pflichtprüfungen bleiben geschützt.
+[ADR-022](architecture/ADR-022_Reviewausnahme_eigene_PRs.md) dokumentiert die bestätigte Begrenzung
+und den noch nicht entschiedenen technischen Betriebsweg. Es wurde keine allgemeine Ausnahme aktiviert.
 
 ## Dokumentationssprache (Ergänzung v5.9)
 

@@ -61,6 +61,15 @@ Ein allgemeines PR-Review ersetzt weder Datenschutzprüfung noch juristische Liz
 Die ausdrücklich zurückgestellten Fachrollen und ihre Sperren aus dem KC-037-Register gelten weiter.
 P0 ist nicht insgesamt abgenommen.
 
+## Bestätigte Zielregel für eigene PRs
+
+Die Projektleitung bestätigt eine Reviewausnahme ausschließlich für selbst erstellte PRs von `@itsh-neumeier`.
+Fremde PRs benötigen weiterhin Review. Tests und Sicherheitsprüfungen bleiben immer verpflichtend.
+[ADR-022](architecture/ADR-022_Reviewausnahme_eigene_PRs.md) dokumentiert Umfang, technische Grenze und Umsetzungsvorschlag.
+Die eingebaute Benutzerausnahme kann nicht nach PR-Autor unterscheiden.
+Eine weitergehende Benutzerausnahme wurde deshalb nicht aktiviert.
+Die gewünschte Zielregel ist bestätigt; der bisherige Schutz bleibt bis zur passenden technischen Umsetzung aktiv.
+
 ## Integration der aufeinander aufbauenden Pull Requests
 
 Die Reihenfolge lautet: #39, #40, #41, #42, danach der KC-038-PR.

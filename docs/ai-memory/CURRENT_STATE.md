@@ -3,17 +3,18 @@
 Aktualisiert: 18.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
 Status: KC-036 hat die ursprünglichen Unterlagen 01 bis 12 redaktionell überarbeitet.
 F-001 ist bestätigt und klargestellt. Timo Neumeier ist als Prüfer benannt.
-Eine unabhängige Gegenprüfung seiner eigenen PRs fehlt weiterhin.
+Die Projektleitung bestätigt anschließend eine Ausnahme ausschließlich für eigene PRs.
+Die passende technische Durchsetzung ist noch offen; keine allgemeine Benutzerausnahme ist aktiviert.
 KC-038 hat den Main-Branchschutz eingerichtet. P0 ist nicht insgesamt abgenommen.
 P1 bis P9 besitzen keinen Implementierungsauftrag.
 
 ## Arbeitsstand
 
-- `issue_id`: [KC-036 / #36](https://github.com/itsh-neumeier/kitaconnect/issues/36).
+- `issue_id`: [KC-038 / #38](https://github.com/itsh-neumeier/kitaconnect/issues/38), Nachtrag im KC-036-PR #44.
 - `branch`: `codex/p0-documentation-review`.
-- `head_commit`: Verifizierter Interviewcommit `2617c38924e1133f907787fae4d45cfedd085831`.
-  Die ergänzte Prüfaufteilung und dieser Checkpoint folgen als eigener Commit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
-- `objective`: Sprachliche Bestandsprüfung ohne eigenmächtige Änderung fachlicher Anforderungen.
+- `head_commit`: Verifizierter Ausgangscommit `8499669818c1cb4dce14841d0cb541fb84c77f83`.
+  ADR-022 und dieser Checkpoint folgen als eigener Commit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
+- `objective`: Bestätigte Reviewausnahme ausschließlich für eigene PRs technisch eingrenzen.
 - `pull_request`: [PR #44](https://github.com/itsh-neumeier/kitaconnect/pull/44), Entwurf gegen `codex/p0-review-protection`.
 - `migration_state`: Keine Datenbankrollen, Migrationen, Zertifikate oder Laufzeitdienste angelegt.
 - `dependencies`: PRs #39 bis #43 zuerst prüfen und integrieren. Kein Merge durch diese Sitzung.
@@ -42,6 +43,8 @@ Quelle: ausdrückliche Antworten im Projektchat am 18.10.2026.
 10. „Ich prüfe die auch sowie du als KI-Assistent“ bestätigt persönliche Prüfung durch die Projektleitung
     und technische Vorprüfung durch den Assistenten. Die GitHub-Pflichtgenehmigung ist damit nicht erfüllt.
     Die PRs wurden über den Zugang der Projektleitung erstellt. Keine abgeschlossene menschliche Prüfung behaupten.
+11. Die spätere Antwort „Ja genau“ bestätigt die Rückfrage: Ausnahme nur für eigene PRs von `@itsh-neumeier`.
+    Fremde PRs brauchen Review. Alle fünf Pflichtprüfungen bleiben verbindlich. Umfang nicht erneut abfragen.
 
 ## Erledigt in KC-038
 
@@ -58,6 +61,9 @@ Quelle: ausdrückliche Antworten im Projektchat am 18.10.2026.
 9. Plan, API-Momentaufnahme, [ADR-021](../architecture/ADR-021_Branchschutz_und_Review.md)
    und [Betriebsanleitung](../18_Branchschutz_und_Reviews.md) erstellt.
 10. Lokale Planprüfung und negative Tests in den bestehenden CI-Prüfschritt `structure` aufgenommen.
+11. Spätere Zielregel in [ADR-022](../architecture/ADR-022_Reviewausnahme_eigene_PRs.md) dokumentiert.
+    Eingebaute Benutzerausnahme kann nicht nach PR-Autor unterscheiden und wurde nicht aktiviert.
+    Konkreten App-Vorschlag und Abnahmefälle vorbereitet. Zusätzliche App und Betriebsweg sind noch nicht entschieden.
 
 ## Erledigt in KC-036
 
@@ -76,7 +82,8 @@ Quelle: ausdrückliche Antworten im Projektchat am 18.10.2026.
 
 ## Grenzen und offene Rollen
 
-- `@itsh-neumeier` ist als Prüfer genannt. Für dessen eigene PRs fehlt weiterhin eine andere unabhängige Person.
+- Für fremde PRs bleibt unabhängige Genehmigung erforderlich. Für eigene PRs ist die begrenzte Ausnahme bestätigt,
+  aber technisch noch nicht eingerichtet. Keine weitergehende Benutzerausnahme aktivieren.
 - Persönliche Prüfung plus KI-Vorprüfung ist bestätigt. Nicht erneut nach dieser gewünschten Aufteilung fragen.
   Keine Pflichtgenehmigung daraus ableiten; bestehende Sperre bleibt bestehen.
 - F-001 ist entschieden und in Unterlage 05 umgesetzt. Nicht erneut abfragen.
@@ -85,7 +92,8 @@ Quelle: ausdrückliche Antworten im Projektchat am 18.10.2026.
   sowie konkrete Prüfberichte fehlen. Fachfreigaben aus KC-037 bleiben erforderlich.
 - CODEOWNERS liegt bisher nur auf dem Arbeitsbranch von PR #42. Die Datei fehlt auf `main`.
 - Ein Autor kann eigene Änderungen nicht genehmigen. Mit nur einem CODEOWNER bleiben dessen eigene Merges
-  nach Integration der Datei ohne weiteren bestätigten CODEOWNER gesperrt. Regeln nicht abschwächen.
+  unter dem bestehenden Schutz ohne weiteren bestätigten CODEOWNER gesperrt.
+  ADR-022 dokumentiert die bestätigte Zielregel, ohne einen bereits aktiven Bypass zu behaupten.
 - Der Regelsatz schützt nur `main`. Auf Arbeitsbranches gerichtete Folge-PRs sind noch nicht durch ihn geschützt.
 - Administratoren können Regelsätze weiterhin verwalten. Keine Unveränderlichkeit behaupten.
 - [API-Nachweis](BRANCH_PROTECTION_STATE.json) ist eine Momentaufnahme, vor Merge erneut prüfen.
@@ -94,7 +102,7 @@ Quelle: ausdrückliche Antworten im Projektchat am 18.10.2026.
 
 | Prüfung | Ergebnis |
 |---|---|
-| `node scripts/check-project.mjs` | 38 Issues, 30 Dokumente und lokale Verweise geprüft |
+| `node scripts/check-project.mjs` | 38 Issues, 31 Dokumente und lokale Verweise geprüft |
 | `node scripts/check-github-rules.mjs` | Versionierter Plan erfüllt Schutzanforderungen |
 | Planprüfung auf ausgelesener API-Antwort | Erfolgreich |
 | `node scripts/fixtures.mjs --check` | Bytegenau erfolgreich |
@@ -113,6 +121,8 @@ Auch der Ausgangscommit `fc60092` ist vollständig grün:
 [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39132856848).
 Für Interviewcommit `2617c38` sind [P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39134454271)
 und [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39134454419) vollständig erfolgreich.
+Für Ausgangscommit `8499669` sind [P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39134864033)
+und [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39134864021) vollständig erfolgreich.
 Der folgende Dokumentationscommit löst eigene Prüfungen aus. Vor Merge muss der aktuelle Kopf grün sein.
 Alle vorgemerkten Gruppen und die vollständige Historie mit 16 Commits wurden mit Gitleaks ohne Befund geprüft.
 Rust-, Frontend- und Workflow-Code wurden nicht geändert.
@@ -120,9 +130,9 @@ Keine neuen lokalen Testfehler. Keine implementierte Dienst-, Last- oder Wahlsic
 
 ## Nächste drei Aktionen
 
-1. Ergänzte Prüfaufteilung in PR #44 sichern, aktuelle CI prüfen und Issues #36/#38 aktualisieren. F-001 nicht erneut abfragen.
-2. Persönliche Prüfung und KI-Vorprüfung am konkreten Commit dokumentieren. Technische GitHub-Genehmigung gesondert nachweisen.
-   KC-036 und KC-038 bleiben bis zur Erfüllung offen. Keine Selbstfreigabe und keine Abschwächung der Schutzregeln.
+1. ADR-022 in PR #44 sichern, aktuelle CI prüfen und Issue #38 aktualisieren. F-001 und Ausnahmeumfang nicht erneut abfragen.
+2. Zusätzliche GitHub-App und Betriebsweg entscheiden lassen. Bis zur passenden technischen Durchsetzung bleibt der alte Schutz aktiv.
+   KC-036 und KC-038 bleiben offen. Keine Ausnahme für fremde PRs oder Pflichtprüfungen einrichten.
 3. Integrationsnachweise und P0-Abnahme vorbereiten. Keine neue Entwicklungsphase beginnen.
 
 Integrationsfolge: #39, #40, #41, #42, #43, danach KC-036. Nach Integration der Basis den nächsten PR

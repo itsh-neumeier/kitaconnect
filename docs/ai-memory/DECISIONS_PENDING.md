@@ -8,6 +8,8 @@ Eine ausbleibende Antwort ist keine Zustimmung.
 
 | Frage aus dieser Sitzung | Stand |
 |---|---|
+| Ausnahme für eigene PRs | Auf die Rückfrage mit „Ja genau“ bestätigt: nur eigene PRs von `@itsh-neumeier`, keine Ausnahme für fremde PRs und keine Ausnahme von Pflichtprüfungen. [ADR-022](../architecture/ADR-022_Reviewausnahme_eigene_PRs.md). Nicht erneut nach diesem Umfang fragen. |
+| Technischer Weg der Ausnahme | Eingebaute Benutzerausnahme ist zu weitgehend. Vorschlag: gesonderte vertrauenswürdige GitHub-App mit begrenztem Merge-Verfahren. Zusätzliche App und Betriebsweg noch nicht entschieden; bisheriger Schutz bleibt aktiv. |
 | Referenzprofil für die Lastprüfung | Eine Einrichtung. 50 Sitzungen, 10 Anfragen pro Sekunde, 80/20 Lesen/Schreiben, p95 500/1.000 ms, unter 1 % Fehler, 4 vCPU, 8 GB RAM, 100 GB SSD, 5 Minuten Aufwärmen und 30 Minuten Messung ausdrücklich bestätigt. |
 | CODEOWNER für das Repository | Antwort `@itsh-neumeier Timo Neumeier`; vorläufige Zuordnung in CODEOWNERS eingetragen. Kein Nachweis unabhängiger Prüfung. |
 | PR-Prüfung durch Projektleitung und KI | Persönliche Prüfung durch Timo Neumeier und technische Vorprüfung durch den KI-Assistenten ausdrücklich gewünscht. Aktuelle PRs sind über denselben Benutzer erstellt; GitHub-Pflichtgenehmigung bleibt unerfüllt. Keine erfolgte menschliche Prüfung behauptet. Keine Abschwächung der Regeln. |

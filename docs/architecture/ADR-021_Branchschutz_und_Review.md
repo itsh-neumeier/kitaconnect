@@ -15,6 +15,10 @@ Die CI verändert keine Verwaltungseinstellungen.
 
 ## Alternative und Folgen
 
+Fortschreibung: [ADR-022](ADR-022_Reviewausnahme_eigene_PRs.md) beschreibt die später ausdrücklich gewünschte
+Ausnahme ausschließlich für eigene PRs von `@itsh-neumeier`. Ihre technische Umsetzung ist noch offen.
+Der hier beschriebene tatsächliche Regelsatz bleibt bis zu diesem Nachweis aktiv und unverändert.
+
 CODEOWNERS allein erzwingt kein Review. Ein bloßer lokaler Plan belegt keinen Schutz.
 Eine Ausnahme für Administratoren würde die verlangten Prüfungen umgehen und wird nicht eingerichtet.
 Die [API-Momentaufnahme](../ai-memory/BRANCH_PROTECTION_STATE.json) belegt Regelsatz `25341109`.

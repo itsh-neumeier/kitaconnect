@@ -48,6 +48,8 @@ Ein vom Client gelieferter Schemaname darf niemals zur Autorität werden.
 6. Bei Fehler stoppt sie die nächste Welle. Sie verwendet den vorab geprüften Wiederherstellungs- oder Vorwärtskorrekturplan.
 
 Die Laufzeitdienste führen keine Migrationen beim Start aus.
+Sensible Mandantentabellen benötigen RLS. KC-005 prüft zusätzlich FORCE ROW LEVEL SECURITY,
+Eigentümerrechte und jede ausdrücklich begründete Ausnahme.
 Es gibt keinen pauschalen Rollback durch Zurücksetzen einer gesamten Mehrmandanten-Datenbank.
 Das genaue Sperrverfahren und die Einbindung von SQLx folgen nach Entscheidung in KC-005.
 Ein Kontext für RLS MUSS aus einer vertrauenswürdig geprüften Identität stammen.
@@ -74,3 +76,15 @@ Der [Prüfplan](KC-002_Dienstgrenzen.md) nennt die nachzuweisenden Negativfälle
 
 **Entscheidung der Projektleitung:** ausstehend.
 **Umsetzung:** keine. Keine Rollen, Tabellen, Migrationen oder Zugangsdaten angelegt.
+
+## Technische Quellen
+
+Die PostgreSQL-Dokumentation beschreibt getrennte Objektrechte und das Risiko
+beschreibbarer Schemas im `search_path`. Sie beschreibt außerdem die besonderen
+RLS-Rechte von Superusern, Rollen mit BYPASSRLS und Tabelleneigentümern.
+Diese Quellen stützen die genannten Prüfanforderungen. Sie genehmigen den Architekturvorschlag nicht.
+
+- [PostgreSQL 18: Schemas und Rechte](https://www.postgresql.org/docs/18/ddl-schemas.html).
+- [PostgreSQL 18: Row Security Policies](https://www.postgresql.org/docs/18/ddl-rowsecurity.html).
+
+PostgreSQL 18 ist hier die Bezugsdokumentation. Die Laufzeitversion bleibt O-006.

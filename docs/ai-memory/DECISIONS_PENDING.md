@@ -16,6 +16,21 @@ Die ausdrückliche Freigabe für npm audit liegt nach einer automatischen Ablehn
 Die ursprüngliche Ablehnung betraf die Übermittlung von Abhängigkeitsmetadaten.
 Sie betraf weder Quelltext noch produktive Zugangsdaten.
 
-Nächster Schritt: [KC-002](https://github.com/itsh-neumeier/kitaconnect/issues/2).
-Entscheidungen zu Dienstgrenzen und Datenhoheit zuerst vorbereiten.
-KC-037 und KC-038 verfolgen die verbleibenden P0-Fragen.
+## Konkrete Vorschläge für KC-002
+
+Die [Dienstmatrix](../architecture/KC-002_Dienstgrenzen.md) liegt mit Datenhoheit,
+Kommunikationszwecken und Testanforderungen als Entwurf vor.
+[Pull Request #40](https://github.com/itsh-neumeier/kitaconnect/pull/40)
+baut auf dem weiterhin offenen Grundgerüst-PR #39 auf.
+
+| Entscheidung | Vorschlag und Stand |
+|---|---|
+| O-001 / ADR-014 | Ein PostgreSQL-Schema je Einrichtung mit getrennten Dienstrechten und Migrationsrollen. Alternative: eigene Datenbank je Dienst. Entscheidung angefragt; ausstehend. |
+| O-002 / ADR-015 | Eigenständiges Rust-Gateway. Alternative: SvelteKit als Backend für das Frontend. Entscheidung angefragt; ausstehend. |
+| O-001-HR | Speicher- und Rechtebereich trägerweiter Personalakten ausdrücklich offen. Die allgemeine Datenbankentscheidung entscheidet diesen Punkt nicht. |
+| O-001-WAHL | Physische Trennung von Wahlberechtigung und Stimme ausdrücklich offen. Unabhängige Fachprüfung erforderlich. |
+
+Nächster Schritt: Die Projektleitung entscheidet die beiden angefragten Varianten.
+KC-002 bleibt bis zu den erforderlichen Sicherheitsentscheidungen offen.
+Es werden keine Dienste, Datenbankrollen oder Migrationen implementiert.
+KC-037 und KC-038 verfolgen die übrigen P0-Fragen.

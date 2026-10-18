@@ -82,3 +82,12 @@ Es weist noch keine Mandantenisolation nach.
 
 RLS bedeutet Row-Level Security. Clippy-Hinweise ersetzen keine Sicherheitsprüfung.
 Fehlende spätere Prüfschritte dürfen nicht als bestanden ausgewiesen werden.
+
+## P1-Ergänzung: Organisationsmodell
+
+KC-004A ergänzt acht Integrationstests unter `services/organization-config/tests/` und einen
+negativen Rust-Dokumentationstest zur Trennung der Kennungstypen.
+`cargo test --workspace --locked` erfasst beide Testarten.
+Die Tests verwenden ausschließlich synthetische Kennungen.
+Sie prüfen doppelte Kennungen, unbekannte Träger und unveränderten Zustand bei fehlgeschlagener Anlage.
+Sie ersetzen keine Rechte-, Datenbank- oder Migrationstests aus KC-004B/C.

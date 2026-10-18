@@ -189,3 +189,9 @@ Die Projektleitung nimmt P0 auf Grundlage der erfolgreichen Prüfungen und dokum
 Sie beauftragt P1. Die Arbeit beginnt mit kleinen Arbeitspaketen aus KC-004.
 Die juristische Lizenzprüfung, die unabhängige Wahlprüfung und alle Sperren aus KC-037 bleiben bestehen.
 Der Abschlussnachweis in PR #49 wird nach erfolgreicher CI integriert.
+
+## ADR-023 – Erstes P1-Modell
+
+[ADR-023](architecture/ADR-023_Organisationsmodell.md) legt das interne Organisationsmodell im zuständigen Dienst fest.
+KC-004A beginnt mit typisierten Kennungen und Modellinvarianten. Persistenz und aktuelle Benutzerrechte folgen in getrennten Arbeitspaketen.
+Diese Entscheidung gewährt keine neuen Berechtigungen und ersetzt keine Dienst- oder Datenbanktests.

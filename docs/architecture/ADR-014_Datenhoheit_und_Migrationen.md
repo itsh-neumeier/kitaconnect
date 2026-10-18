@@ -1,6 +1,6 @@
 # ADR-014 – Datenhoheit und Migrationen je Dienst
 
-Datum: 18.10.2026. Status: vorgeschlagen; Entscheidung ausstehend.
+Datum: 18.10.2026. Status: von der Projektleitung entschieden; Umsetzung ausstehend.
 Bezug: ADR-001, ADR-002, O-001 und [KC-002](https://github.com/itsh-neumeier/kitaconnect/issues/2).
 
 ## Verbindliche Ausgangslage
@@ -9,7 +9,7 @@ Ein Mandant ist eine Einrichtung. Die Spezifikation fordert PostgreSQL-Schemas j
 und zusätzliche Row-Level Security (RLS). Frühe Microservices bleiben verbindlich.
 Ein Dienst darf keine Fachtransaktion über fremde Diensttabellen ausführen.
 
-## Vorschlag A – Ein Einrichtungsschema mit getrennten Dienstrechten
+## Entscheidung – Ein Einrichtungsschema mit getrennten Dienstrechten
 
 Die Datenbank enthält ein registriertes PostgreSQL-Schema je Einrichtung.
 Jeder Dienst erhält darin nur Rechte an seinen eigenen Tabellen und Sequenzen.
@@ -20,7 +20,9 @@ Referenzen auf andere Dienste werden über geprüfte Dienstverträge aufgelöst.
 
 Die globale Identität und Organisationsverwaltung erhalten getrennte restriktive Plattformbereiche.
 Die [Dienstmatrix](KC-002_Dienstgrenzen.md) ordnet die konzeptionellen Entitäten zu.
-Die Speichergrenze trägerweiter Personalakten und die physische Wahltrennung bleiben gesondert offen.
+Die ergänzenden Entscheidungen [ADR-016](ADR-016_Personalbereich.md) und
+[ADR-017](ADR-017_Wahltrennung.md) regeln Personalbereiche und die getrennten Wahldatenbanken.
+Diese besonders geschützten Bereiche erweitern keine allgemeinen Dienstrechte.
 
 | Rolle | Zulässige Aufgabe | Ausgeschlossene Rechte |
 |---|---|---|
@@ -38,7 +40,7 @@ KC-005 MUSS auch Namensverdeckung, Funktionsauflösung und Eigentümerwechsel pr
 Ein freigegebener Tabellenname wird vollständig qualifiziert verwendet.
 Ein vom Client gelieferter Schemaname darf niemals zur Autorität werden.
 
-## Zuständigkeit und Migrationsablauf im Vorschlag
+## Zuständigkeit und Migrationsablauf
 
 1. Der fachlich zuständige Dienst liefert seine Migration, Vertragsversion und Kompatibilitätsangaben.
 2. Die Provisionierung ordnet die Einrichtung einem registrierten Schema zu.
@@ -51,30 +53,31 @@ Die Laufzeitdienste führen keine Migrationen beim Start aus.
 Sensible Mandantentabellen benötigen RLS. KC-005 prüft zusätzlich FORCE ROW LEVEL SECURITY,
 Eigentümerrechte und jede ausdrücklich begründete Ausnahme.
 Es gibt keinen pauschalen Rollback durch Zurücksetzen einer gesamten Mehrmandanten-Datenbank.
-Das genaue Sperrverfahren und die Einbindung von SQLx folgen nach Entscheidung in KC-005.
+Das genaue Sperrverfahren und die Einbindung von SQLx folgen in KC-005.
 Ein Kontext für RLS MUSS aus einer vertrauenswürdig geprüften Identität stammen.
 Ein beliebig durch die Laufzeitrolle gesetzter Sitzungswert ist allein kein Isolationsnachweis.
 
-## Alternative B – Getrennte Dienstdatenbanken mit Einrichtungsschemas
+## Nicht gewählte Alternative – Getrennte Dienstdatenbanken mit Einrichtungsschemas
 
 Jeder Dienst verwendet eine eigene Datenbank und darin registrierte Einrichtungsschemas mit RLS.
 Das trennt Datenbankrechte stärker. Es erhöht den Aufwand für Provisionierung,
 Verbindungen, Datensicherung, Wiederherstellung und dienstübergreifende Abläufe.
 Die Anzahl der Datenbanken ist in v5.9 nicht ausdrücklich entschieden.
-Eine Wahl dieser Alternative erfordert die entsprechende Ergänzung von Architektur und Betriebsplanung.
+Diese allgemeine Dienstaufteilung wurde nicht gewählt. Die Wahltrennung nach ADR-017 bleibt verpflichtend.
 
 Ein gemeinsamer Dienstbenutzer mit Vollzugriff ist keine zulässige Alternative.
 Er widerspricht den verbindlichen Sicherheitsgrenzen.
 
 ## Entscheidung und Konsequenzen
 
-Empfehlung: Vorschlag A für die allgemeine Dienstaufteilung weiter konkretisieren.
-Vor Umsetzung sind seine privilegierten Migrationsrechte ausdrücklich zu prüfen.
-Die Empfehlung ist keine genehmigte Architekturentscheidung.
-O-001-HR und O-001-WAHL bleiben auch bei Zustimmung zu A offen.
+Die Projektleitung hat Variante A mit der Antwort `1A` am 18.10.2026 bestätigt.
+Die Quelle ist die ausdrückliche Antwort `1A, 2A, 3A, 4A` im Projektchat.
+Vor Umsetzung sind die privilegierten Migrationsrechte ausdrücklich zu prüfen.
+O-001 ist damit auf Architekturebene entschieden.
+Die Personal- und Wahlgrenzen wurden gesondert mit `3A` und `4A` bestätigt.
 Der [Prüfplan](KC-002_Dienstgrenzen.md) nennt die nachzuweisenden Negativfälle.
 
-**Entscheidung der Projektleitung:** ausstehend.
+**Entscheidung der Projektleitung:** Variante A bestätigt. P0 dokumentiert die Entscheidung.
 **Umsetzung:** keine. Keine Rollen, Tabellen, Migrationen oder Zugangsdaten angelegt.
 
 ## Technische Quellen

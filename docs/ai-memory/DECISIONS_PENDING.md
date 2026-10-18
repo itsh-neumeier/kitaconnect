@@ -16,21 +16,24 @@ Die ausdrückliche Freigabe für npm audit liegt nach einer automatischen Ablehn
 Die ursprüngliche Ablehnung betraf die Übermittlung von Abhängigkeitsmetadaten.
 Sie betraf weder Quelltext noch produktive Zugangsdaten.
 
-## Konkrete Vorschläge für KC-002
+## Bestätigte Entscheidungen für KC-002
 
 Die [Dienstmatrix](../architecture/KC-002_Dienstgrenzen.md) liegt mit Datenhoheit,
-Kommunikationszwecken und Testanforderungen als Entwurf vor.
+Kommunikationszwecken und Testanforderungen vor.
 [Pull Request #40](https://github.com/itsh-neumeier/kitaconnect/pull/40)
 baut auf dem weiterhin offenen Grundgerüst-PR #39 auf.
 
-| Entscheidung | Vorschlag und Stand |
-|---|---|
-| O-001 / ADR-014 | Ein PostgreSQL-Schema je Einrichtung mit getrennten Dienstrechten und Migrationsrollen. Alternative: eigene Datenbank je Dienst. Entscheidung angefragt; ausstehend. |
-| O-002 / ADR-015 | Eigenständiges Rust-Gateway. Alternative: SvelteKit als Backend für das Frontend. Entscheidung angefragt; ausstehend. |
-| O-001-HR | Speicher- und Rechtebereich trägerweiter Personalakten ausdrücklich offen. Die allgemeine Datenbankentscheidung entscheidet diesen Punkt nicht. |
-| O-001-WAHL | Physische Trennung von Wahlberechtigung und Stimme ausdrücklich offen. Unabhängige Fachprüfung erforderlich. |
+Die Projektleitung hat am 18.10.2026 im Projektchat ausdrücklich `1A, 2A, 3A, 4A` geantwortet.
+Diese Antwort bestätigt die vier zuvor einzeln erläuterten Varianten.
 
-Nächster Schritt: Die Projektleitung entscheidet die beiden angefragten Varianten.
-KC-002 bleibt bis zu den erforderlichen Sicherheitsentscheidungen offen.
-Es werden keine Dienste, Datenbankrollen oder Migrationen implementiert.
-KC-037 und KC-038 verfolgen die übrigen P0-Fragen.
+| Entscheidung | Bestätigter Stand |
+|---|---|
+| O-001 / ADR-014 | `1A`: Ein PostgreSQL-Schema je Einrichtung mit getrennten Dienstrechten und Migrationsrollen. |
+| O-002 / ADR-015 | `2A`: Eigenständiges Rust-Gateway. |
+| O-001-HR / ADR-016 | `3A`: Gesonderter Personalbereich je Träger; Einrichtungen erhalten nur erlaubte Einsatzdaten. Trägerlose Einrichtungen behalten eigene Bereiche. |
+| O-001-WAHL / ADR-017 | `4A`: Getrennte Datenbanken und Dienstidentitäten für Berechtigung und Stimme. Unabhängige Prüfung des Wahlprotokolls vor Implementierung bleibt verbindlich. |
+
+Die Varianten sind damit entschieden. Die Implementierungsnachweise folgen in den zugeordneten Issues.
+O-003 bis O-008 sowie die Benennung der unabhängigen Fachperson bleiben offen.
+KC-037 und KC-038 verfolgen diese übrigen P0-Fragen.
+P0 implementiert keine Dienste, Datenbankrollen oder Migrationen.

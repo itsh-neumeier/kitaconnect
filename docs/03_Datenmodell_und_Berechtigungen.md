@@ -41,6 +41,14 @@ Legende: V=ansehen, B=bearbeiten, G=gezielt freigeben, -=standardmäßig kein Zu
 Keine Zuordnung nur anhand von E-Mail oder Nachname. Sorgerechtsbeschränkungen gehen vor Standard-Elternrechten. Elternbeirat kann nicht über gemeinsame Feeds auf interne Kinder-/Personalakten zugreifen. Aufhebung einer Mitgliedschaft widerruft Sitzungsrechte sofort. Trägerübergreifende Personalrechte gelten nur für konkrete Einsatz-/HR-Aufgaben. Medienfreigaben werden bei jeder Veröffentlichung geprüft. Löschanträge beachten Rechtsgrundlage, Fristen und Backup-Löschjournal.
 
 ## 4. Migration und Schema-Lifecycle
+
+Die [Dienstmatrix](architecture/KC-002_Dienstgrenzen.md) ordnet die oben genannten Entitäten ihrem zuständigen Dienst zu.
+[ADR-014](architecture/ADR-014_Datenhoheit_und_Migrationen.md) trennt Laufzeit-, Eigentümer- und Migrationsrollen.
+Der eigene Personalbereich je Träger folgt [ADR-016](architecture/ADR-016_Personalbereich.md).
+Ein Einrichtungsbezug gewährt keinen Vollzugriff auf diesen Personalbereich.
+Wahlberechtigung und Stimmabgabe liegen gemäß [ADR-017](architecture/ADR-017_Wahltrennung.md)
+in getrennten Datenbanken mit getrennten Dienstidentitäten.
+Diese technische Konkretisierung ändert keine fachlichen Berechtigungen.
 Registrierte Schema-Namen, mandantenbezogene Migrationsversionen, transaktionssichere Schemaänderungen, getrennte Rollout-Wellen und Validierungsberichte. Globale Identitäten bleiben bei Einrichtungstransfers stabil, personenbezogene Fachakten werden nur mit expliziter Freigabe migriert.
 
 

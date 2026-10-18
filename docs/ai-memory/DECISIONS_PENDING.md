@@ -8,8 +8,9 @@ Eine ausbleibende Antwort ist keine Zustimmung.
 
 | Frage aus dieser Sitzung | Stand |
 |---|---|
-| Referenzprofil für die Lastprüfung | Antwort `1`; als eine Einrichtung dokumentiert. Benutzerzahl, Antwortzeit und Hardware fehlen. |
-| CODEOWNER für Sicherheit, Datenschutz und Repository | Vorschlag `@itsh-neumeier` angefragt; noch nicht bestätigt. CODEOWNERS enthält keine aktive Zuordnung. |
+| Referenzprofil für die Lastprüfung | Eine Einrichtung. 50 Sitzungen, 10 Anfragen pro Sekunde, 80/20 Lesen/Schreiben, p95 500/1.000 ms, unter 1 % Fehler, 4 vCPU, 8 GB RAM, 100 GB SSD, 5 Minuten Aufwärmen und 30 Minuten Messung ausdrücklich bestätigt. |
+| CODEOWNER für das Repository | Antwort `@itsh-neumeier Timo Neumeier`; vorläufige Zuordnung in CODEOWNERS eingetragen. Kein Nachweis unabhängiger Prüfung. |
+| Rechteinhaber, juristische Lizenzprüfung und unabhängige Wahlprüfung | Antwort `offen lassen`. Projektleitung bleibt für Besetzung vor den gesperrten Aktionen zuständig. Keine automatische Zuordnung zum CODEOWNER. |
 | npm audit und externe Paketmetadaten | Die Projektleitung hat die Übermittlung von Paketnamen und Versionen an registry.npmjs.org ausdrücklich erlaubt. Gilt lokal und in GitHub Actions. |
 
 Die ausdrückliche Freigabe für npm audit liegt nach einer automatischen Ablehnung vor.
@@ -34,6 +35,18 @@ Diese Antwort bestätigt die vier zuvor einzeln erläuterten Varianten.
 | O-001-WAHL / ADR-017 | `4A`: Getrennte Datenbanken und Dienstidentitäten für Berechtigung und Stimme. Unabhängige Prüfung des Wahlprotokolls vor Implementierung bleibt verbindlich. |
 
 Die Varianten sind damit entschieden. Die Implementierungsnachweise folgen in den zugeordneten Issues.
-O-003 bis O-008 sowie die Benennung der unabhängigen Fachperson bleiben offen.
-KC-037 und KC-038 verfolgen diese übrigen P0-Fragen.
+O-003 bis O-008 sind inzwischen im [KC-037-Register](../17_P0_Entscheidungsregister.md) konkretisiert.
+Technische Festlegungen und bestätigte Ziele sind von den offenen Fachfreigaben getrennt.
+KC-038 verfolgt weiter unabhängige Review-Verantwortung und Branchschutz.
 P0 implementiert keine Dienste, Datenbankrollen oder Migrationen.
+
+## Bestätigte Zurückstellungen und technische Fortsetzung
+
+Die Projektleitung hat nach den Rückfragen autonome Weiterarbeit beauftragt.
+ADR-019 und ADR-020 konkretisieren deshalb Dienstidentitäten und Hintergrundaufträge im bestehenden Sicherheitsumfang.
+Das Register hält die recherchierten Infrastrukturstände mit Prüfpflicht vor tatsächlicher Verwendung fest.
+Die Versionsmatrix behauptet keine getestete Installation oder rechtliche Freigabe.
+
+Offen bleiben Rechteinhaber, juristische Prüfung und die unabhängigen Fachpersonen.
+Die Zurückstellung ist ausdrücklich gewünscht. Sie hebt die Sperren aus dem Register nicht auf.
+Vor Implementierung des Wahlprotokolls ist die unabhängige Prüfung weiterhin zwingend.

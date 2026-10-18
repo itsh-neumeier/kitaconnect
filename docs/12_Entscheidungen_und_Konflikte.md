@@ -99,6 +99,21 @@ Bekannte RustSec-Schwachstellen und die mit `--deny warnings` erfassten Warnunge
 **Folge:** Der pauschale Sperrprüfschritt entfällt. Sicherheitsprüfung, Lockfile und Leserechte bleiben verpflichtend.
 Die [Prüfmatrix](../tests/README.md) beschreibt Befundbehandlung und Grenzen.
 
+## Technische Konkretisierung und bestätigte Ziele aus KC-037
+
+Stand: 18.10.2026. Die Projektleitung hat nach den Rückfragen die autonome Weiterarbeit beauftragt.
+
+- [ADR-019 – Dienstidentitäten](architecture/ADR-019_Dienstidentitaeten.md):
+  Kurzlebige Diensttokens, mTLS und aktuelle serverseitige Token-/Rechteprüfung im delegierten technischen Umfang.
+- [ADR-020 – Hintergrundaufträge](architecture/ADR-020_Hintergrundauftraege.md):
+  Redis Streams mit PostgreSQL als dauerhafter Auftragsquelle und idempotenter Verarbeitung.
+
+Das [KC-037-Register](17_P0_Entscheidungsregister.md) enthält das ausdrücklich bestätigte Lastprofil,
+recherchierte Versionsstände und begründete späteste Prüftermine.
+Die Projektleitung lässt Rechteinhaber, juristische Prüfung und unabhängige Wahlprüfung ausdrücklich offen.
+Sie hat `@itsh-neumeier Timo Neumeier` als vorläufigen CODEOWNER bestätigt.
+Keine dieser Entscheidungen ersetzt die erforderlichen unabhängigen Prüfungen oder eine Lizenzfreigabe.
+
 ## Dokumentationssprache (Ergänzung v5.9)
 Für dieses Dokument gilt die deutsche Projektrichtlinie `13_Dokumentationsrichtlinie_DE_ASD_STE100.md` mit dem verbindlichen Fachwortverzeichnis `14_Fachwortverzeichnis_DE.md`. Die Richtlinie orientiert sich an ASD-STE100, stellt aber **keine offizielle deutsche ASD-STE100-Konformität** dar.
 

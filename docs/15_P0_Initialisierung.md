@@ -64,21 +64,25 @@ Die zusätzliche RLS-Prüfung bleibt verbindlich. RLS bedeutet Row-Level Securit
 Offene Punkte sind keine Freigaben. Die Projektleitung benennt zuständige Fachpersonen.
 KC-037 verfolgt die Entscheidungen. KC-038 verfolgt GitHub-Regeln und Zuständigkeiten.
 
+Das [Entscheidungsregister KC-037](17_P0_Entscheidungsregister.md) enthält die aktuellen Ziele,
+technischen Festlegungen und ausdrücklich zurückgestellten Freigaben.
+
 | ID | Gegenstand | Entscheidung oder benötigter Nachweis / Zeitpunkt |
 |---|---|---|
 | O-001 | Datenhoheit und Migrationen | `1A`: Einrichtungsschema mit getrennten Dienstrechten und Migrationsrollen; spätere Nachweise in KC-005 |
 | O-001-HR | Trägerweite Personalakten | `3A`: Gesonderter Personalbereich je Träger und eigene Bereiche für trägerlose Einrichtungen; spätere Nachweise in KC-015 |
 | O-001-WAHL | Wahlberechtigung und Stimme | `4A`: Getrennte Datenbanken und Dienstidentitäten; unabhängige Protokollprüfung vor Implementierung in KC-025 |
 | O-002 | Gateway und Frontend-Schnittstelle | `2A`: Eigenständiges Rust-Gateway; spätere Prüfung der Dienstaufrufe |
-| O-003 | Kurzlebige Dienstidentitäten und Transportabsicherung | Aussteller, Laufzeit, Widerruf und Secret Store vor Dienstkommunikation |
-| O-004 | Redis-Zustellung und Wiederanlauf | Queue-Verfahren, Zustellbestätigung, Fristen und Fehlerablage vor Hintergrundaufträgen |
-| O-005 | Lastprofil und Referenzhardware | Benutzerzahl, p95-Antwortzeit in ms, Fehlerrate, Datenmenge, CPU/RAM/Speicher und Testdauer vor P0-Abnahme |
-| O-006 | Datenbank-, Redis-, Speicher- und Plattformversionen | Kompatibilitätsmatrix und Patchpflege vor Infrastrukturimplementierung |
-| O-007 | Proprietärer Lizenztext und Rechteinhaber | [Lizenzentwurf](16_Lizenzentwurf.md) fachlich und rechtlich freigeben |
-| O-008 | Fachprüfer und Betriebswerte | Zuständige Personen, rechtliche Prüfungen, Schlüsselhoheit, Löschfristen und Abnahmetermine bestätigen |
+| O-003 | Kurzlebige Dienstidentitäten und Transportabsicherung | ADR-019 konkretisiert Diensttokens, mTLS, Widerruf und Secret Stores; Nachweise vor Dienstkommunikation |
+| O-004 | Redis-Zustellung und Wiederanlauf | ADR-020 konkretisiert Streams, dauerhafte Bestätigung, Wiederholung und Fehlerablage |
+| O-005 | Lastprofil und Referenzhardware | Einrichtungsprofil mit 50 Sitzungen und 10 Anfragen pro Sekunde ausdrücklich bestätigt; Messverfahren in KC-037 |
+| O-006 | Datenbank-, Redis-, Speicher- und Plattformversionen | Primärquellen und Planungsstände in KC-037; endgültige Kompatibilität und Image-Digests vor KC-032 |
+| O-007 | Proprietärer Lizenztext und Rechteinhaber | Auf Wunsch offen; Projektleitung verantwortet Prüfung vor Nutzungsrechtseinräumung oder Softwareveröffentlichung |
+| O-008 | Fachprüfer und Betriebswerte | Auf Wunsch teilweise offen; funktionsbezogene Sperren und späteste Prüftermine in KC-037 |
 
 Die Projektleitung hat in dieser Sitzung `1` zum Referenzprofil angegeben.
-P0 führt dies als eine Einrichtung. Die übrigen Lastwerte bleiben offen.
+P0 führt dies als eine Einrichtung. Die weiteren Lastwerte hat die Projektleitung später ausdrücklich bestätigt.
+Das vollständige [Referenzprofil](17_P0_Entscheidungsregister.md) ersetzt die frühere offene Lastfrage.
 RPO und RTO bleiben gemäß v5.9 jeweils Ziel 24 Stunden.
 RPO bezeichnet den maximalen Datenverlustzeitraum. RTO bezeichnet die Wiederherstellungszeit.
 Ohne Fachabläufe sind noch keine repräsentativen Messungen möglich.
@@ -86,8 +90,8 @@ P0 MUSS das Messverfahren festlegen. KC-034 führt später die Lastprüfung aus.
 
 ## Festgestellte Planungskonflikte
 
-1. KC-001 fordert CODEOWNERS. Zuständige Personen waren nicht benannt.
-   Die Zuordnung wird angefordert. KC-038 verfolgt Bestätigung und Schutzregeln.
+1. KC-001 fordert CODEOWNERS. `@itsh-neumeier` ist inzwischen vorläufig bestätigt.
+   Unabhängige Fachprüfer und verpflichtende Schutzregeln bleiben Teil von KC-038.
 2. P0 soll Messwerte und Hardwaregrößen festlegen. Eine repräsentative Anwendung fehlt.
    O-005 trennt bestätigte Ziele von späteren Messungen.
 3. Die CSV-Abhängigkeiten bilden die Phasenbedingungen nicht vollständig ab.
@@ -135,7 +139,8 @@ Der API-Nachweis tatsächlicher Schutzregeln bleibt Teil von KC-038.
 Die separate Abfrage des bisherigen Branchschutzes lieferte HTTP 403.
 Der Connector darf diese Administrationseinstellung nicht lesen.
 Deshalb ist der bisherige Branchschutz unbekannt.
-Die CODEOWNERS-Datei enthält bis zur Bestätigung nur Hinweise und keine Zuordnung.
+Die CODEOWNERS-Datei benennt nach ausdrücklicher Bestätigung vorläufig `@itsh-neumeier`.
+Diese Zuordnung weist weder unabhängiges Review noch wirksame Schutzregeln nach.
 Die manuelle sprachliche Prüfung bleibt vor dem Merge erforderlich.
 
 ## P0-Abnahme

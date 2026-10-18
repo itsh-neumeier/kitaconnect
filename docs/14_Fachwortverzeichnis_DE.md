@@ -24,6 +24,9 @@
 | Prüfschritt | Nachweisbare Qualitäts- oder Sicherheitskontrolle | Gate ohne Erklärung |
 | Software-Stückliste | Verzeichnis der Softwarebestandteile; englisch Software Bill of Materials (SBOM) | SBOM ohne Erklärung |
 | Dienstidentität | Technisch überprüfbare Identität eines Dienstes | Service-Identität im deutschen Fließtext |
+| Diensttoken | Zeitlich begrenzter Nachweis für einen geprüften Dienstaufruf | Service-Token im deutschen Fließtext |
+| Verbrauchergruppe | Gruppe von Hintergrunddiensten, die Aufträge aus einem Redis Stream übernehmen | Consumer Group ohne Erklärung |
+| Outbox | Dauerhafter Bestand von Ereignissen, die nach einer Fachänderung zugestellt werden müssen | Queue, wenn der dauerhafte Ausgangsbestand gemeint ist |
 | Dienstvertrag | Versionierter Vertrag für eine Dienstschnittstelle oder ein Ereignis | Contract ohne Erklärung |
 | Zugriffsprotokoll | Nachvollziehbarer Nachweis von Datenzugriffen | Log ohne Erklärung |
 | Mandantenwechsel | Wechsel des aktiven organisatorischen Kontexts | Login-Wechsel, wenn kein neuer Login erfolgt |

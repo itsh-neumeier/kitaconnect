@@ -1,0 +1,37 @@
+﻿id,phase,title,depends_on_ids,acceptance_summary,status
+KC-001,P0,Repository und Monorepo-Struktur initialisieren,,"Build für Rust/SvelteKit, Lizenz-/README-Entwurf, CODEOWNERS, CI-Skeleton",planned
+KC-002,P0,Architektur-ADRs und Dienstgrenzen versionieren,1,Microservice-Grenzen und Verantwortlichkeiten nachvollziehbar,planned
+KC-003,P0,Synthetische Testdaten und CI-Matrix einrichten,1,Keine personenbezogenen Echtdaten; Build/Lint/Test,planned
+KC-004,P1,"Organisationen, Träger und Einrichtungen modellieren",1,Mehrere Träger und unabhängige Einrichtungen abbildbar,planned
+KC-005,P1,Schema-Provisioning und RLS erzwingen,4,"Schema je Mandant, Cross-Tenant-Negativtests, sichere Pool-Kontexte",planned
+KC-006,P1,"Identity: Passwort, Passkeys, TOTP und Recovery",4,Sichere Registrierung und Anmeldung inkl. MFA,planned
+KC-007,P1,OIDC und SAML Föderation implementieren,6,"Verifizierte IdP-Anbindung, sichere Zuordnung",planned
+KC-008,P1,RBAC und Objekt-/Feld-Policies implementieren,"5,6",Default-Deny; jede Aktion serverseitig geprüft,planned
+KC-009,P1,Audit sämtlicher personenbezogener Zugriffe,8,"Lese- und Schreibzugriffe nachweisbar, datensparsame Logs",planned
+KC-010,P1,Modul-/Feature-Flags und Hierarchie-Konfiguration,"4,8","Vererbung, Mindeststandards, Unterfunktionen",planned
+KC-011,P2,Kinder- und Sorgeberechtigtenstammdaten,8,Sorgerechts- und Feldrechte durchgesetzt,planned
+KC-012,P2,"Aufnahme, Warteliste, Vertrag und Eingewöhnung",11,"Geführte Aufnahme, konfigurierbare Modelle",planned
+KC-013,P2,"Anwesenheit, Abwesenheit und Abholberechtigungen",11,"Personal/Eltern-Modus, Rechte und Audit",planned
+KC-014,P2,"Gruppen-, Jahreswechsel- und Austrittsassistent","11,12",Kontrollierte Übergänge und Löschregeln,planned
+KC-015,P3,"Personalstamm, Träger-HR und Springerpool",8,Träger-/Einrichtungsrechte korrekt,planned
+KC-016,P3,Dienstplanung mit Vorschlägen und Betreuungsschlüsseln,15,"Versionierte Regelwerke, manuelle Freigabe",planned
+KC-017,P3,"Arbeitszeit, Urlaub, Krankheit und Zeitkonten",15,"Stempeluhr/manuell, Genehmigungen",planned
+KC-018,P3,"Pflege, Schlaf, Übergabe und Ereignisse",13,Altersbezogene Rechte und Datenminimierung,planned
+KC-019,P4,Portfolioeditor und Freigabeprozess,11,"Drag-drop, Revision, Elternansicht",planned
+KC-020,P4,Lokale Gesichtsmaskierung und Medienfreigaben,19,"Maskenprüfung, EXIF-Strip, Einzelbild-Consent",planned
+KC-021,P4,Entwicklungsdokumentation getrennt schützen,19,Vertrauliche Akte vs veröffentlichtes Portfolio,planned
+KC-022,P5,"Elternkommunikation, Kalender und Umfragen",8,"Scoped feeds, Nachrichten, Push/E-Mail",planned
+KC-023,P5,"Veranstaltungen, Helferlisten und Basar",22,Transaktionssichere Buchung,planned
+KC-024,P5,"Kassenbuch, PayPal-Manuellabgleich und QR",23,"Append-only Kasse, atomare QR-Einlösung",planned
+KC-025,P5,Geheime Hybridwahl mit Sicherheitsreview,8,Kein Link zwischen Person und Stimme,planned
+KC-026,P5,"Sitzungen, Wissen, Inventar und Elternservices",22,Dokumentierte Berechtigungen,planned
+KC-027,P6,"Speisepläne, Bestellung und Catereransicht",11,"Allergene, keine Rechnungsstellung",planned
+KC-028,P6,"Integrationen SMTP, Push, ICS, Webhooks",8,"Scoped Keys, Replay-Schutz, Retries",planned
+KC-029,P7,Workflow-/Formulareditor und Vorlagen,10,Versionierung und sichere Freigaben,planned
+KC-030,P7,"DSGVO-Auskunft, Löschung und Consent-Journal","9,20",Rechtsgrundlagenprüfung und Restore-Replay,planned
+KC-031,P7,Mandantenmigration und Exporte,"5,30","Geführter, validierter Transfer",planned
+KC-032,P8,"Compose, Portainer, Kubernetes und Helm",1,Reproduzierbare Installationen,planned
+KC-033,P8,"Verschlüsselte Backups, PITR und Restore-Proben","31,32",RPO/RTO-Ziel 24h getestet,planned
+KC-034,P8,"Monitoring, Last-, Security- und A11y-Tests","1,32",Alle verbindlichen Gates dokumentiert,planned
+KC-035,P9,Release 1.0 automatisiert signieren und veröffentlichen,"2,34","Nur nach Reviews und allen CI-Gates, GHCR Stable",planned
+,P0,DOC-STE100-DE: Deutsche technische Dokumentation vereinheitlichen,,12 Fachdokumente redaktionell geprüft; Glossar konsistent; PR-Review nachgewiesen,

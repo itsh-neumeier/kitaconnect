@@ -1,6 +1,6 @@
 # ADR-021 – Aktiver Main-Regelsatz ohne Merge-Ausnahmen
 
-Datum: 18.10.2026. Status: im P0-Auftrag KC-038 eingerichtet und per API nachgewiesen.
+Datum: 18.10.2026. Status: ursprüngliche Einrichtung; durch ADR-022 fortgeschrieben.
 Grundlage: ADR-003, ADR-013 und das Test- und Release-Konzept v5.9.
 
 ## Entscheidung
@@ -16,8 +16,10 @@ Die CI verändert keine Verwaltungseinstellungen.
 ## Alternative und Folgen
 
 Fortschreibung: [ADR-022](ADR-022_Reviewausnahme_eigene_PRs.md) beschreibt die später ausdrücklich gewünschte
-Ausnahme ausschließlich für eigene PRs von `@itsh-neumeier`. Ihre technische Umsetzung ist noch offen.
-Der hier beschriebene tatsächliche Regelsatz bleibt bis zu diesem Nachweis aktiv und unverändert.
+Konto-Ausnahme mit verbindlicher Nutzung ausschließlich für eigene PRs von `@itsh-neumeier`.
+Die Projektleitung hat die technisch weitergehende Konto-Ausnahme ausdrücklich gewählt.
+Die aktuelle Einrichtung trennt Basisschutz ohne Ausnahme und Review-Regeln mit Konto-Ausnahme.
+Die folgenden ursprünglichen Aussagen dokumentieren den Stand vor dieser bestätigten Änderung.
 
 CODEOWNERS allein erzwingt kein Review. Ein bloßer lokaler Plan belegt keinen Schutz.
 Eine Ausnahme für Administratoren würde die verlangten Prüfungen umgehen und wird nicht eingerichtet.

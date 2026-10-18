@@ -3,7 +3,7 @@
 Stand: 18.10.2026. Grundlage: Spezifikation v5.9.
 Ausgangscommit: `bdb3f9fcf1c077c2359e17488062bf6c1d2a8c60` aus PR #43.
 Umfang: ursprüngliche Unterlagen 01 bis 12, Fachwortverzeichnis und Nachweis der Redaktion.
-Die Änderungen sind zur Prüfung vorbereitet. Unabhängiges Review und Integration stehen aus.
+Die Änderungen sind zur Prüfung vorbereitet. Persönliche sprachliche Prüfung und Integration stehen aus.
 
 ## Verfahren
 
@@ -17,8 +17,9 @@ Die Änderungen sind zur Prüfung vorbereitet. Unabhängiges Review und Integrat
 
 Die manuelle redaktionelle Eigenprüfung umfasst die folgende Tabelle.
 Sie ist keine unabhängige Genehmigung des Pull Requests.
-Vor Merge muss eine andere berechtigte Person die sprachliche Prüfung bestätigen.
-Die Rollenklärung bleibt Teil von KC-038.
+Vor Merge muss die manuelle sprachliche Prüfung bestätigt sein.
+Nach der ausdrücklichen Entscheidung in ADR-022 darf die Projektleitung bei eigenen PRs auf das zusätzliche genehmigende GitHub-Review verzichten.
+Die persönliche Prüfung bleibt vorgesehen und wird nicht als bereits erfolgt behauptet.
 
 ## Nachweis je Unterlage
 
@@ -77,10 +78,11 @@ Der allgemeine Korrelationsbegriff aus Unterlage 04 schwächt die Wahlgrenzen au
 
 ## Entscheidungen und Abnahme
 
-Es wurde keine neue Architekturentscheidung getroffen. ADR-010 bleibt die Grundlage der Redaktion.
+Die Redaktion selbst trifft keine neue Architekturentscheidung. ADR-010 bleibt ihre Grundlage.
+ADR-022 dokumentiert gesondert die anschließend ausdrücklich gewählte GitHub-Review-Ausnahme.
 Zuständigkeiten, Rechte, Fristen, Betriebsziele und Entwicklungsphasen werden durch KC-036 nicht neu festgelegt.
 Das Fachwortverzeichnis ergänzt deutsche Begriffe und Erläuterungen vorhandener Abkürzungen.
 Die deutsche Richtlinie ist eine eigene Adaption. Es wird keine formelle ASD-STE100-Konformität behauptet.
 
-KC-036 bleibt bis zum unabhängigen sprachlichen Review und zur Integration offen.
+KC-036 bleibt bis zur bestätigten manuellen sprachlichen Prüfung und Integration offen.
 P0-Gesamtabnahme, Fachfreigaben und Freigabe einer weiteren Entwicklungsphase stehen weiterhin aus.

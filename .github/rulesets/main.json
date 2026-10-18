@@ -1,5 +1,5 @@
 {
-  "name": "KitaConnect main review and checks",
+  "name": "KitaConnect main mandatory checks",
   "target": "branch",
   "enforcement": "active",
   "bypass_actors": [],
@@ -10,10 +10,10 @@
     {
       "type": "pull_request",
       "parameters": {
-        "required_approving_review_count": 1,
-        "dismiss_stale_reviews_on_push": true,
-        "require_code_owner_review": true,
-        "require_last_push_approval": true,
+        "required_approving_review_count": 0,
+        "dismiss_stale_reviews_on_push": false,
+        "require_code_owner_review": false,
+        "require_last_push_approval": false,
         "required_review_thread_resolution": true
       }
     },

@@ -125,8 +125,8 @@ Keine dieser Entscheidungen ersetzt die erforderlichen unabhängigen Prüfungen 
 ## ADR-021 – Verbindliche Reviews und Main-Branchschutz
 
 [ADR-021](architecture/ADR-021_Branchschutz_und_Review.md) dokumentiert den aktiven Main-Regelsatz aus KC-038.
-Er verlangt Reviews und die fünf aktuellen Pflichtprüfungen ohne eingetragene Merge-Ausnahme.
-Unabhängige Prüfer bleiben bis zur ausdrücklichen Benennung offen.
+Der ursprüngliche Regelsatz verlangte Reviews und die fünf aktuellen Pflichtprüfungen ohne Ausnahme.
+ADR-022 schreibt die Einrichtung nach der ausdrücklichen Wahl einer begrenzten Konto-Ausnahme fort.
 
 ## Interview zur Fortsetzung von KC-036 und KC-038
 
@@ -152,9 +152,11 @@ Die Aufteilung allein verändert weder Branchschutz noch unabhängige Fachprüfu
 ## ADR-022 – Zielregel für eigene Pull Requests
 
 Die Projektleitung hat anschließend ausdrücklich eine Reviewausnahme nur für eigene PRs von `@itsh-neumeier` bestätigt.
-Fremde PRs und sämtliche Pflichtprüfungen bleiben geschützt.
-[ADR-022](architecture/ADR-022_Reviewausnahme_eigene_PRs.md) dokumentiert die bestätigte Begrenzung
-und den noch nicht entschiedenen technischen Betriebsweg. Es wurde keine allgemeine Ausnahme aktiviert.
+Die anschließende ausdrückliche Auswahl lautet: „Einfache Konto-Ausnahme; Nutzung auf eigene PRs beschränken“.
+[ADR-022](architecture/ADR-022_Reviewausnahme_eigene_PRs.md) dokumentiert die jetzt aktive Aufteilung:
+Basisschutz `25341109` ohne Ausnahme; Review-Regelsatz `25346711` mit Ausnahme nur für Benutzer-ID `77058548` über PRs.
+Tests und Sicherheitsprüfungen bleiben verpflichtend. Die Beschränkung auf eigene PRs ist eine Nutzungsregel.
+GitHub würde die Konto-Ausnahme technisch auch bei fremden PRs zulassen. Diese Grenze wurde ausdrücklich akzeptiert.
 
 ## Dokumentationssprache (Ergänzung v5.9)
 

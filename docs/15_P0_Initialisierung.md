@@ -136,7 +136,10 @@ Main MUSS ein unabhängiges Review und die Pflichtprüfungen
 `structure`, `rust`, `web`, `secrets`, `dependencies` verlangen.
 CODEOWNERS allein erzwingt diese Regeln nicht.
 KC-038 hat am 18.10.2026 den aktiven Regelsatz `25341109` eingerichtet.
-Die API bestätigt `protected: true` und alle fünf Pflichtprüfungen ohne Merge-Ausnahme.
+Die API bestätigt `protected: true` und alle fünf Pflichtprüfungen ohne Ausnahme im Basisregelsatz.
+ADR-022 ergänzt nach ausdrücklicher Auswahl einen gesonderten Review-Regelsatz `25346711`.
+Nur `@itsh-neumeier` erhält dort eine Konto-Ausnahme über PRs. Nutzung nur für eigene PRs ist eine dokumentierte Regel.
+Die Konto-Ausnahme kann technisch auch bei fremden PRs verwendet werden; diese Grenze ist ausdrücklich akzeptiert.
 Der [Nachweis und die Review-Anleitung](18_Branchschutz_und_Reviews.md) dokumentieren Grenzen und Integrationsfolge.
 Die CODEOWNERS-Datei benennt nach ausdrücklicher Bestätigung vorläufig `@itsh-neumeier`.
 Diese Datei fehlt bis zur Integration von PR #42 auf `main`. Unabhängige Reviewer bleiben unbesetzt.

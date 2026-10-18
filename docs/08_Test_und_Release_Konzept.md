@@ -44,6 +44,12 @@ Kritische Änderungen benötigen genehmigende Pull-Request-Reviews vor einer aut
 5. Bei einem fehlgeschlagenen Prüfschritt erfolgt weder Versionsmarkierung noch Veröffentlichung.
    Öffentliche Vorschauversionen und nächtliche Entwicklungsartefakte sind ausgeschlossen.
 
+Die spätere ausdrückliche Entscheidung [ADR-022](architecture/ADR-022_Reviewausnahme_eigene_PRs.md)
+erlaubt `@itsh-neumeier` eine Konto-Ausnahme vom zusätzlichen genehmigenden Review.
+Ihre Nutzung ist auf eigene PRs beschränkt. GitHub erzwingt diese Autorgrenze nicht technisch.
+Alle fünf Pflichtprüfungen und die persönliche Durchsicht bleiben erforderlich.
+Die Ausnahme ersetzt keine unabhängige Fachprüfung.
+
 ## Qualitätskennzahlen (initiale Zielwerte, vor Release festzulegen)
 
 Die Projektleitung hat das [Einrichtungsprofil in KC-037](17_P0_Entscheidungsregister.md) ausdrücklich bestätigt.

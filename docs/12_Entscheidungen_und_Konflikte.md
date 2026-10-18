@@ -5,6 +5,7 @@
 > Status: Anforderungsspezifikation, keine implementierte oder rechtsverbindlich geprüfte Software. Die neuesten ausdrücklichen Interviewentscheidungen gelten.
 
 ## Konfliktregel
+
 Die neueste **ausdrückliche** Interviewentscheidung hat Vorrang.
 Änderungen werden protokolliert. Rechtliche und sicherheitskritische Widersprüche werden nicht stillschweigend übergangen.
 
@@ -21,6 +22,7 @@ Die neueste **ausdrückliche** Interviewentscheidung hat Vorrang.
 | ADR-009 | Personalverwaltung lokal | Trägerübergreifend konfigurierbar (Q40/43) | Übergreifender Personalverwaltungsbereich, Einsätze je Einrichtung |
 
 ## Noch fachlich/rechtlich zu validieren (keine offenen Grundsatzentscheidungen)
+
 - Datenschutzrechtliche Verantwortlichkeit, Rechtsgrundlagen und landesspezifische Aufbewahrungsfristen.
 - Verbindliche Betreuungsschlüssel und Arbeitszeit-/Pausenregelwerke pro Region/Träger.
 - Wahlordnungen, Stimmgewicht und unabhängige Sicherheitsprüfung des Wahlprotokolls.
@@ -30,6 +32,7 @@ Die neueste **ausdrückliche** Interviewentscheidung hat Vorrang.
 - Exakte Definition aller Fachakzeptanzkriterien auf Issue-Ebene vor Implementierung.
 
 ## Status
+
 Die fachlichen Interviews 1–51 sind abgeschlossen.
 Die Dateien beschreiben einen konsolidierten Planungsstand. Sie belegen weder rechtliche Zertifizierung noch eine implementierte Anwendung.
 ADR bezeichnet eine dokumentierte Architekturentscheidung. Q bezeichnet die jeweilige Interviewfrage.
@@ -127,9 +130,13 @@ Unabhängige Prüfer bleiben bis zur ausdrücklichen Benennung offen.
 
 ## Dokumentationssprache (Ergänzung v5.9)
 
-Für dieses Dokument gilt die deutsche Projektrichtlinie `13_Dokumentationsrichtlinie_DE_ASD_STE100.md` mit dem verbindlichen Fachwortverzeichnis `14_Fachwortverzeichnis_DE.md`. Die Richtlinie orientiert sich an ASD-STE100, stellt aber **keine offizielle deutsche ASD-STE100-Konformität** dar.
+Es gelten die [deutsche Dokumentationsrichtlinie](13_Dokumentationsrichtlinie_DE_ASD_STE100.md)
+und das [Fachwortverzeichnis](14_Fachwortverzeichnis_DE.md).
+Die Richtlinie adaptiert Sprachprinzipien von ASD-STE100.
+Sie ist keine offizielle deutsche Übersetzung und belegt keine formelle ASD-STE100-Konformität.
 
 ## ADR-010 – Deutsche technische Dokumentationssprache (v5.9)
+
 **Entscheidung:** Alle deutschsprachigen Projektunterlagen folgen einer kontrollierten technischen Sprache nach den Prinzipien von ASD-STE100.
 **Abgrenzung:** ASD-STE100 ist ein englischsprachiger Standard.
 Die deutsche KitaConnect-Richtlinie ist eine eigene Adaption. Sie ist keine offizielle Übersetzung und keine formelle Konformitätsaussage.

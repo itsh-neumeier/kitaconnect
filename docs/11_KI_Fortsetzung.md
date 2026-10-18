@@ -5,12 +5,14 @@
 > Status: Anforderungsspezifikation, keine implementierte oder rechtsverbindlich geprüfte Software. Die neuesten ausdrücklichen Interviewentscheidungen gelten.
 
 ## Prinzip
+
 GitHub ist die einzige verbindliche Quelle für Code, Issues, Pull Requests (PRs), Entscheidungen und KI-Checkpoints.
 Ein Checkpoint dokumentiert den Arbeitsstand und die Fortsetzung.
 Codex und Claude sind austauschbar. Nutzungsgrenzen werden nicht umgangen.
 Die Arbeit wird so zerlegt und dokumentiert, dass eine neue Sitzung sie ohne Wiederholung fortsetzen kann.
 
 ## Start jeder Sitzung
+
 1. Lesen Sie `AGENTS.md`, `CLAUDE.md`, `docs/ai-memory/CURRENT_STATE.md`, Architekturentscheidungen und relevante Issues.
 2. Prüfen Sie `git status`, Branch, offene PRs, letzte Commits und Ergebnisse der automatisierten Integration (CI).
    Prüfen Sie außerdem migrationsbezogene Änderungen.
@@ -18,6 +20,7 @@ Die Arbeit wird so zerlegt und dokumentiert, dass eine neue Sitzung sie ohne Wie
 4. Halten Sie vor Änderungen den Istzustand und das erwartete Ergebnis fest.
 
 ## Während der Arbeit
+
 Erstellen Sie kleine Commits. Beschreiben Sie den Dienstvertrag vor seiner Implementierung.
 Integrieren Sie keine ungetestete Änderung in `main`. Führen Sie Tests fortlaufend aus.
 Aktualisieren Sie das Issue, wenn sich der Umfang ändert.
@@ -48,8 +51,13 @@ Checkpoint, Issue und PR. Halte bei unklarer Sicherheits-/Fachentscheidung an.
 ```
 
 ## Handoff-Schema
+
 `issue_id`, `branch`, `head_commit`, `objective`, `completed`, `remaining`, `test_commands`, `test_results`, `known_failures`, `migration_state`, `security_notes`, `next_steps`, `updated_at`.
 
 
 ## Dokumentationssprache (Ergänzung v5.9)
-Für dieses Dokument gilt die deutsche Projektrichtlinie `13_Dokumentationsrichtlinie_DE_ASD_STE100.md` mit dem verbindlichen Fachwortverzeichnis `14_Fachwortverzeichnis_DE.md`. Die Richtlinie orientiert sich an ASD-STE100, stellt aber **keine offizielle deutsche ASD-STE100-Konformität** dar.
+
+Es gelten die [deutsche Dokumentationsrichtlinie](13_Dokumentationsrichtlinie_DE_ASD_STE100.md)
+und das [Fachwortverzeichnis](14_Fachwortverzeichnis_DE.md).
+Die Richtlinie adaptiert Sprachprinzipien von ASD-STE100.
+Sie ist keine offizielle deutsche Übersetzung und belegt keine formelle ASD-STE100-Konformität.

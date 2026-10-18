@@ -5,6 +5,7 @@
 > Status: Anforderungsspezifikation, keine implementierte oder rechtsverbindlich geprüfte Software. Die neuesten ausdrücklichen Interviewentscheidungen gelten.
 
 ## Nutzererlebnis
+
 Das Design ist familienfreundlich und sachlich. Die Gestaltung beginnt mit mobilen Geräten.
 Die Benutzeroberfläche (UI) verwendet SvelteKit, Svelte 5, TypeScript und Tailwind sowie wiederverwendbare Komponenten.
 Die Progressive Web App (PWA) unterstützt Android und iOS sowie Deutsch und Englisch.
@@ -14,6 +15,7 @@ Eltern-, Mitarbeitenden-, Beirats-, Leitungs- und Trägerbereich bleiben klar ge
 Navigation und Gestaltung sind konfigurierbar. Unzugängliche Farbkombinationen sind ausgeschlossen.
 
 ## Informationsarchitektur
+
 | Bereich | Navigation |
 |---|---|
 | Eltern | Start, Nachrichten, Kalender, Kinder, Formulare, Portfolio, Speiseplan, Termine, Elternbeirat |
@@ -24,6 +26,7 @@ Navigation und Gestaltung sind konfigurierbar. Unzugängliche Farbkombinationen 
 | Administration | Module, Rollen, Domains, Integrationen, Datensicherungen, Betriebsüberwachung |
 
 ## Interaktionsmuster
+
 Geführte Assistenten unterstützen Einrichtung, Aufnahme, Eingewöhnung, Gruppenwechsel und Austritt.
 Sie unterstützen außerdem Mandantenmigration und Wiederherstellung.
 Formatierte Texte und Portfolios werden automatisch gespeichert. Konflikte werden erkannt.
@@ -38,6 +41,8 @@ Sensible Vorgänge erhalten keine unbemerkte Offline-Freigabe.
 ## Zentrale Benutzerabläufe
 
 Die folgenden Abläufe geben die vorhandene fachliche Reihenfolge wieder.
+Die Formulierung zur Berechtigungsprüfung in Ablauf 3 ist als [F-001](19_Redaktionspruefung_KC-036.md) offen.
+Sie hebt die serverseitige Prüfpflicht aus ADR-019 nicht auf.
 
 1. Eltern registrieren sich und werden verifiziert. Danach folgen Einrichtungszuordnung, Einwilligungen und Elternstartseite.
 2. Die Leitung nimmt ein Kind auf und prüft die sorgeberechtigten Personen.
@@ -49,4 +54,8 @@ Die folgenden Abläufe geben die vorhandene fachliche Reihenfolge wieder.
 
 
 ## Dokumentationssprache (Ergänzung v5.9)
-Für dieses Dokument gilt die deutsche Projektrichtlinie `13_Dokumentationsrichtlinie_DE_ASD_STE100.md` mit dem verbindlichen Fachwortverzeichnis `14_Fachwortverzeichnis_DE.md`. Die Richtlinie orientiert sich an ASD-STE100, stellt aber **keine offizielle deutsche ASD-STE100-Konformität** dar.
+
+Es gelten die [deutsche Dokumentationsrichtlinie](13_Dokumentationsrichtlinie_DE_ASD_STE100.md)
+und das [Fachwortverzeichnis](14_Fachwortverzeichnis_DE.md).
+Die Richtlinie adaptiert Sprachprinzipien von ASD-STE100.
+Sie ist keine offizielle deutsche Übersetzung und belegt keine formelle ASD-STE100-Konformität.

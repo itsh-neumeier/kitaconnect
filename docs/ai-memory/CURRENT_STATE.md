@@ -1,20 +1,21 @@
 # Projektstatus und Fortsetzung
 
 Aktualisiert: 18.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
-Status: KC-038 hat den Main-Branchschutz eingerichtet und per API nachgewiesen.
-Unabhängige Reviewer fehlen. P0 ist nicht insgesamt abgenommen.
+Status: KC-036 hat die ursprünglichen Unterlagen 01 bis 12 redaktionell überarbeitet.
+F-001 zur Formulierung eines Tagesereignis-Ablaufs ist angefragt. Unabhängige Reviewer fehlen.
+KC-038 hat den Main-Branchschutz eingerichtet. P0 ist nicht insgesamt abgenommen.
 P1 bis P9 besitzen keinen Implementierungsauftrag.
 
 ## Arbeitsstand
 
-- `issue_id`: [KC-038 / #38](https://github.com/itsh-neumeier/kitaconnect/issues/38).
-- `branch`: `codex/p0-review-protection`.
-- `head_commit`: Geprüfter Änderungscommit `cdaf32c86c9ba020332e3ad87e223afdc2b713e3`.
-  Dieser Checkpoint folgt als gesonderter Dokumentationscommit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
-- `objective`: Aktiven Main-Regelsatz nachweisen und unabhängige Review-Zuständigkeit klären.
-- `pull_request`: [PR #43](https://github.com/itsh-neumeier/kitaconnect/pull/43), Entwurf gegen `codex/p0-decision-register`.
+- `issue_id`: [KC-036 / #36](https://github.com/itsh-neumeier/kitaconnect/issues/36).
+- `branch`: `codex/p0-documentation-review`.
+- `head_commit`: Letzte Redaktionsgruppe `7e49a66`; davor `ebaa1d2` und `4804d1c`.
+  Begriffe, Prüfbericht und dieser Checkpoint folgen als Nachweiscommit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
+- `objective`: Sprachliche Bestandsprüfung ohne eigenmächtige Änderung fachlicher Anforderungen.
+- `pull_request`: Entwurf gegen `codex/p0-review-protection` wird nach Sicherung des Nachweiscommits angelegt.
 - `migration_state`: Keine Datenbankrollen, Migrationen, Zertifikate oder Laufzeitdienste angelegt.
-- `dependencies`: PRs #39, #40, #41 und #42 zuerst prüfen und integrieren. Kein Merge durch diese Sitzung.
+- `dependencies`: PRs #39 bis #43 zuerst prüfen und integrieren. Kein Merge durch diese Sitzung.
 
 ## Bestätigte Antworten
 
@@ -48,9 +49,24 @@ Quelle: ausdrückliche Antworten im Projektchat am 18.10.2026.
    und [Betriebsanleitung](../18_Branchschutz_und_Reviews.md) erstellt.
 10. Lokale Planprüfung und negative Tests in den bestehenden CI-Prüfschritt `structure` aufgenommen.
 
+## Erledigt in KC-036
+
+1. Sauberen Ausgangsstand `bdb3f9f`, PR #43, Issue #36, ADRs und alle fünf erfolgreichen GitHub-Prüfungen gelesen.
+2. Aktiven Regelsatz ohne Merge-Ausnahmen erneut gelesen. Keine GitHub-Verwaltungseinstellung geändert.
+3. Alle zwölf ursprünglichen Unterlagen gelesen und in drei Redaktionsgruppen überarbeitet.
+4. Stichwortketten aufgeteilt, Begriffe erklärt und historische Abschnitte im Fachkonzept eindeutig nummeriert.
+5. Historische Ausschlüsse unter der bestehenden Vorrangregel erhalten. Kein Ausschluss eigenmächtig aufgehoben.
+6. Fachwortverzeichnis ergänzt. API-Pfade, Ereignisnamen und Berechtigungstabellen unverändert erhalten.
+7. [Prüfbericht](../19_Redaktionspruefung_KC-036.md) mit Nachweis je Unterlage und offenen Formulierungen erstellt.
+8. Keine neue Architekturentscheidung getroffen. ADR-010 bleibt die redaktionelle Grundlage.
+9. F-001 angefragt: Eingabe, Berechtigungsprüfung vor Speichern und Speichern im Tagesereignis-Ablauf klar benennen?
+   Noch keine Antwort. Die ursprüngliche Konzeptfolge bleibt erhalten; ADR-019 bleibt verbindlich.
+
 ## Grenzen und offene Rollen
 
 - GitHub-Benutzername für unabhängige PR-Reviews ist angefragt. Noch keine Antwort.
+- F-001 ist offen. Vor einer davon abhängigen Änderung Antwort prüfen. Keine stille Änderung der Ablaufreihenfolge.
+- Redaktionelle Eigenprüfung ist dokumentiert. Unabhängige sprachliche PR-Prüfung und Integration fehlen.
 - Sicherheits- und Datenschutzprüfer sind nicht benannt. Fachfreigaben aus KC-037 bleiben gesperrt.
 - CODEOWNERS liegt bisher nur auf dem Arbeitsbranch von PR #42. Die Datei fehlt auf `main`.
 - Ein Autor kann eigene Änderungen nicht genehmigen. Mit nur einem CODEOWNER bleiben dessen eigene Merges
@@ -63,29 +79,30 @@ Quelle: ausdrückliche Antworten im Projektchat am 18.10.2026.
 
 | Prüfung | Ergebnis |
 |---|---|
-| `node scripts/check-project.mjs` | 38 Issues, 29 Dokumente und lokale Verweise geprüft |
+| `node scripts/check-project.mjs` | 38 Issues, 30 Dokumente und lokale Verweise geprüft |
 | `node scripts/check-github-rules.mjs` | Versionierter Plan erfüllt Schutzanforderungen |
 | Planprüfung auf ausgelesener API-Antwort | Erfolgreich |
 | `node scripts/fixtures.mjs --check` | Bytegenau erfolgreich |
 | `node --test scripts/*.test.mjs` | 28 von 28 Tests erfolgreich, davon 14 negative Branchschutzfälle |
 | actionlint 1.7.12 | Erfolgreich |
 | `git diff --check` | Erfolgreich |
+| Vergleich mit `bdb3f9f` | Tabellen 03/04, Ereignisnamen, Phasenabhängigkeiten, ADR-/Interviewkennungen und Werkzeugversionen unverändert |
 
-Die Push-Prüfungen für `cdaf32c` sind vollständig erfolgreich:
-[P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39123730873) und
-[P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39123730806).
-Der nachfolgende Dokumentationscommit löst eigene Prüfungen aus. Vor Merge muss der aktuelle Kopf grün sein.
-Der vorgemerkte Diff wurde mit Gitleaks ohne Befund geprüft. Rust- und Frontend-Code wurden nicht geändert.
+Die Prüfungen des Ausgangscommits `bdb3f9f` sind vollständig erfolgreich:
+[P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39123817480) und
+[P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39123817474).
+CI für den neuen KC-036-Stand wird nach dem Push geprüft. Vor Merge muss der aktuelle Kopf grün sein.
+Die drei vorgemerkten Redaktionsgruppen wurden jeweils mit Gitleaks ohne Befund geprüft.
+Rust-, Frontend- und Workflow-Code wurden nicht geändert.
 Keine neuen lokalen Testfehler. Keine implementierte Dienst-, Last- oder Wahlsicherheit behauptet.
 
 ## Nächste drei Aktionen
 
-1. Aktuellen CI- und Review-Stand von PR #43 prüfen. Issue #38 bleibt wegen der offenen Rollen unvollständig.
-2. Nach Antwort den unabhängigen Reviewer und dessen Zugriffsrechte prüfen. Keine Person eigenmächtig ernennen.
-   Sicherheits- und Datenschutzrollen gesondert bestätigen lassen. KC-038 bis zur Erfüllung aller Kriterien offen lassen.
-3. Danach [KC-036 / #36](https://github.com/itsh-neumeier/kitaconnect/issues/36) für die sprachliche Bestandsprüfung bearbeiten.
-   P0-Abnahme und spätere Fachprüfungen bleiben erforderlich.
+1. KC-036-Entwurf veröffentlichen, aktuelle CI prüfen und Issue #36 aktualisieren. F-001-Antwort auswerten.
+2. Nach Benennung unabhängigen Reviewer und Zugriffsrechte prüfen. Sprachliches Review veranlassen.
+   Sicherheits- und Datenschutzrollen gesondert bestätigen lassen. KC-036 und KC-038 bleiben bis zur Erfüllung offen.
+3. Integrationsnachweise und P0-Abnahme vorbereiten. Keine neue Entwicklungsphase beginnen.
 
-Integrationsfolge: #39, #40, #41, #42, danach KC-038. Nach Integration der Basis den nächsten PR
+Integrationsfolge: #39, #40, #41, #42, #43, danach KC-036. Nach Integration der Basis den nächsten PR
 auf `main` umstellen und aktuelle CI sowie Reviews erneut prüfen. Keine eigenständige Merge-Freigabe.
 Beim Neustart AGENTS, CLAUDE, diesen Status, offene Entscheidungen und den GitHub-Stand lesen.

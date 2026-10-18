@@ -30,6 +30,43 @@
 | Dienstvertrag | Versionierter Vertrag für eine Dienstschnittstelle oder ein Ereignis | Contract ohne Erklärung |
 | Zugriffsprotokoll | Nachvollziehbarer Nachweis von Datenzugriffen | Log ohne Erklärung |
 | Mandantenwechsel | Wechsel des aktiven organisatorischen Kontexts | Login-Wechsel, wenn kein neuer Login erfolgt |
+| Arbeitsablauf | Fachliche Folge von Bearbeitungs- und Freigabeschritten | Workflow im deutschen Fließtext; technische Bezeichner bleiben erhalten |
+| Betriebsüberwachung | Beobachtung von Zustand, Fehlern und Ressourcen einer Installation | Monitoring im deutschen Fließtext |
+| Nachrichtenübersicht | Zusammenstellung freigegebener Nachrichten für eine Zielgruppe | Newsfeed, Feed im deutschen Fließtext |
+| Notfallzugriff | Begründeter und zeitbegrenzter Zugriff im ausdrücklich definierten Notfall | Break-glass im deutschen Fließtext |
+| Berechtigungsumfang | Explizit begrenzter Geltungsbereich eines Zugriffsrechts | Scope im deutschen Fließtext; API-Felder bleiben erhalten |
+| Dienstvertragstest | Prüfung der vereinbarten Schnittstelle zwischen Diensten | Contract-Test im deutschen Fließtext |
+| Idempotenz | Eigenschaft, bei wiederholter Verarbeitung keine doppelte fachliche Wirkung zu erzeugen | Genau-einmal-Zusage ohne Nachweis |
+| Fehlerablage | Nachvollziehbarer Bestand nicht erfolgreich verarbeiteter Aufträge | Dead-Letter ohne Erklärung |
+| Versionsmarke | Markierung eines Versionsstands in Git | Tag ohne Erklärung im deutschen Fließtext |
+| Änderungsprotokoll | Übersicht der Änderungen einer Softwareversion | Changelog im deutschen Fließtext |
+| Zugriffskontrolle | Prüfung, ob eine konkrete Aktion auf Daten zulässig ist | Audit als Synonym für Berechtigungsentscheidung |
+| Audit | Nachvollziehbare Prüfung protokollierter Vorgänge; technische Bezeichner bleiben erhalten | Pauschaler Vollzugriff auf Fachinhalte |
+
+## Technische Abkürzungen
+
+| Kürzel | Bedeutung im Projekt |
+|---|---|
+| ADR | Dokumentierte Architekturentscheidung; Architecture Decision Record |
+| API | Programmierschnittstelle; Application Programming Interface |
+| CI | Automatisierte Integration; Continuous Integration |
+| PWA | Progressive Web App; installierbare Webanwendung |
+| RBAC / ABAC | Rollenbasierte beziehungsweise attributbasierte Zugriffskontrolle |
+| RLS | Row-Level Security; Zugriffsschutz für Datenbankzeilen |
+| RPO / RTO | Angestrebter maximaler Datenverlustzeitraum beziehungsweise angestrebte Wiederherstellungsdauer |
+| PITR / WAL | Wiederherstellung zu einem Zeitpunkt beziehungsweise PostgreSQL-Schreibprotokoll |
+| HA | Hochverfügbarkeit; High Availability |
+| SAML / OIDC | Security Assertion Markup Language beziehungsweise OpenID Connect |
+| MFA / TOTP | Mehrfaktor-Authentisierung beziehungsweise zeitbasierte Einmalpasswörter |
+| TLS / mTLS | Geschützte Transportverbindung beziehungsweise TLS mit beidseitiger Zertifikatsprüfung |
+| EXIF / GPS | Bildmetadaten beziehungsweise Positionsangaben des Global Positioning System |
+| SMTP / SPF / DKIM / DMARC | Mailversand beziehungsweise Verfahren für Absender- und Domainprüfung |
+| ICS / HMAC / VAPID | Kalenderformat, schlüsselgebundener Nachrichtencode beziehungsweise Identifikation des Web-Push-Anwendungsservers |
+| CSRF / CSP / IDOR | Gefälschte browserbasierte Anfrage, Browser-Inhaltsrichtlinie beziehungsweise unberechtigter direkter Objektzugriff |
+| WCAG / E2E / SBOM | Web Content Accessibility Guidelines, Ende-zu-Ende-Tests beziehungsweise Software-Stückliste |
+| SAST / SCA | Statische Quelltextanalyse beziehungsweise Analyse von Softwareabhängigkeiten |
+| GHCR / HR / UI | GitHub Container Registry, Personalverwaltung beziehungsweise Benutzeroberfläche |
+| DSGVO / DSFA | Datenschutz-Grundverordnung beziehungsweise Datenschutz-Folgenabschätzung |
 
 ## Regeln
 1. Ergänze neue Fachbegriffe vor ihrer ersten wiederholten Verwendung.

@@ -5,6 +5,7 @@
 > Status: Anforderungsspezifikation, keine implementierte oder rechtsverbindlich geprüfte Software. Die neuesten ausdrücklichen Interviewentscheidungen gelten.
 
 ## 1. Kernentitäten
+
 | Kontext | Tabellen / Aggregate (konzeptionell) | Schlüssel/Beziehungen |
 |---|---|---|
 | Plattform | identities, credentials, sessions, organizations, carriers, facilities, memberships | globale IDs, scopes |
@@ -20,6 +21,7 @@
 | Plattformbetrieb | consent_records, privacy_requests, audit_events, workflow_definitions, workflow_instances, outbox_events | Versionen, Löschfristen |
 
 ## 2. Berechtigungsmatrix (Basis, durch Policies verfeinert)
+
 Legende: V = ansehen, B = bearbeiten, G = gezielt freigeben, - = standardmäßig kein Zugriff.
 Rechte gelten nur im ausdrücklich zugeordneten Berechtigungsumfang.
 HR bezeichnet die Personalverwaltung. Audit bezeichnet die Prüfung von Zugriffsprotokollen.
@@ -43,6 +45,7 @@ Einrichtungsadministratoren dürfen nicht automatisch sämtliche sensiblen Akten
 Systemadministratoren verwalten die Infrastruktur. Sie erhalten dadurch keinen pauschalen Inhaltszugriff.
 
 ## 3. Sicherheitsinvarianten
+
 Eine Zuordnung darf nicht allein anhand von E-Mail-Adresse oder Nachname erfolgen.
 Sorgerechtsbeschränkungen gehen den Standardrechten für Eltern vor.
 Der Elternbeirat darf gemeinsame Nachrichtenübersichten nicht zum Zugriff auf interne Kinder- oder Personalakten verwenden.
@@ -67,4 +70,8 @@ Personenbezogene Fachakten werden nur mit ausdrücklicher Freigabe migriert.
 
 
 ## Dokumentationssprache (Ergänzung v5.9)
-Für dieses Dokument gilt die deutsche Projektrichtlinie `13_Dokumentationsrichtlinie_DE_ASD_STE100.md` mit dem verbindlichen Fachwortverzeichnis `14_Fachwortverzeichnis_DE.md`. Die Richtlinie orientiert sich an ASD-STE100, stellt aber **keine offizielle deutsche ASD-STE100-Konformität** dar.
+
+Es gelten die [deutsche Dokumentationsrichtlinie](13_Dokumentationsrichtlinie_DE_ASD_STE100.md)
+und das [Fachwortverzeichnis](14_Fachwortverzeichnis_DE.md).
+Die Richtlinie adaptiert Sprachprinzipien von ASD-STE100.
+Sie ist keine offizielle deutsche Übersetzung und belegt keine formelle ASD-STE100-Konformität.

@@ -5,6 +5,7 @@
 > Status: Anforderungsspezifikation, keine implementierte oder rechtsverbindlich geprüfte Software. Die neuesten ausdrücklichen Interviewentscheidungen gelten.
 
 ## Verbindliche Architekturentscheidungen
+
 Die technische Grundlage umfasst Rust mit Axum, Tokio und SQLx sowie PostgreSQL und Redis.
 Das Frontend verwendet SvelteKit, Svelte 5, TypeScript und Tailwind.
 Für den Betrieb sind Docker Compose mit Portainer sowie Kubernetes mit Helm vorgesehen.
@@ -47,6 +48,7 @@ Observability -> OpenTelemetry/structured logs -> Prometheus/Grafana
 ```
 
 ## Trennung der Daten
+
 Ein Mandant ist eine Einrichtung. Träger bündeln Organisationen und erhalten nur ausdrücklich freigegebene Querzugriffe.
 Schemanamen dürfen nicht direkt aus Benutzerangaben in Abfragen übernommen werden.
 Zulässig sind nur serverseitig registrierte Bezeichner mit korrekter SQL-Quotierung.
@@ -82,6 +84,7 @@ Dienstgrenzen folgen fachlich zusammengehörigen Bereichen statt einzelnen Bilds
 Die Dienstverträge werden gemeinsam versioniert.
 
 ## Daten und Dateien
+
 PostgreSQL verwendet ein eigenes Schema je Mandant.
 Migrationen benötigen je Schema eine Version, einen Sperrplan und einen Plan zum Rücksetzen.
 Eine automatische Prüfung erkennt Abweichungen vom erwarteten Schema.
@@ -95,6 +98,7 @@ Suche und Berichte verwenden nur berechtigte Datensichten.
 Der Suchindex darf keine Daten zwischen Mandanten offenlegen.
 
 ## Identität und Rechte
+
 Die Identitätsverwaltung verwendet Argon2id, WebAuthn beziehungsweise Passkeys und zeitbasierte Einmalpasswörter (TOTP).
 Sie unterstützt Kontowiederherstellung, OpenID Connect (OIDC) und Security Assertion Markup Language (SAML).
 Sitzungscookies verwenden `Secure`, `HttpOnly` und `SameSite`.
@@ -111,7 +115,7 @@ Notfallzugriff ist zeitbegrenzt, begründet und nachprüfbar. Er benötigt eine 
 
 Das bestätigte [Referenzprofil und Messverfahren](17_P0_Entscheidungsregister.md) bildet eine Einrichtung ab.
 Die dokumentierten Zielwerte sind noch keine Messergebnisse oder allgemeinen Mindestressourcen.
-API-Replikate halten keinen lokalen Sitzungszustand. Hintergrunddienste verwenden getrennte Ausführungsgruppen.
+API-Replikate sind zustandslos. Hintergrunddienste verwenden getrennte Ausführungsgruppen.
 Aufträge sind verteilt. Prüfungen erfassen Betriebsbereitschaft und Lebenszeichen.
 Operationen sind idempotent. Hochverfügbares PostgreSQL ist optional.
 Die Wiederherstellung zu einem Zeitpunkt (PITR) verwendet das PostgreSQL-Schreibprotokoll (WAL).
@@ -124,6 +128,7 @@ Eine mandantenspezifische Wiederherstellung verwendet eine kontrollierte tempor�
 Die gesamte Datenbank darf dafür niemals direkt auf einen früheren Stand zurückgesetzt werden.
 
 ## Sicherheitsgrenzen
+
 Geheime Wahlstimmen bleiben strikt von Wähleridentitäten getrennt.
 Protokolle und Datensicherungen dürfen keinen Zuordnungsschlüssel zwischen Person und Stimme enthalten.
 Kassenbuchungen werden nur ergänzt. Korrekturen erfolgen durch Gegenbuchungen.
@@ -133,4 +138,8 @@ Datenschutzrechtliche Anforderungen und das kryptografische Wahlprotokoll benöt
 
 
 ## Dokumentationssprache (Ergänzung v5.9)
-Für dieses Dokument gilt die deutsche Projektrichtlinie `13_Dokumentationsrichtlinie_DE_ASD_STE100.md` mit dem verbindlichen Fachwortverzeichnis `14_Fachwortverzeichnis_DE.md`. Die Richtlinie orientiert sich an ASD-STE100, stellt aber **keine offizielle deutsche ASD-STE100-Konformität** dar.
+
+Es gelten die [deutsche Dokumentationsrichtlinie](13_Dokumentationsrichtlinie_DE_ASD_STE100.md)
+und das [Fachwortverzeichnis](14_Fachwortverzeichnis_DE.md).
+Die Richtlinie adaptiert Sprachprinzipien von ASD-STE100.
+Sie ist keine offizielle deutsche Übersetzung und belegt keine formelle ASD-STE100-Konformität.

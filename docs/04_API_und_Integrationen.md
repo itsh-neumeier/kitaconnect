@@ -5,6 +5,7 @@
 > Status: Anforderungsspezifikation, keine implementierte oder rechtsverbindlich geprüfte Software. Die neuesten ausdrücklichen Interviewentscheidungen gelten.
 
 ## Leitlinien
+
 Die Programmierschnittstelle (API) verwendet REST, OpenAPI 3.1, JSON und UTF-8.
 API-Versionen folgen einer semantischen Versionierung.
 Fehler werden einheitlich als Problem-Details nach RFC 9457 ausgegeben.
@@ -15,6 +16,7 @@ Anfragen sind mengenbegrenzt. Schreibaktionen sind idempotent und erzeugen bei W
 Ein vom Client gesetzter Mandantenheader ist niemals alleinige Berechtigungsgrundlage.
 
 ## Beispielressourcen (konzeptionell, noch nicht implementiert)
+
 | Methode | Pfad | Zweck | Sicherheitsregel |
 |---|---|---|---|
 | GET | /v1/me/memberships | zulässige Rollen/Einrichtungen | eigene Mitgliedschaften |
@@ -29,6 +31,7 @@ Ein vom Client gesetzter Mandantenheader ist niemals alleinige Berechtigungsgrun
 | GET | /v1/audit/events | Audit | strenger Audit-Scope |
 
 ## Integrationen
+
 Der Mailversand verwendet SMTP. Betriebshinweise erläutern die Absenderprüfverfahren SPF, DKIM und DMARC.
 Web Push verwendet VAPID zur Identifikation des Anwendungsservers.
 Webhooks werden mit einem schlüsselgebundenen Nachrichtencode (HMAC) signiert.
@@ -41,6 +44,7 @@ Dienstkonten erhalten nur die erforderlichen Rechte. Ihre Schlüssel werden rege
 Exporte als CSV, Excel oder PDF sind versioniert und benötigen Berechtigungsprüfung sowie Zugriffsprotokollierung.
 
 ## Ereignisse
+
 Vorgesehene Ereignisse sind `ChildAdmitted.v1`, `GuardianLinked.v1`, `AttendanceRecorded.v1`,
 `ConsentWithdrawn.v1`, `ShiftPublished.v1`, `PortfolioPublished.v1` und `FacilityTransferred.v1`.
 Jedes Ereignis trägt eine Ereigniskennung, Version und Zeitstempel.
@@ -53,4 +57,8 @@ Dienstvertragstests und definierte Zeiträume für Rückwärtskompatibilität si
 
 
 ## Dokumentationssprache (Ergänzung v5.9)
-Für dieses Dokument gilt die deutsche Projektrichtlinie `13_Dokumentationsrichtlinie_DE_ASD_STE100.md` mit dem verbindlichen Fachwortverzeichnis `14_Fachwortverzeichnis_DE.md`. Die Richtlinie orientiert sich an ASD-STE100, stellt aber **keine offizielle deutsche ASD-STE100-Konformität** dar.
+
+Es gelten die [deutsche Dokumentationsrichtlinie](13_Dokumentationsrichtlinie_DE_ASD_STE100.md)
+und das [Fachwortverzeichnis](14_Fachwortverzeichnis_DE.md).
+Die Richtlinie adaptiert Sprachprinzipien von ASD-STE100.
+Sie ist keine offizielle deutsche Übersetzung und belegt keine formelle ASD-STE100-Konformität.

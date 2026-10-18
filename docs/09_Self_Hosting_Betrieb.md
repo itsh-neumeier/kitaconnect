@@ -5,6 +5,7 @@
 > Status: Anforderungsspezifikation, keine implementierte oder rechtsverbindlich geprüfte Software. Die neuesten ausdrücklichen Interviewentscheidungen gelten.
 
 ## Unterstützte Installationen
+
 Für einzelne und kleinere Installationen ist Docker Compose mit Portainer vorgesehen.
 Für skalierbare und hochverfügbare Installationen sind Kubernetes und Helm vorgesehen.
 Versionierte Images liegen in der GitHub Container Registry (GHCR).
@@ -15,6 +16,7 @@ Es werden nur stabile Versionen installiert.
 Die Administration bestätigt die Installation. Die Veröffentlichung erfolgt nach erfolgreicher automatisierter Integration (CI) automatisch.
 
 ## Installationsablauf (Soll-Prozess)
+
 DNS bezeichnet die Namensauflösung. TLS schützt die Transportverbindung.
 SMTP bezeichnet das Verfahren für den Mailversand.
 Der Ablauf beschreibt den späteren Sollzustand. Das P0-Grundgerüst ist noch nicht installierbar.
@@ -25,7 +27,7 @@ Der Ablauf beschreibt den späteren Sollzustand. Das P0-Grundgerüst ist noch ni
 3. Starten Sie PostgreSQL, Redis und Dateispeicher. Prüfen Sie Datenbankverbindung und Schemarechte.
 4. Beziehen Sie versionierte Images. Führen Sie Migrationen im Wartungsmodus aus.
 5. Richten Sie Systemadministrator, Träger beziehungsweise Einrichtung, Module, Domains und Datenschutz über den Assistenten ein.
-6. Prüfen Sie Zustandsprüfungen, SMTP, Push, Medien-Hintergrunddienst, Datensicherung und Wiederherstellungsprobe.
+6. Führen Sie Zustandsprüfungen aus. Prüfen Sie SMTP, Push, Medien-Hintergrunddienst, Datensicherung und Wiederherstellungsprobe.
 7. Aktivieren Sie Betriebsüberwachung, Warnmeldungen und Aufbewahrungsregeln für Protokolle.
    Dokumentieren Sie die Verantwortlichen.
 
@@ -41,6 +43,7 @@ Eine mandantenspezifische Wiederherstellung verwendet eine isolierte Umgebung un
 Nach Wiederherstellung werden Löschjournal und widerrufene Einwilligungen erneut durchgesetzt.
 
 ## Updates
+
 1. Zeigen Sie die verfügbare stabile Version an. Prüfen Sie Kompatibilität und Datensicherung.
 2. Holen Sie die manuelle Installationsfreigabe ein. Aktivieren Sie den Wartungsmodus und prüfen Sie die Migration.
 3. Verwenden Sie schrittweise Aktualisierung oder den Wechsel zwischen zwei Betriebsumgebungen, soweit kompatibel.
@@ -79,4 +82,8 @@ Lokale Medienverarbeitung benötigt eine gesonderte Messung.
 
 
 ## Dokumentationssprache (Ergänzung v5.9)
-Für dieses Dokument gilt die deutsche Projektrichtlinie `13_Dokumentationsrichtlinie_DE_ASD_STE100.md` mit dem verbindlichen Fachwortverzeichnis `14_Fachwortverzeichnis_DE.md`. Die Richtlinie orientiert sich an ASD-STE100, stellt aber **keine offizielle deutsche ASD-STE100-Konformität** dar.
+
+Es gelten die [deutsche Dokumentationsrichtlinie](13_Dokumentationsrichtlinie_DE_ASD_STE100.md)
+und das [Fachwortverzeichnis](14_Fachwortverzeichnis_DE.md).
+Die Richtlinie adaptiert Sprachprinzipien von ASD-STE100.
+Sie ist keine offizielle deutsche Übersetzung und belegt keine formelle ASD-STE100-Konformität.

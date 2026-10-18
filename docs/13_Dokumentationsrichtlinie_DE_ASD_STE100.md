@@ -54,4 +54,9 @@ Gültig für Fachkonzept, Architektur, Datenmodell, API-Dokumentation, UX-Texte,
 - Für rechtlich verbindliche Hinweise gelten zusätzlich juristische Prüfung und gesetzliche Formvorgaben. Vereinfachung darf keine fachliche oder rechtliche Aussage verfälschen.
 
 ## 6. Status
-Diese Richtlinie ist eine **Anforderung und redaktionelle Vorgabe**. Die vorhandenen Dokumente werden ab v5.9 damit verknüpft. Eine vollständige redaktionelle Umschreibung jedes Bestandsabschnitts ist **noch nicht abgeschlossen** und wird im Backlog nachverfolgt.
+Diese Richtlinie ist eine **Anforderung und redaktionelle Vorgabe**.
+Die Dokumente sind ab v5.9 mit ihr verknüpft.
+KC-036 dokumentiert den ersten redaktionellen Prüfdurchgang für die ursprünglichen Unterlagen 01 bis 12.
+Der [Prüfbericht](19_Redaktionspruefung_KC-036.md) nennt Umfang, unveränderte Fachgrenzen und offene Formulierungen.
+Die unabhängige sprachliche PR-Prüfung und Integration stehen noch aus.
+Der Prüfdurchgang ist weder eine Fachfreigabe noch ein formeller Konformitätsnachweis.

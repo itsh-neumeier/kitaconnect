@@ -43,7 +43,14 @@ Bis dahin bleiben betroffene Merges gesperrt. Die Regeln werden dafür nicht abg
 Die Projektleitung hat im Interview am 18.10.2026 `itsh-neumeier` als PR-Prüfer genannt.
 Die aktuellen PRs #43 und #44 wurden unter demselben Benutzer erstellt.
 Diese Benennung erfüllt für diese PRs keine unabhängige Genehmigung.
-Die Rückfrage nach einer anderen Person oder dem vorläufigen Offenlassen bleibt offen.
+Die Projektleitung hat anschließend ausdrücklich persönliche Prüfung zusammen mit dem KI-Assistenten gewünscht.
+Timo Neumeier prüft die vom Assistenten vorbereiteten Änderungen persönlich.
+Der KI-Assistent unterstützt durch technische Vorprüfung und nachvollziehbare Prüfberichte.
+Diese Aufteilung ist vereinbart. Eine erfolgte menschliche Prüfung wird dadurch nicht behauptet.
+Die aktuellen PRs wurden über denselben GitHub-Zugang erstellt, den die Projektleitung zur Prüfung verwendet.
+Die persönliche Prüfung ist möglich; GitHub lässt denselben Benutzer jedoch nicht als genehmigenden PR-Prüfer zu.
+Eine KI-Vorprüfung zählt nicht als das erforderliche genehmigende GitHub-Review.
+Die technische Genehmigung unter den bestehenden Regeln bleibt deshalb unerfüllt.
 Es wurden keine Zugriffsrechte geändert und keine Selbstgenehmigung versucht.
 
 Die Projektleitung hat Timo Neumeier, `@itsh-neumeier`, ausdrücklich für Sicherheits- und Datenschutzprüfungen benannt.

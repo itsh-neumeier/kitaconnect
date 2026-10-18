@@ -134,13 +134,20 @@ Datum: 18.10.2026. Quelle: ausdrückliche Antwort im Projektchat.
 
 - Frage 1: „Ja“ bestätigt die Klarstellung F-001. Die Berechtigung wird serverseitig vor dem Speichern geprüft.
 - Frage 2: `itsh-neumeier` ist als PR-Prüfer genannt. Derselbe Benutzer ist Autor der aktuellen PRs.
-  Die Benennung erfüllt dort keine unabhängige Genehmigung. Die Klärungsfrage bleibt offen.
+  Die Benennung erfüllt dort keine genehmigende GitHub-Prüfung.
 - Frage 3: „Ich auch als Prüfer“ benennt Timo Neumeier für Sicherheits- und Datenschutzprüfungen.
   Die Zuständigkeit ersetzt keine durchgeführte Prüfung und belegt keine Unabhängigkeit bei eigenen Änderungen.
 
 Die Review-Regeln bleiben bestehen. Eine Ausnahme oder Selbstfreigabe wurde nicht bestätigt und wird nicht eingerichtet.
 Die gesonderte juristische Lizenzprüfung und unabhängige Wahlprotokollprüfung bleiben unverändert offen.
 Es wurde keine neue Architekturentscheidung getroffen.
+
+Ergänzende Antwort: „Ich prüfe die auch sowie du als KI-Assistent“.
+Die Projektleitung übernimmt persönliche Prüfung. Der KI-Assistent übernimmt technische Vorprüfung.
+Die aktuellen PRs wurden über den Zugang der Projektleitung erstellt.
+Ihre persönliche Prüfung und das technisch erforderliche genehmigende GitHub-Review bleiben getrennte Nachweise.
+Es wird keine abgeschlossene Prüfung oder erfüllte Pflichtgenehmigung behauptet.
+Die Aufteilung allein verändert weder Branchschutz noch unabhängige Fachprüfungen.
 
 ## Dokumentationssprache (Ergänzung v5.9)
 

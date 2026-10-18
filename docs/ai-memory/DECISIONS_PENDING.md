@@ -10,7 +10,7 @@ Eine ausbleibende Antwort ist keine Zustimmung.
 |---|---|
 | Referenzprofil für die Lastprüfung | Eine Einrichtung. 50 Sitzungen, 10 Anfragen pro Sekunde, 80/20 Lesen/Schreiben, p95 500/1.000 ms, unter 1 % Fehler, 4 vCPU, 8 GB RAM, 100 GB SSD, 5 Minuten Aufwärmen und 30 Minuten Messung ausdrücklich bestätigt. |
 | CODEOWNER für das Repository | Antwort `@itsh-neumeier Timo Neumeier`; vorläufige Zuordnung in CODEOWNERS eingetragen. Kein Nachweis unabhängiger Prüfung. |
-| PR-Reviewer | Antwort `itsh-neumeier`. Derselbe Benutzer ist Autor der aktuellen PRs und kann sie nicht selbst genehmigen. Andere unabhängige Person oder vorläufiges Offenlassen angefragt. Keine Abschwächung der Regeln. |
+| PR-Prüfung durch Projektleitung und KI | Persönliche Prüfung durch Timo Neumeier und technische Vorprüfung durch den KI-Assistenten ausdrücklich gewünscht. Aktuelle PRs sind über denselben Benutzer erstellt; GitHub-Pflichtgenehmigung bleibt unerfüllt. Keine erfolgte menschliche Prüfung behauptet. Keine Abschwächung der Regeln. |
 | Sicherheits- und Datenschutzprüfung | Antwort „Ich auch als Prüfer“ benennt Timo Neumeier, `@itsh-neumeier`. Keine durchgeführte oder unabhängige Prüfung behauptet. Für eigene Änderungen bleibt unabhängige Gegenprüfung offen. |
 | KC-036 / F-001: Tagesereignis | Antwort „Ja“ bestätigt Prüfung vor Speichern. Ablauf in Unterlage 05 klargestellt; F-001 entschieden. [Prüfbericht](../19_Redaktionspruefung_KC-036.md). |
 | Rechteinhaber, juristische Lizenzprüfung und unabhängige Wahlprüfung | Antwort `offen lassen`. Projektleitung bleibt für Besetzung vor den gesperrten Aktionen zuständig. Keine automatische Zuordnung zum CODEOWNER. |

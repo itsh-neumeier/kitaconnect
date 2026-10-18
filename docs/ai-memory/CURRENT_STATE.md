@@ -11,8 +11,8 @@ P1 bis P9 besitzen keinen Implementierungsauftrag.
 
 - `issue_id`: [KC-036 / #36](https://github.com/itsh-neumeier/kitaconnect/issues/36).
 - `branch`: `codex/p0-documentation-review`.
-- `head_commit`: Verifizierter Ausgangscommit `fc60092027e87bb74f7931b11d90c3c93112e59e`.
-  Interviewentscheidungen und dieser Checkpoint folgen als eigener Commit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
+- `head_commit`: Verifizierter Interviewcommit `2617c38924e1133f907787fae4d45cfedd085831`.
+  Die ergänzte Prüfaufteilung und dieser Checkpoint folgen als eigener Commit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
 - `objective`: Sprachliche Bestandsprüfung ohne eigenmächtige Änderung fachlicher Anforderungen.
 - `pull_request`: [PR #44](https://github.com/itsh-neumeier/kitaconnect/pull/44), Entwurf gegen `codex/p0-review-protection`.
 - `migration_state`: Keine Datenbankrollen, Migrationen, Zertifikate oder Laufzeitdienste angelegt.
@@ -39,6 +39,9 @@ Quelle: ausdrückliche Antworten im Projektchat am 18.10.2026.
    Der Benutzer ist zugleich Autor der aktuellen PRs. Er kann diese nicht selbst genehmigen.
 9. Interviewantwort „3. Ich auch als Prüfer“ benennt Timo Neumeier für Sicherheits- und Datenschutzprüfungen.
    Sie belegt keine erfolgte Fachprüfung oder unabhängige Gegenprüfung eigener Änderungen.
+10. „Ich prüfe die auch sowie du als KI-Assistent“ bestätigt persönliche Prüfung durch die Projektleitung
+    und technische Vorprüfung durch den Assistenten. Die GitHub-Pflichtgenehmigung ist damit nicht erfüllt.
+    Die PRs wurden über den Zugang der Projektleitung erstellt. Keine abgeschlossene menschliche Prüfung behaupten.
 
 ## Erledigt in KC-038
 
@@ -68,13 +71,14 @@ Quelle: ausdrückliche Antworten im Projektchat am 18.10.2026.
 8. Keine neue Architekturentscheidung getroffen. ADR-010 bleibt die redaktionelle Grundlage.
 9. F-001 nach ausdrücklichem „Ja“ klargestellt: serverseitige Berechtigungsprüfung vor Speichern.
    ADR-019 bleibt verbindlich. Keine Fachfunktion implementiert.
-10. Benannte Prüfzuständigkeit und Konflikt mit der eigenen PR-Autorschaft dokumentiert.
-    Rückfrage nach anderer unabhängiger Person oder vorläufigem Offenlassen gestellt. Antwort steht aus.
+10. Benannte Prüfzuständigkeit und Konflikt mit der GitHub-PR-Autorschaft dokumentiert.
+    Gewünschte persönliche Prüfung plus KI-Vorprüfung erfasst. Technische Pflichtgenehmigung bleibt unerfüllt.
 
 ## Grenzen und offene Rollen
 
 - `@itsh-neumeier` ist als Prüfer genannt. Für dessen eigene PRs fehlt weiterhin eine andere unabhängige Person.
-- Klärungsfrage zum Offenlassen oder Benennen einer anderen Person ist gestellt. Keine Antwort als Zustimmung werten.
+- Persönliche Prüfung plus KI-Vorprüfung ist bestätigt. Nicht erneut nach dieser gewünschten Aufteilung fragen.
+  Keine Pflichtgenehmigung daraus ableiten; bestehende Sperre bleibt bestehen.
 - F-001 ist entschieden und in Unterlage 05 umgesetzt. Nicht erneut abfragen.
 - Redaktionelle Eigenprüfung ist dokumentiert. Unabhängige sprachliche PR-Prüfung und Integration fehlen.
 - Timo Neumeier ist für Sicherheits- und Datenschutzprüfungen benannt. Unabhängige Gegenprüfung eigener Änderungen
@@ -107,15 +111,17 @@ und [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/3913
 Auch der Ausgangscommit `fc60092` ist vollständig grün:
 [P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39132856831),
 [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39132856848).
-Der Interviewcommit löst eigene Prüfungen aus. Vor Merge muss der aktuelle Kopf grün sein.
+Für Interviewcommit `2617c38` sind [P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39134454271)
+und [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39134454419) vollständig erfolgreich.
+Der folgende Dokumentationscommit löst eigene Prüfungen aus. Vor Merge muss der aktuelle Kopf grün sein.
 Alle vorgemerkten Gruppen und die vollständige Historie mit 16 Commits wurden mit Gitleaks ohne Befund geprüft.
 Rust-, Frontend- und Workflow-Code wurden nicht geändert.
 Keine neuen lokalen Testfehler. Keine implementierte Dienst-, Last- oder Wahlsicherheit behauptet.
 
 ## Nächste drei Aktionen
 
-1. Interviewcommit in PR #44 sichern, aktuelle CI prüfen und Issues #36/#38 aktualisieren. F-001 nicht erneut abfragen.
-2. Antwort zur unabhängigen Gegenprüfung abwarten. Nach Benennung Zugriffsrechte prüfen und sprachliches Review veranlassen.
+1. Ergänzte Prüfaufteilung in PR #44 sichern, aktuelle CI prüfen und Issues #36/#38 aktualisieren. F-001 nicht erneut abfragen.
+2. Persönliche Prüfung und KI-Vorprüfung am konkreten Commit dokumentieren. Technische GitHub-Genehmigung gesondert nachweisen.
    KC-036 und KC-038 bleiben bis zur Erfüllung offen. Keine Selbstfreigabe und keine Abschwächung der Schutzregeln.
 3. Integrationsnachweise und P0-Abnahme vorbereiten. Keine neue Entwicklungsphase beginnen.
 

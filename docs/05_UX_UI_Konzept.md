@@ -41,13 +41,15 @@ Sensible Vorgänge erhalten keine unbemerkte Offline-Freigabe.
 ## Zentrale Benutzerabläufe
 
 Die folgenden Abläufe geben die vorhandene fachliche Reihenfolge wieder.
-Die Formulierung zur Berechtigungsprüfung in Ablauf 3 ist als [F-001](19_Redaktionspruefung_KC-036.md) offen.
-Sie hebt die serverseitige Prüfpflicht aus ADR-019 nicht auf.
+Die Projektleitung hat die Klarstellung zur Berechtigungsprüfung in Ablauf 3 am 18.10.2026 bestätigt.
+[F-001](19_Redaktionspruefung_KC-036.md) ist damit entschieden. Die serverseitige Prüfpflicht aus ADR-019 bleibt verbindlich.
 
 1. Eltern registrieren sich und werden verifiziert. Danach folgen Einrichtungszuordnung, Einwilligungen und Elternstartseite.
 2. Die Leitung nimmt ein Kind auf und prüft die sorgeberechtigten Personen.
    Danach folgen Vertrag, Gruppe, Einladung und Eingewöhnung.
-3. Eine Fachkraft dokumentiert ein Tagesereignis. Danach folgen Berechtigungsprüfung, optionale Elternfreigabe und Zugriffsprotokollierung.
+3. Eine Fachkraft erfasst die Eingabe für ein Tagesereignis.
+   Vor dem Speichern prüft der Server die Berechtigung. Nur bei zulässigem Zugriff wird gespeichert.
+   Danach folgen gegebenenfalls die Freigabe für Eltern und die Zugriffsprotokollierung.
 4. Eine Portfolioseite wird bearbeitet. Danach folgen Gesichtsmaskierung, Einwilligungsprüfung, Freigabe und Veröffentlichung.
 5. Der Elternbeirat organisiert einen Basar und vergibt Plätze. Zahlungen werden manuell bestätigt. Danach werden QR-Codes ausgegeben.
 6. Der Träger weist eine Springerkraft zu. Sie erhält begrenzten Einrichtungszugriff. Dieser Zugriff wird automatisch entzogen.

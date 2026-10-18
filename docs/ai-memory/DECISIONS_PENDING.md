@@ -10,8 +10,9 @@ Eine ausbleibende Antwort ist keine Zustimmung.
 |---|---|
 | Referenzprofil für die Lastprüfung | Eine Einrichtung. 50 Sitzungen, 10 Anfragen pro Sekunde, 80/20 Lesen/Schreiben, p95 500/1.000 ms, unter 1 % Fehler, 4 vCPU, 8 GB RAM, 100 GB SSD, 5 Minuten Aufwärmen und 30 Minuten Messung ausdrücklich bestätigt. |
 | CODEOWNER für das Repository | Antwort `@itsh-neumeier Timo Neumeier`; vorläufige Zuordnung in CODEOWNERS eingetragen. Kein Nachweis unabhängiger Prüfung. |
-| Unabhängiger PR-Reviewer | GitHub-Benutzername angefragt. Keine Antwort liegt vor. Autor darf eigene Änderungen nicht freigeben. Fachprüfer bleiben gesondert offen. |
-| KC-036 / F-001: Tagesereignis | Formulierung „dokumentieren → Berechtigung prüfen“ ist offen. Rückfrage zur ausdrücklichen Prüfung vor Speichern gestellt. Bis zur Antwort bleiben ursprüngliche Konzeptfolge und verbindliche serverseitige Rechteprüfung erhalten. [Prüfbericht](../19_Redaktionspruefung_KC-036.md). |
+| PR-Reviewer | Antwort `itsh-neumeier`. Derselbe Benutzer ist Autor der aktuellen PRs und kann sie nicht selbst genehmigen. Andere unabhängige Person oder vorläufiges Offenlassen angefragt. Keine Abschwächung der Regeln. |
+| Sicherheits- und Datenschutzprüfung | Antwort „Ich auch als Prüfer“ benennt Timo Neumeier, `@itsh-neumeier`. Keine durchgeführte oder unabhängige Prüfung behauptet. Für eigene Änderungen bleibt unabhängige Gegenprüfung offen. |
+| KC-036 / F-001: Tagesereignis | Antwort „Ja“ bestätigt Prüfung vor Speichern. Ablauf in Unterlage 05 klargestellt; F-001 entschieden. [Prüfbericht](../19_Redaktionspruefung_KC-036.md). |
 | Rechteinhaber, juristische Lizenzprüfung und unabhängige Wahlprüfung | Antwort `offen lassen`. Projektleitung bleibt für Besetzung vor den gesperrten Aktionen zuständig. Keine automatische Zuordnung zum CODEOWNER. |
 | npm audit und externe Paketmetadaten | Die Projektleitung hat die Übermittlung von Paketnamen und Versionen an registry.npmjs.org ausdrücklich erlaubt. Gilt lokal und in GitHub Actions. |
 

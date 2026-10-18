@@ -128,6 +128,20 @@ Keine dieser Entscheidungen ersetzt die erforderlichen unabhängigen Prüfungen 
 Er verlangt Reviews und die fünf aktuellen Pflichtprüfungen ohne eingetragene Merge-Ausnahme.
 Unabhängige Prüfer bleiben bis zur ausdrücklichen Benennung offen.
 
+## Interview zur Fortsetzung von KC-036 und KC-038
+
+Datum: 18.10.2026. Quelle: ausdrückliche Antwort im Projektchat.
+
+- Frage 1: „Ja“ bestätigt die Klarstellung F-001. Die Berechtigung wird serverseitig vor dem Speichern geprüft.
+- Frage 2: `itsh-neumeier` ist als PR-Prüfer genannt. Derselbe Benutzer ist Autor der aktuellen PRs.
+  Die Benennung erfüllt dort keine unabhängige Genehmigung. Die Klärungsfrage bleibt offen.
+- Frage 3: „Ich auch als Prüfer“ benennt Timo Neumeier für Sicherheits- und Datenschutzprüfungen.
+  Die Zuständigkeit ersetzt keine durchgeführte Prüfung und belegt keine Unabhängigkeit bei eigenen Änderungen.
+
+Die Review-Regeln bleiben bestehen. Eine Ausnahme oder Selbstfreigabe wurde nicht bestätigt und wird nicht eingerichtet.
+Die gesonderte juristische Lizenzprüfung und unabhängige Wahlprotokollprüfung bleiben unverändert offen.
+Es wurde keine neue Architekturentscheidung getroffen.
+
 ## Dokumentationssprache (Ergänzung v5.9)
 
 Es gelten die [deutsche Dokumentationsrichtlinie](13_Dokumentationsrichtlinie_DE_ASD_STE100.md)

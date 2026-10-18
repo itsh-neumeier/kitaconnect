@@ -2,7 +2,8 @@
 
 Aktualisiert: 18.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
 Status: KC-036 hat die ursprünglichen Unterlagen 01 bis 12 redaktionell überarbeitet.
-F-001 zur Formulierung eines Tagesereignis-Ablaufs ist angefragt. Unabhängige Reviewer fehlen.
+F-001 ist bestätigt und klargestellt. Timo Neumeier ist als Prüfer benannt.
+Eine unabhängige Gegenprüfung seiner eigenen PRs fehlt weiterhin.
 KC-038 hat den Main-Branchschutz eingerichtet. P0 ist nicht insgesamt abgenommen.
 P1 bis P9 besitzen keinen Implementierungsauftrag.
 
@@ -10,8 +11,8 @@ P1 bis P9 besitzen keinen Implementierungsauftrag.
 
 - `issue_id`: [KC-036 / #36](https://github.com/itsh-neumeier/kitaconnect/issues/36).
 - `branch`: `codex/p0-documentation-review`.
-- `head_commit`: Geprüfter Nachweiscommit `733f7a500ee7069428c251f80bc3d5c6f829779d`.
-  Dieser Checkpoint folgt als gesonderter Dokumentationscommit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
+- `head_commit`: Verifizierter Ausgangscommit `fc60092027e87bb74f7931b11d90c3c93112e59e`.
+  Interviewentscheidungen und dieser Checkpoint folgen als eigener Commit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
 - `objective`: Sprachliche Bestandsprüfung ohne eigenmächtige Änderung fachlicher Anforderungen.
 - `pull_request`: [PR #44](https://github.com/itsh-neumeier/kitaconnect/pull/44), Entwurf gegen `codex/p0-review-protection`.
 - `migration_state`: Keine Datenbankrollen, Migrationen, Zertifikate oder Laufzeitdienste angelegt.
@@ -32,6 +33,12 @@ Quelle: ausdrückliche Antworten im Projektchat am 18.10.2026.
    Dies ernennt keinen Rechteinhaber oder unabhängigen Fachprüfer.
 5. npm audit ist lokal und in GitHub Actions ausdrücklich erlaubt.
 6. Technische Weiterarbeit innerhalb der Anforderungen ist delegiert. Keine weitere Entwicklungsphase beginnen.
+7. Interviewantwort „1. Ja“ bestätigt die Klarstellung F-001: Eingabe, serverseitige Prüfung vor Speichern,
+   Speichern, gegebenenfalls Freigabe für Eltern und Zugriffsprotokollierung.
+8. Interviewantwort „2 person steht fest itsh-neumeier“ benennt den PR-Prüfer.
+   Der Benutzer ist zugleich Autor der aktuellen PRs. Er kann diese nicht selbst genehmigen.
+9. Interviewantwort „3. Ich auch als Prüfer“ benennt Timo Neumeier für Sicherheits- und Datenschutzprüfungen.
+   Sie belegt keine erfolgte Fachprüfung oder unabhängige Gegenprüfung eigener Änderungen.
 
 ## Erledigt in KC-038
 
@@ -59,15 +66,19 @@ Quelle: ausdrückliche Antworten im Projektchat am 18.10.2026.
 6. Fachwortverzeichnis ergänzt. API-Pfade, Ereignisnamen und Berechtigungstabellen unverändert erhalten.
 7. [Prüfbericht](../19_Redaktionspruefung_KC-036.md) mit Nachweis je Unterlage und offenen Formulierungen erstellt.
 8. Keine neue Architekturentscheidung getroffen. ADR-010 bleibt die redaktionelle Grundlage.
-9. F-001 angefragt: Eingabe, Berechtigungsprüfung vor Speichern und Speichern im Tagesereignis-Ablauf klar benennen?
-   Noch keine Antwort. Die ursprüngliche Konzeptfolge bleibt erhalten; ADR-019 bleibt verbindlich.
+9. F-001 nach ausdrücklichem „Ja“ klargestellt: serverseitige Berechtigungsprüfung vor Speichern.
+   ADR-019 bleibt verbindlich. Keine Fachfunktion implementiert.
+10. Benannte Prüfzuständigkeit und Konflikt mit der eigenen PR-Autorschaft dokumentiert.
+    Rückfrage nach anderer unabhängiger Person oder vorläufigem Offenlassen gestellt. Antwort steht aus.
 
 ## Grenzen und offene Rollen
 
-- GitHub-Benutzername für unabhängige PR-Reviews ist angefragt. Noch keine Antwort.
-- F-001 ist offen. Vor einer davon abhängigen Änderung Antwort prüfen. Keine stille Änderung der Ablaufreihenfolge.
+- `@itsh-neumeier` ist als Prüfer genannt. Für dessen eigene PRs fehlt weiterhin eine andere unabhängige Person.
+- Klärungsfrage zum Offenlassen oder Benennen einer anderen Person ist gestellt. Keine Antwort als Zustimmung werten.
+- F-001 ist entschieden und in Unterlage 05 umgesetzt. Nicht erneut abfragen.
 - Redaktionelle Eigenprüfung ist dokumentiert. Unabhängige sprachliche PR-Prüfung und Integration fehlen.
-- Sicherheits- und Datenschutzprüfer sind nicht benannt. Fachfreigaben aus KC-037 bleiben gesperrt.
+- Timo Neumeier ist für Sicherheits- und Datenschutzprüfungen benannt. Unabhängige Gegenprüfung eigener Änderungen
+  sowie konkrete Prüfberichte fehlen. Fachfreigaben aus KC-037 bleiben erforderlich.
 - CODEOWNERS liegt bisher nur auf dem Arbeitsbranch von PR #42. Die Datei fehlt auf `main`.
 - Ein Autor kann eigene Änderungen nicht genehmigen. Mit nur einem CODEOWNER bleiben dessen eigene Merges
   nach Integration der Datei ohne weiteren bestätigten CODEOWNER gesperrt. Regeln nicht abschwächen.
@@ -93,16 +104,19 @@ Die Prüfungen des Ausgangscommits `bdb3f9f` sind vollständig erfolgreich:
 [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39123817474).
 Für KC-036-Commit `733f7a5` sind [P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39132777909)
 und [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39132777911) vollständig erfolgreich.
-Der nachfolgende Dokumentationscommit löst eigene Prüfungen aus. Vor Merge muss der aktuelle Kopf grün sein.
+Auch der Ausgangscommit `fc60092` ist vollständig grün:
+[P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39132856831),
+[P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39132856848).
+Der Interviewcommit löst eigene Prüfungen aus. Vor Merge muss der aktuelle Kopf grün sein.
 Alle vorgemerkten Gruppen und die vollständige Historie mit 16 Commits wurden mit Gitleaks ohne Befund geprüft.
 Rust-, Frontend- und Workflow-Code wurden nicht geändert.
 Keine neuen lokalen Testfehler. Keine implementierte Dienst-, Last- oder Wahlsicherheit behauptet.
 
 ## Nächste drei Aktionen
 
-1. Aktuellen CI-Stand von PR #44 prüfen und F-001-Antwort auswerten. Issue #36 bleibt offen.
-2. Nach Benennung unabhängigen Reviewer und Zugriffsrechte prüfen. Sprachliches Review veranlassen.
-   Sicherheits- und Datenschutzrollen gesondert bestätigen lassen. KC-036 und KC-038 bleiben bis zur Erfüllung offen.
+1. Interviewcommit in PR #44 sichern, aktuelle CI prüfen und Issues #36/#38 aktualisieren. F-001 nicht erneut abfragen.
+2. Antwort zur unabhängigen Gegenprüfung abwarten. Nach Benennung Zugriffsrechte prüfen und sprachliches Review veranlassen.
+   KC-036 und KC-038 bleiben bis zur Erfüllung offen. Keine Selbstfreigabe und keine Abschwächung der Schutzregeln.
 3. Integrationsnachweise und P0-Abnahme vorbereiten. Keine neue Entwicklungsphase beginnen.
 
 Integrationsfolge: #39, #40, #41, #42, #43, danach KC-036. Nach Integration der Basis den nächsten PR

@@ -126,4 +126,9 @@ Keine dieser Zurückstellungen ist eine erteilte Fachfreigabe.
 
 Die Dokumentationsprüfung und P0-Arbeit mit synthetischen Daten dürfen weitergehen.
 Die bewusste Zurückstellung verändert weder die Spezifikation noch die unabhängigen Prüfpflichten.
+
+Ergänzung vom 18.10.2026: Die Projektleitung benennt Timo Neumeier, `@itsh-neumeier`,
+für allgemeine Sicherheits- und Datenschutzprüfungen. Diese Zuständigkeit belegt weder eine erfolgte Prüfung
+noch eine unabhängige Gegenprüfung eigener Änderungen. Die unabhängige PR-Prüfung bleibt für seine eigenen PRs offen.
+Rechteinhaber, juristische Lizenzprüfung und unabhängige Wahlprüfung bleiben ausdrücklich gesondert offen.
 Die fachlich und rechtlich zuständigen Personen müssen vor den gesperrten Aktionen benannt sein.

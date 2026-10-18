@@ -40,10 +40,16 @@ Ein einzelner CODEOWNER kann deshalb seine eigenen Änderungen nach Integration 
 Die Projektleitung MUSS eine unabhängige Person benennen und deren erforderlichen Repository-Zugriff bestätigen.
 Diese Person benötigt eine bestätigte CODEOWNER-Zuordnung, wenn sie die einzige erforderliche Eigentümerprüfung leisten soll.
 Bis dahin bleiben betroffene Merges gesperrt. Die Regeln werden dafür nicht abgeschwächt.
-Die Rückfrage zum GitHub-Benutzernamen ist offen. Es wurde niemand eigenmächtig ernannt oder angefragt.
+Die Projektleitung hat im Interview am 18.10.2026 `itsh-neumeier` als PR-Prüfer genannt.
+Die aktuellen PRs #43 und #44 wurden unter demselben Benutzer erstellt.
+Diese Benennung erfüllt für diese PRs keine unabhängige Genehmigung.
+Die Rückfrage nach einer anderen Person oder dem vorläufigen Offenlassen bleibt offen.
+Es wurden keine Zugriffsrechte geändert und keine Selbstgenehmigung versucht.
 
-Die unabhängigen Sicherheits- und Datenschutzprüfer bleiben ebenfalls unbesetzt.
-Die Projektleitung benennt sie vor der jeweiligen Freigabe.
+Die Projektleitung hat Timo Neumeier, `@itsh-neumeier`, ausdrücklich für Sicherheits- und Datenschutzprüfungen benannt.
+Dies dokumentiert die Zuständigkeit. Es ist kein Nachweis einer durchgeführten Fachprüfung oder ihrer Unabhängigkeit.
+Für selbst verantwortete Änderungen bleibt eine andere unabhängige prüfende Person erforderlich.
+Diese zusätzliche Person ist nicht benannt. Eine formale Datenschutzbeauftragtenrolle wird aus der Antwort nicht abgeleitet.
 Ein allgemeines PR-Review ersetzt weder Datenschutzprüfung noch juristische Lizenzprüfung oder Wahlprotokollprüfung.
 Die ausdrücklich zurückgestellten Fachrollen und ihre Sperren aus dem KC-037-Register gelten weiter.
 P0 ist nicht insgesamt abgenommen.
@@ -84,3 +90,4 @@ Kein Prüfer darf die Regeln zur Selbstfreigabe deaktivieren.
 Quellen: [GitHub-Regelsatz-API](https://docs.github.com/en/rest/repos/rules?apiVersion=2022-11-28),
 [geschützte Branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches),
 [CODEOWNERS](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners).
+GitHub beschreibt außerdem das [Verbot der Genehmigung eigener PRs](https://docs.github.com/en/pull-requests/how-tos/review-pull-requests/approving-a-pull-request-with-required-reviews).

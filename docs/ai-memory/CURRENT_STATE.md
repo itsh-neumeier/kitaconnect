@@ -8,8 +8,8 @@ P0 ist nicht insgesamt abgenommen. P1 bis P9 besitzen keinen Implementierungsauf
 
 - `issue_id`: [KC-038 / #38](https://github.com/itsh-neumeier/kitaconnect/issues/38), Nachtrag im KC-036-PR #44.
 - `branch`: `codex/p0-documentation-review`.
-- `head_commit`: Verifizierter Ausgangscommit `bad4415865c0c8a9be2249ff64909e0da0b5c8dc`.
-  Konto-Ausnahme, Tests und dieser Checkpoint folgen als eigener Commit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
+- `head_commit`: Geprüfter Änderungscommit `3077cea308bacc198bddbe773d1803f6d1d48499`.
+  Dieser Checkpoint folgt als gesonderter Dokumentationscommit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
 - `objective`: Konto-Ausnahme ausschließlich von Review-Regeln; sämtliche Pflichtprüfungen ohne Ausnahme erhalten.
 - `pull_request`: [PR #44](https://github.com/itsh-neumeier/kitaconnect/pull/44), Entwurf gegen `codex/p0-review-protection`.
 - `migration_state`: Keine Datenbankrollen, Migrationen, Zertifikate oder Laufzeitdienste angelegt.
@@ -71,13 +71,16 @@ Die ursprüngliche Branchschutzentscheidung ADR-021 wird durch die ausdrücklich
 
 Ausgangscommit `bad4415`: [P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39135846179)
 und [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39135846189) erfolgreich.
-Der neue Commit benötigt eigene CI-Nachweise. Keine Laufzeitdienste oder Workflows geändert.
+Für Änderungscommit `3077cea` sind [P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39138328760)
+und [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39138328793) vollständig erfolgreich.
+Der folgende Dokumentationscommit löst eigene Prüfungen aus. Keine Laufzeitdienste oder Workflows geändert.
+Der vorgemerkte Diff wurde mit Gitleaks ohne Befund geprüft. Issues #36/#38 und PR #44 sind nachgeführt.
 Kein tatsächlicher Merge- oder negativer Push-Versuch zur Schutzprüfung durchgeführt.
 API-Nachweise und Konfigurationstests sind keine bereits erfolgte persönliche Prüfung oder Fachfreigabe.
 
 ## Grenzen und nächste drei Aktionen
 
-1. Konto-Ausnahme in PR #44 sichern, aktuelle CI nachweisen und Issues #36/#38 nachführen.
+1. Aktuellen CI-Stand von PR #44 prüfen. Beide Regelsätze vor einem späteren Merge erneut lesen.
 2. Persönliche sprachliche Prüfung am konkreten Commit dokumentieren lassen.
    Review-Ausnahme nur für eigene PRs nutzen; bei fremden PRs Review verlangen.
    Ein Merge braucht weiterhin einen gesonderten Auftrag. Die Einrichtung allein erteilt keine Merge-Freigabe.

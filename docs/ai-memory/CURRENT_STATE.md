@@ -8,10 +8,10 @@ P0 ist insgesamt nicht abgenommen. P1 bis P9 besitzen keinen Implementierungsauf
 
 - `issue_id`: [KC-037 / #37](https://github.com/itsh-neumeier/kitaconnect/issues/37).
 - `branch`: `codex/p0-decision-register`.
-- `head_commit`: Ausgangscommit `ec907b82323b8beb9c41a22eb777233af378667e`; KC-037 wird als eigener Dokumentationscommit gesichert.
-  Aktuellen Branchkopf mit `git rev-parse HEAD` prüfen.
+- `head_commit`: Verifizierter Entscheidungscommit `a6d807eda65c48a9492f1fa158f4077fccf5602f`.
+  Dieser Checkpoint folgt als gesonderter Dokumentationscommit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
 - `objective`: O-001 bis O-008 mit Entscheidungen oder begründeten späteren Prüfterminen dokumentieren.
-- `pull_request`: Eigener KC-037-PR auf Basis von `codex/p0-test-security-foundations`; Link im GitHub-Issue #37.
+- `pull_request`: [PR #42](https://github.com/itsh-neumeier/kitaconnect/pull/42) auf Basis von `codex/p0-test-security-foundations`.
 - `migration_state`: Keine Datenbankrollen, Migrationen, Zertifikate, Zugangsdaten oder Laufzeitdienste angelegt.
 - `dependencies`: Bisherige PRs #39, #40 und #41 zuerst prüfen und integrieren. Kein Merge durch diese Sitzung.
 
@@ -67,7 +67,11 @@ Compose-/Portainer-Patchstände und konkrete S3-Anbieter sind bewusst noch nicht
 | Ausgangscommit `ec907b8` | [P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39121874227) und [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39121874219) erfolgreich |
 
 Nur Dokumentation und CODEOWNERS geändert. Lokale Frontend-/Rust-Builds werden nicht wiederholt.
-Secret-Scan und CI-Nachweise des neuen Commits werden im PR nachgeführt.
+Gitleaks prüfte den vollständigen vorgemerkten Diff ohne Befund.
+[P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39122501875) und
+[P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39122501690)
+sind für den Entscheidungscommit erfolgreich. Der nachfolgende Dokumentationscommit löst eigene Prüfungen aus.
+Vor Merge MUSS der aktuelle Commit grün sein. Die Folge-Issues #6, #28, #32 und #34 sind nachgeführt.
 Keine bekannten neuen Testfehler. Kein Nachweis implementierter Dienst-, Last- oder Wahlsicherheit behauptet.
 
 ## Noch offene Freigaben

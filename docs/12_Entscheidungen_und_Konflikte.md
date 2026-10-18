@@ -158,6 +158,15 @@ Basisschutz `25341109` ohne Ausnahme; Review-Regelsatz `25346711` mit Ausnahme n
 Tests und Sicherheitsprüfungen bleiben verpflichtend. Die Beschränkung auf eigene PRs ist eine Nutzungsregel.
 GitHub würde die Konto-Ausnahme technisch auch bei fremden PRs zulassen. Diese Grenze wurde ausdrücklich akzeptiert.
 
+## Freigabe und Integration der P0-PRs
+
+Datum: 18.10.2026. Die Projektleitung hat mit „Ja“ die persönliche/sprachliche Durchsicht
+und die angebotene Integration der PRs #39 bis #44 bestätigt.
+Die Integration erfolgte mit aktualisierten Basen und erfolgreichen Pflichtprüfungen.
+Der [Integrationsnachweis](21_P0_Integration_und_Abnahmevorbereitung.md) enthält die Merge- und Main-CI-Stände.
+Die P0-Gesamtabnahme wurde zur Vorbereitung beauftragt, aber noch nicht erklärt.
+Es gibt keinen Auftrag zur Implementierung von P1.
+
 ## Dokumentationssprache (Ergänzung v5.9)
 
 Es gelten die [deutsche Dokumentationsrichtlinie](13_Dokumentationsrichtlinie_DE_ASD_STE100.md)
@@ -172,3 +181,11 @@ Sie ist keine offizielle deutsche Übersetzung und belegt keine formelle ASD-STE
 Die deutsche KitaConnect-Richtlinie ist eine eigene Adaption. Sie ist keine offizielle Übersetzung und keine formelle Konformitätsaussage.
 **Umsetzung:** Dokumentationsrichtlinie und Fachwortverzeichnis sind verbindlich.
 KC-036 dokumentiert die redaktionelle Prüfung des Bestands als eigenes Arbeitspaket.
+
+## P0-Abnahme und P1-Auftrag
+
+Datum: 18.10.2026. Ausdrückliche Antwort im Projektchat: „P0 abnehmen, und P1 freigeben“.
+Die Projektleitung nimmt P0 auf Grundlage der erfolgreichen Prüfungen und dokumentierten Zurückstellungen ab.
+Sie beauftragt P1. Die Arbeit beginnt mit kleinen Arbeitspaketen aus KC-004.
+Die juristische Lizenzprüfung, die unabhängige Wahlprüfung und alle Sperren aus KC-037 bleiben bestehen.
+Der Abschlussnachweis in PR #49 wird nach erfolgreicher CI integriert.

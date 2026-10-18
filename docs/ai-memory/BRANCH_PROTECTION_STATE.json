@@ -1,11 +1,9 @@
 {
-  "verified_at": {
-    "current_time": "2026-10-18 14:55:34 UTC"
-  },
+  "verified_at": "2026-10-18 15:54:53 UTC",
   "repository": "itsh-neumeier/kitaconnect",
   "branch": "main",
   "branch_protected": true,
-  "branch_head": "a6fae87c40f0e030dbd39913f0dc3f575a2b6c38",
+  "branch_head": "68f39f19295b1c723e75b257b73d890dbbe5b9b6",
   "base_ruleset": {
     "id": 25341109,
     "name": "KitaConnect main mandatory checks",
@@ -144,8 +142,9 @@
     }
   },
   "limitations": [
-    "Nur eigene PRs ist eine bestätigte Nutzungsregel; GitHub kann diese Ausnahme technisch auch bei fremden PRs zulassen.",
-    "Keine Ausnahme von Pflichtprüfungen, PR-Zwang, Gesprächsklärung, Lösch- oder Force-Push-Schutz.",
-    "API-Momentaufnahme vor Merge erneut prüfen. Kein Merge erfolgt."
+    "Nur eigene PRs ist eine bestätigte Nutzungsregel; GitHub kann die Konto-Ausnahme technisch auch bei fremden PRs zulassen.",
+    "Keine Ausnahme vom Basisschutz.",
+    "PRs #39 bis #44 sind nach ausdrücklicher Freigabe integriert; weitere PRs sind nicht erfasst.",
+    "API-Momentaufnahme vor weiteren Merges erneut prüfen."
   ]
 }

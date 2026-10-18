@@ -5,6 +5,10 @@ Geprüfter Gesamtstand: `f4d8983ecf46ef61735ab3984435aaf037430a7f`.
 Vergleichsbasis: `a6fae87c40f0e030dbd39913f0dc3f575a2b6c38`.
 Status: technische Vorprüfung dokumentiert; persönliche Durchsicht und Integration stehen aus.
 
+Fortschreibung: Die Projektleitung hat danach Durchsicht und Integration bestätigt.
+Der [Integrationsnachweis](21_P0_Integration_und_Abnahmevorbereitung.md) dokumentiert die durchgeführten Merges und die vorbereitete P0-Abnahme.
+Die folgenden Angaben halten den Prüfstand vor diesem Auftrag fest.
+
 ## Ergebnis und Umfang
 
 Im unten beschriebenen Umfang wurden keine neuen blockierenden technischen Befunde festgestellt.

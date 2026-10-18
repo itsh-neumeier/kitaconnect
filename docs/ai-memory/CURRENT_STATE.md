@@ -9,10 +9,10 @@ P1 bis P9 besitzen keinen Implementierungsauftrag.
 
 - `issue_id`: [KC-038 / #38](https://github.com/itsh-neumeier/kitaconnect/issues/38).
 - `branch`: `codex/p0-review-protection`.
-- `head_commit`: Ausgangscommit `a893f76e1f8513d4dbdcc88f292477cd48bbd8c2` aus PR #42.
-  Der KC-038-Änderungscommit folgt. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
+- `head_commit`: Geprüfter Änderungscommit `cdaf32c86c9ba020332e3ad87e223afdc2b713e3`.
+  Dieser Checkpoint folgt als gesonderter Dokumentationscommit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
 - `objective`: Aktiven Main-Regelsatz nachweisen und unabhängige Review-Zuständigkeit klären.
-- `pull_request`: Wird nach dem ersten Commit als Entwurf gegen `codex/p0-decision-register` angelegt.
+- `pull_request`: [PR #43](https://github.com/itsh-neumeier/kitaconnect/pull/43), Entwurf gegen `codex/p0-decision-register`.
 - `migration_state`: Keine Datenbankrollen, Migrationen, Zertifikate oder Laufzeitdienste angelegt.
 - `dependencies`: PRs #39, #40, #41 und #42 zuerst prüfen und integrieren. Kein Merge durch diese Sitzung.
 
@@ -71,12 +71,16 @@ Quelle: ausdrückliche Antworten im Projektchat am 18.10.2026.
 | actionlint 1.7.12 | Erfolgreich |
 | `git diff --check` | Erfolgreich |
 
-CI für den neuen Commit steht noch aus. Rust- und Frontend-Code wurden nicht geändert.
+Die Push-Prüfungen für `cdaf32c` sind vollständig erfolgreich:
+[P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39123730873) und
+[P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39123730806).
+Der nachfolgende Dokumentationscommit löst eigene Prüfungen aus. Vor Merge muss der aktuelle Kopf grün sein.
+Der vorgemerkte Diff wurde mit Gitleaks ohne Befund geprüft. Rust- und Frontend-Code wurden nicht geändert.
 Keine neuen lokalen Testfehler. Keine implementierte Dienst-, Last- oder Wahlsicherheit behauptet.
 
 ## Nächste drei Aktionen
 
-1. KC-038-Entwurf veröffentlichen und aktuelle CI prüfen. Issue #38 mit dem belegten Teilfortschritt nachführen.
+1. Aktuellen CI- und Review-Stand von PR #43 prüfen. Issue #38 bleibt wegen der offenen Rollen unvollständig.
 2. Nach Antwort den unabhängigen Reviewer und dessen Zugriffsrechte prüfen. Keine Person eigenmächtig ernennen.
    Sicherheits- und Datenschutzrollen gesondert bestätigen lassen. KC-038 bis zur Erfüllung aller Kriterien offen lassen.
 3. Danach [KC-036 / #36](https://github.com/itsh-neumeier/kitaconnect/issues/36) für die sprachliche Bestandsprüfung bearbeiten.

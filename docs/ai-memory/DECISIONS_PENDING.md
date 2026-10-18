@@ -10,6 +10,7 @@ Eine ausbleibende Antwort ist keine Zustimmung.
 |---|---|
 | Referenzprofil für die Lastprüfung | Eine Einrichtung. 50 Sitzungen, 10 Anfragen pro Sekunde, 80/20 Lesen/Schreiben, p95 500/1.000 ms, unter 1 % Fehler, 4 vCPU, 8 GB RAM, 100 GB SSD, 5 Minuten Aufwärmen und 30 Minuten Messung ausdrücklich bestätigt. |
 | CODEOWNER für das Repository | Antwort `@itsh-neumeier Timo Neumeier`; vorläufige Zuordnung in CODEOWNERS eingetragen. Kein Nachweis unabhängiger Prüfung. |
+| Unabhängiger PR-Reviewer | GitHub-Benutzername angefragt. Keine Antwort liegt vor. Autor darf eigene Änderungen nicht freigeben. Fachprüfer bleiben gesondert offen. |
 | Rechteinhaber, juristische Lizenzprüfung und unabhängige Wahlprüfung | Antwort `offen lassen`. Projektleitung bleibt für Besetzung vor den gesperrten Aktionen zuständig. Keine automatische Zuordnung zum CODEOWNER. |
 | npm audit und externe Paketmetadaten | Die Projektleitung hat die Übermittlung von Paketnamen und Versionen an registry.npmjs.org ausdrücklich erlaubt. Gilt lokal und in GitHub Actions. |
 
@@ -37,7 +38,8 @@ Diese Antwort bestätigt die vier zuvor einzeln erläuterten Varianten.
 Die Varianten sind damit entschieden. Die Implementierungsnachweise folgen in den zugeordneten Issues.
 O-003 bis O-008 sind inzwischen im [KC-037-Register](../17_P0_Entscheidungsregister.md) konkretisiert.
 Technische Festlegungen und bestätigte Ziele sind von den offenen Fachfreigaben getrennt.
-KC-038 verfolgt weiter unabhängige Review-Verantwortung und Branchschutz.
+KC-038 hat den [Main-Regelsatz](../18_Branchschutz_und_Reviews.md) eingerichtet und per API nachgewiesen.
+Unabhängige Review-Verantwortung bleibt offen. Der Regelsatz wird dafür nicht abgeschwächt.
 P0 implementiert keine Dienste, Datenbankrollen oder Migrationen.
 
 ## Bestätigte Zurückstellungen und technische Fortsetzung

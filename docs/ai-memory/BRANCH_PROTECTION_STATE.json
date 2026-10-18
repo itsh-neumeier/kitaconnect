@@ -1,0 +1,98 @@
+{
+  "verified_at": "2026-10-18T13:30:43.181+02:00",
+  "repository": "itsh-neumeier/kitaconnect",
+  "branch": "main",
+  "branch_protected": true,
+  "branch_head": "a6fae87c40f0e030dbd39913f0dc3f575a2b6c38",
+  "ruleset_api": "https://api.github.com/repos/itsh-neumeier/kitaconnect/rulesets/25341109",
+  "branch_api": "https://api.github.com/repos/itsh-neumeier/kitaconnect/branches/main",
+  "ruleset": {
+    "id": 25341109,
+    "name": "KitaConnect main review and checks",
+    "target": "branch",
+    "source_type": "Repository",
+    "source": "itsh-neumeier/kitaconnect",
+    "enforcement": "active",
+    "conditions": {
+      "ref_name": {
+        "exclude": [],
+        "include": [
+          "refs/heads/main"
+        ]
+      }
+    },
+    "rules": [
+      {
+        "type": "deletion"
+      },
+      {
+        "type": "non_fast_forward"
+      },
+      {
+        "type": "pull_request",
+        "parameters": {
+          "required_approving_review_count": 1,
+          "dismiss_stale_reviews_on_push": true,
+          "required_reviewers": [],
+          "require_code_owner_review": true,
+          "require_last_push_approval": true,
+          "required_review_thread_resolution": true,
+          "require_extra_approval_for_unattributed_changes": true,
+          "allowed_merge_methods": [
+            "merge",
+            "squash",
+            "rebase"
+          ]
+        }
+      },
+      {
+        "type": "required_status_checks",
+        "parameters": {
+          "strict_required_status_checks_policy": true,
+          "do_not_enforce_on_create": false,
+          "required_status_checks": [
+            {
+              "context": "structure",
+              "integration_id": 15368
+            },
+            {
+              "context": "rust",
+              "integration_id": 15368
+            },
+            {
+              "context": "web",
+              "integration_id": 15368
+            },
+            {
+              "context": "secrets",
+              "integration_id": 15368
+            },
+            {
+              "context": "dependencies",
+              "integration_id": 15368
+            }
+          ]
+        }
+      }
+    ],
+    "node_id": "RRS_lACqUmVwb3NpdG9yec5U4q0ezgGCrLU",
+    "created_at": "2026-10-18T13:30:43.102+02:00",
+    "updated_at": "2026-10-18T13:30:43.181+02:00",
+    "bypass_actors": [],
+    "current_user_can_bypass": "never",
+    "_links": {
+      "self": {
+        "href": "https://api.github.com/repos/itsh-neumeier/kitaconnect/rulesets/25341109"
+      },
+      "html": {
+        "href": "https://github.com/itsh-neumeier/kitaconnect/rules/25341109"
+      }
+    }
+  },
+  "limits": [
+    "Momentaufnahme; vor Merge erneut lesen.",
+    "CODEOWNERS liegt bisher nur auf dem Arbeitsbranch.",
+    "Unabhängiger Reviewer nicht benannt.",
+    "Andere Zielbranches sind nicht durch diesen Regelsatz geschützt."
+  ]
+}

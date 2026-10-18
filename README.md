@@ -10,6 +10,7 @@ Die unabhängige sprachliche PR-Prüfung steht noch aus.
 
 Der [P0-Plan](docs/15_P0_Initialisierung.md) beschreibt Struktur und Entscheidungen.
 Der [Projektstatus](docs/ai-memory/CURRENT_STATE.md) nennt Nachweise und nächste Schritte.
+Der [technische P0-Prüfbericht](docs/20_P0_Pruefung_und_Abnahme.md) führt die Nachweise aller sechs vorbereiteten PRs zusammen.
 GitHub ist die verbindliche Quelle für Issues. Der [Backlog](docs/07_GitHub_Issue_Backlog.md)
 erläutert den Importstand und die stabilen KC-Kennungen.
 

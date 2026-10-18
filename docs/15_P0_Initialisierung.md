@@ -132,7 +132,7 @@ Quelltext-Sicherheitsanalyse, Containerprüfung, Lizenzprüfung, Software-Stück
 Signaturen, Mandantenisolation und Wiederherstellung folgen den Phasen aus `08`.
 P0 veröffentlicht keine Tags oder Images.
 
-Main MUSS ein unabhängiges Review und die Pflichtprüfungen
+Main MUSS die Review-Regeln gemäß ADR-022 und die Pflichtprüfungen
 `structure`, `rust`, `web`, `secrets`, `dependencies` verlangen.
 CODEOWNERS allein erzwingt diese Regeln nicht.
 KC-038 hat am 18.10.2026 den aktiven Regelsatz `25341109` eingerichtet.
@@ -142,10 +142,13 @@ Nur `@itsh-neumeier` erhält dort eine Konto-Ausnahme über PRs. Nutzung nur fü
 Die Konto-Ausnahme kann technisch auch bei fremden PRs verwendet werden; diese Grenze ist ausdrücklich akzeptiert.
 Der [Nachweis und die Review-Anleitung](18_Branchschutz_und_Reviews.md) dokumentieren Grenzen und Integrationsfolge.
 Die CODEOWNERS-Datei benennt nach ausdrücklicher Bestätigung vorläufig `@itsh-neumeier`.
-Diese Datei fehlt bis zur Integration von PR #42 auf `main`. Unabhängige Reviewer bleiben unbesetzt.
+Diese Datei fehlt bis zur Integration von PR #42 auf `main`.
 Die manuelle sprachliche Prüfung bleibt vor dem Merge erforderlich.
 
 ## P0-Abnahme
+
+Der [technische Prüfbericht](20_P0_Pruefung_und_Abnahme.md) ordnet die vorhandenen Nachweise zu.
+Die folgende Liste ist die formale Abnahme. Sie wird durch erfolgreiche Vorprüfungen nicht automatisch bestätigt.
 
 - [ ] Builds und P0-Prüfschritte sind für den aktuellen Commit grün.
 - [ ] KC-002 bestätigt Dienstgrenzen, Datenhoheit und Architekturentscheidungen.

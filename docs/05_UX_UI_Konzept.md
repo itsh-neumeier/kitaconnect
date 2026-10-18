@@ -5,22 +5,59 @@
 > Status: Anforderungsspezifikation, keine implementierte oder rechtsverbindlich geprüfte Software. Die neuesten ausdrücklichen Interviewentscheidungen gelten.
 
 ## Nutzererlebnis
-Familienfreundliches, sachliches Design, mobil zuerst, SvelteKit/Svelte 5/TypeScript/Tailwind, wiederverwendbare UI-Komponenten, PWA für Android/iOS, Deutsch und Englisch, WCAG 2.2 AA. Rollenbezogene Startseiten und personalisierbare Widgets; klare Trennung von Eltern-, Mitarbeitenden-, Beirats-, Leitungs- und Trägerbereich. Konfigurierbare Navigation und Branding ohne unzugängliche Farbkombinationen.
+
+Das Design ist familienfreundlich und sachlich. Die Gestaltung beginnt mit mobilen Geräten.
+Die Benutzeroberfläche (UI) verwendet SvelteKit, Svelte 5, TypeScript und Tailwind sowie wiederverwendbare Komponenten.
+Die Progressive Web App (PWA) unterstützt Android und iOS sowie Deutsch und Englisch.
+Für Barrierefreiheit gelten die Web Content Accessibility Guidelines (WCAG) 2.2 auf Stufe AA.
+Startseiten richten sich nach der Rolle. Benutzer können ihre Anzeigeelemente anpassen.
+Eltern-, Mitarbeitenden-, Beirats-, Leitungs- und Trägerbereich bleiben klar getrennt.
+Navigation und Gestaltung sind konfigurierbar. Unzugängliche Farbkombinationen sind ausgeschlossen.
 
 ## Informationsarchitektur
-Eltern: Start, Nachrichten, Kalender, Kinder, Formulare, Portfolio, Speiseplan, Termine, Elternbeirat. Mitarbeitende: Tagesübersicht, Gruppe, Anwesenheit, Übergabe, Portfolio, Personal. Leitung: Aufnahme, Gruppen, Dienstplanung, Freigaben, Datenschutz, Berichte. Elternbeirat: Events, Helfende, Basar, Kasse, Sitzungen, Wahl, Wissen. Träger: Einrichtungen, Personal, Vorgaben, Berichte, Audit. Admin: Module, Rollen, Domains, Integrationen, Backups, Monitoring.
+
+| Bereich | Navigation |
+|---|---|
+| Eltern | Start, Nachrichten, Kalender, Kinder, Formulare, Portfolio, Speiseplan, Termine, Elternbeirat |
+| Mitarbeitende | Tagesübersicht, Gruppe, Anwesenheit, Übergabe, Portfolio, Personal |
+| Leitung | Aufnahme, Gruppen, Dienstplanung, Freigaben, Datenschutz, Berichte |
+| Elternbeirat | Veranstaltungen, Helfende, Basar, Kasse, Sitzungen, Wahl, Wissen |
+| Träger | Einrichtungen, Personal, Vorgaben, Berichte, Prüfung von Zugriffsprotokollen |
+| Administration | Module, Rollen, Domains, Integrationen, Datensicherungen, Betriebsüberwachung |
 
 ## Interaktionsmuster
-Wizards für Einrichtung, Aufnahme, Eingewöhnung, Gruppenwechsel, Austritt, Mandantenmigration und Restore. Autosave mit Konflikterkennung in Rich-Text/Portfolio; mobile touchoptimierte Foto-Maskierung mit verpflichtender Vorschau. Sichtbarer aktiver Organisationskontext, deutliche Warnung beim Rollenwechsel, sichere Vorschau vor Veröffentlichung. Formulare mit verständlichen Fehlermeldungen, Tastaturbedienbarkeit, Screenreader-Labels, Kontrast- und Zoomtests. Offline nur bei ausdrücklich freigegebenen, konfliktbeherrschbaren Abläufen; keine stille Offline-Freigabe sensibler Vorgänge.
 
-## Kernjourneys
-1. Eltern registrieren -> verifizieren -> Einrichtung zuordnen -> Einwilligungen -> Elternstartseite.
-2. Leitung Kind aufnehmen -> Sorgeberechtigte prüfen -> Vertrag -> Gruppe -> Einladung -> Eingewöhnung.
-3. Fachkraft Tagesereignis dokumentieren -> Berechtigung prüfen -> optional Elternfreigabe -> Audit.
-4. Portfolioseite bearbeiten -> Gesichter maskieren -> Einwilligungen prüfen -> Freigabe -> Veröffentlichung.
-5. Elternbeirat Basar organisieren -> Plätze vergeben -> Zahlungen manuell bestätigen -> QR ausgeben.
-6. Träger Springer zuweisen -> begrenzten Einrichtungszugriff gewähren -> automatisch entziehen.
+Geführte Assistenten unterstützen Einrichtung, Aufnahme, Eingewöhnung, Gruppenwechsel und Austritt.
+Sie unterstützen außerdem Mandantenmigration und Wiederherstellung.
+Formatierte Texte und Portfolios werden automatisch gespeichert. Konflikte werden erkannt.
+Die Foto-Maskierung ist für Berührungseingabe auf mobilen Geräten ausgelegt und verlangt eine Vorschau.
+Der aktive Organisationskontext bleibt sichtbar. Ein Rollenwechsel zeigt eine deutliche Warnung.
+Vor Veröffentlichung wird eine sichere Vorschau angezeigt.
+Formulare bieten verständliche Fehlermeldungen, Tastaturbedienung und Beschriftungen für Vorleseprogramme.
+Kontrast und Vergrößerung werden getestet.
+Offline-Nutzung ist nur für ausdrücklich freigegebene Abläufe mit beherrschbaren Konflikten zulässig.
+Sensible Vorgänge erhalten keine unbemerkte Offline-Freigabe.
+
+## Zentrale Benutzerabläufe
+
+Die folgenden Abläufe geben die vorhandene fachliche Reihenfolge wieder.
+Die Projektleitung hat die Klarstellung zur Berechtigungsprüfung in Ablauf 3 am 18.10.2026 bestätigt.
+[F-001](19_Redaktionspruefung_KC-036.md) ist damit entschieden. Die serverseitige Prüfpflicht aus ADR-019 bleibt verbindlich.
+
+1. Eltern registrieren sich und werden verifiziert. Danach folgen Einrichtungszuordnung, Einwilligungen und Elternstartseite.
+2. Die Leitung nimmt ein Kind auf und prüft die sorgeberechtigten Personen.
+   Danach folgen Vertrag, Gruppe, Einladung und Eingewöhnung.
+3. Eine Fachkraft erfasst die Eingabe für ein Tagesereignis.
+   Vor dem Speichern prüft der Server die Berechtigung. Nur bei zulässigem Zugriff wird gespeichert.
+   Danach folgen gegebenenfalls die Freigabe für Eltern und die Zugriffsprotokollierung.
+4. Eine Portfolioseite wird bearbeitet. Danach folgen Gesichtsmaskierung, Einwilligungsprüfung, Freigabe und Veröffentlichung.
+5. Der Elternbeirat organisiert einen Basar und vergibt Plätze. Zahlungen werden manuell bestätigt. Danach werden QR-Codes ausgegeben.
+6. Der Träger weist eine Springerkraft zu. Sie erhält begrenzten Einrichtungszugriff. Dieser Zugriff wird automatisch entzogen.
 
 
 ## Dokumentationssprache (Ergänzung v5.9)
-Für dieses Dokument gilt die deutsche Projektrichtlinie `13_Dokumentationsrichtlinie_DE_ASD_STE100.md` mit dem verbindlichen Fachwortverzeichnis `14_Fachwortverzeichnis_DE.md`. Die Richtlinie orientiert sich an ASD-STE100, stellt aber **keine offizielle deutsche ASD-STE100-Konformität** dar.
+
+Es gelten die [deutsche Dokumentationsrichtlinie](13_Dokumentationsrichtlinie_DE_ASD_STE100.md)
+und das [Fachwortverzeichnis](14_Fachwortverzeichnis_DE.md).
+Die Richtlinie adaptiert Sprachprinzipien von ASD-STE100.
+Sie ist keine offizielle deutsche Übersetzung und belegt keine formelle ASD-STE100-Konformität.

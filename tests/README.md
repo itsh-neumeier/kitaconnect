@@ -62,8 +62,10 @@ Quelle: [RustSec-Dokumentation zu cargo-audit](https://github.com/rustsec/rustse
 
 ## Grenzen
 
-`node scripts/check-github-rules.mjs` prüft den lokalen Main-Regelsatz.
-Die negativen Tests weisen Abschwächungen von Reviews, Pflichtprüfungen und Branchgrenzen ab.
+`node scripts/check-github-rules.mjs` prüft Basis- und Review-Regelsatz gemeinsam.
+Der Basisregelsatz erlaubt keine Ausnahme von Pflichtprüfungen, PR-Zwang und Gesprächsklärung.
+Nur der getrennte Review-Regelsatz enthält die ausdrücklich bestätigte Konto-Ausnahme für `@itsh-neumeier`.
+Die 26 negativen Branchschutzfälle weisen unerlaubte Konten, Rollen, Ausnahmemodi und Abschwächungen ab.
 Diese Tests beweisen keine aktive GitHub-Einstellung.
 Der getrennte [API-Nachweis](../docs/18_Branchschutz_und_Reviews.md) bleibt erforderlich.
 

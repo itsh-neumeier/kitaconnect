@@ -18,5 +18,12 @@ Spätere Issues sind Planung. Sie erteilen keinen Implementierungsauftrag.
 Vor Fachimplementierung MÜSSEN breite Module weiter zerlegt werden.
 Ihre Sicherheitsgrenzen benötigen konkrete positive und negative Tests.
 
-Nächstes Arbeitspaket: [KC-002](https://github.com/itsh-neumeier/kitaconnect/issues/2).
-Es bestätigt Dienstgrenzen und Datenhoheit. P1 bleibt bis zur P0-Abnahme gesperrt.
+Das aktuelle Arbeitspaket und seine Fortsetzung stehen im [Projektstatus](ai-memory/CURRENT_STATE.md).
+KC-002 hat Dienstgrenzen und Datenhoheit im noch offenen PR #40 dokumentiert.
+Die Review- und Integrationsnachweise bleiben erforderlich. P1 bleibt bis zur P0-Abnahme gesperrt.
+
+## Dokumentationssprache
+
+Es gelten die [deutsche Dokumentationsrichtlinie](13_Dokumentationsrichtlinie_DE_ASD_STE100.md)
+und das [Fachwortverzeichnis](14_Fachwortverzeichnis_DE.md).
+Dies ist eine deutsche Adaption der Sprachprinzipien und keine formelle ASD-STE100-Konformität.

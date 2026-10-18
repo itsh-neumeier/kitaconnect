@@ -5,9 +5,18 @@
 > Status: Anforderungsspezifikation, keine implementierte oder rechtsverbindlich geprüfte Software. Die neuesten ausdrücklichen Interviewentscheidungen gelten.
 
 ## Leitlinien
-REST/OpenAPI 3.1, JSON, UTF-8, semantische API-Versionierung, einheitliche Problem-Details (RFC 9457), Cursor-Pagination, Filter/Sortierung mit Allowlist, Rate-Limits und idempotente Schreibaktionen. `organization_context` wird serverseitig aus autorisierter Sitzung ermittelt; ein vom Client gesetzter Tenant-Header ist niemals alleinige Autorität.
+
+Die Programmierschnittstelle (API) verwendet REST, OpenAPI 3.1, JSON und UTF-8.
+API-Versionen folgen einer semantischen Versionierung.
+Fehler werden einheitlich als Problem-Details nach RFC 9457 ausgegeben.
+Ergebnislisten werden mit einem Fortsetzungszeiger seitenweise abgerufen.
+Filter und Sortierung verwenden eine ausdrückliche Liste zulässiger Werte.
+Anfragen sind mengenbegrenzt. Schreibaktionen sind idempotent und erzeugen bei Wiederholung keine doppelte fachliche Wirkung.
+`organization_context` wird serverseitig aus der berechtigten Sitzung ermittelt.
+Ein vom Client gesetzter Mandantenheader ist niemals alleinige Berechtigungsgrundlage.
 
 ## Beispielressourcen (konzeptionell, noch nicht implementiert)
+
 | Methode | Pfad | Zweck | Sicherheitsregel |
 |---|---|---|---|
 | GET | /v1/me/memberships | zulässige Rollen/Einrichtungen | eigene Mitgliedschaften |
@@ -22,11 +31,34 @@ REST/OpenAPI 3.1, JSON, UTF-8, semantische API-Versionierung, einheitliche Probl
 | GET | /v1/audit/events | Audit | strenger Audit-Scope |
 
 ## Integrationen
-SMTP mit SPF/DKIM/DMARC-Hinweisen; Web Push (VAPID), signierte Webhooks (HMAC + Timestamp + Replay-Schutz), ICS-Abonnement mit widerrufbarem Token, S3/MinIO oder lokaler Speicher, OIDC/SAML, externe Caterer via dedizierte Scopes, n8n über signierte Webhooks. Dienstkonten mit minimalen Scopes und Schlüsselrotation. CSV/Excel/PDF als versionierte Exporte mit Berechtigungsprüfung und Audit.
 
-## Events
-`ChildAdmitted.v1`, `GuardianLinked.v1`, `AttendanceRecorded.v1`, `ConsentWithdrawn.v1`, `ShiftPublished.v1`, `PortfolioPublished.v1`, `FacilityTransferred.v1`; jedes Event mit Event-ID, Version, Zeitstempel, pseudonymisiertem Scope, Correlation-ID ohne Gesundheits-/Wahlgeheimnisdaten. Outbox und idempotente Consumer, Dead-Letter und Retry. Contract-Tests und Rückwärtskompatibilitätsfenster für Dienste.
+Der Mailversand verwendet SMTP. Betriebshinweise erläutern die Absenderprüfverfahren SPF, DKIM und DMARC.
+Web Push verwendet VAPID zur Identifikation des Anwendungsservers.
+Webhooks werden mit einem schlüsselgebundenen Nachrichtencode (HMAC) signiert.
+Sie verwenden Zeitstempel und Schutz gegen das erneute Einspielen derselben Nachricht.
+Kalenderabonnements im ICS-Format verwenden widerrufbare Tokens.
+Dateien liegen in S3, MinIO oder lokalem Speicher.
+Die Anmeldung kann OpenID Connect (OIDC) und Security Assertion Markup Language (SAML) verwenden.
+Externe Caterer erhalten gesonderte Berechtigungsumfänge. n8n wird über signierte Webhooks angebunden.
+Dienstkonten erhalten nur die erforderlichen Rechte. Ihre Schlüssel werden regelmäßig gewechselt.
+Exporte als CSV, Excel oder PDF sind versioniert und benötigen Berechtigungsprüfung sowie Zugriffsprotokollierung.
+
+## Ereignisse
+
+Vorgesehene Ereignisse sind `ChildAdmitted.v1`, `GuardianLinked.v1`, `AttendanceRecorded.v1`,
+`ConsentWithdrawn.v1`, `ShiftPublished.v1`, `PortfolioPublished.v1` und `FacilityTransferred.v1`.
+Jedes Ereignis trägt eine Ereigniskennung, Version und Zeitstempel.
+Es trägt außerdem einen pseudonymisierten Berechtigungsumfang und eine technische Korrelationskennung.
+Diese Kennung darf keine Gesundheitsdaten oder Daten zum Wahlgeheimnis enthalten.
+Die weitergehenden Grenzen für Wahlkorrelation folgen ADR-017.
+Eine Outbox hält ausstehende Ereignisse dauerhaft vor.
+Die Verarbeitung ist idempotent. Fehlerablage und Wiederholungen sind vorgesehen.
+Dienstvertragstests und definierte Zeiträume für Rückwärtskompatibilität sichern die Zusammenarbeit der Dienste.
 
 
 ## Dokumentationssprache (Ergänzung v5.9)
-Für dieses Dokument gilt die deutsche Projektrichtlinie `13_Dokumentationsrichtlinie_DE_ASD_STE100.md` mit dem verbindlichen Fachwortverzeichnis `14_Fachwortverzeichnis_DE.md`. Die Richtlinie orientiert sich an ASD-STE100, stellt aber **keine offizielle deutsche ASD-STE100-Konformität** dar.
+
+Es gelten die [deutsche Dokumentationsrichtlinie](13_Dokumentationsrichtlinie_DE_ASD_STE100.md)
+und das [Fachwortverzeichnis](14_Fachwortverzeichnis_DE.md).
+Die Richtlinie adaptiert Sprachprinzipien von ASD-STE100.
+Sie ist keine offizielle deutsche Übersetzung und belegt keine formelle ASD-STE100-Konformität.

@@ -5,7 +5,17 @@
 > Status: Anforderungsspezifikation, keine implementierte oder rechtsverbindlich geprüfte Software. Die neuesten ausdrücklichen Interviewentscheidungen gelten.
 
 ## Verbindliche Architekturentscheidungen
-Rust (Axum, Tokio, SQLx), PostgreSQL, Redis, SvelteKit/Svelte 5, TypeScript, Tailwind, Docker Compose/Portainer, Kubernetes/Helm, GHCR. **Microservices frühzeitig**, gemeinsam im Monorepo. Separierte PostgreSQL-Schemas je Mandant, RLS zusätzlich, explizite Schema-/Rollen-/Rechtezuordnung. Zentrale Identität/Organisation ist eine besonders restriktive Plattformdomäne. Kein pauschaler Träger- oder Systemadmin-Bypass.
+
+Die technische Grundlage umfasst Rust mit Axum, Tokio und SQLx sowie PostgreSQL und Redis.
+Das Frontend verwendet SvelteKit, Svelte 5, TypeScript und Tailwind.
+Für den Betrieb sind Docker Compose mit Portainer sowie Kubernetes mit Helm vorgesehen.
+Images liegen in der GitHub Container Registry (GHCR).
+**Microservices entstehen frühzeitig und liegen gemeinsam im Monorepo.**
+
+Jeder Mandant erhält ein getrenntes PostgreSQL-Schema.
+Row-Level Security (RLS) ergänzt diese Trennung. Schemas, Rollen und Rechte werden ausdrücklich zugeordnet.
+Zentrale Identitäts- und Organisationsdaten bilden einen besonders restriktiven Plattformbereich.
+Träger- und Systemadministratoren erhalten keinen pauschalen Zugriff unter Umgehung der Regeln.
 
 ## Systemskizze
 
@@ -38,30 +48,98 @@ Observability -> OpenTelemetry/structured logs -> Prometheus/Grafana
 ```
 
 ## Trennung der Daten
-Ein Mandant ist eine Einrichtung; Träger sind Organisationsaggregate mit ausdrücklich freigegebenen Querzugriffen. Schema-Namen nie direkt aus Benutzerangaben interpolieren; nur serverseitig registrierte, gequotete Identifikatoren. Datenbank-`search_path` strikt transaktionsgebunden/qualifiziert, Connection-Pooling mit Isolationstests. Dienstrollen ohne BYPASSRLS; FORCE RLS soweit sinnvoll; Sicherheitsdefinierte Funktionen und Migrationen prüfen. RLS auf jeder sensiblen Mandantentabelle, auch wenn Schema-Trennung vorhanden. Plattformtabellen für Identität/Träger separat; Zuordnung von User/Role/Scope/Policy; keine personenbezogenen Kinderakten im globalen Index. Auditprotokolle mandantengebunden, append-only und getrennt aufbewahrt.
 
-## Service- und Eventdesign
+Ein Mandant ist eine Einrichtung. Träger bündeln Organisationen und erhalten nur ausdrücklich freigegebene Querzugriffe.
+Schemanamen dürfen nicht direkt aus Benutzerangaben in Abfragen übernommen werden.
+Zulässig sind nur serverseitig registrierte Bezeichner mit korrekter SQL-Quotierung.
+Der Datenbank-`search_path` ist strikt an die Transaktion gebunden; Objektbezüge werden qualifiziert verwendet.
+Die gemeinsame Nutzung von Datenbankverbindungen benötigt Isolationstests.
+
+Dienstrollen besitzen kein `BYPASSRLS`-Recht. `FORCE RLS` wird verwendet, soweit sinnvoll.
+Funktionen mit den Rechten ihres Eigentümers und Migrationen benötigen eine Prüfung.
+Jede sensible Mandantentabelle verwendet RLS, auch bei vorhandener Schematrennung.
+Plattformtabellen für Identität und Träger bleiben getrennt.
+Benutzer, Rolle, Berechtigungsumfang und Berechtigungsregel werden zugeordnet.
+Der globale Index enthält keine personenbezogenen Kinderakten.
+Zugriffsprotokolle sind mandantengebunden. Sie werden nur ergänzt und getrennt aufbewahrt.
+
+## Dienste und Ereignisse
 
 KC-037 konkretisiert die Dienstidentitäten in [ADR-019](architecture/ADR-019_Dienstidentitaeten.md)
 und die Zustellung von Hintergrundaufträgen in [ADR-020](architecture/ADR-020_Hintergrundauftraege.md).
 Diese technischen Festlegungen ändern keine Benutzerrechte und erteilen keinen Implementierungsauftrag.
-OpenAPI pro Dienst, versionierte Ereignisse (z. B. ChildAdmitted.v1, AttendanceRecorded.v1, ConsentWithdrawn.v1), Transactional Outbox, idempotente Konsumenten, Dead-Letter, Retry-Backoff. Keine synchronen Cross-Service-Transaktionen; Saga/kompensierende Aktionen für Aufnahme, Wechsel und Austritt. Interservice-Authentisierung mit kurzlebigen Service-Identitäten, mTLS wo sinnvoll; Default-Deny und überprüfbare Scopes. Vermeide Microservice-Schnitt pro Bildschirm: fachlich kohärente Bounded Contexts, gemeinsam versionierte API-Verträge.
+Jeder Dienst beschreibt seine Schnittstelle mit OpenAPI.
+Ereignisse sind versioniert, zum Beispiel `ChildAdmitted.v1`, `AttendanceRecorded.v1` und `ConsentWithdrawn.v1`.
+Eine transaktionale Outbox speichert ausstehende Ereignisse dauerhaft zusammen mit der Fachänderung.
+Die Verarbeitung ist idempotent: Wiederholungen erzeugen keine doppelte fachliche Wirkung.
+Fehlerfälle verbleiben in einer Fehlerablage. Wiederholungen verwenden steigende Wartezeiten.
+
+Es gibt keine synchronen Transaktionen über mehrere Dienste.
+Aufnahme, Wechsel und Austritt verwenden koordinierte Teilschritte mit ausgleichenden Aktionen.
+Die Authentisierung zwischen Diensten verwendet kurzlebige Dienstidentitäten.
+Die ursprüngliche Vorgabe für mTLS gilt dort, wo sinnvoll; ADR-019 konkretisiert die verbindliche Dienstkommunikation.
+mTLS bezeichnet TLS mit beidseitiger Zertifikatsprüfung. TLS schützt die Transportverbindung.
+Zugriffe werden standardmäßig verweigert. Der zulässige Berechtigungsumfang ist überprüfbar.
+Dienstgrenzen folgen fachlich zusammengehörigen Bereichen statt einzelnen Bildschirmen.
+Die Dienstverträge werden gemeinsam versioniert.
 
 ## Daten und Dateien
-PostgreSQL je Mandant in eigenem Schema; Migrationen pro Schema mit Schema-Version, Sperr-/Rollback-Plan und automatischem Drift-Check. Redis für Cache/Queue, keine alleinige persistente Wahrheit. Medien: S3-kompatibel oder lokaler Storage; Mandantenpräfix/Bucket und separate Schlüssel/Policies; signierte URLs mit kurzer Laufzeit; EXIF-Strip und Face-Masking-Worker. Dateispeicher muss konsistent mit Datenbank gesichert werden. Suche und Reporting nur über autorisierte Projektionen; kein mandantenübergreifendes Suchindex-Leak.
+
+PostgreSQL verwendet ein eigenes Schema je Mandant.
+Migrationen benötigen je Schema eine Version, einen Sperrplan und einen Plan zum Rücksetzen.
+Eine automatische Prüfung erkennt Abweichungen vom erwarteten Schema.
+Redis dient als Zwischenspeicher und Auftragswarteschlange. Redis ist nicht die einzige dauerhafte Datenquelle.
+
+Medien liegen in einem S3-kompatiblen oder lokalen Speicher.
+Mandanten erhalten getrennte Präfixe oder Speicherbereiche sowie getrennte Schlüssel und Zugriffsregeln.
+Signierte URLs gelten nur kurz. Ein Hintergrunddienst entfernt EXIF-Metadaten und maskiert Gesichter.
+Dateispeicher und Datenbank werden konsistent gesichert.
+Suche und Berichte verwenden nur berechtigte Datensichten.
+Der Suchindex darf keine Daten zwischen Mandanten offenlegen.
 
 ## Identität und Rechte
-Argon2id, WebAuthn/Passkeys, TOTP, Recovery, OIDC und SAML; Sitzung mit Secure/HttpOnly/SameSite Cookies und CSRF-Schutz; Step-up für sensible Aktionen. RBAC + objekt-/feldbezogene Policy-Auswertung, deny by default; Rollenwechsel erzeugt neuen geprüften Organisationskontext. Audits für sämtliche Lese-/Schreibzugriffe mit minimierten Metadaten und eigener Retention. Break-glass zeitbegrenzt, begründet, Zweitfreigabe soweit möglich und nachprüfbar.
+
+Die Identitätsverwaltung verwendet Argon2id, WebAuthn beziehungsweise Passkeys und zeitbasierte Einmalpasswörter (TOTP).
+Sie unterstützt Kontowiederherstellung, OpenID Connect (OIDC) und Security Assertion Markup Language (SAML).
+Sitzungscookies verwenden `Secure`, `HttpOnly` und `SameSite`.
+Schutz gegen gefälschte browserbasierte Anfragen (CSRF) ist erforderlich.
+Sensible Aktionen benötigen eine zusätzliche Authentisierungsprüfung.
+
+Rollenbasierte Berechtigungen (RBAC) werden durch Objekt- und Feldregeln ergänzt.
+Zugriffe werden standardmäßig verweigert. Ein Rollenwechsel erzeugt einen neuen, geprüften Organisationskontext.
+Alle Lese- und Schreibzugriffe werden mit minimierten Metadaten protokolliert.
+Zugriffsprotokolle haben eigene Aufbewahrungsregeln.
+Notfallzugriff ist zeitbegrenzt, begründet und nachprüfbar. Er benötigt eine Zweitfreigabe, soweit möglich.
 
 ## Skalierung und Ausfallsicherheit
 
 Das bestätigte [Referenzprofil und Messverfahren](17_P0_Entscheidungsregister.md) bildet eine Einrichtung ab.
 Die dokumentierten Zielwerte sind noch keine Messergebnisse oder allgemeinen Mindestressourcen.
-Stateless API-Replikate, separate Worker-Pools, verteilte Jobs, Readiness/Liveness, idempotente Operationen. HA Postgres optional; PITR via WAL, verschlüsselte Backups. RPO/RTO jeweils Ziel 24 h (betriebsabhängig nachzuweisen). Mandantenspezifischer Restore via kontrolliertem temporärem Restore + selektiver Übernahme, niemals direktes Zurückrollen der gesamten Datenbank für einen Mandanten.
+API-Replikate sind zustandslos. Hintergrunddienste verwenden getrennte Ausführungsgruppen.
+Aufträge sind verteilt. Prüfungen erfassen Betriebsbereitschaft und Lebenszeichen.
+Operationen sind idempotent. Hochverfügbares PostgreSQL ist optional.
+Die Wiederherstellung zu einem Zeitpunkt (PITR) verwendet das PostgreSQL-Schreibprotokoll (WAL).
+Datensicherungen sind verschlüsselt.
+
+Der angestrebte maximale Datenverlustzeitraum (RPO) beträgt 24 Stunden.
+Die angestrebte Wiederherstellungsdauer (RTO) beträgt ebenfalls 24 Stunden.
+Beide Ziele benötigen betriebsabhängige Nachweise.
+Eine mandantenspezifische Wiederherstellung verwendet eine kontrollierte temporäre Umgebung und selektive Datenübernahme.
+Die gesamte Datenbank darf dafür niemals direkt auf einen früheren Stand zurückgesetzt werden.
 
 ## Sicherheitsgrenzen
-Geheime Wahlstimmen strikt von Wähleridentitäten isolieren, keinen Korrelationsschlüssel in Logs/Backups. Kasse append-only mit Gegenbuchungen; QR- und Basartransaktionen atomar. Uploads auf MIME, Malware und Größenlimits prüfen. Datenschutzrechtliche Anforderungen und kryptografisches Wahlprotokoll vor produktivem Einsatz separat prüfen.
+
+Geheime Wahlstimmen bleiben strikt von Wähleridentitäten getrennt.
+Protokolle und Datensicherungen dürfen keinen Zuordnungsschlüssel zwischen Person und Stimme enthalten.
+Kassenbuchungen werden nur ergänzt. Korrekturen erfolgen durch Gegenbuchungen.
+QR- und Basartransaktionen sind atomar.
+Uploads werden auf Dateityp (MIME), Schadsoftware und Größenlimits geprüft.
+Datenschutzrechtliche Anforderungen und das kryptografische Wahlprotokoll benötigen vor produktivem Einsatz gesonderte Prüfungen.
 
 
 ## Dokumentationssprache (Ergänzung v5.9)
-Für dieses Dokument gilt die deutsche Projektrichtlinie `13_Dokumentationsrichtlinie_DE_ASD_STE100.md` mit dem verbindlichen Fachwortverzeichnis `14_Fachwortverzeichnis_DE.md`. Die Richtlinie orientiert sich an ASD-STE100, stellt aber **keine offizielle deutsche ASD-STE100-Konformität** dar.
+
+Es gelten die [deutsche Dokumentationsrichtlinie](13_Dokumentationsrichtlinie_DE_ASD_STE100.md)
+und das [Fachwortverzeichnis](14_Fachwortverzeichnis_DE.md).
+Die Richtlinie adaptiert Sprachprinzipien von ASD-STE100.
+Sie ist keine offizielle deutsche Übersetzung und belegt keine formelle ASD-STE100-Konformität.

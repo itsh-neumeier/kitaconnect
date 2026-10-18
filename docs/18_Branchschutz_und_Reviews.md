@@ -1,86 +1,68 @@
-# P0 – Branchschutz und unabhängige Reviews
+# P0 – Branchschutz und Review-Ausnahme
 
-Stand: 18.10.2026. Arbeitspaket: KC-038. Grundlage: Spezifikation v5.9 und ADR-013.
+Stand: 18.10.2026. Arbeitspaket: KC-038. Grundlage: Spezifikation v5.9 und ADR-022.
 
-## Nachgewiesener Zustand
+## Aktiver Schutz
 
-Der Regelsatz [25341109](https://github.com/itsh-neumeier/kitaconnect/rules/25341109) ist aktiv.
-Er gilt ausschließlich für `refs/heads/main`.
-Die API meldet `protected: true`. Der Hauptbranch steht weiterhin auf `a6fae87`.
-Diese Sitzung hat keinen Pull Request integriert.
+Der [Basisregelsatz 25341109](https://github.com/itsh-neumeier/kitaconnect/rules/25341109) gilt ohne Ausnahme für `main`.
+Er verlangt `structure`, `rust`, `web`, `secrets` und `dependencies` mit aktueller Basis.
+Prüfungen müssen von GitHub Actions mit Integrationskennung `15368` stammen.
+Er verlangt außerdem PRs und geklärte Review-Gespräche. Löschen und Force-Push bleiben verboten.
 
-Der [versionierte Plan](../.github/rulesets/main.json) enthält folgende Regeln:
+Der [Review-Regelsatz 25346711](https://github.com/itsh-neumeier/kitaconnect/rules/25346711) verlangt mindestens eine Genehmigung,
+CODEOWNER-Prüfung, Verwerfen veralteter Genehmigungen und Prüfung des letzten Pushs durch eine andere Person.
+Nur `@itsh-neumeier`, Benutzer-ID `77058548`, erhält hier eine Ausnahme im Modus `pull_request`.
+Andere Benutzer und Administratorrollen erhalten keine Ausnahme.
+Die Ausnahme erlaubt keine Umgehung des getrennten Basisschutzes.
 
-- Mindestens ein genehmigendes Review. Neue Änderungen verwerfen frühere Genehmigungen.
-- Erforderliches CODEOWNER-Review. Die letzte Änderung benötigt die Genehmigung einer anderen Person.
-- Alle Review-Gespräche müssen geklärt sein.
-- `structure`, `rust`, `web`, `secrets` und `dependencies` müssen erfolgreich sein.
-- Der geprüfte Stand muss den aktuellen Hauptbranch enthalten.
-- Die Pflichtprüfungen sind an GitHub Actions mit Integrationskennung `15368` gebunden.
-- Löschen und Force-Push sind verboten. Es gibt keine eingetragenen Ausnahmen.
+## Ausdrücklich bestätigte Nutzungsregel
 
-Die Integrationskennung wurde an den erfolgreichen Prüfungen von Commit `a893f76` abgelesen.
-Der [API-Nachweis](ai-memory/BRANCH_PROTECTION_STATE.json) enthält den ausgelesenen Regelsatz.
-Er ist eine Momentaufnahme. Er ersetzt keine erneute Prüfung vor einem Merge.
-Der allgemeine Branch-Endpunkt und der Regelsatz-Endpunkt wurden nach der Einrichtung erneut gelesen.
-Die verbundene App darf den klassischen Verwaltungsendpunkt nicht lesen und lieferte dort HTTP 403.
-Der vorhandene Git-Zugang erlaubte die Einrichtung. Zugangsdaten wurden nur im Speicher verwendet.
-Sie wurden weder in Dateien gespeichert noch ausgegeben.
+Die Projektleitung wählt: „Einfache Konto-Ausnahme; Nutzung auf eigene PRs beschränken“.
+GitHub kann bei dieser Ausnahme nicht nach PR-Autor unterscheiden.
+Die Ausnahme wäre technisch auch bei fremden PRs verwendbar.
+Die verbindliche Nutzungsregel erlaubt dies ausschließlich bei eigenen PRs von `@itsh-neumeier`.
+[ADR-022](architecture/ADR-022_Reviewausnahme_eigene_PRs.md) dokumentiert die akzeptierte technische Grenze.
 
-## Review-Zuständigkeit und Sperren
+Timo Neumeier übernimmt persönliche Prüfung sowie die benannten Sicherheits- und Datenschutzprüfungen.
+Der KI-Assistent unterstützt mit technischer Vorprüfung und nachvollziehbaren Ergebnissen.
+Die Zuständigkeit belegt keine bereits erfolgte Prüfung.
+Die Ausnahme erzeugt keine Selbstgenehmigung; sie erlaubt den dokumentierten Verzicht auf das zusätzliche GitHub-Pflichtreview.
+Sie ersetzt weder unabhängige Wahlprotokollprüfung noch juristische Lizenzprüfung oder andere erforderliche Fachfreigaben.
 
-`@itsh-neumeier`, Timo Neumeier, ist ausdrücklich als vorläufiger CODEOWNER bestätigt.
-Die Datei liegt bisher auf dem Arbeitsbranch aus PR #42. Sie fehlt noch auf `main`.
+## CODEOWNERS und Integrationsfolge
+
+`@itsh-neumeier` ist als vorläufiger CODEOWNER bestätigt.
+Die Datei liegt bisher auf dem Arbeitsbranch aus PR #42 und fehlt auf `main`.
 GitHub verwendet die CODEOWNERS-Datei des Zielbranchs.
-Bis zu ihrer Integration besteht deshalb noch keine wirksame CODEOWNER-Zuordnung für `main`.
-Die allgemeine Pflicht zu einem genehmigenden Review gilt bereits.
+Die Konto-Ausnahme selbst ist bereits aktiv; sie setzt keine integrierte CODEOWNERS-Datei voraus.
 
-Der Autor darf eigene Änderungen nicht genehmigen.
-Ein einzelner CODEOWNER kann deshalb seine eigenen Änderungen nach Integration der Datei nicht selbst freigeben.
-Die Projektleitung MUSS eine unabhängige Person benennen und deren erforderlichen Repository-Zugriff bestätigen.
-Diese Person benötigt eine bestätigte CODEOWNER-Zuordnung, wenn sie die einzige erforderliche Eigentümerprüfung leisten soll.
-Bis dahin bleiben betroffene Merges gesperrt. Die Regeln werden dafür nicht abgeschwächt.
-Die Rückfrage zum GitHub-Benutzernamen ist offen. Es wurde niemand eigenmächtig ernannt oder angefragt.
+Die Integrationsfolge lautet #39, #40, #41, #42, #43, #44.
+Die Folge-PRs zielen derzeit auf Arbeitsbranches. Die Main-Regelsätze schützen diese Zielbranches nicht.
+Nach Integration der Basis muss der nächste PR auf `main` umgestellt und erneut geprüft werden.
 
-Die unabhängigen Sicherheits- und Datenschutzprüfer bleiben ebenfalls unbesetzt.
-Die Projektleitung benennt sie vor der jeweiligen Freigabe.
-Ein allgemeines PR-Review ersetzt weder Datenschutzprüfung noch juristische Lizenzprüfung oder Wahlprotokollprüfung.
-Die ausdrücklich zurückgestellten Fachrollen und ihre Sperren aus dem KC-037-Register gelten weiter.
-P0 ist nicht insgesamt abgenommen.
+1. Prüfen Sie PR-Autor, Zielbranch und aktuellen Commit.
+2. Prüfen Sie persönliche Durchsicht, technische Vorprüfung und sämtliche Pflichtprüfungen.
+3. Dokumentieren Sie bei eigenen PRs den Grund für die Review-Ausnahme und den geprüften Commit.
+4. Verlangen Sie bei fremden PRs gemäß Nutzungsregel ein Review.
+5. Integrieren Sie nur nach gesondertem Merge-Auftrag und erfülltem Basisschutz.
 
-## Integration der aufeinander aufbauenden Pull Requests
+Diese Einrichtung hat keinen PR integriert. P0 ist noch nicht insgesamt abgenommen.
 
-Die Reihenfolge lautet: #39, #40, #41, #42, danach der KC-038-PR.
-Die Folge-PRs zielen derzeit auf Arbeitsbranches. Der Main-Regelsatz schützt diese Zielbranches nicht.
-Eine grüne CI auf einem Arbeitsbranch ist daher noch keine durchgesetzte Main-Freigabe.
+## Nachweis und Änderungen
 
-1. Prüfen Sie den ersten PR gegen `main`. Fordern Sie das unabhängige Review an.
-2. Prüfen Sie alle fünf Pflichtprüfungen für den aktuellen Commit und die aktuelle Basis.
-3. Lassen Sie die deutsche Dokumentation manuell sprachlich prüfen.
-4. Integrieren Sie nur nach ausdrücklicher Merge-Freigabe und erfüllten Regeln.
-5. Stellen Sie den nächsten PR nach Integration seiner Basis auf `main` um.
-6. Prüfen Sie Änderungen, CI und Reviews erneut. Wiederholen Sie diese Schritte bis zum letzten PR.
+Die [API-Momentaufnahme](ai-memory/BRANCH_PROTECTION_STATE.json) enthält beide aktiven Regelsätze.
+`GET branches/main` bestätigte nach Einrichtung weiterhin `protected: true`.
+Dies ist eine Momentaufnahme. Lesen Sie vor Merge beide Regelsätze und den aktuellen Prüfstand erneut.
+Die lokale Prüfung lautet `node scripts/check-github-rules.mjs`.
+Für separat gespeicherte API-Antworten lautet sie:
 
-## Schutz prüfen und ändern
+```sh
+node scripts/check-github-rules.mjs BASISANTWORT.json REVIEWANTWORT.json
+```
 
-1. Führen Sie `node scripts/check-github-rules.mjs` aus. Dies prüft nur den lokalen Plan.
-2. Lesen Sie `GET /repos/itsh-neumeier/kitaconnect/rulesets/25341109` mit einem berechtigten GitHub-Zugang.
-3. Speichern Sie ausschließlich die Regelsatzantwort, ohne Header oder Zugangsdaten.
-4. Prüfen Sie diese Datei mit `node scripts/check-github-rules.mjs PFAD_ZUR_ANTWORT.json`.
-5. Lesen Sie zusätzlich `GET /repos/itsh-neumeier/kitaconnect/branches/main`. Prüfen Sie `protected: true`.
-6. Vergleichen Sie den aktuellen PR-Commit mit seinen Prüfungen und Reviews.
+Die CI prüft die versionierten Pläne und hat keine Verwaltungsrechte.
+HTTP 403, fehlende Antworten oder reine Konfigurationstests sind kein erfolgreicher Aktivierungsnachweis.
+Administratoren können Regelsätze weiterhin verwalten. Änderungen benötigen dokumentierten Anlass und neuen API-Nachweis.
+Zugangsdaten wurden bei der Einrichtung nur im Speicher verwendet und weder ausgegeben noch gespeichert.
 
-Fehlende Berechtigung, HTTP 403 oder eine leere Antwort gelten nicht als erfolgreicher Schutznachweis.
-Bei Abweichung bleibt der Merge gesperrt. Aktualisieren Sie Issue und Checkpoint.
-Die CI prüft den lokalen Plan und negative Testfälle. Sie hat keine Verwaltungsrechte.
-Sie liest oder verändert deshalb keine GitHub-Verwaltungseinstellung.
-
-GitHub-Administratoren können Regelsätze weiterhin verwalten.
-Eine leere Ausnahmeliste verhindert den Merge-Bypass unter dem aktiven Regelsatz.
-Sie macht Verwaltungsrechte nicht unveränderlich.
-Änderungen an Regeln benötigen einen dokumentierten Anlass, Prüfung und einen neuen API-Nachweis in KC-038.
-Kein Prüfer darf die Regeln zur Selbstfreigabe deaktivieren.
-
-Quellen: [GitHub-Regelsatz-API](https://docs.github.com/en/rest/repos/rules?apiVersion=2022-11-28),
-[geschützte Branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches),
-[CODEOWNERS](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners).
+Quelle: [GitHub-Regelsatz-API](https://docs.github.com/en/rest/repos/rules?apiVersion=2026-03-10).

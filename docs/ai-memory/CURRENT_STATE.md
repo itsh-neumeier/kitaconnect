@@ -8,10 +8,11 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 
 - issue_id: [KC-004A / #50](https://github.com/itsh-neumeier/kitaconnect/issues/50), Teil von [KC-004 / #4](https://github.com/itsh-neumeier/kitaconnect/issues/4).
 - branch: codex/kc-004a-organisationsmodell auf Main eaca2cb56a0e54a732ec17986f7c3ccb854c3986.
-- head_commit: Vertrag und ADR-023 in 847517b vor Implementierung versioniert. Implementierungscommit folgt; aktuellen Kopf mit git rev-parse HEAD prüfen.
+- pull_request: [PR #53](https://github.com/itsh-neumeier/kitaconnect/pull/53), gegen main.
+- head_commit: Implementierung 1332bd7e0507310e30b42af9603a16aeb5916187; Vertrag und ADR-023 zuvor in 847517b versioniert. Dieser Checkpoint folgt gesondert; aktuellen Kopf mit git rev-parse HEAD prüfen.
 - objective: Kleines erstes P1-Paket mit internem Rust-Modell, ohne Netzwerk oder Persistenz.
 - completed: Modell mit getrennten ID-Typen, optionalem registriertem Träger und unveränderlicher Zuordnung; acht Integrationstests und ein negativer Dokumentationstest vorbereitet.
-- remaining: Neue Linux-CI für Tests und Build prüfen; eigenen PR und Issue mit Nachweisen aktualisieren.
+- remaining: Abschließenden Checkpoint-Commit in CI prüfen; PR #53 zur Durchsicht bereitstellen. #50 bleibt bis Integration offen.
 - migration_state: Keine Datenbankmigrationen, Laufzeitkonten oder Zertifikate angelegt.
 - known_failures: Keine bekannten fachlichen Fehler. Lokaler C++-Linker fehlt; ausführbare Rust-Tests und Build deshalb in Linux-CI prüfen. Windows meldete beim Clippy-Cache Ersatzkopien statt Hardlinks; Befehl erfolgreich.
 
@@ -57,9 +58,12 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 - Lokal erfolgreich: cargo generate-lockfile --offline; cargo check --workspace --all-targets --locked --offline;
   cargo fmt --all --check; cargo clippy --workspace --all-targets --locked --offline -- -D warnings.
-- Struktur-/Verweisprüfung und git diff --check erfolgreich; nach finalem Checkpoint erneut prüfen.
-- cargo test --workspace --locked und cargo build --workspace --locked: neue Linux-CI vor Abnahme erforderlich.
-- Gitleaks auf vorgemerkten Änderungen vor Commit ausführen. Ergebnis im PR nachführen.
+- Struktur-/Verweisprüfung für 38 Issues und 35 Dokumente, beide Regelsatzvalidatoren, 40 Node-Tests und git diff --check erfolgreich.
+- Implementierung 1332bd7: alle fünf Pflichtprüfungen erfolgreich. Linux-CI führt Rust-Integrationstests, negativen Dokumentationstest und Build erfolgreich aus.
+  Nachweise: [CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39155761533),
+  [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39155761404).
+  Der folgende Checkpoint-Commit erhält eigene Prüfungen.
+- Gitleaks auf vorgemerkter Implementierung ohne Befund. Checkpoint ebenfalls vor Commit prüfen. Ergebnis im PR nachführen.
 
 ## Nächste drei Aktionen
 

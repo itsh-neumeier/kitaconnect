@@ -8,6 +8,17 @@
 Rust (Axum, Tokio, SQLx), PostgreSQL, Redis, SvelteKit/Svelte 5, TypeScript, Tailwind, Docker Compose/Portainer, Kubernetes/Helm, GHCR. **Microservices frühzeitig**, gemeinsam im Monorepo. Separierte PostgreSQL-Schemas je Mandant, RLS zusätzlich, explizite Schema-/Rollen-/Rechtezuordnung. Zentrale Identität/Organisation ist eine besonders restriktive Plattformdomäne. Kein pauschaler Träger- oder Systemadmin-Bypass.
 
 ## Systemskizze
+
+Die Projektleitung hat die technische Konkretisierung am 18.10.2026 mit `1A, 2A, 3A, 4A` bestätigt:
+
+- [ADR-014](architecture/ADR-014_Datenhoheit_und_Migrationen.md): Ein Einrichtungsschema mit getrennten Dienstrechten und Migrationsrollen.
+- [ADR-015](architecture/ADR-015_Gateway_Grenze.md): Eigenständiger Rust-Dienst als Gateway.
+- [ADR-016](architecture/ADR-016_Personalbereich.md): Gesonderter Personalbereich je Träger und eigener Bereich für trägerlose Einrichtungen.
+- [ADR-017](architecture/ADR-017_Wahltrennung.md): Getrennte Datenbanken und Dienstidentitäten für Wahlberechtigung und Stimmabgabe.
+
+Die unabhängige Prüfung des Wahlprotokolls MUSS vor dessen Implementierung erfolgen.
+Die [Dienstmatrix](architecture/KC-002_Dienstgrenzen.md) ordnet Entitäten und Kommunikationszwecke zu.
+Diese Entscheidungen dokumentieren Architektur. Sie behaupten keine implementierten Dienste.
 ```text
 PWA SvelteKit -> TLS/Ingress -> API Gateway / BFF
                               |-> Identity & Access Service

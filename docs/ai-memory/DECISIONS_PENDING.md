@@ -16,6 +16,24 @@ Die ausdrückliche Freigabe für npm audit liegt nach einer automatischen Ablehn
 Die ursprüngliche Ablehnung betraf die Übermittlung von Abhängigkeitsmetadaten.
 Sie betraf weder Quelltext noch produktive Zugangsdaten.
 
-Nächster Schritt: [KC-002](https://github.com/itsh-neumeier/kitaconnect/issues/2).
-Entscheidungen zu Dienstgrenzen und Datenhoheit zuerst vorbereiten.
-KC-037 und KC-038 verfolgen die verbleibenden P0-Fragen.
+## Bestätigte Entscheidungen für KC-002
+
+Die [Dienstmatrix](../architecture/KC-002_Dienstgrenzen.md) liegt mit Datenhoheit,
+Kommunikationszwecken und Testanforderungen vor.
+[Pull Request #40](https://github.com/itsh-neumeier/kitaconnect/pull/40)
+baut auf dem weiterhin offenen Grundgerüst-PR #39 auf.
+
+Die Projektleitung hat am 18.10.2026 im Projektchat ausdrücklich `1A, 2A, 3A, 4A` geantwortet.
+Diese Antwort bestätigt die vier zuvor einzeln erläuterten Varianten.
+
+| Entscheidung | Bestätigter Stand |
+|---|---|
+| O-001 / ADR-014 | `1A`: Ein PostgreSQL-Schema je Einrichtung mit getrennten Dienstrechten und Migrationsrollen. |
+| O-002 / ADR-015 | `2A`: Eigenständiges Rust-Gateway. |
+| O-001-HR / ADR-016 | `3A`: Gesonderter Personalbereich je Träger; Einrichtungen erhalten nur erlaubte Einsatzdaten. Trägerlose Einrichtungen behalten eigene Bereiche. |
+| O-001-WAHL / ADR-017 | `4A`: Getrennte Datenbanken und Dienstidentitäten für Berechtigung und Stimme. Unabhängige Prüfung des Wahlprotokolls vor Implementierung bleibt verbindlich. |
+
+Die Varianten sind damit entschieden. Die Implementierungsnachweise folgen in den zugeordneten Issues.
+O-003 bis O-008 sowie die Benennung der unabhängigen Fachperson bleiben offen.
+KC-037 und KC-038 verfolgen diese übrigen P0-Fragen.
+P0 implementiert keine Dienste, Datenbankrollen oder Migrationen.

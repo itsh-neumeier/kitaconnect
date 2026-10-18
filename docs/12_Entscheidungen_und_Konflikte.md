@@ -42,8 +42,8 @@ Verträge liegen unter `contracts/`, Infrastruktur unter `infra/`.
 P0 enthält nur ein Rust-Werkzeugkettenprogramm und eine Frontend-Hinweisseite.
 **Alternative:** Ein gemeinsames Fachpaket wurde verworfen. Es würde Datenhoheit
 und frühe Microservice-Grenzen verschleiern.
-**Folge:** Die Dienstmatrix im [P0-Plan](15_P0_Initialisierung.md) bleibt ein Entwurf.
-KC-002 bestätigt Datenhoheit vor Fachimplementierung. Schema je Mandant und RLS bleiben verbindlich.
+**Folge:** KC-002 konkretisiert die Dienstmatrix durch ADR-014 bis ADR-017.
+Schema je Mandant und RLS bleiben verbindlich.
 
 ## ADR-012 – Reproduzierbare P0-Werkzeugketten
 
@@ -66,6 +66,25 @@ vollständige Abnahme für 1.0 nicht leisten.
 **Folge:** Fehlende spätere Prüfschritte bleiben offen.
 KC-038 weist GitHub-Regeln und Review-Verantwortung nach.
 Die Ziele aus ADR-003 und ADR-004 bleiben bestehen.
+
+## Bestätigte Architekturentscheidungen für KC-002
+
+Stand: 18.10.2026. Die Projektleitung hat im Projektchat ausdrücklich
+`1A, 2A, 3A, 4A` gewählt. Die folgenden Architekturentscheidungen sind damit bestätigt.
+
+- [ADR-014 – Datenhoheit und Migrationen](architecture/ADR-014_Datenhoheit_und_Migrationen.md):
+  Ein Einrichtungsschema mit getrennten Dienstrechten und Migrationsrollen (`1A`).
+- [ADR-015 – Gateway-Grenze](architecture/ADR-015_Gateway_Grenze.md):
+  Eigenständiges Rust-Gateway (`2A`).
+- [ADR-016 – Personalbereich](architecture/ADR-016_Personalbereich.md):
+  Gesonderter Personalbereich je Träger; eigene Personalbereiche für trägerlose Einrichtungen (`3A`).
+- [ADR-017 – Wahltrennung](architecture/ADR-017_Wahltrennung.md):
+  Getrennte Datenbanken und Dienstidentitäten für Wahlberechtigung und Stimme (`4A`).
+
+Die [Dienstmatrix](architecture/KC-002_Dienstgrenzen.md) ergänzt Entitäten,
+Kommunikationszwecke und negative Testanforderungen.
+Die unabhängige Prüfung des Wahlprotokolls ist vor dessen Implementierung verpflichtend.
+Die Entscheidungen belegen keine implementierte Sicherheit und erteilen keinen Auftrag für P1 bis P9.
 
 
 ## Dokumentationssprache (Ergänzung v5.9)

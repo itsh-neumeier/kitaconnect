@@ -30,40 +30,46 @@ Der CSV-Backlog war deshalb die Importgrundlage. GitHub bleibt danach verbindlic
 | `.github/` | Automatisierte Integration und Vorlagen | P0-Prüfschritte ohne Veröffentlichungsrechte |
 | `docs/ai-memory/` | Status und Fortsetzungsanleitung | Nachweise und offene Aufgaben |
 
-## Dienstgrenzen als Entwurf
+## Entschiedene Dienstgrenzen
+
+KC-002 ergänzt eine [Zuordnung von Entitäten und Kommunikationszwecken](architecture/KC-002_Dienstgrenzen.md).
+ADR-014 bis ADR-017 sind dort verknüpft. Die Projektleitung hat sie am 18.10.2026
+mit `1A, 2A, 3A, 4A` ausdrücklich bestätigt. Die Implementierung ist nicht Teil von P0.
 
 Diese Zuordnung konkretisiert die Skizze aus `02_Technische_Architektur.md`.
-KC-002 MUSS Datenhoheit, Dienstrollen, Tabellenzuordnung und erlaubte Aufrufe bestätigen.
-Bis dahin entstehen keine Fachpakete oder Datenbanktabellen.
+KC-002 dokumentiert Datenhoheit, Dienstrollen, Entitätenzuordnung und erlaubte Aufrufe.
+Konkrete Tabellen, Fachpakete und Dienstverträge entstehen erst im später beauftragten Implementierungsissue.
 Kein Dienst darf Tabellen eines anderen Dienstes direkt lesen oder ändern.
 Die zusätzliche RLS-Prüfung bleibt verbindlich. RLS bedeutet Row-Level Security.
 
 | Geplanter Dienst | Zuständigkeit | Sicherheitsgrenze |
 |---|---|---|
-| `gateway` | API-Zugang und Frontend-Schnittstelle | Kein Berechtigungs-Bypass; Laufzeitgrenze offen |
+| `gateway` | Eigenständiger Rust-Dienst für API-Zugang | Keine Datenbankrolle; Fachdienste prüfen Rechte erneut |
 | `identity-access` | Identitäten, Anmeldung, Sitzungen, Rechteentscheidung | Plattformdaten ohne Kinderakte |
 | `organization-config` | Träger, Einrichtungen, Mitgliedschaften, Konfiguration | Keine impliziten Querzugriffe |
 | `children-admissions` | Kinderakte, Sorgeberechtigung, Aufnahme, Verträge | Einrichtungs-, Objekt- und Feldrechte |
 | `attendance-care` | Anwesenheit, Abholung, Tagespflege, Übergabe | Gesundheitsdaten und Abholrechte |
-| `staff-scheduling` | Personal, Einsatz, Dienstplan, Arbeitszeit | Begrenzte Träger-/Einrichtungsrechte |
+| `staff-scheduling` | Personal, Einsatz, Dienstplan, Arbeitszeit | Eigener Personalbereich je Träger oder trägerloser Einrichtung; begrenzte Einsatzrechte |
 | `portfolio-media` | Portfolio, Entwicklungsakte, Medienfreigabe | Vertrauliche Akte getrennt von Veröffentlichungen |
 | `media-worker` | Lokale Maskierung und Metadatenentfernung | Isolierter Hintergrunddienst ohne Identitätserkennung |
 | `meals` | Speisepläne, Bestellung, Catereransicht | Kostformenrechte; keine Abrechnung |
 | `communication-events` | Kommunikation, Kalender, Veranstaltungen | Nur freigegebene Zielgruppen |
 | `council-bazaar-cash` | Elternbeirat, Basar, Kasse, QR, Wissen, Inventar | Getrennte Finanzen; atomare Buchungen |
-| `election` | Wahlberechtigung, geheime Stimmabgabe, Auszählung | Identität und Stimme ohne rückverfolgbaren Zusammenhang |
+| `election` | Wahlberechtigung, geheime Stimmabgabe, Auszählung | Getrennte Datenbanken und Dienstidentitäten; unabhängige Protokollprüfung vor Implementierung |
 | `workflow-notification` | Formulare, Abläufe, Aufträge, Zustellung | Nur nötige Auftragsdaten und Rechte |
 | `audit-privacy` | Zugriffsprotokoll, Datenschutzanfragen, Löschjournal | Getrennte Aufbewahrung ohne fachlichen Vollzugriff |
 
-## Offene Entscheidungen
+## Entscheidungsstand
 
 Offene Punkte sind keine Freigaben. Die Projektleitung benennt zuständige Fachpersonen.
 KC-037 verfolgt die Entscheidungen. KC-038 verfolgt GitHub-Regeln und Zuständigkeiten.
 
-| ID | Fehlende Entscheidung | Benötigter Nachweis / Zeitpunkt |
+| ID | Gegenstand | Entscheidung oder benötigter Nachweis / Zeitpunkt |
 |---|---|---|
-| O-001 | Datenhoheit und Migrationen bei Schema je Mandant und mehreren Diensten | Tabellen-/Rollenmatrix, Migrationszuständigkeit, Pool- und RLS-Negativtests vor KC-005 |
-| O-002 | Laufzeitgrenze von Gateway und Frontend-Schnittstelle | Eigener Dienst oder SvelteKit-Server; Aufrufe und Rechteprüfung vor P1 bestätigen |
+| O-001 | Datenhoheit und Migrationen | `1A`: Einrichtungsschema mit getrennten Dienstrechten und Migrationsrollen; spätere Nachweise in KC-005 |
+| O-001-HR | Trägerweite Personalakten | `3A`: Gesonderter Personalbereich je Träger und eigene Bereiche für trägerlose Einrichtungen; spätere Nachweise in KC-015 |
+| O-001-WAHL | Wahlberechtigung und Stimme | `4A`: Getrennte Datenbanken und Dienstidentitäten; unabhängige Protokollprüfung vor Implementierung in KC-025 |
+| O-002 | Gateway und Frontend-Schnittstelle | `2A`: Eigenständiges Rust-Gateway; spätere Prüfung der Dienstaufrufe |
 | O-003 | Kurzlebige Dienstidentitäten und Transportabsicherung | Aussteller, Laufzeit, Widerruf und Secret Store vor Dienstkommunikation |
 | O-004 | Redis-Zustellung und Wiederanlauf | Queue-Verfahren, Zustellbestätigung, Fristen und Fehlerablage vor Hintergrundaufträgen |
 | O-005 | Lastprofil und Referenzhardware | Benutzerzahl, p95-Antwortzeit in ms, Fehlerrate, Datenmenge, CPU/RAM/Speicher und Testdauer vor P0-Abnahme |

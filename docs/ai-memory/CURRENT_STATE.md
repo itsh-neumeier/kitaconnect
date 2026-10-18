@@ -8,10 +8,12 @@ P1 bis P9 sind nicht implementiert und haben keinen Auftrag.
 
 - `issue_id`: KC-001 / GitHub #1; Grundlagen für KC-002 und KC-003.
 - `branch`: `codex/p0-project-initialization`.
-- `head_commit`: Ausgangscommit `a6fae87c40f0e030dbd39913f0dc3f575a2b6c38`; der P0-Commit wird nach den Prüfungen erstellt.
+- `head_commit`: Verifizierter Implementierungscommit `a22c09e22592266280041c8a2804f69aa7e0a063`.
+  Dieser Checkpoint folgt als eigener Dokumentationscommit. Den aktuellen Branchkopf zeigt `git rev-parse HEAD`.
 - `objective`: Technische Initialisierung ohne Änderung fachlicher Anforderungen.
 - `migration_state`: Keine Migrationen, keine Datenbank und keine Fachdatenspeicherung.
-- `pull_request`: Wird nach Sicherung des Branches als Entwurf erstellt.
+- `pull_request`: [Entwurf #39](https://github.com/itsh-neumeier/kitaconnect/pull/39).
+  Branch ist auf GitHub gesichert. Kein Merge und keine Veröffentlichung erfolgt.
 
 ## Erledigt
 
@@ -38,12 +40,18 @@ P1 bis P9 sind nicht implementiert und haben keinen Auftrag.
 | `npm audit --audit-level=high` | Aktuelle Installation meldet keine bekannten Sicherheitsbefunde |
 | `cargo fmt --all --check` | Erfolgreich |
 | `cargo clippy --workspace --all-targets --locked -- -D warnings` | Erfolgreich |
-| `cargo test --workspace --locked` | Lokal blockiert: Windows-Linker `link.exe` fehlt |
-| `cargo build --workspace --locked` | Linux-CI-Nachweis ausstehend; lokal gleicher Linkerbedarf |
+| `cargo test --workspace --locked` | In Linux-CI erfolgreich; lokal fehlt Windows-Linker `link.exe` |
+| `cargo build --workspace --locked` | In Linux-CI erfolgreich |
 | Actionlint 1.7.12 | Beide Workflows ohne Fehler geprüft |
-| Gitleaks 8.30.1 | Bisheriger Ausgangscommit ohne Befund; neue Dateien werden vor Commit zusätzlich geprüft |
+| Gitleaks 8.30.1 | Gesamte Historie einschließlich P0-Commit und vorgemerkter Diff ohne Befund |
 | `git diff --check` | Erfolgreich |
-| GitHub Actions | Noch kein Lauf für den nicht veröffentlichten Branch |
+| GitHub Actions | Implementierungscommit: `structure`, `rust`, `web`, `secrets`, `dependencies` erfolgreich |
+
+Nachweise für den Implementierungscommit:
+[P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39111705927) und
+[P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39111705959).
+Der nachfolgende Dokumentationscommit löst eigene Prüfungen aus.
+Vor Merge MUSS der aktuelle Commit im Pull Request erneut grün sein.
 
 ## Bekannte Einschränkungen
 

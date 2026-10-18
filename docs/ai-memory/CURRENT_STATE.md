@@ -10,10 +10,10 @@ P1 bis P9 besitzen keinen Implementierungsauftrag.
 
 - `issue_id`: [KC-036 / #36](https://github.com/itsh-neumeier/kitaconnect/issues/36).
 - `branch`: `codex/p0-documentation-review`.
-- `head_commit`: Letzte Redaktionsgruppe `7e49a66`; davor `ebaa1d2` und `4804d1c`.
-  Begriffe, Prüfbericht und dieser Checkpoint folgen als Nachweiscommit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
+- `head_commit`: Geprüfter Nachweiscommit `733f7a500ee7069428c251f80bc3d5c6f829779d`.
+  Dieser Checkpoint folgt als gesonderter Dokumentationscommit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
 - `objective`: Sprachliche Bestandsprüfung ohne eigenmächtige Änderung fachlicher Anforderungen.
-- `pull_request`: Entwurf gegen `codex/p0-review-protection` wird nach Sicherung des Nachweiscommits angelegt.
+- `pull_request`: [PR #44](https://github.com/itsh-neumeier/kitaconnect/pull/44), Entwurf gegen `codex/p0-review-protection`.
 - `migration_state`: Keine Datenbankrollen, Migrationen, Zertifikate oder Laufzeitdienste angelegt.
 - `dependencies`: PRs #39 bis #43 zuerst prüfen und integrieren. Kein Merge durch diese Sitzung.
 
@@ -91,14 +91,16 @@ Quelle: ausdrückliche Antworten im Projektchat am 18.10.2026.
 Die Prüfungen des Ausgangscommits `bdb3f9f` sind vollständig erfolgreich:
 [P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39123817480) und
 [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39123817474).
-CI für den neuen KC-036-Stand wird nach dem Push geprüft. Vor Merge muss der aktuelle Kopf grün sein.
-Die drei vorgemerkten Redaktionsgruppen wurden jeweils mit Gitleaks ohne Befund geprüft.
+Für KC-036-Commit `733f7a5` sind [P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39132777909)
+und [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39132777911) vollständig erfolgreich.
+Der nachfolgende Dokumentationscommit löst eigene Prüfungen aus. Vor Merge muss der aktuelle Kopf grün sein.
+Alle vorgemerkten Gruppen und die vollständige Historie mit 16 Commits wurden mit Gitleaks ohne Befund geprüft.
 Rust-, Frontend- und Workflow-Code wurden nicht geändert.
 Keine neuen lokalen Testfehler. Keine implementierte Dienst-, Last- oder Wahlsicherheit behauptet.
 
 ## Nächste drei Aktionen
 
-1. KC-036-Entwurf veröffentlichen, aktuelle CI prüfen und Issue #36 aktualisieren. F-001-Antwort auswerten.
+1. Aktuellen CI-Stand von PR #44 prüfen und F-001-Antwort auswerten. Issue #36 bleibt offen.
 2. Nach Benennung unabhängigen Reviewer und Zugriffsrechte prüfen. Sprachliches Review veranlassen.
    Sicherheits- und Datenschutzrollen gesondert bestätigen lassen. KC-036 und KC-038 bleiben bis zur Erfüllung offen.
 3. Integrationsnachweise und P0-Abnahme vorbereiten. Keine neue Entwicklungsphase beginnen.

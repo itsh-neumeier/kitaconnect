@@ -1,9 +1,21 @@
 {
   "synthetic": true,
-  "carriers": ["synthetic-carrier-a", "synthetic-carrier-b"],
+  "carriers": [
+    "synthetic-carrier-a",
+    "synthetic-carrier-b"
+  ],
   "facilities": [
-    { "id": "synthetic-facility-a", "carrier": "synthetic-carrier-a" },
-    { "id": "synthetic-facility-b", "carrier": "synthetic-carrier-b" },
-    { "id": "synthetic-facility-independent", "carrier": null }
+    {
+      "id": "synthetic-facility-a",
+      "carrier": "synthetic-carrier-a"
+    },
+    {
+      "id": "synthetic-facility-b",
+      "carrier": "synthetic-carrier-b"
+    },
+    {
+      "id": "synthetic-facility-independent",
+      "carrier": null
+    }
   ]
 }

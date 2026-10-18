@@ -102,8 +102,7 @@ P0 MUSS das Messverfahren festlegen. KC-034 führt später die Lastprüfung aus.
 
 1. KC-001: Monorepo, Werkzeugketten, Build und Infrastrukturstruktur prüfen.
 2. KC-002: Dienstgrenzen und O-001/O-002 als Architekturentscheidungen bestätigen.
-3. KC-003: Testdaten und P0-Prüfschritte abschließen. Vor externen Rust-Abhängigkeiten
-   MUSS `cargo audit` als Prüfung gegen Sicherheitsmeldungen eingerichtet werden.
+3. KC-003: Reproduzierbare Testdaten, Negativtests und RustSec-Prüfung aus dem eigenen PR prüfen.
 4. KC-037 und KC-038: Ziele, Verantwortliche, Lizenzfragen und GitHub-Regeln klären.
 5. KC-036: Bestandsdokumentation in kleinen Pull Requests sprachlich prüfen.
 6. P0 mit vollständigen Nachweisen abnehmen. Erst ein neuer Auftrag erlaubt P1.
@@ -121,8 +120,10 @@ Actions sind auf vollständige Commit-IDs festgelegt. Gitleaks nutzt eine feste 
 Workflow-Tokens erhalten nur Leserechte. npm-Installationsskripte sind deaktiviert.
 Die Abhängigkeitsprüfung umfasst auch Frontend-Buildwerkzeuge.
 
-P0 hat keine externen Rust-Abhängigkeiten. Ein Prüfschritt blockiert deren Einführung,
-bis KC-003 `cargo audit` einrichtet. Dies ersetzt keine spätere Sicherheitsprüfung.
+P0 hat keine externen Rust-Abhängigkeiten. KC-003 ersetzt die pauschale Einführungssperre
+durch `cargo-audit` 0.22.2 mit festgelegter Prüfsumme und RustSec-Abgleich der Cargo.lock.
+Die [Prüfmatrix](../tests/README.md) beschreibt Testdaten, Befundbehandlung und Nachweise.
+Dies ersetzt keine spätere Sicherheitsprüfung der Dienste.
 Quelltext-Sicherheitsanalyse, Containerprüfung, Lizenzprüfung, Software-Stückliste,
 Signaturen, Mandantenisolation und Wiederherstellung folgen den Phasen aus `08`.
 P0 veröffentlicht keine Tags oder Images.

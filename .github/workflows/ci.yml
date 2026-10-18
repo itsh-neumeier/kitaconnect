@@ -21,6 +21,7 @@ jobs:
         with:
           node-version-file: .node-version
       - run: node scripts/check-project.mjs
+      - run: node scripts/fixtures.mjs --check
       - run: node --test scripts/*.test.mjs
   rust:
     runs-on: ubuntu-24.04

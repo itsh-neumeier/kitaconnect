@@ -40,8 +40,15 @@ jobs:
       - run: npm install --global npm@12.2.0 --ignore-scripts
       - run: npm ci --ignore-scripts
       - run: npm audit --audit-level=high
-      - name: Rust-Abhängigkeiten in P0 prüfen
+      - name: Rust-Lockfile mit cargo-audit prüfen
+        shell: bash
         run: |
-          rustup show
-          cargo metadata --locked --format-version 1 > "$RUNNER_TEMP/metadata.json"
-          node --input-type=module -e 'import fs from "node:fs"; const m=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/metadata.json")); if(m.packages.some(p=>p.source!==null)) throw Error("Vor externen Rust-Abhängigkeiten MUSS KC-003 cargo audit einrichten.");'
+          set -euo pipefail
+          test -f Cargo.lock
+          mkdir -p "$RUNNER_TEMP/cargo-audit"
+          cd "$RUNNER_TEMP/cargo-audit"
+          curl --fail --silent --show-error --location --retry 3 -o cargo-audit.tgz https://github.com/rustsec/rustsec/releases/download/cargo-audit/v0.22.2/cargo-audit-x86_64-unknown-linux-gnu-v0.22.2.tgz
+          echo 'ab28a1bdb54db4d5d8ad5981cf1f959410370b3d28250dbd35f6a44248620e39  cargo-audit.tgz' | sha256sum --check
+          tar -xzf cargo-audit.tgz
+          ./cargo-audit-x86_64-unknown-linux-gnu-v0.22.2/cargo-audit audit --file "$GITHUB_WORKSPACE/Cargo.lock" --db "$RUNNER_TEMP/cargo-audit/advisory-db" --deny warnings
+          git -C "$RUNNER_TEMP/cargo-audit/advisory-db" rev-parse HEAD

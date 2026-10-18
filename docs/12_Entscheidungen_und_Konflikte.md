@@ -87,6 +87,18 @@ Die unabhängige Prüfung des Wahlprotokolls ist vor dessen Implementierung verp
 Die Entscheidungen belegen keine implementierte Sicherheit und erteilen keinen Auftrag für P1 bis P9.
 
 
+## ADR-018 – Reproduzierbare Testdaten und RustSec-Prüfung in P0
+
+Datum: 18.10.2026. Status: im autorisierten technischen Umfang von KC-003 festgelegt.
+**Grundlage:** KC-003 verlangt synthetische Testdaten und Build-/Sicherheitsprüfungen.
+**Entscheidung:** Ein lokaler Generator erzeugt ausschließlich feste Organisationskennungen.
+CI prüft die Ausgabe bytegenau und weist unbekannte Felder sowie ungültige Zuordnungen ab.
+`cargo-audit` 0.22.2 prüft die Cargo.lock gegen RustSec. Version und Archivprüfsumme sind festgelegt.
+Bekannte RustSec-Schwachstellen und die mit `--deny warnings` erfassten Warnungen blockieren den Scannerprozess.
+**Alternative:** Eine dauerhafte Sperre aller externen Rust-Abhängigkeiten erfüllt die spätere Abhängigkeitsprüfung nicht.
+**Folge:** Der pauschale Sperrprüfschritt entfällt. Sicherheitsprüfung, Lockfile und Leserechte bleiben verpflichtend.
+Die [Prüfmatrix](../tests/README.md) beschreibt Befundbehandlung und Grenzen.
+
 ## Dokumentationssprache (Ergänzung v5.9)
 Für dieses Dokument gilt die deutsche Projektrichtlinie `13_Dokumentationsrichtlinie_DE_ASD_STE100.md` mit dem verbindlichen Fachwortverzeichnis `14_Fachwortverzeichnis_DE.md`. Die Richtlinie orientiert sich an ASD-STE100, stellt aber **keine offizielle deutsche ASD-STE100-Konformität** dar.
 

@@ -9,10 +9,10 @@ P0-Gesamtabnahme ist vorbereitet, noch nicht erklärt. P1 bis P9 besitzen keinen
 
 - `issue_id`: [KC-038 / #38](https://github.com/itsh-neumeier/kitaconnect/issues/38), formale P0-Abnahmevorbereitung.
 - `branch`: `codex/p0-abnahmevorbereitung` auf Basis des integrierten main.
-- `head_commit`: Geprüfter Main-Stand `68f39f19295b1c723e75b257b73d890dbbe5b9b6`.
-  Integrationsnachweis und dieser Checkpoint folgen als Dokumentationscommit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
+- `head_commit`: Dokumentationscommit `ce0f17fc5d93bcbd2c507098fdb4f6ea526f07c0` auf integriertem Main `68f39f1`.
+  Dieser Checkpoint folgt als gesonderter Dokumentationscommit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
 - `objective`: Integrationsnachweise sichern und gesonderte P0-Gesamtabnahme vorbereiten.
-- `pull_request`: Eigener Dokumentationsentwurf gegen main wird nach dem ersten Commit angelegt.
+- `pull_request`: [PR #49](https://github.com/itsh-neumeier/kitaconnect/pull/49), Dokumentationsentwurf gegen main.
 - `migration_state`: Keine Datenbankmigrationen, Laufzeitkonten, Zertifikate oder Fachfunktionen angelegt.
 - `dependencies`: Die freigegebenen PRs #39 bis #44 sind abgeschlossen. Folge-PR zur Dokumentation ist nicht zur Integration freigegeben.
 
@@ -34,6 +34,8 @@ P0-Gesamtabnahme ist vorbereitet, noch nicht erklärt. P1 bis P9 besitzen keinen
 7. Neueste Antwort „Ja“ bestätigt ausdrücklich die angebotene persönliche/sprachliche Durchsicht
    und Integration #39 bis #44. Danach soll die P0-Abnahme vorbereitet werden.
    Dies ist kein Auftrag zur Implementierung von P1 und keine Freigabe anderer PRs.
+   Die nachfolgende Interviewantwort „Durchsicht bestätigt; PRs #39–#44 integrieren“ bestätigt denselben Auftrag erneut.
+   Die bereits erfolgte Integration nicht wiederholen und nicht erneut zur Freigabe stellen.
 8. npm audit ist lokal und in GitHub Actions erlaubt. Technische P0-Weiterarbeit ist delegiert.
 
 ## Durchgeführte Integration
@@ -76,12 +78,15 @@ KC-038 bleibt für die formale P0-Gesamtabnahme offen.
   und [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142292652) vollständig erfolgreich.
 - Main-CI enthält 40 Tests; Build, Formatierung, Frontend, Secrets und Abhängigkeiten sind grün.
 - Struktur-/Verweisprüfung dieser Dokumentationsänderung: 38 Issues und 33 Dokumente erfolgreich geprüft.
-  Beide Regelpläne und `git diff --check` sind erfolgreich. Gitleaks und CI folgen vor Abschluss.
+  Beide Regelpläne und `git diff --check` sind erfolgreich. Vorgemerkter Gitleaks-Scan ohne Befund.
+- Dokumentationscommit `ce0f17f`: [P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142635579)
+  und [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142635620) erfolgreich.
+  Der folgende Checkpoint-Commit löst eigene Prüfungen aus.
 - Vorbereitete Dokumentation erteilt keine neue Lizenz und keine unabhängige Fachfreigabe.
 
 ## Nächste drei Aktionen
 
-1. Integrationsnachweis als gesonderten Dokumentationsentwurf veröffentlichen und dessen CI prüfen.
+1. Aktuellen CI-Stand von PR #49 prüfen. Die Integration #39 bis #44 ist vollständig abgeschlossen.
 2. Formale P0-Gesamtabnahme der Projektleitung einholen. Den Folge-PR nicht ohne eigenen Auftrag integrieren.
 3. Nach P0-Abnahme und gesondertem Auftrag KC-004 in kleine P1-Arbeitspakete zerlegen.
    Bis dahin keine P1-Fachimplementierung beginnen. Bestätigte Freigaben nicht erneut abfragen.

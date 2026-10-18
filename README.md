@@ -1,6 +1,35 @@
 # KitaConnect – Spezifikation v5.9
-Konsolidierte Planungsunterlagen aus Interviewfragen 1–51. 14 Markdown-Fachdokumente unter `docs/`, GitHub-Backlog unter `backlog/issues.csv`, KI-Handoff-Dateien. Keine Implementierung, keine automatisch erstellten GitHub-Issues. Frühere Spezifikation v4.2 ist durch die aktuellen ADRs ersetzt.
+Die Spezifikation v5.9 aus Interviewfragen 1–51 ist verbindlich. P0 ergänzt ein technisches Grundgerüst ohne Fachfunktionen. Frühere Spezifikation v4.2 ist durch die aktuellen ADRs ersetzt.
 
 Start: `docs/01_Fachkonzept.md`, `docs/12_Entscheidungen_und_Konflikte.md`, `docs/06_Entwicklungsroadmap.md`.
 
 Dokumentationsstandard: `docs/13_Dokumentationsrichtlinie_DE_ASD_STE100.md` und `docs/14_Fachwortverzeichnis_DE.md`. Deutsche Adaption der Sprachprinzipien, **keine offizielle ASD-STE100-Konformität**. Bestandsredaktion noch offen.
+
+Der [P0-Plan](docs/15_P0_Initialisierung.md) beschreibt Struktur und Entscheidungen.
+Der [Projektstatus](docs/ai-memory/CURRENT_STATE.md) nennt Nachweise und nächste Schritte.
+GitHub ist die verbindliche Quelle für Issues. Der [Backlog](docs/07_GitHub_Issue_Backlog.md)
+erläutert den Importstand und die stabilen KC-Kennungen.
+
+## Lokale Entwicklung
+
+Voraussetzungen: Rust 1.99.1 mit Rustfmt und Clippy, Node.js 24.19.0, npm 12.2.0.
+Unter Windows braucht Rust zusätzlich Visual-Studio-C++-Buildwerkzeuge und das Windows SDK.
+Diese Werkzeuge gehören nicht zum Repository. Verwenden Sie nur synthetische Testdaten.
+
+```sh
+npm ci --ignore-scripts
+npm run check
+npm test
+npm run check:web
+npm run build:web
+cargo fmt --all --check
+cargo clippy --workspace --all-targets --locked -- -D warnings
+cargo test --workspace --locked
+cargo build --workspace --locked
+npm audit --audit-level=high
+```
+
+Starten Sie die interne Hinweisseite mit `npm run dev --workspace @kitaconnect/web`.
+Der Rust-Bootstrap startet keinen API-Dienst. Die Infrastruktur ist noch nicht installierbar.
+P0 ist vor Bestätigung offener Entscheidungen und Review nicht abgenommen.
+Der [Lizenzentwurf](docs/16_Lizenzentwurf.md) erteilt keine neuen Nutzungsrechte.

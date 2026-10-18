@@ -31,6 +31,42 @@ Neueste **ausdrückliche** Interviewentscheidung hat Vorrang. Änderungen werden
 ## Status
 Fachliche Interviews 1–51 abgeschlossen. Die Dateien sind ein konsolidierter Planungsstand, keine rechtliche Zertifizierung und keine implementierte Anwendung.
 
+## ADR-011 – P0-Struktur und dienstbezogene Verantwortung
+
+Datum: 18.10.2026. Status: für das technische P0-Grundgerüst entschieden.
+Grundlage: ADR-001, ADR-002 und Auftrag zur Projektinitialisierung.
+
+**Entscheidung:** Rust-Pakete liegen unter `services/`, technische Bibliotheken
+unter `crates/`, das SvelteKit-Frontend unter `apps/web/`.
+Verträge liegen unter `contracts/`, Infrastruktur unter `infra/`.
+P0 enthält nur ein Rust-Werkzeugkettenprogramm und eine Frontend-Hinweisseite.
+**Alternative:** Ein gemeinsames Fachpaket wurde verworfen. Es würde Datenhoheit
+und frühe Microservice-Grenzen verschleiern.
+**Folge:** Die Dienstmatrix im [P0-Plan](15_P0_Initialisierung.md) bleibt ein Entwurf.
+KC-002 bestätigt Datenhoheit vor Fachimplementierung. Schema je Mandant und RLS bleiben verbindlich.
+
+## ADR-012 – Reproduzierbare P0-Werkzeugketten
+
+Datum: 18.10.2026. Status: für P0 entschieden.
+**Entscheidung:** Rust 1.99.1, Node.js 24.19.0 und npm 12.2.0 sind festgelegt.
+Cargo.lock und package-lock.json werden versioniert. Frontend-Pakete erhalten exakte Versionen.
+Die Versionen wurden gegen die offiziellen Paketquellen aufgelöst und werden mit Builds geprüft.
+**Alternative:** Veränderliche Werkzeugversionen ohne Lockfiles wurden verworfen.
+**Folge:** Aktualisierungen brauchen einen geprüften Pull Request.
+Die Versionen von PostgreSQL, Redis und Infrastruktur bleiben O-006.
+
+## ADR-013 – P0-Prüfschritte ohne Veröffentlichungsrechte
+
+Datum: 18.10.2026. Status: für P0 entschieden.
+**Entscheidung:** Die automatisierte Integration verwendet nur Leserechte,
+auf Commit-IDs festgelegte Actions und blockierende Build-/Sicherheitsprüfungen.
+P0 hat keinen Veröffentlichungsworkflow. npm-Installationsskripte bleiben deaktiviert.
+**Alternative:** Ein früher Tag-/Image-Workflow wurde verworfen. P0 kann die
+vollständige Abnahme für 1.0 nicht leisten.
+**Folge:** Fehlende spätere Prüfschritte bleiben offen.
+KC-038 weist GitHub-Regeln und Review-Verantwortung nach.
+Die Ziele aus ADR-003 und ADR-004 bleiben bestehen.
+
 
 ## Dokumentationssprache (Ergänzung v5.9)
 Für dieses Dokument gilt die deutsche Projektrichtlinie `13_Dokumentationsrichtlinie_DE_ASD_STE100.md` mit dem verbindlichen Fachwortverzeichnis `14_Fachwortverzeichnis_DE.md`. Die Richtlinie orientiert sich an ASD-STE100, stellt aber **keine offizielle deutsche ASD-STE100-Konformität** dar.

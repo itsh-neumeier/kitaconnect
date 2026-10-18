@@ -1,0 +1,704 @@
+[
+  {
+    "id": "KC-001",
+    "phase": "P0",
+    "title": "Repository und Monorepo-Struktur initialisieren",
+    "depends_on": [],
+    "specification": [
+      "docs/02_Technische_Architektur.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Rust-Build und SvelteKit-Build laufen aus den Lockfiles auf einem frischen Checkout.",
+      "Monorepo, Infrastrukturstruktur und Lizenzentwurf sind dokumentiert; keine Fachfunktionen sind implementiert."
+    ],
+    "security_scope": "P0: Nur Werkzeugkette und Metadaten. Keine Laufzeitkonten oder Fachdatenspeicherung.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-002",
+    "phase": "P0",
+    "title": "Architektur-ADRs und Dienstgrenzen versionieren",
+    "depends_on": [
+      "KC-001"
+    ],
+    "specification": [
+      "docs/12_Entscheidungen_und_Konflikte.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Alle in docs/02 genannten Dienste haben Zuständigkeit, Datenhoheit und erlaubte Aufrufe.",
+      "Schema je Mandant bleibt erhalten; Dienstrollen und Migrationszuständigkeit sind entschieden; kein dienstübergreifender Tabellenzugriff."
+    ],
+    "security_scope": "P0: Entwurf der Dienst-, Datenbank- und Wahlgrenzen. Keine Datenbankmigration.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-003",
+    "phase": "P0",
+    "title": "Synthetische Testdaten und CI-Matrix einrichten",
+    "depends_on": [
+      "KC-001"
+    ],
+    "specification": [
+      "docs/08_Test_und_Release_Konzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Synthetische Organisationsdaten sind reproduzierbar und enthalten keine Echtdaten.",
+      "CI prüft Build, Formatierung, Tests, Secrets und npm-Abhängigkeiten; externe Rust-Abhängigkeiten erfordern cargo audit."
+    ],
+    "security_scope": "P0: Nur erfundene Daten; CI ohne Schreibrechte oder Deployment-Secrets.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-004",
+    "phase": "P1",
+    "title": "Organisationen, Träger und Einrichtungen modellieren",
+    "depends_on": [
+      "KC-001",
+      "KC-002",
+      "KC-003",
+      "KC-037",
+      "KC-038"
+    ],
+    "specification": [
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Zwei Träger und eine unabhängige Einrichtung sind im Modell getrennt abbildbar.",
+      "Eine unberechtigte Zuordnung zu einem fremden Träger wird abgewiesen."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-005",
+    "phase": "P1",
+    "title": "Schema-Provisioning und RLS erzwingen",
+    "depends_on": [
+      "KC-004"
+    ],
+    "specification": [
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Ein Rollenwechsel auf einer wiederverwendeten Verbindung gibt keine Daten des vorherigen Mandanten zurück.",
+      "Nicht registrierte Schemanamen und Dienstrollen mit BYPASSRLS werden abgewiesen."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-006",
+    "phase": "P1",
+    "title": "Identity: Passwort, Passkeys, TOTP und Recovery",
+    "depends_on": [
+      "KC-004"
+    ],
+    "specification": [
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Passwort, Passkey, TOTP und Recovery besitzen positive und negative Anmeldefälle.",
+      "Widerrufene Sitzungen und wiederverwendete Recovery-Nachweise werden abgewiesen."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-007",
+    "phase": "P1",
+    "title": "OIDC und SAML Föderation implementieren",
+    "depends_on": [
+      "KC-006"
+    ],
+    "specification": [
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "OIDC und SAML prüfen Aussteller, Empfänger, Zeitfenster und Wiederverwendung.",
+      "Eine gleiche E-Mail allein verknüpft keine fremde Identität."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-008",
+    "phase": "P1",
+    "title": "RBAC und Objekt-/Feld-Policies implementieren",
+    "depends_on": [
+      "KC-005",
+      "KC-006"
+    ],
+    "specification": [
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Nicht ausdrücklich erlaubte Aktionen werden serverseitig abgewiesen.",
+      "Objekt-, Feld-, Einrichtungs- und Trägergrenzen haben negative Tests; Rollenentzug wirkt sofort."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-009",
+    "phase": "P1",
+    "title": "Audit sämtlicher personenbezogener Zugriffe",
+    "depends_on": [
+      "KC-008"
+    ],
+    "specification": [
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Personenbezogene Lese- und Schreibzugriffe erzeugen die vorgeschriebenen Metadaten.",
+      "Zugriffsprotokolle enthalten keine Fachinhalte; Änderung und unberechtigtes Lesen sind verhindert."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-010",
+    "phase": "P1",
+    "title": "Modul-/Feature-Flags und Hierarchie-Konfiguration",
+    "depends_on": [
+      "KC-004",
+      "KC-008"
+    ],
+    "specification": [
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Einrichtungswerte respektieren verbindliche Träger-Mindeststandards.",
+      "Moduldeaktivierung entzieht Funktionen und erhält Daten geschützt."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-011",
+    "phase": "P2",
+    "title": "Kinder- und Sorgeberechtigtenstammdaten",
+    "depends_on": [
+      "KC-008",
+      "KC-009"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Sorgerechtsbeschränkungen begrenzen den Zugriff auf einzelne Kinder und Felder.",
+      "Elternbeirat und fremde Einrichtung erhalten keinen Zugriff auf die Kinderakte."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-012",
+    "phase": "P2",
+    "title": "Aufnahme, Warteliste, Vertrag und Eingewöhnung",
+    "depends_on": [
+      "KC-011"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Aufnahme, Warteliste, Vertrag und Eingewöhnung haben versionierte Abläufe.",
+      "Vertragsfreigabe und Einladungen prüfen Rechte; rechtliche Freigaben sind vor Einsatz dokumentiert."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-013",
+    "phase": "P2",
+    "title": "Anwesenheit, Abwesenheit und Abholberechtigungen",
+    "depends_on": [
+      "KC-011"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Nur berechtigte Personen erfassen Anwesenheit, Abwesenheit und Abholung.",
+      "Entzogene Abholberechtigungen werden sofort berücksichtigt und Änderungen protokolliert."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-014",
+    "phase": "P2",
+    "title": "Gruppen-, Jahreswechsel- und Austrittsassistent",
+    "depends_on": [
+      "KC-011",
+      "KC-012"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Gruppenwechsel und Austritt entziehen alte Rechte ohne fremde Daten zu verändern.",
+      "Löschregeln prüfen Kategorie und Rechtsgrundlage; Testlauf zeigt betroffene Daten."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-015",
+    "phase": "P3",
+    "title": "Personalstamm, Träger-HR und Springerpool",
+    "depends_on": [
+      "KC-008",
+      "KC-009",
+      "KC-011"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Personalverwaltung erhält nur ausdrücklich zugewiesene Träger- und Einrichtungsrechte.",
+      "Springereinsatz endet mit dem Einsatzrecht; fremde Personalakten bleiben gesperrt."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-016",
+    "phase": "P3",
+    "title": "Dienstplanung mit Vorschlägen und Betreuungsschlüsseln",
+    "depends_on": [
+      "KC-015"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Dienstplanvorschläge verwenden ein versioniertes, fachlich bestätigtes Regelwerk.",
+      "Vorschläge werden erst nach manueller Freigabe verbindlich; Unterbesetzung wird nachvollziehbar gemeldet."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-017",
+    "phase": "P3",
+    "title": "Arbeitszeit, Urlaub, Krankheit und Zeitkonten",
+    "depends_on": [
+      "KC-015"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Manuelle und gestempelte Zeiten besitzen eine nachvollziehbare Korrekturhistorie.",
+      "Korrekturen erfordern Freigabe; Krankheitsdaten bleiben besonders geschützt."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-018",
+    "phase": "P3",
+    "title": "Pflege, Schlaf, Übergabe und Ereignisse",
+    "depends_on": [
+      "KC-013"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Pflege, Schlaf, Übergabe und Ereignisse prüfen Alter, Gruppe und Feldrechte.",
+      "Elternansichten enthalten nur ausdrücklich freigegebene Inhalte."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-019",
+    "phase": "P4",
+    "title": "Portfolioeditor und Freigabeprozess",
+    "depends_on": [
+      "KC-011"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Portfolioseiten unterstützen Vorlagen, Revisionen und einen Freigabeablauf.",
+      "Unveröffentlichte Seiten sind für nicht berechtigte Personen unzugänglich."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-020",
+    "phase": "P4",
+    "title": "Lokale Gesichtsmaskierung und Medienfreigaben",
+    "depends_on": [
+      "KC-019"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Die lokale Maskierung überträgt keine Bilder an externe Erkennungsdienste.",
+      "EXIF/GPS wird entfernt; jede Veröffentlichung erfordert Maskenprüfung und gültige Einzelbildeinwilligung."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-021",
+    "phase": "P4",
+    "title": "Entwicklungsdokumentation getrennt schützen",
+    "depends_on": [
+      "KC-019"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Vertrauliche Entwicklungsdaten sind vom veröffentlichten Portfolio getrennt.",
+      "Ein Portfoliozugriff gibt keine Entwicklungsakte frei; negative Feldtests sind vorhanden."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-022",
+    "phase": "P5",
+    "title": "Elternkommunikation, Kalender und Umfragen",
+    "depends_on": [
+      "KC-008",
+      "KC-009",
+      "KC-011"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Nachrichten, Kalender und Umfragen beachten freigegebene Zielgruppen.",
+      "Ein Einrichtungswechsel oder Widerruf entzieht auch den Zugriff auf zugehörige Inhalte."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-023",
+    "phase": "P5",
+    "title": "Veranstaltungen, Helferlisten und Basar",
+    "depends_on": [
+      "KC-022"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Parallele Buchungen überschreiten keine verfügbare Basarkapazität.",
+      "Reservierungsablauf und erneute Zustellung geben Kapazität genau einmal frei."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-024",
+    "phase": "P5",
+    "title": "Kassenbuch, PayPal-Manuellabgleich und QR",
+    "depends_on": [
+      "KC-023"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Kassenkorrekturen erfolgen durch Gegenbuchung; PayPal-Abgleich bleibt manuell.",
+      "Gleichzeitige QR-Einlösungen erlauben nur einen Verbrauch; Offline-Risiko erfordert ausdrückliche Aktivierung."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-025",
+    "phase": "P5",
+    "title": "Geheime Hybridwahl mit Sicherheitsreview",
+    "depends_on": [
+      "KC-008",
+      "KC-009",
+      "KC-011"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Online-, Papier- und Hybridfälle verhindern doppelte Stimmen ohne Identitätsverknüpfung.",
+      "Unabhängige Prüfung untersucht auch Logs, Zeitkorrelation und Datensicherungen; keine Freigabe ohne bestätigtes Wahlprotokoll."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-026",
+    "phase": "P5",
+    "title": "Sitzungen, Wissen, Inventar und Elternservices",
+    "depends_on": [
+      "KC-022"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Jedes Protokoll, Notizbuch und Inventarobjekt prüft seinen Berechtigungsumfang.",
+      "Exporte und gemeinsame Freigaben erweitern keine Kinder- oder Personalrechte."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-027",
+    "phase": "P6",
+    "title": "Speisepläne, Bestellung und Catereransicht",
+    "depends_on": [
+      "KC-011",
+      "KC-018"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Bestellungen, Abmeldungen und Catereransichten beachten Fristen und Kostformenrechte.",
+      "Das Modul erzeugt keine Rechnungen, Forderungen oder Zahlungen."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-028",
+    "phase": "P6",
+    "title": "Integrationen SMTP, Push, ICS, Webhooks",
+    "depends_on": [
+      "KC-008"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Webhooks weisen manipulierte, veraltete und wiederholte Anfragen ab.",
+      "ICS- und Dienstschlüssel sind widerrufbar; Wiederholungen erzeugen keine doppelten Nachrichten."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-029",
+    "phase": "P7",
+    "title": "Workflow-/Formulareditor und Vorlagen",
+    "depends_on": [
+      "KC-010"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Workflow- und Formularversionen erhalten nachvollziehbare Freigaben.",
+      "Benutzerdefinitionen können keine verbindlichen Rechte- oder Datenschutzregeln umgehen."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-030",
+    "phase": "P7",
+    "title": "DSGVO-Auskunft, Löschung und Consent-Journal",
+    "depends_on": [
+      "KC-009",
+      "KC-020"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Auskunft und Löschprüfung berücksichtigen Identität, Kategorie und bestätigte Fristen.",
+      "Nach Wiederherstellung werden Löschjournal und Einwilligungswiderrufe erneut angewendet."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-031",
+    "phase": "P7",
+    "title": "Mandantenmigration und Exporte",
+    "depends_on": [
+      "KC-005",
+      "KC-030"
+    ],
+    "specification": [
+      "docs/01_Fachkonzept.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Mandantenexport und Testimport prüfen Rechte, Vollständigkeit und Dubletten.",
+      "Ein fehlgeschlagener Transfer erhält den ursprünglichen Datenbestand und dokumentiert den Zustand."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-032",
+    "phase": "P8",
+    "title": "Compose, Portainer, Kubernetes und Helm",
+    "depends_on": [
+      "KC-001"
+    ],
+    "specification": [
+      "docs/09_Self_Hosting_Betrieb.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Compose/Portainer und Helm installieren denselben dokumentierten Versionsstand reproduzierbar.",
+      "Secrets liegen außerhalb des Repositorys; Netzwerkgrenzen und Dienstidentitäten haben negative Tests."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-033",
+    "phase": "P8",
+    "title": "Verschlüsselte Backups, PITR und Restore-Proben",
+    "depends_on": [
+      "KC-031",
+      "KC-032"
+    ],
+    "specification": [
+      "docs/09_Self_Hosting_Betrieb.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Datenbank, Medien, Konfiguration und Schlüsselmaterial werden konsistent verschlüsselt gesichert.",
+      "Wiederherstellungsproben messen die bestehenden RPO/RTO-Ziele von je 24 Stunden einschließlich Löschabgleich."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-034",
+    "phase": "P8",
+    "title": "Monitoring, Last-, Security- und A11y-Tests",
+    "depends_on": [
+      "KC-001",
+      "KC-032"
+    ],
+    "specification": [
+      "docs/09_Self_Hosting_Betrieb.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Bestätigte Lastgrenzen und WCAG 2.2 AA haben reproduzierbare Prüfszenarien.",
+      "Alle blockierenden Sicherheitsprüfungen aus docs/08 sind nachgewiesen; fehlende Prüfungen blockieren die Abnahme."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-035",
+    "phase": "P9",
+    "title": "Release 1.0 automatisiert signieren und veröffentlichen",
+    "depends_on": [
+      "KC-002",
+      "KC-034",
+      "KC-033",
+      "KC-030",
+      "KC-031"
+    ],
+    "specification": [
+      "docs/09_Self_Hosting_Betrieb.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Erst der vollständige Umfang von v5.9 erlaubt die erste öffentliche stabile Version 1.0.",
+      "Fehlgeschlagene Prüfschritte verhindern Tag und Veröffentlichung; Images sind signiert und besitzen Software-Stückliste."
+    ],
+    "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-036",
+    "phase": "P0",
+    "title": "Deutsche Bestandsdokumentation redaktionell prüfen",
+    "depends_on": [],
+    "specification": [
+      "docs/13_Dokumentationsrichtlinie_DE_ASD_STE100.md",
+      "docs/14_Fachwortverzeichnis_DE.md"
+    ],
+    "acceptance": [
+      "Die zwölf ursprünglichen Fachunterlagen sind sprachlich geprüft; fachliche Aussagen bleiben erhalten.",
+      "Glossarbegriffe und manuelle sprachliche Prüfung sind je Pull Request nachgewiesen; keine formelle ASD-STE100-Konformität wird behauptet."
+    ],
+    "security_scope": "Nur Dokumentation; keine Änderung von Rechten oder Fristen.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-037",
+    "phase": "P0",
+    "title": "Offene technische P0-Entscheidungen bestätigen",
+    "depends_on": [
+      "KC-002"
+    ],
+    "specification": [
+      "docs/15_P0_Initialisierung.md"
+    ],
+    "acceptance": [
+      "O-001 bis O-008 besitzen eine dokumentierte Entscheidung der zuständigen Person oder einen ausdrücklich begründeten späteren Prüftermin.",
+      "Lastprofil für eine Einrichtung besitzt bestätigte Benutzerzahl, Antwortzeit, Referenzhardware und Messverfahren; keine erfundenen Messwerte."
+    ],
+    "security_scope": "Keine fachlichen oder rechtlichen Annahmen als Freigabe behandeln.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-038",
+    "phase": "P0",
+    "title": "Review-Verantwortung und verpflichtenden Branchschutz einrichten",
+    "depends_on": [
+      "KC-001"
+    ],
+    "specification": [
+      "docs/08_Test_und_Release_Konzept.md",
+      "docs/15_P0_Initialisierung.md"
+    ],
+    "acceptance": [
+      "Bestätigte CODEOWNERS und unabhängige Sicherheits-/Datenschutzprüfer sind dokumentiert.",
+      "Main verlangt Review, aktuelle Pflichtprüfungen structure/rust/web/secrets/dependencies und Schutz der Regeln; die tatsächliche Konfiguration ist per GitHub-API nachgewiesen."
+    ],
+    "security_scope": "Keine automatische Veröffentlichung oder administrativer Review-Bypass; CODEOWNERS erfordert bestätigte Zuständigkeit.",
+    "status": "planned"
+  }
+]

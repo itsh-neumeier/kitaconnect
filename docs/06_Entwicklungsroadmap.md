@@ -21,6 +21,10 @@
 | P9 Release 1.0 | P0–P8 | Vollständige Abnahme, CI-Gates, SBOM, signierte Images, Changelog, Stable-Tag |
 
 ## Sequenzierung und Parallelität
+
+Die P0-Reihenfolge, offene Entscheidungen und die Abnahme stehen im
+[P0-Plan](15_P0_Initialisierung.md). Verfeinerte Issue-Abhängigkeiten ergänzen
+die Phasenbedingungen dieser Tabelle. Sie ersetzen diese Bedingungen nicht.
 P1 ist der kritische Pfad. Ab P2 können unabhängige Dienste parallel entwickelt werden, solange API-Verträge versioniert und testbar sind. Jede Phase in kleine GitHub-Issues zerlegen (idealerweise 0,5–2 Entwicklungstage pro Issue); keine KI-Sitzung soll ein ganzes Modul auf einmal implementieren müssen. Technische Spike-Issues vor besonders riskanten Bereichen: geheime Hybridwahl, Mandantenschema+RLS, vollständige Lesezugriff-Audits, Face-Masking, mandantenspezifischer Restore, SAML/OIDC, lokaler/S3-Speicher, Microservice-Betrieb.
 
 ## Release-1.0-Abnahme

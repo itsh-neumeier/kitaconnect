@@ -1,0 +1,16 @@
+.local/
+node_modules/
+target/
+.svelte-kit/
+build/
+coverage/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.log
+Thumbs.db
+.DS_Store

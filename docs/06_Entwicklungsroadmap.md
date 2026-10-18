@@ -4,31 +4,61 @@
 
 > Status: Anforderungsspezifikation, keine implementierte oder rechtsverbindlich geprüfte Software. Die neuesten ausdrücklichen Interviewentscheidungen gelten.
 
-## Releaseprinzip
-**1.0 ist die erste öffentliche Stable und enthält den gesamten vereinbarten Umfang.** Davor nur interne Entwicklungsmeilensteine, keine öffentliche Beta/Nightly. Danach zusätzliche stabile Versionen. Alle Phasen mit grünen Tests und fortlaufender Dokumentation; kein Feature gilt ohne Berechtigungs-, Datenschutz- und Migrationstests als fertig.
+## Veröffentlichungsprinzip
 
-| Phase | Abhängigkeit | Ergebnis / Exit-Gate |
+**1.0 ist die erste öffentliche stabile Version und enthält den gesamten vereinbarten Umfang.**
+Davor gibt es nur interne Entwicklungsmeilensteine. Öffentliche Beta- und nächtliche Entwicklungsversionen sind ausgeschlossen.
+Danach folgen weitere stabile Versionen.
+Jede Phase benötigt erfolgreiche Tests und fortlaufende Dokumentation.
+Eine Funktion gilt ohne Berechtigungs-, Datenschutz- und Migrationstests nicht als fertig.
+
+CI bezeichnet die automatisierte Integration. ADR bezeichnet eine dokumentierte Architekturentscheidung.
+RLS bezeichnet Row-Level Security. MFA bezeichnet Mehrfaktor-Authentisierung.
+PITR ist die Wiederherstellung zu einem Zeitpunkt. HA bezeichnet Hochverfügbarkeit.
+E2E bezeichnet Ende-zu-Ende-Tests. SBOM bezeichnet die Software-Stückliste.
+
+| Phase | Abhängigkeit | Ergebnis / Abnahmekriterium |
 |---|---|---|
-| P0 Grundlagen | keine | Monorepo, ADRs, Lizenzentwurf, CI, Docker/Helm-Skeleton, Testdaten |
-| P1 Plattformkern | P0 | Identity, MFA, Organisation/Träger, Schemas/RLS, Policy-Engine, Audit, Modulkonfiguration |
+| P0 Grundlagen | keine | Monorepo, ADRs, Lizenzentwurf, CI, Docker-/Helm-Grundgerüst, Testdaten |
+| P1 Plattformkern | P0 | Identität, MFA, Organisation/Träger, Schemas/RLS, Berechtigungsprüfung, Zugriffsprotokollierung, Modulkonfiguration |
 | P2 Kita-Stammdaten | P1 | Kinder, Sorgeberechtigte, Gruppen, Aufnahme, Verträge, Anwesenheit, Rechte |
 | P3 Personal & Tagesbetrieb | P2 | Dienstplan, Zeitkonten, Pflege, Übergaben, Notfälle, Elternkommunikation |
 | P4 Pädagogik & Medien | P2/P3 | Portfolio, Entwicklung, lokale Gesichtsmaskierung, Medienfreigabe |
-| P5 Elternbeirat & Finanzen | P1/P2 | Events, Basare, Kasse, QR, Wahlen, Sitzungen, Wissen, Inventar |
+| P5 Elternbeirat & Finanzen | P1/P2 | Veranstaltungen, Basare, Kasse, QR, Wahlen, Sitzungen, Wissen, Inventar |
 | P6 Speisen & Integrationen | P2/P3 | Menüs, Bestellungen ohne Abrechnung, Caterer, SMTP/Push/ICS/Webhooks |
-| P7 Administration & Datenschutz | P1–P6 | Trägerkonfiguration, Workflows, Auskunft/Löschung, Import/Export, Migration |
-| P8 Betrieb & Härtung | P0–P7 | Backups/PITR, Restore, HA, Monitoring, Last, Security, Accessibility, E2E |
-| P9 Release 1.0 | P0–P8 | Vollständige Abnahme, CI-Gates, SBOM, signierte Images, Changelog, Stable-Tag |
+| P7 Administration & Datenschutz | P1–P6 | Trägerkonfiguration, Arbeitsabläufe, Auskunft/Löschung, Import/Export, Migration |
+| P8 Betrieb & Härtung | P0–P7 | Datensicherungen/PITR, Wiederherstellung, HA, Betriebsüberwachung, Last, Sicherheit, Barrierefreiheit, E2E |
+| P9 Veröffentlichung 1.0 | P0–P8 | Vollständige Abnahme, CI-Prüfschritte, SBOM, signierte Images, Änderungsprotokoll, Versionsmarke der stabilen Version |
 
 ## Sequenzierung und Parallelität
 
 Die P0-Reihenfolge, offene Entscheidungen und die Abnahme stehen im
 [P0-Plan](15_P0_Initialisierung.md). Verfeinerte Issue-Abhängigkeiten ergänzen
 die Phasenbedingungen dieser Tabelle. Sie ersetzen diese Bedingungen nicht.
-P1 ist der kritische Pfad. Ab P2 können unabhängige Dienste parallel entwickelt werden, solange API-Verträge versioniert und testbar sind. Jede Phase in kleine GitHub-Issues zerlegen (idealerweise 0,5–2 Entwicklungstage pro Issue); keine KI-Sitzung soll ein ganzes Modul auf einmal implementieren müssen. Technische Spike-Issues vor besonders riskanten Bereichen: geheime Hybridwahl, Mandantenschema+RLS, vollständige Lesezugriff-Audits, Face-Masking, mandantenspezifischer Restore, SAML/OIDC, lokaler/S3-Speicher, Microservice-Betrieb.
+P1 ist der kritische Pfad. Ab P2 können unabhängige Dienste parallel entwickelt werden.
+Ihre Dienstverträge müssen dabei versioniert und testbar sein.
+Zerlegen Sie jede Phase in kleine GitHub-Issues, möglichst mit 0,5–2 Entwicklungstagen je Issue.
+Eine KI-Sitzung soll kein vollständiges Modul auf einmal implementieren müssen.
 
-## Release-1.0-Abnahme
-100 % vereinbarte Must-Funktionen nachprüfbar; alle kritischen Tests grün; Mandantenisolation nachgewiesen; Datenschutz- und Rechteprüfung; barrierefreie Hauptprozesse; Restore-Test; Load-Test mit definiertem Szenario; signierte Container und Release Notes. Automatisches Tag/Publish ausschließlich nach Review-geschütztem Merge und vollständigem CI-Gate.
+Besonders riskante Bereiche benötigen vorher technische Untersuchungsissues:
+
+- Geheime Hybridwahl, Mandantenschema mit RLS und vollständige Protokollierung von Lesezugriffen.
+- Gesichtsmaskierung und mandantenspezifische Wiederherstellung.
+- Anmeldung über SAML beziehungsweise OIDC, lokaler oder S3-kompatibler Speicher und Microservice-Betrieb.
+
+SAML und OIDC bezeichnen Verfahren für die angebundene Identitätsverwaltung.
+
+## Abnahme der Version 1.0
+
+Die Abnahme verlangt folgende Nachweise:
+
+- 100 % der vereinbarten Pflichtfunktionen sind prüfbar. Alle kritischen Tests sind erfolgreich.
+- Mandantenisolation, Datenschutz und Berechtigungen sind geprüft.
+- Hauptprozesse sind barrierefrei. Wiederherstellung und Last werden mit definiertem Szenario getestet.
+- Container sind signiert. Veröffentlichungshinweise liegen vor.
+
+Automatische Versionsmarkierung und Veröffentlichung erfolgen ausschließlich nach einem durch Review geschützten Merge.
+Alle verpflichtenden CI-Prüfschritte müssen erfolgreich sein.
 
 
 ## Dokumentationssprache (Ergänzung v5.9)

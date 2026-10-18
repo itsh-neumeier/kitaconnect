@@ -4,18 +4,45 @@
 
 > Status: Anforderungsspezifikation, keine implementierte oder rechtsverbindlich geprüfte Software. Die neuesten ausdrücklichen Interviewentscheidungen gelten.
 
-## Testpyramide und verpflichtende Gates
-Format/Lint, Rust clippy/test, TypeScript/Svelte checks, Unit-/Integrationstests, Datenbankmigrationstests pro Mandantenschema, Contract-Tests, E2E, RBAC/ABAC/Feldrechte, Sorgerechtsfälle, Cross-Tenant- und Cross-Carrier-Tests, Security-SAST/SCA/Secrets/Container, SBOM, Lizenz-Compliance, Performance/Load, WCAG 2.2 AA, PWA/Mobil, Backup/Restore/PITR und Rollback-Szenarien. Keine echten Kinderdaten in CI; synthetische Fixtures.
+## Testpyramide und verpflichtende Prüfschritte
 
-## Security-Kritikalität
-Blockierende Tests: tenant isolation, Wahlgeheimnis, Gesundheits-/Personalaktenzugriff, Consent-Withdrawal, Notfallzugriff, Finanztransaktionen, Passwort-/Session-Sicherheit, unsignierte/verwundbare Images. Kritische Änderungen brauchen genehmigte PR-Reviews, bevor automatischer Release möglich ist.
+Die automatisierte Integration (CI) und die späteren Abnahmen umfassen:
 
-## Automatische Stable-Pipeline
-1. Geschützter Main-Branch, mindestens ein Review, CODEOWNERS für Security/Privacy.
-2. CI-Checks, Integration, E2E, Contract, Mandantentests, Last-Schwellen, Security, Accessibility.
-3. Migrationskompatibilität und Rücksicherungsprobe; Release-Checkliste maschinell geprüft.
-4. Versionsberechnung/Tag, Changelog, SBOM, Image-Signierung, GHCR-Publish, Release Notes.
-5. Bei einem fehlgeschlagenen Gate kein Tag und kein Publish. Keine öffentlichen Preview-/Nightly-Artefakte.
+- Formatierung, statische Codeprüfung, Rust-Clippy, Rust-Tests sowie TypeScript- und Svelte-Prüfungen.
+- Komponenten- und Integrationstests sowie Datenbankmigrationstests je Mandantenschema.
+- Dienstvertragstests und Ende-zu-Ende-Tests (E2E).
+- Rollenbasierte (RBAC), attributbasierte (ABAC) und feldbezogene Berechtigungstests sowie Sorgerechtsfälle.
+- Isolationstests zwischen Mandanten und zwischen Trägern.
+- Statische Quelltextanalyse (SAST), Abhängigkeitsanalyse (SCA), Secret- und Containerprüfung.
+- Software-Stückliste (SBOM) und Prüfung der Lizenzanforderungen.
+- Leistungs- und Lasttests sowie Barrierefreiheit nach WCAG 2.2 AA.
+- Mobile Nutzung der Progressive Web App (PWA).
+- Datensicherung, Wiederherstellung, Wiederherstellung zu einem Zeitpunkt (PITR) und Rücksetzverfahren.
+
+WCAG bezeichnet die Web Content Accessibility Guidelines.
+CI verwendet ausschließlich synthetische Testdaten und keine echten Kinderdaten.
+
+## Sicherheitskritische Prüfungen
+
+Folgende Testbereiche blockieren bei Fehlern die Freigabe:
+
+- Mandantenisolation und Wahlgeheimnis.
+- Zugriff auf Gesundheitsdaten und Personalakten sowie Widerruf von Einwilligungen.
+- Notfallzugriff und Finanztransaktionen.
+- Passwort- und Sitzungssicherheit sowie unsignierte oder verwundbare Images.
+
+Kritische Änderungen benötigen genehmigende Pull-Request-Reviews vor einer automatischen Veröffentlichung.
+
+## Automatisierte Veröffentlichung stabiler Versionen
+
+1. Schützen Sie `main`. Verlangen Sie mindestens ein Review und CODEOWNERS für Sicherheit und Datenschutz.
+2. Prüfen Sie CI, Integration, E2E, Dienstverträge, Mandantenisolation, Lastgrenzen, Sicherheit und Barrierefreiheit.
+3. Prüfen Sie Migrationskompatibilität und Wiederherstellung. Prüfen Sie die Veröffentlichungscheckliste maschinell.
+4. Berechnen Sie die Version und setzen Sie ihre Versionsmarke.
+   Erstellen Sie Änderungsprotokoll und SBOM. Signieren Sie Images und veröffentlichen Sie diese in der GitHub Container Registry (GHCR).
+   Erstellen Sie Veröffentlichungshinweise.
+5. Bei einem fehlgeschlagenen Prüfschritt erfolgt weder Versionsmarkierung noch Veröffentlichung.
+   Öffentliche Vorschauversionen und nächtliche Entwicklungsartefakte sind ausgeschlossen.
 
 ## Qualitätskennzahlen (initiale Zielwerte, vor Release festzulegen)
 
@@ -23,7 +50,10 @@ Die Projektleitung hat das [Einrichtungsprofil in KC-037](17_P0_Entscheidungsreg
 Es legt 50 Sitzungen, 10 Anfragen pro Sekunde, p95-Ziele, Fehlerrate und Referenzressourcen fest.
 KC-034 prüft diese Ziele nach Implementierung repräsentativer Abläufe.
 Die unabhängige Prüfung des Wahlprotokolls bleibt gemäß ADR-017 vor dessen Implementierung erforderlich.
-Keine kritischen bekannten Sicherheitslücken; keine unaufgelösten kritischen Bugs; alle verbindlichen Testfälle erfolgreich. Konkrete Performance-SLOs und Lastszenarien sind in P0 als messbare Werte festzulegen, statt unbelegte Zahlen vorzugeben.
+Zur Abnahme dürfen keine bekannten kritischen Sicherheitslücken oder ungeklärten kritischen Fehler vorliegen.
+Alle verbindlichen Testfälle müssen erfolgreich sein.
+P0 verlangt messbare Leistungsziele und Lastszenarien statt unbelegter Zahlen.
+Das verknüpfte Einrichtungsprofil dokumentiert die inzwischen bestätigten Zielwerte.
 
 
 ## Dokumentationssprache (Ergänzung v5.9)

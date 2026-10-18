@@ -67,6 +67,20 @@ vollständige Abnahme für 1.0 nicht leisten.
 KC-038 weist GitHub-Regeln und Review-Verantwortung nach.
 Die Ziele aus ADR-003 und ADR-004 bleiben bestehen.
 
+## Vorgeschlagene Architekturentscheidungen für KC-002
+
+Stand: 18.10.2026. Die folgenden Einträge sind keine beschlossenen Entscheidungen.
+
+- [ADR-014 – Datenhoheit und Migrationen](architecture/ADR-014_Datenhoheit_und_Migrationen.md):
+  Einrichtungsschema mit getrennten Dienstrechten oder getrennte Dienstdatenbanken.
+- [ADR-015 – Gateway-Grenze](architecture/ADR-015_Gateway_Grenze.md):
+  Eigenständiges Rust-Gateway oder SvelteKit als Backend für das Frontend.
+
+Die [Dienstmatrix](architecture/KC-002_Dienstgrenzen.md) ergänzt Entitäten,
+Kommunikationszwecke und negative Testanforderungen.
+Trägerweite Personalakten und die physische Wahltrennung bleiben explizit offen.
+KC-002 darf vor den erforderlichen Sicherheitsentscheidungen nicht als abgeschlossen gelten.
+
 
 ## Dokumentationssprache (Ergänzung v5.9)
 Für dieses Dokument gilt die deutsche Projektrichtlinie `13_Dokumentationsrichtlinie_DE_ASD_STE100.md` mit dem verbindlichen Fachwortverzeichnis `14_Fachwortverzeichnis_DE.md`. Die Richtlinie orientiert sich an ASD-STE100, stellt aber **keine offizielle deutsche ASD-STE100-Konformität** dar.

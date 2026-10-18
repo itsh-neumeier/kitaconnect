@@ -32,6 +32,9 @@ Der CSV-Backlog war deshalb die Importgrundlage. GitHub bleibt danach verbindlic
 
 ## Dienstgrenzen als Entwurf
 
+KC-002 ergänzt eine [Zuordnung von Entitäten und Kommunikationszwecken](architecture/KC-002_Dienstgrenzen.md).
+Die Vorschläge ADR-014 und ADR-015 sind dort verknüpft. Sie sind noch nicht entschieden.
+
 Diese Zuordnung konkretisiert die Skizze aus `02_Technische_Architektur.md`.
 KC-002 MUSS Datenhoheit, Dienstrollen, Tabellenzuordnung und erlaubte Aufrufe bestätigen.
 Bis dahin entstehen keine Fachpakete oder Datenbanktabellen.

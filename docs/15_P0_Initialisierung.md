@@ -1,7 +1,7 @@
 # P0 – Technische Projektinitialisierung
 
 Stand: 18.10.2026. Grundlage: Spezifikation v5.9.
-Status: Grundgerüst zur Prüfung. P0 ist noch nicht vollständig abgenommen.
+Status: Grundgerüst integriert. Die formale P0-Gesamtabnahme steht noch aus.
 
 ## Auftrag und Grenze
 
@@ -142,18 +142,20 @@ Nur `@itsh-neumeier` erhält dort eine Konto-Ausnahme über PRs. Nutzung nur fü
 Die Konto-Ausnahme kann technisch auch bei fremden PRs verwendet werden; diese Grenze ist ausdrücklich akzeptiert.
 Der [Nachweis und die Review-Anleitung](18_Branchschutz_und_Reviews.md) dokumentieren Grenzen und Integrationsfolge.
 Die CODEOWNERS-Datei benennt nach ausdrücklicher Bestätigung vorläufig `@itsh-neumeier`.
-Diese Datei fehlt bis zur Integration von PR #42 auf `main`.
-Die manuelle sprachliche Prüfung bleibt vor dem Merge erforderlich.
+Diese Datei ist nach Integration von PR #42 auf `main` vorhanden.
+Die Projektleitung hat die persönliche und sprachliche Durchsicht für die Integration #39 bis #44 bestätigt.
 
 ## P0-Abnahme
 
 Der [technische Prüfbericht](20_P0_Pruefung_und_Abnahme.md) ordnet die vorhandenen Nachweise zu.
-Die folgende Liste ist die formale Abnahme. Sie wird durch erfolgreiche Vorprüfungen nicht automatisch bestätigt.
+Der [Integrationsnachweis](21_P0_Integration_und_Abnahmevorbereitung.md) dokumentiert die durchgeführten Merges.
+Die folgenden Nachweise sind erfüllt. Die formale Gesamtabnahme bleibt eine gesonderte Entscheidung.
 
-- [ ] Builds und P0-Prüfschritte sind für den aktuellen Commit grün.
-- [ ] KC-002 bestätigt Dienstgrenzen, Datenhoheit und Architekturentscheidungen.
-- [ ] O-001 bis O-008 sind entschieden oder haben einen ausdrücklich bestätigten späteren Prüftermin.
-- [ ] Lastprofil und Messverfahren sind bestätigt; fehlende Messungen sind gekennzeichnet.
-- [ ] CODEOWNERS und Branchschutz sind bestätigt und nachgewiesen.
-- [ ] Lizenzentwurf und Dokumentationsprüfung haben den geforderten Prüfstatus.
-- [ ] Checkpoint, GitHub-Issues und Pull Request stimmen überein.
+- [x] Builds und P0-Prüfschritte sind für den integrierten Main-Commit grün.
+- [x] KC-002 bestätigt Dienstgrenzen, Datenhoheit und Architekturentscheidungen.
+- [x] O-001 bis O-008 sind entschieden oder haben einen ausdrücklich bestätigten späteren Prüftermin.
+- [x] Lastprofil und Messverfahren sind bestätigt; fehlende Messungen sind gekennzeichnet.
+- [x] CODEOWNERS und Branchschutz sind bestätigt und nachgewiesen.
+- [x] Lizenzentwurf und Dokumentationsprüfung haben den dokumentierten Prüfstatus.
+- [x] Integrationsnachweise, GitHub-Stand und Checkpoint sind für die Abnahmevorbereitung nachgeführt.
+- [ ] Projektleitung erklärt die formale P0-Gesamtabnahme.

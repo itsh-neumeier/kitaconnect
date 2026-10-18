@@ -32,13 +32,14 @@ Sie ersetzt weder unabhängige Wahlprotokollprüfung noch juristische Lizenzprü
 ## CODEOWNERS und Integrationsfolge
 
 `@itsh-neumeier` ist als vorläufiger CODEOWNER bestätigt.
-Die Datei liegt bisher auf dem Arbeitsbranch aus PR #42 und fehlt auf `main`.
+Die Datei ist nach Integration von PR #42 auf `main` vorhanden.
 GitHub verwendet die CODEOWNERS-Datei des Zielbranchs.
-Die Konto-Ausnahme selbst ist bereits aktiv; sie setzt keine integrierte CODEOWNERS-Datei voraus.
+Die Konto-Ausnahme selbst bleibt aktiv; ihre Wirksamkeit ist von der CODEOWNERS-Datei unabhängig.
 
 Die Integrationsfolge lautet #39, #40, #41, #42, #43, #44.
-Die Folge-PRs zielen derzeit auf Arbeitsbranches. Die Main-Regelsätze schützen diese Zielbranches nicht.
-Nach Integration der Basis muss der nächste PR auf `main` umgestellt und erneut geprüft werden.
+Diese sechs PRs sind nach ausdrücklicher Freigabe integriert.
+Jeder Folge-PR wurde vorher auf `main` umgestellt, seine Basis aktualisiert und seine CI erneut geprüft.
+Der [Integrationsnachweis](21_P0_Integration_und_Abnahmevorbereitung.md) enthält die Merge- und Main-Prüfstände.
 
 1. Prüfen Sie PR-Autor, Zielbranch und aktuellen Commit.
 2. Prüfen Sie persönliche Durchsicht, technische Vorprüfung und sämtliche Pflichtprüfungen.
@@ -46,7 +47,7 @@ Nach Integration der Basis muss der nächste PR auf `main` umgestellt und erneut
 4. Verlangen Sie bei fremden PRs gemäß Nutzungsregel ein Review.
 5. Integrieren Sie nur nach gesondertem Merge-Auftrag und erfülltem Basisschutz.
 
-Diese Einrichtung hat keinen PR integriert. P0 ist noch nicht insgesamt abgenommen.
+Die spätere freigegebene Integration umfasst ausschließlich PRs #39 bis #44. P0 ist noch nicht insgesamt abgenommen.
 
 ## Nachweis und Änderungen
 

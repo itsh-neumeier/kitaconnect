@@ -158,6 +158,15 @@ Basisschutz `25341109` ohne Ausnahme; Review-Regelsatz `25346711` mit Ausnahme n
 Tests und Sicherheitsprüfungen bleiben verpflichtend. Die Beschränkung auf eigene PRs ist eine Nutzungsregel.
 GitHub würde die Konto-Ausnahme technisch auch bei fremden PRs zulassen. Diese Grenze wurde ausdrücklich akzeptiert.
 
+## Freigabe und Integration der P0-PRs
+
+Datum: 18.10.2026. Die Projektleitung hat mit „Ja“ die persönliche/sprachliche Durchsicht
+und die angebotene Integration der PRs #39 bis #44 bestätigt.
+Die Integration erfolgte mit aktualisierten Basen und erfolgreichen Pflichtprüfungen.
+Der [Integrationsnachweis](21_P0_Integration_und_Abnahmevorbereitung.md) enthält die Merge- und Main-CI-Stände.
+Die P0-Gesamtabnahme wurde zur Vorbereitung beauftragt, aber noch nicht erklärt.
+Es gibt keinen Auftrag zur Implementierung von P1.
+
 ## Dokumentationssprache (Ergänzung v5.9)
 
 Es gelten die [deutsche Dokumentationsrichtlinie](13_Dokumentationsrichtlinie_DE_ASD_STE100.md)

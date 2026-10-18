@@ -46,7 +46,9 @@ Die [Basisdatei](../../.github/rulesets/main.json) und die [Reviewdatei](../../.
 Die CI prüft beide Dateien. Negative Tests weisen fremde Konten, pauschale Rollen, direkte Push-Ausnahmen
 und Ausnahmen von Pflichtprüfungen ab.
 Konfigurationstests und API-Nachweis ersetzen keinen Nachweis einer persönlichen Prüfung oder eines tatsächlich versuchten Merges.
-Es wurde kein Merge durchgeführt.
+Bei Einrichtung der Ausnahme wurde kein Merge durchgeführt.
+Die anschließend ausdrücklich freigegebene Integration der PRs #39 bis #44 ist im
+[Integrationsnachweis](../21_P0_Integration_und_Abnahmevorbereitung.md) dokumentiert.
 
 ## Verbindliche Nutzung
 

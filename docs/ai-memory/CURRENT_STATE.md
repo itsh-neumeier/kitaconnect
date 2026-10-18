@@ -8,11 +8,11 @@ P0 ist insgesamt nicht abgenommen. P1 bis P9 haben weiterhin keinen Implementier
 
 - `issue_id`: [KC-003 / #3](https://github.com/itsh-neumeier/kitaconnect/issues/3).
 - `branch`: `codex/p0-test-security-foundations`.
-- `head_commit`: Ausgangscommit `d4de932c83fcb0cd987e7e979dceab9a90e660cd`; KC-003 folgt als eigener Commit.
-  Aktuellen Branchkopf mit `git rev-parse HEAD` prüfen.
+- `head_commit`: Verifizierter Implementierungscommit `3596ba9662b0ecf92eaec542fe5a5d2d228cd429`.
+  Dieser Checkpoint folgt als gesonderter Dokumentationscommit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
 - `objective`: Reproduzierbare synthetische Organisationsdaten und vollständige P0-Prüfmatrix.
 - `migration_state`: Keine Migrationen, Datenbankrollen oder Fachdatenspeicherung angelegt.
-- `pull_request`: Eigener KC-003-PR auf Basis von `codex/p0-service-boundaries`; Link im GitHub-Issue #3.
+- `pull_request`: [PR #41](https://github.com/itsh-neumeier/kitaconnect/pull/41) auf Basis von `codex/p0-service-boundaries`.
 - `dependencies`: PR #39 enthält das Grundgerüst. PR #40 enthält die bestätigten Dienstgrenzen.
   Beide PRs waren beim Start noch offen. Nicht ungeprüft zusammenführen.
 
@@ -54,7 +54,11 @@ Die Datei wurde danach aus dem Generator neu erzeugt; ihre Organisationsdaten bl
 Der erste lokale RustSec-Aufruf fand Cargo für den Registry-Abgleich nicht.
 Nach Setzen des lokalen Cargo-Pfads war der erneute Scan ohne diese Warnung erfolgreich.
 Es gibt keine bekannten verbleibenden lokalen Prüffehler.
-Secret-Scan und GitHub-Ergebnisse des finalen Commits werden im PR nachgewiesen.
+Gitleaks prüfte den vollständigen Diff und die gesamte Historie ohne Befund.
+[P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39121788898) und
+[P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39121788935)
+sind für den Implementierungscommit erfolgreich. Alle fünf Prüfschritte sind grün.
+Der gesonderte Checkpoint-Commit löst neue Prüfungen aus; deren aktuellen Stand vor Merge im PR prüfen.
 Rust-Quelltext bleibt unverändert. Build und Tests laufen zusätzlich in der Linux-CI.
 
 ## Sicherheitsumfang

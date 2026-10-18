@@ -26,7 +26,7 @@ Alle fünf bestehenden Prüfschritte bleiben benannt, damit KC-038 sie als Pflic
 
 | Prüfschritt | Laufzeit / Eingabe | Ausgeführter Nachweis |
 |---|---|---|
-| `structure` | Node.js 24.19.0, versionierte Organisationsdaten | Lokale Dokumentverweise, Backlog-Abhängigkeiten, bytegenaue Erzeugung, Struktur- und Negativtests |
+| `structure` | Node.js 24.19.0, versionierte Organisationsdaten | Lokale Dokumentverweise, Backlog-Abhängigkeiten, bytegenaue Erzeugung, Branchschutzplan, Struktur- und Negativtests |
 | `rust` | Rust 1.99.1, Cargo.lock | Rustfmt, Clippy, Tests und Build mit festgelegtem Lockfile |
 | `web` | Node.js 24.19.0, npm 12.2.0, package-lock.json | Installation ohne Paketskripte, Svelte-/TypeScript-Prüfung und Build |
 | `secrets` | Gitleaks 8.30.1 | Gesamte Git-Historie; Ausgabe mit verdeckten Fundwerten |
@@ -61,6 +61,11 @@ Der Scan bleibt auch nach Einführung externer Abhängigkeiten verpflichtend.
 Quelle: [RustSec-Dokumentation zu cargo-audit](https://github.com/rustsec/rustsec/blob/cargo-audit/v0.22.2/cargo-audit/README.md).
 
 ## Grenzen
+
+`node scripts/check-github-rules.mjs` prüft den lokalen Main-Regelsatz.
+Die negativen Tests weisen Abschwächungen von Reviews, Pflichtprüfungen und Branchgrenzen ab.
+Diese Tests beweisen keine aktive GitHub-Einstellung.
+Der getrennte [API-Nachweis](../docs/18_Branchschutz_und_Reviews.md) bleibt erforderlich.
 
 P0 prüft die Backlog-Abhängigkeiten, lokale Dokumentverweise und das Grundgerüst.
 Es weist noch keine Mandantenisolation nach.

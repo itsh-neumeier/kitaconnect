@@ -1,106 +1,87 @@
 # Projektstatus und Fortsetzung
 
 Aktualisiert: 18.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
-Status: KC-037 dokumentiert bestätigte Ziele, technische Festlegungen und ausdrücklich zurückgestellte Freigaben.
-P0 ist insgesamt nicht abgenommen. P1 bis P9 besitzen keinen Implementierungsauftrag.
+Status: KC-038 hat den Main-Branchschutz eingerichtet und per API nachgewiesen.
+Unabhängige Reviewer fehlen. P0 ist nicht insgesamt abgenommen.
+P1 bis P9 besitzen keinen Implementierungsauftrag.
 
 ## Arbeitsstand
 
-- `issue_id`: [KC-037 / #37](https://github.com/itsh-neumeier/kitaconnect/issues/37).
-- `branch`: `codex/p0-decision-register`.
-- `head_commit`: Verifizierter Entscheidungscommit `a6d807eda65c48a9492f1fa158f4077fccf5602f`.
-  Dieser Checkpoint folgt als gesonderter Dokumentationscommit. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
-- `objective`: O-001 bis O-008 mit Entscheidungen oder begründeten späteren Prüfterminen dokumentieren.
-- `pull_request`: [PR #42](https://github.com/itsh-neumeier/kitaconnect/pull/42) auf Basis von `codex/p0-test-security-foundations`.
-- `migration_state`: Keine Datenbankrollen, Migrationen, Zertifikate, Zugangsdaten oder Laufzeitdienste angelegt.
-- `dependencies`: Bisherige PRs #39, #40 und #41 zuerst prüfen und integrieren. Kein Merge durch diese Sitzung.
+- `issue_id`: [KC-038 / #38](https://github.com/itsh-neumeier/kitaconnect/issues/38).
+- `branch`: `codex/p0-review-protection`.
+- `head_commit`: Ausgangscommit `a893f76e1f8513d4dbdcc88f292477cd48bbd8c2` aus PR #42.
+  Der KC-038-Änderungscommit folgt. Aktuellen Kopf mit `git rev-parse HEAD` prüfen.
+- `objective`: Aktiven Main-Regelsatz nachweisen und unabhängige Review-Zuständigkeit klären.
+- `pull_request`: Wird nach dem ersten Commit als Entwurf gegen `codex/p0-decision-register` angelegt.
+- `migration_state`: Keine Datenbankrollen, Migrationen, Zertifikate oder Laufzeitdienste angelegt.
+- `dependencies`: PRs #39, #40, #41 und #42 zuerst prüfen und integrieren. Kein Merge durch diese Sitzung.
 
-## Antworten der Projektleitung
+## Bestätigte Antworten
 
 Quelle: ausdrückliche Antworten im Projektchat am 18.10.2026.
 
-1. Das vorgeschlagene Referenzprofil wurde mit „Dieses Referenzprofil bestätigen“ angenommen.
-2. Rechteinhaber, juristische Lizenzprüfung und unabhängige Wahlprüfung sollen ausdrücklich „offen lassen“ bleiben.
-3. Die Antwort „@itsh-neumeier Timo Neumeier“ bestätigt die vorläufige CODEOWNER-Zuordnung.
-4. Der Auftrag „gerne fragen stellen danach autonom weiterarbeiten“ delegiert die technische Weiterarbeit innerhalb der bestehenden Anforderungen.
+1. `1A, 2A, 3A, 4A` bestätigt ADR-014 bis ADR-017. Nicht erneut abfragen.
+2. Das [Lastprofil](../17_P0_Entscheidungsregister.md) ist bestätigt: eine Einrichtung, 50 Sitzungen,
+   10 Anfragen pro Sekunde, 80/20 Lesen/Schreiben, p95 500/1.000 ms und unter 1 % Fehler.
+   Referenz: 4 vCPU, 8 GB RAM, 100 GB SSD, 5 Minuten Aufwärmen und 30 Minuten Messung.
+   Medienverarbeitung bleibt gesondert. Es gibt noch keine repräsentativen Messergebnisse.
+3. Rechteinhaber, juristische Lizenzprüfung und unabhängige Wahlprüfung sollen ausdrücklich offen bleiben.
+   Projektleitung bleibt für Besetzung vor den gesperrten Aktionen zuständig.
+4. `@itsh-neumeier Timo Neumeier` bestätigt den vorläufigen CODEOWNER.
+   Dies ernennt keinen Rechteinhaber oder unabhängigen Fachprüfer.
+5. npm audit ist lokal und in GitHub Actions ausdrücklich erlaubt.
+6. Technische Weiterarbeit innerhalb der Anforderungen ist delegiert. Keine weitere Entwicklungsphase beginnen.
 
-Die CODEOWNER-Antwort ernennt Timo Neumeier nicht zum Rechteinhaber oder unabhängigen Fachprüfer.
-Die frühere Auswahl `1A, 2A, 3A, 4A` bleibt gültig. ADR-014 bis ADR-017 werden nicht erneut abgefragt.
-Die unabhängige Prüfung des Wahlprotokolls bleibt vor dessen Implementierung verpflichtend.
+## Erledigt in KC-038
 
-## Erledigt
+1. AGENTS, CLAUDE, Fortsetzungsanleitung, Checkpoint, Entscheidungsprotokoll und relevante Unterlagen gelesen.
+2. Sauberen Ausgangsbranch und erfolgreiche fünf Prüfungen von PR #42 geprüft.
+3. `GET branches/main` zeigte zunächst `protected: false`; die Regelsatzliste war leer.
+4. Die App erhielt beim klassischen Schutzendpunkt HTTP 403. Ihr fehlen dort Verwaltungsrechte.
+5. Der vorhandene Git-Zugang bestätigte Administrationsrechte. Er wurde nur im Speicher verwendet.
+   Keine Zugangsdaten ausgegeben oder gespeichert. Keine zusätzlichen Zugangsdaten angelegt.
+6. Aktiven Regelsatz `25341109` ausschließlich für `refs/heads/main` erstellt.
+7. Reviews, CODEOWNER-Prüfung, aktuelle Basis und alle fünf GitHub-Actions-Prüfungen sind erforderlich.
+   Löschen und Force-Push sind gesperrt. Es gibt keine eingetragenen Merge-Ausnahmen.
+8. Regelsatz und `protected: true` nach Einrichtung erneut über die GitHub-App gelesen.
+9. Plan, API-Momentaufnahme, [ADR-021](../architecture/ADR-021_Branchschutz_und_Review.md)
+   und [Betriebsanleitung](../18_Branchschutz_und_Reviews.md) erstellt.
+10. Lokale Planprüfung und negative Tests in den bestehenden CI-Prüfschritt `structure` aufgenommen.
 
-1. AGENTS, CLAUDE, Checkpoint, ADRs, relevante Spezifikation sowie Issues #37/#38 gelesen.
-2. Sauberen Arbeitsbaum und erfolgreichen CI-Stand des KC-003-Ausgangs geprüft.
-3. [Entscheidungsregister](../17_P0_Entscheidungsregister.md) mit O-001 bis O-008 und spätesten Prüfterminen erstellt.
-4. Bestätigtes Lastprofil und reproduzierbares Messverfahren dokumentiert.
-5. [ADR-019](../architecture/ADR-019_Dienstidentitaeten.md) konkretisiert Diensttokens, mTLS, Widerruf und aktuelle Rechteprüfung.
-6. [ADR-020](../architecture/ADR-020_Hintergrundauftraege.md) konkretisiert Redis Streams, dauerhafte Zustellnachweise, Wiederholungen und Fehlerablage.
-7. Primärquellen für PostgreSQL, Redis, Helm und Kubernetes recherchiert. Planungsstände sind ausdrücklich keine getestete Installationsfreigabe.
-8. Vorläufigen CODEOWNER eingetragen. Unabhängige Reviews und tatsächlicher Branchschutz bleiben offen.
-9. Architektur, Testkonzept, Betriebshinweise, Lizenzprüfpunkte, Entscheidungsliste und P0-Plan abgeglichen.
+## Grenzen und offene Rollen
 
-## Bestätigtes Lastprofil
-
-Eine Einrichtung, 50 gleichzeitig angemeldete Benutzer und insgesamt 10 Anfragen pro Sekunde.
-80 % Lesen und 20 % Schreiben. p95 höchstens 500 ms beim Lesen und 1.000 ms beim Schreiben.
-Technische Fehlerrate unter 1 %. Referenz: 4 vCPU, 8 GB RAM und 100 GB SSD.
-5 Minuten Aufwärmzeit und 30 Minuten Messung. Medienverarbeitung wird gesondert gemessen.
-Die Zielwerte sind bestätigt. Es gibt noch keine repräsentativen Lastmessergebnisse.
-Der spätere synthetische Testbestand und das genaue Verfahren stehen im Register.
-
-## Technische Quellen und Versionen
-
-Stand vom 18.10.2026: PostgreSQL 18.6, Redis 8.10.2, Helm 4.3.1 und Kubernetes 1.37.1.
-Die Primärquellen sind im Register verknüpft. Versionen, Images, Sicherheitsmeldungen,
-Lizenzwahl und tatsächliche Kompatibilität MÜSSEN vor Infrastrukturimplementierung in KC-032 erneut geprüft werden.
-Compose-/Portainer-Patchstände und konkrete S3-Anbieter sind bewusst noch nicht festgelegt.
+- GitHub-Benutzername für unabhängige PR-Reviews ist angefragt. Noch keine Antwort.
+- Sicherheits- und Datenschutzprüfer sind nicht benannt. Fachfreigaben aus KC-037 bleiben gesperrt.
+- CODEOWNERS liegt bisher nur auf dem Arbeitsbranch von PR #42. Die Datei fehlt auf `main`.
+- Ein Autor kann eigene Änderungen nicht genehmigen. Mit nur einem CODEOWNER bleiben dessen eigene Merges
+  nach Integration der Datei ohne weiteren bestätigten CODEOWNER gesperrt. Regeln nicht abschwächen.
+- Der Regelsatz schützt nur `main`. Auf Arbeitsbranches gerichtete Folge-PRs sind noch nicht durch ihn geschützt.
+- Administratoren können Regelsätze weiterhin verwalten. Keine Unveränderlichkeit behaupten.
+- [API-Nachweis](BRANCH_PROTECTION_STATE.json) ist eine Momentaufnahme, vor Merge erneut prüfen.
 
 ## Prüfungen
 
 | Prüfung | Ergebnis |
 |---|---|
-| `node scripts/check-project.mjs` | 38 Issues, 27 Dokumente, lokale Verweise und synthetische Daten geprüft |
+| `node scripts/check-project.mjs` | 38 Issues, 29 Dokumente und lokale Verweise geprüft |
+| `node scripts/check-github-rules.mjs` | Versionierter Plan erfüllt Schutzanforderungen |
+| Planprüfung auf ausgelesener API-Antwort | Erfolgreich |
 | `node scripts/fixtures.mjs --check` | Bytegenau erfolgreich |
-| `node --test scripts/*.test.mjs` | 13 von 13 Tests erfolgreich |
+| `node --test scripts/*.test.mjs` | 28 von 28 Tests erfolgreich, davon 14 negative Branchschutzfälle |
+| actionlint 1.7.12 | Erfolgreich |
 | `git diff --check` | Erfolgreich |
-| Ausgangscommit `ec907b8` | [P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39121874227) und [P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39121874219) erfolgreich |
 
-Nur Dokumentation und CODEOWNERS geändert. Lokale Frontend-/Rust-Builds werden nicht wiederholt.
-Gitleaks prüfte den vollständigen vorgemerkten Diff ohne Befund.
-[P0 CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39122501875) und
-[P0 Security](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39122501690)
-sind für den Entscheidungscommit erfolgreich. Der nachfolgende Dokumentationscommit löst eigene Prüfungen aus.
-Vor Merge MUSS der aktuelle Commit grün sein. Die Folge-Issues #6, #28, #32 und #34 sind nachgeführt.
-Keine bekannten neuen Testfehler. Kein Nachweis implementierter Dienst-, Last- oder Wahlsicherheit behauptet.
-
-## Noch offene Freigaben
-
-- Projektleitung benennt Rechteinhaber und juristische Fachperson vor Nutzungsrechtseinräumung oder Softwareveröffentlichung.
-- Projektleitung benennt unabhängige Wahlprüfer; ohne geprüften Entwurf keine Implementierung des Wahlprotokolls.
-- Rechtliche Datenschutzfristen und regionale Personalregelwerke bleiben vor betroffener Umsetzung fachlich zu bestätigen.
-- CODEOWNERS ist jetzt zugeordnet. Ein unabhängiger Prüfer und wirksame Branchschutzregeln sind dadurch nicht nachgewiesen.
-- Die frühere Branchschutzabfrage lieferte HTTP 403. Aus der leeren Regelsatzliste wurde kein fehlender Schutz abgeleitet.
-- Juristische Lizenzwahl und geprüfte Versions-/Installationsmatrix bleiben vor tatsächlicher Verwendung erforderlich.
-
-Die Zurückstellung der drei angefragten Rollen ist ausdrücklich gewünscht.
-Die gesperrten Aktionen und spätesten Termine sind im Register dokumentiert.
-Sie ist keine Fachfreigabe und keine P0-Gesamtabnahme.
+CI für den neuen Commit steht noch aus. Rust- und Frontend-Code wurden nicht geändert.
+Keine neuen lokalen Testfehler. Keine implementierte Dienst-, Last- oder Wahlsicherheit behauptet.
 
 ## Nächste drei Aktionen
 
-1. KC-037-PR mit aktuellem CI- und Review-Stand prüfen. Issue #37 erst nach Review und Integration schließen.
-2. [KC-038 / #38](https://github.com/itsh-neumeier/kitaconnect/issues/38) weiterführen:
-   unabhängige Review-Rollen und nachweisbaren Branchschutz klären. Bestätigten CODEOWNER nicht erneut abfragen.
-3. KC-036 für die sprachliche Bestandsprüfung bearbeiten. Die dokumentierten späteren Fachprüfungen vor ihren Sperrterminen veranlassen.
+1. KC-038-Entwurf veröffentlichen und aktuelle CI prüfen. Issue #38 mit dem belegten Teilfortschritt nachführen.
+2. Nach Antwort den unabhängigen Reviewer und dessen Zugriffsrechte prüfen. Keine Person eigenmächtig ernennen.
+   Sicherheits- und Datenschutzrollen gesondert bestätigen lassen. KC-038 bis zur Erfüllung aller Kriterien offen lassen.
+3. Danach [KC-036 / #36](https://github.com/itsh-neumeier/kitaconnect/issues/36) für die sprachliche Bestandsprüfung bearbeiten.
+   P0-Abnahme und spätere Fachprüfungen bleiben erforderlich.
 
-Die Integrationsreihenfolge ist #39, #40, #41, danach der KC-037-PR.
-Nach Integration einer Basis den nächsten PR auf `main` umstellen und erneut prüfen.
-Die Sitzung erteilt keine eigenständige Merge-Freigabe.
-
-## Sicherheitsumfang und Fortsetzung
-
-Nur Planung und Repository-Zuständigkeit. Keine Echtdaten oder produktiven Secrets.
-Die bestehende Erlaubnis für npm audit lokal und in GitHub Actions bleibt gültig.
-Lesen Sie beim Neustart AGENTS, CLAUDE, diesen Status, die Entscheidungsliste und den aktuellen GitHub-Stand.
-Wiederholen Sie bestätigte Fragen nicht. Arbeiten Sie weiter in P0; P1 benötigt Abnahme und eigenen Auftrag.
+Integrationsfolge: #39, #40, #41, #42, danach KC-038. Nach Integration der Basis den nächsten PR
+auf `main` umstellen und aktuelle CI sowie Reviews erneut prüfen. Keine eigenständige Merge-Freigabe.
+Beim Neustart AGENTS, CLAUDE, diesen Status, offene Entscheidungen und den GitHub-Stand lesen.

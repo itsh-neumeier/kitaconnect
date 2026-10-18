@@ -134,13 +134,12 @@ P0 veröffentlicht keine Tags oder Images.
 
 Main MUSS ein unabhängiges Review und die Pflichtprüfungen
 `structure`, `rust`, `web`, `secrets`, `dependencies` verlangen.
-CODEOWNERS allein erzwingt diese Regeln nicht. Die GitHub-Regelsatzabfrage war leer.
-Der API-Nachweis tatsächlicher Schutzregeln bleibt Teil von KC-038.
-Die separate Abfrage des bisherigen Branchschutzes lieferte HTTP 403.
-Der Connector darf diese Administrationseinstellung nicht lesen.
-Deshalb ist der bisherige Branchschutz unbekannt.
+CODEOWNERS allein erzwingt diese Regeln nicht.
+KC-038 hat am 18.10.2026 den aktiven Regelsatz `25341109` eingerichtet.
+Die API bestätigt `protected: true` und alle fünf Pflichtprüfungen ohne Merge-Ausnahme.
+Der [Nachweis und die Review-Anleitung](18_Branchschutz_und_Reviews.md) dokumentieren Grenzen und Integrationsfolge.
 Die CODEOWNERS-Datei benennt nach ausdrücklicher Bestätigung vorläufig `@itsh-neumeier`.
-Diese Zuordnung weist weder unabhängiges Review noch wirksame Schutzregeln nach.
+Diese Datei fehlt bis zur Integration von PR #42 auf `main`. Unabhängige Reviewer bleiben unbesetzt.
 Die manuelle sprachliche Prüfung bleibt vor dem Merge erforderlich.
 
 ## P0-Abnahme

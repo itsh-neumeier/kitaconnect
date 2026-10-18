@@ -115,6 +115,11 @@ Sie hat `@itsh-neumeier Timo Neumeier` als vorläufigen CODEOWNER bestätigt.
 Keine dieser Entscheidungen ersetzt die erforderlichen unabhängigen Prüfungen oder eine Lizenzfreigabe.
 
 ## Dokumentationssprache (Ergänzung v5.9)
+
+[ADR-021](architecture/ADR-021_Branchschutz_und_Review.md) dokumentiert den aktiven Main-Regelsatz aus KC-038.
+Er verlangt Reviews und die fünf aktuellen Pflichtprüfungen ohne eingetragene Merge-Ausnahme.
+Unabhängige Prüfer bleiben bis zur ausdrücklichen Benennung offen.
+
 Für dieses Dokument gilt die deutsche Projektrichtlinie `13_Dokumentationsrichtlinie_DE_ASD_STE100.md` mit dem verbindlichen Fachwortverzeichnis `14_Fachwortverzeichnis_DE.md`. Die Richtlinie orientiert sich an ASD-STE100, stellt aber **keine offizielle deutsche ASD-STE100-Konformität** dar.
 
 ## ADR-010 – Deutsche technische Dokumentationssprache (v5.9)

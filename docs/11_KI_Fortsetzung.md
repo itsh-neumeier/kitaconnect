@@ -20,6 +20,11 @@ Kleine Commits; API-Contract zuerst; niemals ungetestete Änderung in Main; Test
 Commit/Branch sichern; `CURRENT_STATE.md` mit Issue, Branch, Commit, fertig, offen, Tests, Fehlern, Migrationen und nächsten drei Aktionen aktualisieren; Issue/PR kommentieren. Keine unbegründete Erfolgsmeldung bei fehlenden Tests.
 
 ## Neustart-Prompt
+
+Der konkrete P0-Stand steht in [CURRENT_STATE](ai-memory/CURRENT_STATE.md).
+Offene Rückfragen stehen in [DECISIONS_PENDING](ai-memory/DECISIONS_PENDING.md).
+Die [Issue-Zuordnung](../backlog/github-issues.json) verbindet KC-Kennungen mit GitHub.
+P0 ist vor der dokumentierten Abnahme nicht abgeschlossen. P1 braucht einen neuen Auftrag.
 ```text
 Arbeite am GitHub-Repository kitaconnect weiter. Lies zuerst AGENTS.md, CLAUDE.md,
 docs/ai-memory/CURRENT_STATE.md, die relevanten ADRs, Issues und PRs.

@@ -1,0 +1,15 @@
+{
+  "name": "kitaconnect",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": ["apps/web"],
+  "engines": { "node": ">=24.19.0 <25" },
+  "packageManager": "npm@12.2.0",
+  "scripts": {
+    "check": "node scripts/check-project.mjs",
+    "test": "node --test scripts/*.test.mjs",
+    "check:web": "npm run check --workspace @kitaconnect/web",
+    "build:web": "npm run build --workspace @kitaconnect/web"
+  }
+}

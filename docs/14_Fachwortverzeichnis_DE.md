@@ -22,6 +22,9 @@
 | Wiederherstellung | Rückführung gesicherter Daten in einen geprüften Zustand | Restore im deutschen Fließtext |
 | Stabile Version | Freigegebene, vollständig geprüfte Veröffentlichung | Release-Kandidat |
 | Prüfschritt | Nachweisbare Qualitäts- oder Sicherheitskontrolle | Gate ohne Erklärung |
+| Software-Stückliste | Verzeichnis der Softwarebestandteile; englisch Software Bill of Materials (SBOM) | SBOM ohne Erklärung |
+| Dienstidentität | Technisch überprüfbare Identität eines Dienstes | Service-Identität im deutschen Fließtext |
+| Dienstvertrag | Versionierter Vertrag für eine Dienstschnittstelle oder ein Ereignis | Contract ohne Erklärung |
 | Zugriffsprotokoll | Nachvollziehbarer Nachweis von Datenzugriffen | Log ohne Erklärung |
 | Mandantenwechsel | Wechsel des aktiven organisatorischen Kontexts | Login-Wechsel, wenn kein neuer Login erfolgt |
 

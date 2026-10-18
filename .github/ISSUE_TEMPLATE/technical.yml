@@ -1,0 +1,29 @@
+name: Technisches Arbeitspaket
+description: Kleiner, prüfbarer Arbeitsumfang für KitaConnect
+body:
+  - type: textarea
+    id: basis
+    attributes:
+      label: Spezifikationsgrundlage und Ziel
+      description: Nennen Sie Phase, v5.9-Abschnitt und erwartetes Ergebnis.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Voraussetzungen und offene Entscheidungen
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Akzeptanzkriterien und Testnachweise
+    validations:
+      required: true
+  - type: textarea
+    id: security
+    attributes:
+      label: Sicherheitsumfang
+      description: Nennen Sie Datenklassen, Rollen, Mandanten und negative Berechtigungstests.
+    validations:
+      required: true

@@ -8,12 +8,13 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 
 - issue_id: [KC-004B / #51](https://github.com/itsh-neumeier/kitaconnect/issues/51), SQL-Persistenz und echte Datenbanktests.
 - branch: codex/kc-004b-postgres-persistenz; baut auf PR #53 / 5d42ef8 auf.
-- head_commit: Speichervertrag und ADR-024 zuerst in a209a25 versioniert. Implementierungscommit folgt; aktuellen Kopf mit git rev-parse HEAD prüfen.
+- pull_request: [PR #54](https://github.com/itsh-neumeier/kitaconnect/pull/54), Basis codex/kc-004a-organisationsmodell.
+- head_commit: Implementierung 5deba61d2411841c0e446d8610eae1604cbd28b6; Speichervertrag und ADR-024 zuvor in a209a25 versioniert. Dieser Checkpoint folgt gesondert; aktuellen Kopf mit git rev-parse HEAD prüfen.
 - objective: Rollen, transaktionssichere Erstmigration und synthetische PostgreSQL-Tests; keine vorgezogene Benutzerrechtefreigabe.
 - completed: SQL-Speichervertrag, ADR-024, getrennte NOLOGIN-Rollen, restriktives Schema, ID-Domäne und Referenztabellen; Testläufer für echten Server-Neustart, Rechte und Rollback.
-- remaining: Linux-CI für Datenbanktests ausführen und Fehler beheben. Rust-/SQLx-Anbindung bleibt als Folgeschritt von #51 offen.
+- remaining: Abschließenden Checkpoint in CI prüfen und PR zur Durchsicht bereitstellen. Rust-/SQLx-Anbindung bleibt als Folgeschritt von #51 offen.
 - migration_state: Versionierte Erstmigration und gesonderte Provisionierung hinzugefügt. Noch keine produktive Datenbank oder Laufzeitidentität angelegt.
-- known_failures: Lokal fehlen Docker und psql sowie der Windows-C++-Linker. Echte PostgreSQL-Ausführung wird deshalb in der Linux-CI geprüft; noch kein Datenbankerfolg behauptet.
+- known_failures: Keine bekannten fehlgeschlagenen Pflichtprüfungen. Lokal fehlen Docker und psql sowie der Windows-C++-Linker; echte PostgreSQL-Tests und Rust-Build sind in Linux-CI erfolgreich.
 - dependencies: PR #53 offen und vollständig grün. Folge-PR gegen dessen Branch öffnen; keinen ungefragten Merge ausführen. Nach Integration Basis auf main umstellen und erneut prüfen.
 
 ## P0-Abschluss
@@ -72,9 +73,13 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 - Testcontainer ohne Netzwerk und Host-Port; lokale Testanmeldung nur im kurzlebigen Testcontainer.
 - Pflichtprüfung rust umfasst jetzt auch Datenbanktests. Alle bisherigen Pflichtstatus bleiben unverändert geschützt.
 - Runtime besitzt keine erlaubende RLS-Policy. Aktuelle Benutzerrechteprüfung bleibt #52 vorbehalten.
-- Vor Commit Gitleaks auf vorgemerkten Änderungen ausführen; CI-Ergebnis im eigenen PR ergänzen.
+- Implementierung 5deba61: alle fünf Pflichtprüfungen erfolgreich. Echter PostgreSQL-Test einschließlich Rollback, Laufzeit-/Eigentümergrenzen und Server-Neustart im Pflichtstatus rust erfolgreich.
+  Nachweise: [CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39289182939),
+  [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39289183446).
+- 40 Node-Tests, JavaScript-Syntaxprüfung, Regelsatzvalidatoren und Gitleaks ebenfalls erfolgreich.
+- Der folgende Checkpoint-Commit erhält eigene CI. Ergebnis im PR nachführen.
 
-1. Folge-PR zu #51 öffnen und echte Datenbanktests in CI ausführen; Fehler beheben.
+1. Abschlussstand von PR #54 prüfen und zur Durchsicht bereitstellen. PR #53 bleibt offene Basis; nach deren Integration auf main umstellen und neu prüfen.
 2. Rechte-/Migrationsnachweise dokumentieren. #51 bis zur Rust-Anbindung und vollständigen Abnahme offen lassen.
 3. SQLx-Version und Sicherheitsmeldungen für Rust-Persistenz prüfen; danach kleine Adapter- und Datenbanktests ergänzen.
 

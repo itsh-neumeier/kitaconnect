@@ -12,9 +12,9 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 - head_commit: Implementierung 9a3ca3291b06c653c16ba8eb5e635053e06c9107; Vertrag und ADR-025 zuvor in d3dbb96 versioniert. Folgecommit sichert die Socket-Bereinigung und diesen Checkpoint; aktuellen Kopf mit git rev-parse HEAD prüfen.
 - objective: SQLx-Adapter mit echten PostgreSQL-Tests; keine neue Berechtigungsregel oder Laufzeitfreigabe.
 - completed: Adapter für Anlage und Lesen, gebundene Parameter und exakte u128-Kennungen, typisierte Fehler, callergeführte Transaktionen; Testläufer um Rust-Prüfung vor/nach Neustart erweitert.
-- remaining: Linux-Build, Clippy und echte Adaptertests für PR #55 vollständig prüfen; Fehler beheben.
+- remaining: Vollständige CI einschließlich korrigierter Socket-Bereinigung für PR #55 erneut prüfen.
 - migration_state: Migration 0001 und produktionsbezogene NOLOGIN-Provisionierung unverändert. Nur im isolierten Testcontainer entsteht eine kurzlebige Loginrolle ohne Passwort.
-- known_failures: Lokal scheitert cargo check an fehlendem link.exe für Abhängigkeits-Buildskripte. Docker/psql fehlen ebenfalls. Ausführbare Nachweise müssen aus Linux-CI kommen.
+- known_failures: Lokales cargo check scheitert an fehlendem link.exe; Docker/psql fehlen ebenfalls. CI 9a3ca32 bestand Rust-Build und echte Adaptertests vor/nach Neustart, scheiterte danach an EPERM beim Löschen des durch PostgreSQL umbesessenen Socket-Verzeichnisses. Korrektur stellt Host-UID/GID und Modus vor gezielter Bereinigung wieder her; neue CI erforderlich.
 - dependencies: PR #53 und #54 bleiben offen und grün. Neuer Folge-PR gegen codex/kc-004b-postgres-persistenz. Keine ungefragte Integration; nach Basis-Merges retargeten und neu prüfen.
 
 ## P0-Abschluss
@@ -73,7 +73,8 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 - Aktueller lokaler RustSec-Abgleich mit aktualisierter Datenbank und Paketindex erfolgreich: 155 Lockfile-Pakete, keine blockierenden Befunde.
   Advisory-DB: 999ec89d5d3f10f20be14750ec8c2d8b44e0ac9b.
 - Lokal erfolgreich: Rustfmt, 40 Node-Tests, JavaScript-Syntax, Struktur-/Verweisprüfung, Actionlint und git diff --check.
-- Adapter-Build/Tests noch nicht erfolgreich ausgeführt. cargo check scheitert am fehlenden Windows-C++-Linker, nicht als bestandene Prüfung ausweisen.
+- Adapter-Build und Tests sind in CI 9a3ca32 erfolgreich ausgeführt; der gesamte Rust-Job blieb wegen nachgelagerter Socket-Bereinigung rot. Neue CI muss den vollständigen Erfolg nachweisen.
+  Lokales cargo check scheitert am fehlenden Windows-C++-Linker und gilt nicht als bestanden.
 - Der echte PostgreSQL-Test läuft weiterhin im Pflichtstatus rust. Ein temporärer Unix-Socket ermöglicht die Rust-Verbindung ohne Container-Netzwerk oder Host-Port.
 - Runtime-RLS bleibt ohne erlaubende Policy. Aktuelle Benutzerrechteprüfung und Dienstfreigabe bleiben #52 vorbehalten.
 - Vor Commit Gitleaks auf vorgemerkten Änderungen ausführen; neue CI-Nachweise im Folge-PR nachführen.

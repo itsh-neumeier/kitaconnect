@@ -131,8 +131,9 @@ try {
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {
     // PostgreSQL changes this bind mount's ownership/mode during startup.
-    // Remove its sticky bit so the host can clean up stale socket files after forced removal.
+    // Restore the host owner as well: /tmp's sticky bit otherwise prevents removal of the directory itself.
     try {
+      requireSuccess(docker(['exec', '--user', '0', container, 'chown', `${process.getuid()}:${process.getgid()}`, '/var/run/postgresql']), 'Restore own socket directory owner');
       requireSuccess(docker(['exec', '--user', '0', container, 'chmod', '0777', '/var/run/postgresql']), 'Prepare own socket directory cleanup');
     } finally {
       requireSuccess(docker(['rm', '--force', '--volumes', container]), 'Remove own test container and its volumes');

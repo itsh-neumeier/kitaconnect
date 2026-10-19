@@ -38,8 +38,13 @@ Die Tests belegen keine vollständige Mandantenisolation oder Benutzerberechtigu
 Am 19.10.2026 wurden die offiziellen PostgreSQL-Unterlagen und das Manifest des offiziellen Images geprüft.
 Image: `postgres:18.6-bookworm@sha256:afc7e2d441324c0388fa80c3d24f733b4194a4eb7f47dd8ee2b08eb1a24a647c`.
 Dies ist ein CI-Testartefakt, keine Freigabe des späteren Betriebsprofils.
+Die offizielle Sicherheitsübersicht nennt 18.6 als behobenen Stand für die dort zuletzt aufgeführten PostgreSQL-Befunde.
+Die PostgreSQL-Lizenz wurde als Lizenzgrundlage geprüft. Dies ersetzt weder einen Scan der übrigen Image-Pakete
+noch die gesonderte juristische Prüfung vor Veröffentlichung. Es wird keine allgemeine Schwachstellenfreiheit behauptet.
 
 - [PostgreSQL: RLS und standardmäßige Verweigerung](https://www.postgresql.org/docs/18/ddl-rowsecurity.html)
 - [PostgreSQL: Rollenrechte](https://www.postgresql.org/docs/18/sql-grant.html)
 - [PostgreSQL: Numeric-Datentypen](https://www.postgresql.org/docs/18/datatype-numeric.html)
 - [PostgreSQL: psql und Einzeltransaktionen](https://www.postgresql.org/docs/18/app-psql.html)
+- [PostgreSQL: Sicherheitsmeldungen und behobene Versionen](https://www.postgresql.org/support/security/)
+- [PostgreSQL: Lizenz](https://www.postgresql.org/about/licence/)

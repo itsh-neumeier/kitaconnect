@@ -130,7 +130,13 @@ try {
   console.log('PASS: two carriers and an independent facility, version and role boundaries survive server restart');
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {
-    requireSuccess(docker(['rm', '--force', '--volumes', container]), 'Remove own test container and its volumes');
+    // PostgreSQL changes this bind mount's ownership/mode during startup.
+    // Remove its sticky bit so the host can clean up stale socket files after forced removal.
+    try {
+      requireSuccess(docker(['exec', '--user', '0', container, 'chmod', '0777', '/var/run/postgresql']), 'Prepare own socket directory cleanup');
+    } finally {
+      requireSuccess(docker(['rm', '--force', '--volumes', container]), 'Remove own test container and its volumes');
+    }
   }
   if (socketDirectory) {
     const absolute = resolve(socketDirectory);

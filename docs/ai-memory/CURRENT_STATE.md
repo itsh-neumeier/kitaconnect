@@ -8,10 +8,11 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 
 - issue_id: [KC-004B / #51](https://github.com/itsh-neumeier/kitaconnect/issues/51), Rust-/SQLx-Anbindung.
 - branch: codex/kc-004b-sqlx-adapter auf PR #54 / 16cd295.
-- head_commit: Adaptervertrag und ADR-025 in d3dbb96 vor Implementierung versioniert. Implementierungscommit folgt; aktuellen Kopf mit git rev-parse HEAD prüfen.
+- pull_request: [PR #55](https://github.com/itsh-neumeier/kitaconnect/pull/55), Basis codex/kc-004b-postgres-persistenz.
+- head_commit: Implementierung 9a3ca3291b06c653c16ba8eb5e635053e06c9107; Vertrag und ADR-025 zuvor in d3dbb96 versioniert. Folgecommit sichert die Socket-Bereinigung und diesen Checkpoint; aktuellen Kopf mit git rev-parse HEAD prüfen.
 - objective: SQLx-Adapter mit echten PostgreSQL-Tests; keine neue Berechtigungsregel oder Laufzeitfreigabe.
 - completed: Adapter für Anlage und Lesen, gebundene Parameter und exakte u128-Kennungen, typisierte Fehler, callergeführte Transaktionen; Testläufer um Rust-Prüfung vor/nach Neustart erweitert.
-- remaining: Linux-Build, Clippy und echte Adaptertests ausführen; Fehler beheben und Folge-PR gegen #54 öffnen.
+- remaining: Linux-Build, Clippy und echte Adaptertests für PR #55 vollständig prüfen; Fehler beheben.
 - migration_state: Migration 0001 und produktionsbezogene NOLOGIN-Provisionierung unverändert. Nur im isolierten Testcontainer entsteht eine kurzlebige Loginrolle ohne Passwort.
 - known_failures: Lokal scheitert cargo check an fehlendem link.exe für Abhängigkeits-Buildskripte. Docker/psql fehlen ebenfalls. Ausführbare Nachweise müssen aus Linux-CI kommen.
 - dependencies: PR #53 und #54 bleiben offen und grün. Neuer Folge-PR gegen codex/kc-004b-postgres-persistenz. Keine ungefragte Integration; nach Basis-Merges retargeten und neu prüfen.
@@ -70,13 +71,14 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 - Vorgänger PR #54, 16cd295: alle fünf Pflichtprüfungen erfolgreich, einschließlich echter PostgreSQL-Migrations-/Rechte-/Neustarttests.
 - Neu: SQLx 0.9.0 und Tokio 1.54.0 anhand offizieller Paketmetadaten geprüft; Versionen exakt festgelegt, Cargo.lock aktualisiert.
 - Aktueller lokaler RustSec-Abgleich mit aktualisierter Datenbank und Paketindex erfolgreich: 155 Lockfile-Pakete, keine blockierenden Befunde.
+  Advisory-DB: 999ec89d5d3f10f20be14750ec8c2d8b44e0ac9b.
 - Lokal erfolgreich: Rustfmt, 40 Node-Tests, JavaScript-Syntax, Struktur-/Verweisprüfung, Actionlint und git diff --check.
 - Adapter-Build/Tests noch nicht erfolgreich ausgeführt. cargo check scheitert am fehlenden Windows-C++-Linker, nicht als bestandene Prüfung ausweisen.
 - Der echte PostgreSQL-Test läuft weiterhin im Pflichtstatus rust. Ein temporärer Unix-Socket ermöglicht die Rust-Verbindung ohne Container-Netzwerk oder Host-Port.
 - Runtime-RLS bleibt ohne erlaubende Policy. Aktuelle Benutzerrechteprüfung und Dienstfreigabe bleiben #52 vorbehalten.
 - Vor Commit Gitleaks auf vorgemerkten Änderungen ausführen; neue CI-Nachweise im Folge-PR nachführen.
 
-1. Folge-PR für den Adapter gegen #54 öffnen und Linux-CI vollständig prüfen; Build-/Testfehler beheben.
+1. Aktuellen Kopf von PR #55 und Linux-CI vollständig prüfen; Build-/Testfehler beheben.
 2. #51 mit Adapter- und Datenbanknachweisen aktualisieren. Erst nach Integration und vollständigen Kriterien abschließen.
 3. KC-005 mit dem Organisationsmodell abstimmen; anschließend Identitäts-/Policy-Grundlagen für #52 bearbeiten. Keine Fachrechte erfinden.
 

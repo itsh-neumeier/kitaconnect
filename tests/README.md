@@ -110,3 +110,6 @@ Eine ausschließlich im Testcontainer angelegte Loginrolle erbt nur die Laufzeit
 Die ausgelieferte Provisionierung bleibt unverändert ohne Loginrollen oder Passwörter.
 Der normale Cargo-Testlauf kennzeichnet den Datenbanktest als ignoriert; der verpflichtende Datenbankprüfschritt
 führt ihn mit `--ignored --exact` aus und prüft, dass genau ein Test tatsächlich ausgeführt wurde.
+Ein zusätzlicher Rust-Unit-Test weist ungültige gespeicherte Kennungen ohne Ersatzwert zurück.
+Der Adaptertest prüft außerdem die unveränderte Darstellung der größten u128-Kennung,
+typisierte Referenzfehler und die Rücknahme einer vom Aufrufer geführten Transaktion.

@@ -91,3 +91,15 @@ negativen Rust-Dokumentationstest zur Trennung der Kennungstypen.
 Die Tests verwenden ausschließlich synthetische Kennungen.
 Sie prüfen doppelte Kennungen, unbekannte Träger und unveränderten Zustand bei fehlgeschlagener Anlage.
 Sie ersetzen keine Rechte-, Datenbank- oder Migrationstests aus KC-004B/C.
+
+## P1-Ergänzung: Organisationsdatenbank
+
+Führen Sie mit Node.js 24 und Docker den Befehl `node scripts/test-organization-db.mjs` aus.
+Der Test startet ausschließlich einen eigenen PostgreSQL-18.6-Container mit festgelegtem Image-Digest.
+Er öffnet weder Netzwerk noch Host-Port und entfernt am Ende nur seinen eigenen Container und dessen Volumes.
+Docker lädt das offizielle Image bei Bedarf. Es werden keine Zugangsdaten benötigt oder gespeichert.
+
+Geprüft werden ID-Grenzen, Primär-/Fremdschlüssel, Rollenrechte, erzwungene RLS ohne erlaubende Policy,
+fehlgeschlagene Migration, abgebrochene Schreibtransaktion, Wiederholung der Erstmigration und echter Server-Neustart.
+Nur die Test-Betriebsidentität fügt synthetische Daten ein; sie ist keine Laufzeitidentität.
+Diese Prüfung ist im Pflichtstatus `rust` enthalten. SQLx-Anbindung, aktuelle Benutzerrechte und vollständige KC-005-Isolation folgen gesondert.

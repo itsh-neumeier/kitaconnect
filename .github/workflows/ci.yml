@@ -36,6 +36,11 @@ jobs:
       - run: cargo clippy --workspace --all-targets --locked -- -D warnings
       - run: cargo test --workspace --locked
       - run: cargo build --workspace --locked
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .node-version
+      - name: Organisationsdatenbank und Migrationsrechte prüfen
+        run: node scripts/test-organization-db.mjs
   web:
     runs-on: ubuntu-24.04
     timeout-minutes: 15

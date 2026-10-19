@@ -94,7 +94,7 @@ Sie ersetzen keine Rechte-, Datenbank- oder Migrationstests aus KC-004B/C.
 
 ## P1-Ergänzung: Organisationsdatenbank
 
-Führen Sie mit Node.js 24 und Docker den Befehl `node scripts/test-organization-db.mjs` aus.
+Führen Sie unter Linux mit Node.js 24, Rust 1.99.1 und Docker den Befehl `node scripts/test-organization-db.mjs` aus.
 Der Test startet ausschließlich einen eigenen PostgreSQL-18.6-Container mit festgelegtem Image-Digest.
 Er öffnet weder Netzwerk noch Host-Port und entfernt am Ende nur seinen eigenen Container und dessen Volumes.
 Docker lädt das offizielle Image bei Bedarf. Es werden keine Zugangsdaten benötigt oder gespeichert.
@@ -102,4 +102,11 @@ Docker lädt das offizielle Image bei Bedarf. Es werden keine Zugangsdaten benö
 Geprüft werden ID-Grenzen, Primär-/Fremdschlüssel, Rollenrechte, erzwungene RLS ohne erlaubende Policy,
 fehlgeschlagene Migration, abgebrochene Schreibtransaktion, Wiederholung der Erstmigration und echter Server-Neustart.
 Nur die Test-Betriebsidentität fügt synthetische Daten ein; sie ist keine Laufzeitidentität.
-Diese Prüfung ist im Pflichtstatus `rust` enthalten. SQLx-Anbindung, aktuelle Benutzerrechte und vollständige KC-005-Isolation folgen gesondert.
+Diese Prüfung ist im Pflichtstatus `rust` enthalten. Aktuelle Benutzerrechte und vollständige KC-005-Isolation folgen gesondert.
+
+Der Läufer führt den Rust-/SQLx-Integrationstest ausdrücklich vor und nach dem Server-Neustart aus.
+Ein temporärer Unix-Socket verbindet den Rust-Prozess mit dem Container. Der Container erhält weiterhin keinen Netzwerkzugang.
+Eine ausschließlich im Testcontainer angelegte Loginrolle erbt nur die Laufzeitrechte.
+Die ausgelieferte Provisionierung bleibt unverändert ohne Loginrollen oder Passwörter.
+Der normale Cargo-Testlauf kennzeichnet den Datenbanktest als ignoriert; der verpflichtende Datenbankprüfschritt
+führt ihn mit `--ignored --exact` aus und prüft, dass genau ein Test tatsächlich ausgeführt wurde.

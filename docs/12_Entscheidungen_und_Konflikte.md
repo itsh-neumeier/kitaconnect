@@ -201,3 +201,10 @@ Diese Entscheidung gewährt keine neuen Berechtigungen und ersetzt keine Dienst-
 Am 19.10.2026 konkretisiert [ADR-024](architecture/ADR-024_Organisationspersistenz.md) den Speichervertrag, getrennte Datenbankrollen und transaktionssichere Migrationen.
 Die Laufzeit bleibt bis zur aktuellen Identitäts-/Policy-Prüfung durch RLS gesperrt. Echte PostgreSQL-Tests laufen innerhalb der verpflichtenden Rust-CI.
 Die technische Festlegung verändert keine fachlichen Zugriffsrechte.
+
+## ADR-025 – SQLx-Adapter
+
+[ADR-025](architecture/ADR-025_SQLx_Adapter.md) ergänzt am 19.10.2026 die Rust-Anbindung für KC-004B.
+Der Adapter verwendet gebundene Parameter, exakte Kennungswerte und bestehende Verbindungen.
+Er führt keine Rollenwechsel, Migrationen oder Rechtevergabe aus. Die RLS-Sperre bleibt unverändert.
+Die vorhandenen PostgreSQL-Tests prüfen ihn vor und nach einem echten Server-Neustart.

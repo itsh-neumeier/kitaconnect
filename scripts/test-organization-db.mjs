@@ -1,14 +1,16 @@
 // Starts and removes only its own ephemeral test container. Never targets an existing database.
 import { spawnSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { readFileSync, mkdtempSync, chmodSync, rmSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import { resolve, dirname, join } from 'node:path';
+import { resolve, dirname, join, basename } from 'node:path';
+import { tmpdir } from 'node:os';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sqlRoot = join(root, 'services/organization-config/database');
 const image = 'postgres:18.6-bookworm@sha256:afc7e2d441324c0388fa80c3d24f733b4194a4eb7f47dd8ee2b08eb1a24a647c';
 let container;
+let socketDirectory;
 
 function docker(args, input) {
   const result = spawnSync('docker', args, { encoding: 'utf8', input, timeout: 180_000, maxBuffer: 8 * 1024 * 1024 });
@@ -56,10 +58,28 @@ async function waitUntilReady() {
   throw new Error('PostgreSQL did not become ready');
 }
 
+function testAdapter(phase) {
+  const result = spawnSync('cargo', [
+    'test', '--locked', '--package', 'kitaconnect-organization-config', '--test', 'postgres',
+    '--', '--ignored', '--exact', 'storage_adapter_controls_references', '--nocapture',
+  ], {
+    cwd: root, encoding: 'utf8', timeout: 180_000, maxBuffer: 8 * 1024 * 1024,
+    env: { ...process.env, KC_ORG_TEST_SOCKET: socketDirectory, KC_ORG_TEST_PHASE: phase },
+  });
+  if (result.error) throw result.error;
+  requireSuccess(result, `Rust adapter test (${phase})`);
+  if (!/test result: ok\. 1 passed;/.test(result.stdout)) throw new Error('Rust adapter test was not executed');
+  console.log(`PASS: Rust/SQLx adapter (${phase} restart) including runtime denial and exact identifiers`);
+}
+
 try {
+  if (process.platform !== 'linux') throw new Error('The isolated socket fixture requires Linux, Docker and Rust');
+  socketDirectory = mkdtempSync(join(tmpdir(), 'kc-org-test-socket-'));
+  chmodSync(socketDirectory, 0o777); // The container's PostgreSQL UID must create its socket here.
   container = requireSuccess(docker([
     'create', '--name', `kc-org-test-${randomUUID()}`, '--network', 'none',
     '--label', 'kitaconnect.purpose=organization-db-test',
+    '--mount', `type=bind,src=${socketDirectory},dst=/var/run/postgresql`,
     '-e', 'POSTGRES_HOST_AUTH_METHOD=trust', '-e', 'POSTGRES_DB=kc_org_test', image,
   ]), 'Create isolated test container');
   if (!/^[a-f0-9]{64}$/.test(container)) throw new Error('Unexpected test container identifier');
@@ -95,13 +115,28 @@ try {
   sql(file('tests/persisted.sql'));
   console.log('PASS: failed write and migration replay leave no partial changes');
 
+  sql('CREATE DATABASE kc_org_adapter_test;');
+  sql(file('provision/002_schema.sql'), { database: 'kc_org_adapter_test', transaction: true });
+  migrate('kc_org_adapter_test');
+  // This login exists only in this ephemeral fixture; the shipped provisioning remains NOLOGIN.
+  sql('CREATE ROLE kc_org_adapter_runtime LOGIN INHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_org_runtime TO kc_org_adapter_runtime WITH INHERIT TRUE, SET FALSE, ADMIN FALSE;');
+  testAdapter('before');
+
   requireSuccess(docker(['restart', container]), 'Restart same test database');
   await waitUntilReady();
   sql(file('tests/persisted.sql'));
   sql(file('tests/roles.sql'));
+  testAdapter('after');
   console.log('PASS: two carriers and an independent facility, version and role boundaries survive server restart');
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {
     requireSuccess(docker(['rm', '--force', '--volumes', container]), 'Remove own test container and its volumes');
+  }
+  if (socketDirectory) {
+    const absolute = resolve(socketDirectory);
+    if (dirname(absolute) !== resolve(tmpdir()) || !basename(absolute).startsWith('kc-org-test-socket-')) {
+      throw new Error('Refusing cleanup outside own temporary socket directory');
+    }
+    rmSync(absolute, { recursive: true });
   }
 }

@@ -195,3 +195,9 @@ Der Abschlussnachweis in PR #49 wird nach erfolgreicher CI integriert.
 [ADR-023](architecture/ADR-023_Organisationsmodell.md) legt das interne Organisationsmodell im zuständigen Dienst fest.
 KC-004A beginnt mit typisierten Kennungen und Modellinvarianten. Persistenz und aktuelle Benutzerrechte folgen in getrennten Arbeitspaketen.
 Diese Entscheidung gewährt keine neuen Berechtigungen und ersetzt keine Dienst- oder Datenbanktests.
+
+## ADR-024 – Organisationspersistenz ohne vorgezogene Rechtefreigabe
+
+Am 19.10.2026 konkretisiert [ADR-024](architecture/ADR-024_Organisationspersistenz.md) den Speichervertrag, getrennte Datenbankrollen und transaktionssichere Migrationen.
+Die Laufzeit bleibt bis zur aktuellen Identitäts-/Policy-Prüfung durch RLS gesperrt. Echte PostgreSQL-Tests laufen innerhalb der verpflichtenden Rust-CI.
+Die technische Festlegung verändert keine fachlichen Zugriffsrechte.

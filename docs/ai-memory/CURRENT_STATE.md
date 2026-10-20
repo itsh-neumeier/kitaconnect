@@ -6,17 +6,17 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 
 ## Arbeitsstand
 
-- issue_id: [KC-005C / #58](https://github.com/itsh-neumeier/kitaconnect/issues/58), Teil von KC-005 / #5.
-- branch: codex/kc-005c-pool-wartung auf PR #60 / 3dcf78f87480245144e67a550051efa89f52e41e.
-- pull_request: [PR #61](https://github.com/itsh-neumeier/kitaconnect/pull/61), Basis codex/kc-005b-dienstrechte-rls.
-- head_commit: geprüfte Implementierung e4c1e000d8e2b5ddf554e6eb52e99c87b27dde94. Vertrag und ADR-028 zuvor in d32879a versioniert. Dieser Dokumentationscheckpoint folgt gesondert; aktuellen Kopf und CI im PR prüfen.
-- objective: Poolrückgabe und konkurrierende Wartung ausschließlich im synthetischen Testaufbau nachweisen.
-- completed: Zwei neue SQLx-/PostgreSQL-Tests erfolgreich vor und nach Neustart; dieselbe Prozesskennung belegt Poolwiederverwendung. Wartungskonkurrenz ist anhand zweier real wartender Sperranforderungen nachgewiesen.
-- remaining: Persönliche/sprachliche Durchsicht und gesonderter Integrationsauftrag. #58 bleibt bis Integration offen. Produktive KC-005-Abnahme bleibt gesperrt; nächste unabhängige Vorbereitung ist KC-006 / #6.
-- migration_state: Keine neue ausgelieferte Migration. Zwei feste technische Migrationsschritte liegen ausschließlich in der Testhilfe.
-- known_failures: Keine bekannten Fehler; fünf Pflichtprüfungen des ersten vollständigen CI-Laufs erfolgreich. Docker und Windows-Linker fehlen lokal.
-- dependencies: #53, #54, #55, #59 und #60 offen, grün und zur Durchsicht bereit. Keine ungefragte Integration.
-- security_notes: Testpool und Testmigrationshilfe sind keine produktive Pool-/Migrationssteuerung. Produktive Identitäts-/Poolbindung bleibt angefragt und offen. Keine Benutzerrechtefreigabe oder Wiederherstellungsabnahme.
+- issue_id: [KC-006A / #62](https://github.com/itsh-neumeier/kitaconnect/issues/62), Teil von KC-006 / #6.
+- branch: codex/kc-006a-sitzungsmodell auf PR #61 / 4fa55b0ea37bd9e359dd7ccd82a5dc11ed2a0c81.
+- pull_request: [PR #68](https://github.com/itsh-neumeier/kitaconnect/pull/68), Basis codex/kc-005c-pool-wartung.
+- head_commit: geprüfte Implementierung 5abb46e6345e4d0e5417ead35e9f96d12deea947. Vertrag und ADR-029 zuvor in 85fed18 versioniert. Dieser Dokumentationscheckpoint folgt gesondert; aktuellen Kopf und CI im PR prüfen.
+- objective: KC-006 in kleine Pakete zerlegen und nur interne Kennungen sowie lokale Sitzungszustände ohne Anmeldung implementieren.
+- completed: Issues #62–#67 mit Abhängigkeiten und Kriterien angelegt. Rust-Bibliothek identity-access ohne externe Abhängigkeiten; elf Modelltests und negativer Typvertragstest in Linux-CI erfolgreich.
+- remaining: Persönliche/sprachliche Durchsicht und gesonderter Integrationsauftrag. #62 bleibt bis Integration offen. Als Nächstes KC-006B / #63 mit Speichervertrag und atomaren PostgreSQL-Nachweisen vorbereiten.
+- migration_state: Keine neue Migration, Datenbankrolle oder Laufzeitfreigabe. Cargo.lock ergänzt nur das neue Workspace-Paket.
+- known_failures: Keine bekannten Fehler; fünf Pflichtprüfungen des ersten vollständigen CI-Laufs erfolgreich. Windows-Linker und Docker fehlen lokal.
+- dependencies: #53, #54, #55, #59, #60 und #61 offen und grün. Keine ungefragte Integration.
+- security_notes: Datensatzkennungen sind keine Sitzungsnachweise; lokaler Modellzustand ist keine aktuelle Authentisierungsentscheidung. Drei neue Sicherheitsvorschläge sowie produktive Identitäts-/Poolbindung sind angefragt und offen.
 
 ## P0-Abschluss
 
@@ -117,10 +117,27 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 - Der [KC-005-Prüfstand](../23_KC-005_Pruefstand_und_Abnahmegrenzen.md) trennt technische Teilnachweise und offene Gesamtabnahme.
   Produktive Identitätsbindung, erlaubter produktiver Einrichtungswechsel, allgemeine Migrationssteuerung, Benutzerrechte und Wiederherstellung sind nicht abgenommen.
 
+## KC-006A: Prüfstand und Fortsetzung
+
+- [KC-006-Plan](../24_KC-006_Authentisierung.md) zerlegt #6 in KC-006A bis KC-006F / #62 bis #67.
+  Alle ursprünglichen Passwort-, Passkey-, TOTP-, Wiederherstellungs- und Widerrufskriterien bleiben bestehen.
+- Vertrag und ADR-029 wurden in 85fed18 vor dem Modellcode versioniert.
+- Implementierung 5abb46e: erster vollständiger CI-Lauf mit fünf erfolgreichen Pflichtprüfungen.
+  [Build, Clippy, elf Modelltests und negativer Typvertragstest](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39411531255),
+  [Secret- und Abhängigkeitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39411531380).
+- Lokal erfolgreich: paketbezogene Typprüfung und Clippy mit --all-targets --locked --offline, rustfmt,
+  44 Node-Tests, Struktur-/Verweisprüfung für 50 Issues und 43 Dokumente, git diff --check und Gitleaks.
+- Cargo.lock ergänzt ausschließlich das neue Paket; keine neue externe Abhängigkeit oder Werkzeugversion.
+- Der folgende reine Dokumentationscheckpoint erhält eigene CI. Nachweise zum aktuellen Kopf werden im PR nachgeführt.
+- Keine eingebauten Projektwerte, Passwortprüfung, Cookies, MFA, Speicherung, Tokenausstellung oder Berechtigung implementiert.
+- Rückfragen zu MFA-Zuordnung, Sitzungswerten und Wiederherstellung wurden mit konkreten Vorschlägen gestellt.
+  Es liegt noch keine ausdrückliche Antwort vor. Keine abhängigen Regeln als bestätigt behandeln.
+  Details stehen in [DECISIONS_PENDING](DECISIONS_PENDING.md).
+
 ## Nächste drei Aktionen
 
-1. KC-006 / #6 lesen und in kleine Arbeitspakete mit Vertrag vor Implementierung zerlegen. Keine vollständige Authentisierung in einem PR.
-2. Offene Antwort zur produktiven Identitäts-/Poolbindung berücksichtigen. Keine produktive erlaubende RLS ohne ausdrückliche Entscheidung implementieren.
-3. PR #61 persönlich prüfen lassen. Integrationsfolge #53, #54, #55, #59, #60, #61; nach Basisintegration neu prüfen. Keine ungefragte Integration.
+1. KC-006B / #63 mit begrenztem Speichervertrag vorbereiten. Aktuelle Abfrage, atomaren Widerruf und Konkurrenzfälle gegen PostgreSQL benennen; keine vollständige Anmeldung in einem PR.
+2. Antworten zu MFA, Sitzungswerten, Wiederherstellung und produktiver Identitäts-/Poolbindung berücksichtigen. Ohne ausdrückliche Entscheidung keine abhängigen Freigaben oder Vorgabewerte einbauen.
+3. PR #68 persönlich prüfen lassen. Integrationsfolge #53, #54, #55, #59, #60, #61, #68; nach Basisintegration neu prüfen. Keine ungefragte Integration.
 
-Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/025/026/027/028, Testverträge, KC-005-Prüfstand und aktuellen GitHub-Stand lesen.
+Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/029, KC-006-Plan, Modellvertrag und aktuellen GitHub-Stand lesen.

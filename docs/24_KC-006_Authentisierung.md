@@ -49,3 +49,12 @@ Die bestehende Workspace-CI soll Formatierung, Clippy, Tests und Build der neuen
 Rust-Tests müssen Fristgrenzen, unwirksame Verlängerungsversuche, Widerruf und Zeitfehler prüfen.
 Sie sind kein Nachweis einer Anmeldung oder sofortigen verteilten Widerrufsprüfung.
 KC-006B muss danach Speicherung und atomare aktuelle Prüfung gegen echte PostgreSQL-Verbindungen nachweisen.
+
+## Ausgeführter erster Modellnachweis
+
+Stand 5abb46e6345e4d0e5417ead35e9f96d12deea947: fünf Pflichtprüfungen des ersten vollständigen CI-Laufs erfolgreich.
+[Build, Clippy und Modelltests](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39411531255),
+[Secret- und Abhängigkeitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39411531380).
+Elf Modelltests und der negative Kennungstypvertrag sind erfolgreich. Neue externe Abhängigkeiten waren nicht erforderlich.
+[PR #68](https://github.com/itsh-neumeier/kitaconnect/pull/68) führt den Prüfstand des folgenden Dokumentationscheckpoints nach.
+KC-006A bleibt bis Integration offen. Nächster Schritt ist KC-006B / #63; die Gesamtabnahme von KC-006 bleibt offen.

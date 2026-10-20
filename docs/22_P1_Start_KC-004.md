@@ -51,3 +51,10 @@ KC-004 bleibt bis zu sämtlichen ursprünglichen Kriterien offen. Dies ist keine
 
 KC-005 wird in #56 (leere Schemata und Registry), #57 (Dienstobjekte und RLS) und #58 (Pool-/Migrationsabläufe) zerlegt.
 Der [Wartungsvertrag](../contracts/organization-config/schema-provisioning-v1.md) grenzt den ersten Schritt ab.
+
+## Technische KC-005-Nachweise und Fortsetzung
+
+Der [KC-005-Prüfstand](23_KC-005_Pruefstand_und_Abnahmegrenzen.md) bündelt Teilnachweise und offene Abnahmegrenzen.
+PR #61 ergänzt synthetische Pool- und Wartungstests. Produktive Identitätsbindung, Benutzerrechte und Wiederherstellung bleiben gesondert offen.
+KC-006 / #6 kann nach KC-004A/B mit einem begrenzten Vertrag und kleinen Arbeitspaketen vorbereitet werden.
+Dies erteilt keine produktive RLS-Freigabe.

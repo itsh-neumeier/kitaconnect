@@ -264,16 +264,15 @@ async fn passwords_and_durable_attempts_fail_closed() {
             .unwrap_err(),
         PasswordError
     );
-    for table in [
-        "password_credentials",
-        "password_budget",
-        "password_attempts",
+    for query in [
+        "SELECT count(*) FROM identity_access.password_credentials",
+        "SELECT count(*) FROM identity_access.password_budget",
+        "SELECT count(*) FROM identity_access.password_attempts",
     ] {
-        let count: i64 =
-            sqlx::query_scalar(&format!("SELECT count(*) FROM identity_access.{table}"))
-                .fetch_one(&mut runtime)
-                .await
-                .unwrap();
+        let count: i64 = sqlx::query_scalar(query)
+            .fetch_one(&mut runtime)
+            .await
+            .unwrap();
         assert_eq!(count, 0);
     }
 

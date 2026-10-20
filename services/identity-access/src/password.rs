@@ -198,7 +198,7 @@ impl PasswordChecker {
             None
         };
         let dummy = Arc::clone(&self.dummy);
-        let (verified, upgrade, old_revision) = blocking(move || {
+        let (verified, upgrade, snapshot) = blocking(move || {
             let profile = snapshot
                 .as_ref()
                 .and_then(|(hash, _)| Profile::parse(&hash.0));
@@ -230,19 +230,20 @@ impl PasswordChecker {
             } else {
                 None
             };
-            Ok((verified, upgrade, snapshot.map(|(_, revision)| revision)))
+            Ok((verified, upgrade, snapshot))
         })
         .await?;
         if !verified {
             return Err(PasswordError);
         }
         let identity = identity.ok_or(PasswordError)?;
+        let (old_hash, old_revision) = snapshot.ok_or(PasswordError)?;
         let mut transaction = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
-        let current: Option<Vec<u8>> = sqlx::query_scalar("SELECT revision FROM identity_access.password_credentials WHERE identity_id = $1::text::numeric FOR UPDATE")
-            .bind(identity.value().to_string()).fetch_optional(&mut *transaction).await?;
-        if current.is_none() || current != old_revision {
+        let current: Option<Vec<u8>> = sqlx::query_scalar("SELECT revision FROM identity_access.password_credentials WHERE identity_id = $1::text::numeric AND phc = $2 FOR UPDATE")
+            .bind(identity.value().to_string()).bind(old_hash.0.as_str()).fetch_optional(&mut *transaction).await?;
+        if current != Some(old_revision) {
             return Err(PasswordError);
         }
         if let Some(hash) = upgrade {

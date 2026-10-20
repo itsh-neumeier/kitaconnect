@@ -9,10 +9,10 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 - issue_id: [KC-005A / #56](https://github.com/itsh-neumeier/kitaconnect/issues/56), Teil von KC-005 / #5.
 - branch: codex/kc-005a-schema-provisionierung auf PR #55 / a8db9ca.
 - pull_request: [PR #59](https://github.com/itsh-neumeier/kitaconnect/pull/59), Basis codex/kc-004b-sqlx-adapter.
-- head_commit: Implementierung c3369d6c9b7a55ffdb3462cff4e0a5bb48c3ec2c; Wartungsvertrag und ADR-026 zuvor in 0011c36 versioniert. Folgecommit ergänzt gezielte Negativfälle und diesen Checkpoint; aktuellen Kopf mit git rev-parse HEAD prüfen.
+- head_commit: geprüfter Stand 518415ee4e267252e29de6b34b08632d72f17705; Wartungsvertrag und ADR-026 zuvor in 0011c36 versioniert. Dieser Abschlusscheckpoint folgt gesondert; aktuellen Kopf mit git rev-parse HEAD prüfen.
 - objective: Leere Einrichtungsschemas mit Registry atomar provisionieren und prüfen; keine Laufzeitfreigabe.
-- completed: Neue NOLOGIN-Wartungs-/Schemaeigentümerrollen, Migration 0002, Rust-Wartungs-API und echte PostgreSQL-Testfälle vorbereitet. Backlog bildet Grundmodelle und Gesamtabnahmen ohne verdeckten Zyklus ab.
-- remaining: Ergänzte Rollen-/Rollback-Negativfälle mit aktueller Linux-CI prüfen; PR #59 zur Durchsicht bereitstellen.
+- completed: Neue NOLOGIN-Wartungs-/Schemaeigentümerrollen, Migration 0002, atomare Rust-Wartungs-API und echte PostgreSQL-Tests erfolgreich. Backlog bildet Grundmodelle und Gesamtabnahmen ohne verdeckten Zyklus ab.
+- remaining: Abschlusscheckpoint in CI prüfen; PR #59 zur Durchsicht bereitstellen. #56 bleibt bis Integration offen.
 - migration_state: Neue gesonderte Rollen-/Datenbank-Provisionierung und Migration 0002 nach 0001. Keine produktive Datenbank oder Loginidentität angelegt.
 - known_failures: Keine bekannten fehlgeschlagenen Pflichtprüfungen. Windows-C++-Linker und Docker/psql fehlen; ausführbare Nachweise stammen aus Linux-CI.
 - dependencies: #53, #54, #55 offen und grün. Keine ungefragte Integration; Folge-PR gegen codex/kc-004b-sqlx-adapter. Nach Basisintegration retargeten und erneut prüfen.
@@ -78,14 +78,16 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 - Implementierung c3369d6: erster vollständiger CI-Lauf mit fünf erfolgreichen Pflichtprüfungen, einschließlich echter PostgreSQL-Provisionierungs-, Rollen-, Rollback- und Neustarttests.
   [CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368424819),
   [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368424845).
-- Ergänzte Negativfälle für LOGIN, CREATEDB, CREATEROLE, Replikation und Datenbank-CREATE sowie zurückgenommene Rechtevergaben benötigen eigene CI.
-- Rustfmt und Gitleaks waren für die Implementierung erfolgreich; Folgecommit vor Push erneut prüfen.
+- Stand 518415e: alle fünf Pflichtprüfungen des neuesten PR-Laufs erfolgreich. Ergänzte Rollenattribute, zurückgenommene Rechtevergaben und der negative Rust-Dokumentationstest zum freien Client-Schemanamen sind erfolgreich.
+  [CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368712802),
+  [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368712808).
+- Rustfmt und Gitleaks waren für Implementierung und Ergänzungen erfolgreich. Der folgende reine Dokumentationscommit erhält eigene CI; Nachweise im PR nachführen.
 - Neue Migration verändert keine vorhandene Datei 0001. Registry-/Kennungslese-Policies erlauben ausschließlich der Wartungsrolle Metadatenzugriff.
 - Bestehende Runtime-Rolle erhält keine Registry- oder Einrichtungsschema-Rechte. Keine Fachobjekte, Personalbereiche oder Wahldatenbanken angelegt.
 
 ## Nächste drei Aktionen
 
-1. Aktuellen Kopf von PR #59 in Linux-CI prüfen und zur Durchsicht bereitstellen. Keine ungefragte Integration; nach Basis-Merges retargeten und erneut prüfen.
+1. Abschlusscheckpoint von PR #59 in Linux-CI prüfen und PR zur Durchsicht bereitstellen. Integrationsfolge #53, #54, #55, #59; nach Basis-Merges retargeten und neu prüfen. Keine ungefragte Integration.
 2. Erfolgreiche Rollen-, Registry-, Rollback- und Neustartnachweise in Issue, PR und Checkpoint sichern.
 3. KC-005B mit expliziter Dienst-/Objektliste und begründetem RLS-Kontext vorbereiten. Keine selbst gesetzte Kontextvariable allein als Identitätsnachweis zulassen.
 

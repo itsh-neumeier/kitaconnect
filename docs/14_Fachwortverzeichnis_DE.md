@@ -9,6 +9,8 @@
 | Installation | Technisch eigenständig betriebene KitaConnect-Umgebung | Instanz, wenn unklar |
 | Mandant | Technisch und rechtlich abgegrenzter Datenbereich | Tenant in deutschem Fließtext |
 | PostgreSQL-Schema | Getrennter Namensraum in einer Datenbank | Datenbank, wenn nur Schema gemeint ist |
+| Schema-Registry | Geschütztes Verzeichnis der Zuordnung zwischen Einrichtung und geprüftem PostgreSQL-Schema; ein Eintrag erteilt kein Zugriffsrecht | Schemaname als Berechtigungsnachweis |
+| Provisionierung | Geprüftes Anlegen technischer Ressourcen durch eine gesonderte Betriebsidentität | Ungeprüfte automatische Anlage beim Anwendungsstart |
 | Berechtigung | Erlaubnis für eine definierte Aktion auf Daten | Freigabe, wenn technische Autorisierung gemeint ist |
 | Rolle | Bündel definierter Berechtigungen | Profil, wenn Rolle gemeint ist |
 | Sorgeberechtigte Person | Person mit den jeweils geltenden Sorge- und Zugriffsrechten | Elternteil als pauschale Rechtsannahme |

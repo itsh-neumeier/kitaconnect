@@ -240,3 +240,9 @@ Das Modell erhält keine eingebauten Vorgabewerte und erteilt keine Anmeldung od
 [ADR-030](architecture/ADR-030_Sitzungsspeicher.md) konkretisiert den internen Sitzungsbestand in KC-006B.
 Zufällige Nachweise bleiben getrennt von Datensatzkennungen. Die Datenbank speichert nur deren Ableitung.
 Aktuelle Prüfung und Widerruf konkurrieren über dieselbe Zeile. Die produktive Anwendungsrolle bleibt durch RLS gesperrt.
+
+## ADR-031 – Passwortprüfung und dauerhafte Versuchslimits
+
+[ADR-031](architecture/ADR-031_Passwortpruefung.md) begrenzt Argon2id-Parameter und parallele Hasharbeit für KC-006C.
+Versuche werden vor der Prüfung dauerhaft reserviert. Produktive Grenzwerte werden nicht vorgegeben.
+Ein positives Passwortergebnis ersetzt weder MFA noch eine aktuelle Freigabe. Die offenen Interviewfragen bleiben offen.

@@ -68,6 +68,26 @@ async fn schema_provisioning_is_atomic_and_restricted() {
         // Privileged fixture mutations only: each unsafe global role state must block a new provision.
         for (make_unsafe, restore) in [
             (
+                "ALTER ROLE kc_org_runtime LOGIN",
+                "ALTER ROLE kc_org_runtime NOLOGIN",
+            ),
+            (
+                "ALTER ROLE kc_org_runtime CREATEDB",
+                "ALTER ROLE kc_org_runtime NOCREATEDB",
+            ),
+            (
+                "ALTER ROLE kc_org_runtime CREATEROLE",
+                "ALTER ROLE kc_org_runtime NOCREATEROLE",
+            ),
+            (
+                "ALTER ROLE kc_org_runtime REPLICATION",
+                "ALTER ROLE kc_org_runtime NOREPLICATION",
+            ),
+            (
+                "GRANT CREATE ON DATABASE kc_facility_schema_test TO kc_org_runtime",
+                "REVOKE CREATE ON DATABASE kc_facility_schema_test FROM kc_org_runtime",
+            ),
+            (
                 "ALTER ROLE kc_org_runtime BYPASSRLS",
                 "ALTER ROLE kc_org_runtime NOBYPASSRLS",
             ),

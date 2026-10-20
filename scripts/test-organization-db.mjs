@@ -134,6 +134,8 @@ try {
     ASSERT pg_catalog.to_regclass('organization_config.facility_schemas') IS NULL;
     ASSERT (SELECT count(*) = 4 FROM organization_config.facilities);
     ASSERT NOT EXISTS (SELECT 1 FROM pg_catalog.pg_policies WHERE schemaname = 'organization_config');
+    ASSERT NOT pg_catalog.has_schema_privilege('kc_facility_provisioner', 'organization_config', 'USAGE');
+    ASSERT NOT pg_catalog.has_column_privilege('kc_facility_provisioner', 'organization_config.facilities', 'id', 'SELECT');
     ASSERT (SELECT pg_catalog.array_agg(version) = ARRAY[1] FROM organization_config.schema_versions);
   END $$;`, { database: 'kc_facility_schema_test' });
   sql(registryMigration, { database: 'kc_facility_schema_test', transaction: true });

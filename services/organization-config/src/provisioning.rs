@@ -170,6 +170,13 @@ async fn provision_in_transaction(
 }
 
 /// Atomically creates an empty schema and registry entry under the supplied maintenance identity.
+/// A client-supplied schema string is not accepted:
+/// ```compile_fail
+/// use kitaconnect_organization_config::provisioning::provision;
+/// async fn wrong_input(connection: &mut sqlx::PgConnection) {
+///     provision(connection, "public").await;
+/// }
+/// ```
 pub async fn provision(
     connection: &mut PgConnection,
     facility: FacilityId,

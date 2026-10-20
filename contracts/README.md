@@ -14,3 +14,5 @@ Der [interne Organisationsmodellvertrag v1](organization-config/model-v1.md) ist
 Er beschreibt die Rust-Bibliothek und ist kein HTTP-Vertrag. Öffentliche Endpunkte folgen erst mit geprüften Rechten.
 Der [Speichervertrag](organization-config/storage-v1.md) und der [Adaptervertrag](organization-config/adapter-v1.md)
 ergänzen die Datenbankstruktur und die interne SQLx-Anbindung. Sie erteilen keine Benutzerrechte.
+Der [Schema-Wartungsvertrag](organization-config/schema-provisioning-v1.md) ergänzt die privilegierte Registrierung leerer Einrichtungsschemas.
+Er ist kein öffentlicher API-Vertrag und keine Freigabe von Fachzugriffen.

@@ -89,3 +89,8 @@ Dies ist kein produktiver Registrierungs- oder Wiederherstellungsablauf.
 Produktive Grenzwerte, vertrauenswürdige Bildung der Prüfschlüssel und Messungen auf der Referenzhardware bleiben vor einer Laufzeitfreigabe erforderlich.
 Die produktive Datenbankbindung und die bisherigen Interviewfragen bleiben offen.
 KC-006C bleibt bis Integration offen. Als nächstes unabhängiges Teilpaket folgt KC-006D / #65 mit einem WebAuthn-Vertrag.
+
+Prüfstand cd39fe8: alle fünf Pflichtprüfungen für Push und PR erfolgreich.
+[Clippy, Rust-Tests, Build und echte Datenbanktests einschließlich Neustart](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431069566),
+[Secret- und Abhängigkeitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431069880).
+Der folgende Abschlusscheckpoint erhält eigene Prüfungen; den aktuellen Kopf weist PR #70 aus.

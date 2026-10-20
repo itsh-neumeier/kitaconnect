@@ -258,7 +258,7 @@ impl PasswordChecker {
     }
 }
 
-/// A local factor snapshot, never a session or permission. Complete MFA remains mandatory.
+/// A local factor snapshot, never a session or permission. Pending MFA rules remain a release gate.
 pub struct PasswordEvidence {
     identity: IdentityId,
 }

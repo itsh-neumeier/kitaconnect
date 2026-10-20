@@ -9,10 +9,10 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 - issue_id: [KC-006C / #64](https://github.com/itsh-neumeier/kitaconnect/issues/64), Teil von KC-006 / #6.
 - branch: codex/kc-006c-passwortpruefung auf PR #69 / e0e1214fd88e65ebc34c2db81286990388b59571.
 - pull_request: [PR #70](https://github.com/itsh-neumeier/kitaconnect/pull/70), Basis codex/kc-006b-sitzungsspeicher.
-- head_commit: Kernimplementierung 2ec3983 mit vollständigem CI-Nachweis. Ergänzende Negativtests und Abnahmegrenzen in 404c04c. Vertrag und ADR-031 zuvor in 3f964e6 versioniert. Dieser Checkpoint folgt gesondert; aktuellen Kopf und dessen CI im PR prüfen.
+- head_commit: cd39fe8 mit vollständigem CI-Nachweis einschließlich der Ergänzungen aus 404c04c. Vertrag und ADR-031 zuvor in 3f964e6 versioniert. Dieser Abschlusscheckpoint und eine Klarstellung zur offenen MFA-Regel folgen gesondert; aktuellen Kopf und dessen CI im PR prüfen.
 - objective: Begrenzter Argon2id-Passwortfaktor mit dauerhafter Reservierung von Versuchen, ohne Anmeldefreigabe.
-- completed: Feste Profile, begrenzte Hasharbeit, einheitliche Fehler, Parameteraktualisierung und Migration 0002 eingebaut. Kernnachweise einschließlich echter Sperrkonkurrenz und Server-Neustart erfolgreich. Zusätzliche Tests prüfen Hashänderung ohne Versionswechsel, Eigentümer-RLS und ausbleibende Sitzungserzeugung.
-- remaining: CI des ergänzten Kopfes im PR prüfen; bei Fehler korrigieren. Persönliche/sprachliche Durchsicht und gesonderter Integrationsauftrag. #64 bleibt bis Integration offen. Danach KC-006D / #65 mit WebAuthn-Vertrag vorbereiten.
+- completed: Feste Profile, begrenzte Hasharbeit, einheitliche Fehler, Parameteraktualisierung und Migration 0002 eingebaut. Alle Nachweise einschließlich echter Sperrkonkurrenz und Server-Neustart erfolgreich. Auch Hashänderung ohne Versionswechsel, Eigentümer-RLS und ausbleibende Sitzungserzeugung sind geprüft.
+- remaining: CI des Abschlusskopfes im PR prüfen; bei Fehler korrigieren. Persönliche/sprachliche Durchsicht und gesonderter Integrationsauftrag. #64 bleibt bis Integration offen. Danach KC-006D / #65 mit WebAuthn-Vertrag vorbereiten.
 - migration_state: Neue identity-access-Migration 0002. Migration 0001 und Organisationsmigrationen bleiben unverändert. FORCE RLS ohne erlaubende Policy sperrt weiterhin die Runtime. Getrennter synthetischer Passwort-Testbestand mit Versionen 1 und 2.
 - known_failures: Erste SQLx-Typanforderung im Test in 2ec3983 behoben. Fünf Pflichtprüfungen des ersten vollständigen Laufs erfolgreich. Windows-Linker und Docker fehlen lokal. Keine unbelegten lokalen Rust-/Datenbankerfolge behaupten.
 - dependencies: #53, #54, #55, #59, #60, #61, #68 und #69 offen und grün. Keine ungefragte Integration.
@@ -165,7 +165,10 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
   Schlüssellimit, Gesamtlimit, Mengenlimit, Konfigurationsabweichung und rückläufige Datenbankzeit werden negativ geprüft.
 - Ein weiterer Rust-Test belegt, dass ein Aufrufabbruch die Begrenzung laufender Hasharbeit nicht vorzeitig freigibt.
 - 404c04c ergänzt die konkurrierende Hashänderung bei unveränderter Versionskennung, Eigentümer-RLS und fehlende Sitzungserzeugung.
-  Dieser Checkpoint erhält mit den Ergänzungen eigene CI. Den aktuellen vollständigen Nachweis im PR nachführen.
+  Abschlussstand cd39fe8: alle fünf Pflichtprüfungen von Push und PR erfolgreich, einschließlich dieser Ergänzungen.
+  [CI mit ergänzten Datenbanktests vor und nach Neustart](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431069566),
+  [Secret- und Abhängigkeitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431069880).
+  Der folgende Abschlusscheckpoint erhält eigene CI; Kopf und Nachweise im PR nachführen.
 - Fünf neue Lockfile-Pakete: argon2 0.6.0, base64ct 1.8.3, blake2 0.11.0, password-hash 0.6.1 und phc 0.6.1.
   Bestehende Paketversionen wurden nicht aktualisiert. Tokio wird auch für begrenzte Hintergrundarbeit verwendet.
 - Lokal erfolgreich: 44 Node-Tests, Struktur-/Verweisprüfung für 50 Issues und 45 Dokumente, Rustfmt,

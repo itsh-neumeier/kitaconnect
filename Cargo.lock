@@ -553,6 +553,13 @@ version = "0.0.0"
 [[package]]
 name = "kitaconnect-identity-access"
 version = "0.0.0"
+dependencies = [
+ "getrandom 0.4.3",
+ "sha2 0.11.1",
+ "sqlx",
+ "tokio",
+ "zeroize",
+]
 
 [[package]]
 name = "kitaconnect-organization-config"

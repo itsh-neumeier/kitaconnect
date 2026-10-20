@@ -25,3 +25,6 @@ Er definiert Testhilfen und keine produktive Pool- oder Migrationssteuerung.
 
 Der [Identitäts- und Sitzungsmodellvertrag](identity-access/session-model-v1.md) beginnt KC-006A im Dienst `identity-access`.
 Das interne Modell stellt keine Sitzungsnachweise aus und erteilt keine Anmeldung oder Berechtigung.
+
+Der [Sitzungs-Speichervertrag](identity-access/session-storage-v1.md) ergänzt den internen SQLx-Adapter und abgeleitete Sitzungsnachweise.
+Die Anwendungsrolle bleibt durch RLS gesperrt. Die HTTP-Anmeldung und ihre offenen Sicherheitsregeln folgen gesondert.

@@ -158,3 +158,16 @@ Ein negativer Dokumentationstest verweigert die Verwendung einer Identitätskenn
 Die vorhandene Workspace-CI erfasst die neue Bibliothek mit Clippy, Tests und Build.
 Diese Prüfungen sind keine Anmelde-, Kryptografie-, Persistenz- oder verteilten Widerrufsnachweise.
 Es werden keine offenen Sitzungs-, MFA- oder Wiederherstellungsregeln als Vorgabewerte eingebaut.
+
+## KC-006B: Aktueller Sitzungsbestand
+
+Der vorhandene isolierte PostgreSQL-Läufer ergänzt zwei Datenbanken für die Identitätsmigration und den Speicheradapter.
+Ein fehlgeschlagener Migrationslauf muss Tabellen, Funktionen, Typen und neue Rechte vollständig zurücknehmen. Wiederholung wird verweigert.
+Der ausdrücklich ausgeführte SQLx-Test prüft aktuelle Zustände, gespeicherte Ableitung statt rohem Nachweis, Ablauf und idempotenten Widerruf.
+Er beobachtet zwei echte Zeilensperrwartende bei konkurrierender Aktivität und Widerruf.
+Eine weitere Sperrprüfung beginnt vor Ablauf und endet danach; nur eine nach Erwerb gelesene Zeit darf entscheiden.
+Aktive äußere SQLx-Transaktionen, unterdrückte Zustandsupdates, rückläufige Zeit und Verbindungsverlust dürfen keinen positiven Treffer liefern.
+Die Test-Laufzeitrolle bleibt durch RLS gesperrt und darf weder Eigentümer- noch Migrationsrolle annehmen.
+Nach Neustart werden bestätigte Zustände erneut gelesen und neue Nachweise nur im Arbeitsspeicher erzeugt.
+Es wird kein roher Nachweis in einer Datei über den Neustart hinweg gespeichert.
+Die Prüfung weist keine Anmeldung, MFA, Mitgliedschaft oder Benutzerberechtigung nach.

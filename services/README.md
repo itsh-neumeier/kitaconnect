@@ -22,3 +22,7 @@ Die Testartefakte unter `database/tests/` gehören nicht zu den ausgelieferten M
 `identity-access` enthält in KC-006A ein [internes Identitäts-/Sitzungsmodell](../contracts/identity-access/session-model-v1.md).
 Die Bibliothek prüft lokale Zeit- und Zustandsregeln ohne Netzwerk, Speicherung oder Zugangsnachweise.
 Die [KC-006-Planung](../docs/24_KC-006_Authentisierung.md) trennt die späteren Anmeldewege und die Gesamtabnahme.
+
+KC-006B ergänzt den [internen Sitzungsbestand](../contracts/identity-access/session-storage-v1.md) mit SQLx und gespeicherten Ableitungen zufälliger Nachweise.
+Der Adapter öffnet keine Verbindungen und vergibt keine Rechte. Positive Speicherprüfungen verwenden nur den Test-Betriebszugang.
+Die produktive Anwendungsrolle bleibt ohne erlaubende RLS-Policy gesperrt; eine Anmeldung ist noch nicht implementiert.

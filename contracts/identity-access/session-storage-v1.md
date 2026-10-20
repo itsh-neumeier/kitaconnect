@@ -46,6 +46,11 @@ Die ausdrückliche Byteausgabe dient erst der späteren Transportanbindung. Cook
 Die interne Rust-API erhält eine bestehende Verbindung. Sie ändert keine Rolle und öffnet keine Datenbankverbindung.
 Ihre Aufrufer müssen einen freigegebenen internen Zweck und die passende Dienstidentität prüfen.
 Sie ist keine öffentliche Erstellungs- oder Widerrufsschnittstelle.
+Die Verbindung muss außerhalb einer aufrufenden Transaktion stehen. Der Adapter weist aktive SQLx-Transaktionen ab.
+Manuell per Roh-SQL eröffnete Transaktionen sind ebenfalls kein zulässiger Aufrufkontext.
+Eigene mehrteilige Vorgänge verwenden ausdrücklich READ COMMITTED und bestätigen vor erfolgreicher Rückgabe.
+Eine nicht bestätigte Zustandsaktualisierung darf keinen positiven Treffer erzeugen.
+Ein Datenbanktrigger verhindert zusätzlich Reaktivierung, rückläufige Zeit und Änderungen unveränderlicher Sitzungsfelder.
 
 - Identitätsanlage speichert nur eine interne Kennung; doppelte Kennungen scheitern.
 - Sitzungsanlage erhält interne Kennungen und ausdrücklich gewählte Grenzen.

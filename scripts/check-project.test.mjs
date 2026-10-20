@@ -15,3 +15,31 @@ test('Zyklen verhindern die Freigabe', () => {
 test('Doppelte Kennungen verhindern die Freigabe', () => {
   assert.throws(() => validateBacklog([item('KC-001'), item('KC-001')]), /Doppelte/);
 });
+
+test('Grundmodell kann eine Voraussetzung sein, während die Gesamtabnahme auf spätere Rechteprüfung wartet', () => {
+  const parent = { ...item('KC-004'), work_packages: ['KC-004A', 'KC-004B'] };
+  assert.doesNotThrow(() => validateBacklog([
+    parent, item('KC-004A'), item('KC-005', ['KC-004A']), item('KC-004B', ['KC-005']),
+  ]));
+});
+test('Gesamtabnahme darf keinen verdeckten Zyklus durch Teilpakete erzeugen', () => {
+  assert.throws(() => validateBacklog([
+    { ...item('KC-004'), work_packages: ['KC-004A'] },
+    item('KC-004A', ['KC-005']), item('KC-005', ['KC-004']),
+  ]), /Zyklische/);
+});
+test('Fehlende oder doppelte Teilpakete werden abgewiesen', () => {
+  assert.throws(() => validateBacklog([{ ...item('KC-004'), work_packages: ['KC-004A'] }]), /Fehlendes Teilpaket/);
+  assert.throws(() => validateBacklog([
+    { ...item('KC-004'), work_packages: ['KC-004A', 'KC-004A'] }, item('KC-004A'),
+  ]), /Ungültige Teilpakete/);
+});
+test('Nicht zugeordnete, fremde und phasenfremde Teilpakete werden abgewiesen', () => {
+  assert.throws(() => validateBacklog([item('KC-004'), item('KC-004A')]), /Nicht zugeordnetes/);
+  assert.throws(() => validateBacklog([
+    { ...item('KC-004'), work_packages: ['KC-005'] }, item('KC-005'),
+  ]), /Falsche Teilpaketzuordnung/);
+  assert.throws(() => validateBacklog([
+    { ...item('KC-004'), work_packages: ['KC-004A'] }, { ...item('KC-004A'), phase: 'P1' },
+  ]), /Falsche Teilpaketzuordnung/);
+});

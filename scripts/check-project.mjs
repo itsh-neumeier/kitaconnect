@@ -6,9 +6,24 @@ import { validateOrganizationFixtures } from './fixtures.mjs';
 export function validateBacklog(items) {
   const byId = new Map();
   for (const item of items) {
-    if (!/^KC-\d{3}$/.test(item.id) || byId.has(item.id)) throw new Error(`Doppelte oder ungültige ID: ${item.id}`);
+    if (!/^KC-\d{3}[A-Z]?$/.test(item.id) || byId.has(item.id)) throw new Error(`Doppelte oder ungültige ID: ${item.id}`);
     if (!/^P[0-9]$/.test(item.phase) || !item.acceptance?.length || !item.security_scope) throw new Error(`Unvollständiges Issue: ${item.id}`);
     byId.set(item.id, item);
+  }
+  for (const item of items) {
+    if (/[A-Z]$/.test(item.id)) {
+      const parent = byId.get(item.id.slice(0, -1));
+      if (!parent?.work_packages?.includes(item.id)) throw new Error(`Nicht zugeordnetes Teilpaket: ${item.id}`);
+    }
+    if (item.work_packages !== undefined && (!Array.isArray(item.work_packages) || new Set(item.work_packages).size !== item.work_packages.length)) {
+      throw new Error(`Ungültige Teilpakete: ${item.id}`);
+    }
+    for (const child of item.work_packages ?? []) {
+      if (!byId.has(child)) throw new Error(`Fehlendes Teilpaket: ${child}`);
+      if (!child.startsWith(item.id) || child.length !== item.id.length + 1 || byId.get(child).phase !== item.phase) {
+        throw new Error(`Falsche Teilpaketzuordnung: ${child}`);
+      }
+    }
   }
   const done = new Set();
   const active = new Set();
@@ -18,6 +33,7 @@ export function validateBacklog(items) {
     if (done.has(id)) return;
     active.add(id);
     for (const dep of byId.get(id).depends_on) visit(dep);
+    for (const child of byId.get(id).work_packages ?? []) visit(child);
     active.delete(id);
     done.add(id);
   }

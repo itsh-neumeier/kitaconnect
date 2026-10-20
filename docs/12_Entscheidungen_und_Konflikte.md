@@ -208,3 +208,10 @@ Die technische Festlegung verändert keine fachlichen Zugriffsrechte.
 Der Adapter verwendet gebundene Parameter, exakte Kennungswerte und bestehende Verbindungen.
 Er führt keine Rollenwechsel, Migrationen oder Rechtevergabe aus. Die RLS-Sperre bleibt unverändert.
 Die vorhandenen PostgreSQL-Tests prüfen ihn vor und nach einem echten Server-Neustart.
+
+## ADR-026 – Einrichtungsschema-Registry und technische Reihenfolge
+
+[ADR-026](architecture/ADR-026_Schema_Provisionierung.md) konkretisiert am 20.10.2026 atomare Wartungsoperationen für leere Einrichtungsschemas.
+Wartungsrechte bleiben getrennt von Laufzeitrechten. Die Schema-Registry wird mit einer neuen Migration ergänzt.
+Der Backlog trennt Grundmodell und Gesamtabnahme von KC-004; Teilpaketabhängigkeiten werden einschließlich Gesamtabnahme auf Zyklen geprüft.
+Die ursprünglichen Fach- und Abnahmekriterien bleiben bestehen.

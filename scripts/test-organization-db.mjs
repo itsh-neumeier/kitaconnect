@@ -58,10 +58,10 @@ async function waitUntilReady() {
   throw new Error('PostgreSQL did not become ready');
 }
 
-function testAdapter(phase) {
+function testAdapter(phase, target = 'postgres', test = 'storage_adapter_controls_references') {
   const result = spawnSync('cargo', [
-    'test', '--locked', '--package', 'kitaconnect-organization-config', '--test', 'postgres',
-    '--', '--ignored', '--exact', 'storage_adapter_controls_references', '--nocapture',
+    'test', '--locked', '--package', 'kitaconnect-organization-config', '--test', target,
+    '--', '--ignored', '--exact', test, '--nocapture',
   ], {
     cwd: root, encoding: 'utf8', timeout: 180_000, maxBuffer: 8 * 1024 * 1024,
     env: { ...process.env, KC_ORG_TEST_SOCKET: socketDirectory, KC_ORG_TEST_PHASE: phase },
@@ -69,7 +69,7 @@ function testAdapter(phase) {
   if (result.error) throw result.error;
   requireSuccess(result, `Rust adapter test (${phase})`);
   if (!/test result: ok\. 1 passed;/.test(result.stdout)) throw new Error('Rust adapter test was not executed');
-  console.log(`PASS: Rust/SQLx adapter (${phase} restart) including runtime denial and exact identifiers`);
+  console.log(`PASS: Rust/SQLx ${target} (${phase} restart)`);
 }
 
 try {
@@ -122,11 +122,30 @@ try {
   sql('CREATE ROLE kc_org_adapter_runtime LOGIN INHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_org_runtime TO kc_org_adapter_runtime WITH INHERIT TRUE, SET FALSE, ADMIN FALSE;');
   testAdapter('before');
 
+  sql(file('provision/003_facility_roles.sql'), { transaction: true });
+  sql('CREATE DATABASE kc_facility_schema_test;');
+  sql(file('provision/002_schema.sql'), { database: 'kc_facility_schema_test', transaction: true });
+  sql(file('provision/004_facility_database.sql'), { database: 'kc_facility_schema_test', transaction: true });
+  migrate('kc_facility_schema_test');
+  sql('INSERT INTO organization_config.facilities (id) VALUES (1), (2), (3), (340282366920938463463374607431768211455);', { database: 'kc_facility_schema_test' });
+  const registryMigration = `SET SESSION AUTHORIZATION kc_org_migrator;\n${file('migrations/0002_facility_schema_registry.sql')}`;
+  sql(`${registryMigration}\nSELECT 1 / 0;`, { database: 'kc_facility_schema_test', transaction: true, expectedState: '22012' });
+  sql(`DO $$ BEGIN
+    ASSERT pg_catalog.to_regclass('organization_config.facility_schemas') IS NULL;
+    ASSERT (SELECT count(*) = 4 FROM organization_config.facilities);
+    ASSERT NOT EXISTS (SELECT 1 FROM pg_catalog.pg_policies WHERE schemaname = 'organization_config');
+    ASSERT (SELECT pg_catalog.array_agg(version) = ARRAY[1] FROM organization_config.schema_versions);
+  END $$;`, { database: 'kc_facility_schema_test' });
+  sql(registryMigration, { database: 'kc_facility_schema_test', transaction: true });
+  sql('CREATE ROLE kc_facility_test_maintenance LOGIN INHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_facility_provisioner TO kc_facility_test_maintenance WITH INHERIT TRUE, SET TRUE, ADMIN FALSE;');
+  testAdapter('before', 'provisioning', 'schema_provisioning_is_atomic_and_restricted');
+
   requireSuccess(docker(['restart', container]), 'Restart same test database');
   await waitUntilReady();
   sql(file('tests/persisted.sql'));
   sql(file('tests/roles.sql'));
   testAdapter('after');
+  testAdapter('after', 'provisioning', 'schema_provisioning_is_atomic_and_restricted');
   console.log('PASS: two carriers and an independent facility, version and role boundaries survive server restart');
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {

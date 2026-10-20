@@ -109,6 +109,10 @@ async fn passwords_and_durable_attempts_fail_closed() {
         .await
         .unwrap();
     checker.store(&mut connection, id(), input()).await.unwrap();
+    let sessions_before: i64 = sqlx::query_scalar("SELECT count(*) FROM identity_access.sessions")
+        .fetch_one(&mut connection)
+        .await
+        .unwrap();
     let evidence = checker
         .check(&mut connection, key(1), limits(), Some(id()), input())
         .await
@@ -131,6 +135,11 @@ async fn passwords_and_durable_attempts_fail_closed() {
     )
     .await;
     assert_eq!(used(&mut connection).await, 4);
+    let sessions_after: i64 = sqlx::query_scalar("SELECT count(*) FROM identity_access.sessions")
+        .fetch_one(&mut connection)
+        .await
+        .unwrap();
+    assert_eq!(sessions_before, sessions_after);
 
     // Check actual full-size parameter upgrade with a fresh OS-random salt.
     let legacy = tokio::task::spawn_blocking(|| {
@@ -230,6 +239,28 @@ async fn passwords_and_durable_attempts_fail_closed() {
     guarded.commit().await.unwrap();
     assert_eq!(pending.await.unwrap().unwrap_err(), PasswordError);
 
+    // Also reject a changed PHC if maintenance did not change its revision.
+    let mut guarded = guard.begin().await.unwrap();
+    sqlx::query("SELECT identity_id FROM identity_access.password_credentials WHERE identity_id = 1 FOR UPDATE").execute(&mut *guarded).await.unwrap();
+    let mut reader = connect("postgres").await;
+    let reader_pid = pid(&mut reader).await;
+    let worker = std::sync::Arc::clone(&checker);
+    let pending = tokio::spawn(async move {
+        worker
+            .check(&mut reader, key(1), limits(), Some(id()), input())
+            .await
+    });
+    waiters(&mut connection, &[reader_pid]).await;
+    sqlx::query(
+        "UPDATE identity_access.password_credentials SET phc = 'invalidated' WHERE identity_id = 1",
+    )
+    .execute(&mut *guarded)
+    .await
+    .unwrap();
+    guarded.commit().await.unwrap();
+    assert_eq!(pending.await.unwrap().unwrap_err(), PasswordError);
+    checker.store(&mut connection, id(), input()).await.unwrap();
+
     // Open caller transactions cannot roll back an already accepted attempt reservation.
     let mut transaction = connection.begin().await.unwrap();
     assert_eq!(
@@ -271,6 +302,27 @@ async fn passwords_and_durable_attempts_fail_closed() {
     ] {
         let count: i64 = sqlx::query_scalar(query)
             .fetch_one(&mut runtime)
+            .await
+            .unwrap();
+        assert_eq!(count, 0);
+    }
+
+    sqlx::query("SET ROLE kc_identity_owner")
+        .execute(&mut runtime)
+        .await
+        .unwrap_err();
+    let mut owner = connect("postgres").await;
+    sqlx::query("SET ROLE kc_identity_owner")
+        .execute(&mut owner)
+        .await
+        .unwrap();
+    for query in [
+        "SELECT count(*) FROM identity_access.password_credentials",
+        "SELECT count(*) FROM identity_access.password_budget",
+        "SELECT count(*) FROM identity_access.password_attempts",
+    ] {
+        let count: i64 = sqlx::query_scalar(query)
+            .fetch_one(&mut owner)
             .await
             .unwrap();
         assert_eq!(count, 0);

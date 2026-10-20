@@ -6,17 +6,17 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 
 ## Arbeitsstand
 
-- issue_id: [KC-006C / #64](https://github.com/itsh-neumeier/kitaconnect/issues/64), Teil von KC-006 / #6.
-- branch: codex/kc-006c-passwortpruefung auf PR #69 / e0e1214fd88e65ebc34c2db81286990388b59571.
-- pull_request: [PR #70](https://github.com/itsh-neumeier/kitaconnect/pull/70), Basis codex/kc-006b-sitzungsspeicher.
-- head_commit: cd39fe8 mit vollständigem CI-Nachweis einschließlich der Ergänzungen aus 404c04c. Vertrag und ADR-031 zuvor in 3f964e6 versioniert. Dieser Abschlusscheckpoint und eine Klarstellung zur offenen MFA-Regel folgen gesondert; aktuellen Kopf und dessen CI im PR prüfen.
-- objective: Begrenzter Argon2id-Passwortfaktor mit dauerhafter Reservierung von Versuchen, ohne Anmeldefreigabe.
-- completed: Feste Profile, begrenzte Hasharbeit, einheitliche Fehler, Parameteraktualisierung und Migration 0002 eingebaut. Alle Nachweise einschließlich echter Sperrkonkurrenz und Server-Neustart erfolgreich. Auch Hashänderung ohne Versionswechsel, Eigentümer-RLS und ausbleibende Sitzungserzeugung sind geprüft.
-- remaining: CI des Abschlusskopfes im PR prüfen; bei Fehler korrigieren. Persönliche/sprachliche Durchsicht und gesonderter Integrationsauftrag. #64 bleibt bis Integration offen. Danach KC-006D / #65 mit WebAuthn-Vertrag vorbereiten.
-- migration_state: Neue identity-access-Migration 0002. Migration 0001 und Organisationsmigrationen bleiben unverändert. FORCE RLS ohne erlaubende Policy sperrt weiterhin die Runtime. Getrennter synthetischer Passwort-Testbestand mit Versionen 1 und 2.
-- known_failures: Erste SQLx-Typanforderung im Test in 2ec3983 behoben. Fünf Pflichtprüfungen des ersten vollständigen Laufs erfolgreich. Windows-Linker und Docker fehlen lokal. Keine unbelegten lokalen Rust-/Datenbankerfolge behaupten.
-- dependencies: #53, #54, #55, #59, #60, #61, #68 und #69 offen und grün. Keine ungefragte Integration.
-- security_notes: Ein Passwortergebnis ist nur ein Faktor. Keine Anmeldung, Cookies, Mitgliedschaft oder fachliche Rechtefreigabe. Positive Speichertests verwenden nur die Test-Betriebsidentität. MFA-, Sitzungsdauer-, Wiederherstellungs- und produktive Rollenbindungsfragen bleiben offen. Produktive Versuchslimits, Prüfschlüsselbindung und Argon2id-Lastmessungen sind vor Laufzeitfreigabe erforderlich.
+- issue_id: [KC-006D / #65](https://github.com/itsh-neumeier/kitaconnect/issues/65), Teil von KC-006 / #6.
+- branch: codex/kc-006d-webauthn-vertrag auf PR #70 / e003eb055f4137ee66184152ce660e96d838be44.
+- pull_request: [PR #71](https://github.com/itsh-neumeier/kitaconnect/pull/71), Entwurf; Basis codex/kc-006c-passwortpruefung.
+- head_commit: Vertragsvorbereitung 5ffe61e. Dieser Checkpoint folgt gesondert; aktuellen Kopf und dessen CI in PR #71 prüfen.
+- objective: WebAuthn-Vertrag und Testplan vorbereiten; offene Sicherheitsentscheidungen vor abhängiger Implementierung anfordern.
+- completed: Bibliotheksmetadaten und relevante APIs geprüft. Vertragsentwurf, ADR-032 und konkrete Negativtestmatrix versioniert. Getrennter lokaler Abhängigkeits-Prüfgraph mit aktueller RustSec-Datenbank ohne Befund geprüft. #70 ist unverändert offen, zur Durchsicht bereit und vollständig grün.
+- remaining: Ausdrückliche Antworten zu RP-ID/Ursprung, Benutzerverifikation und synchronisierten Passkeys abwarten. Danach zuerst Vertrag und ADR aktualisieren und versionieren, anschließend #65 auf diesem Branch umsetzen. Alle Akzeptanzkriterien von #65 bleiben offen.
+- migration_state: In KC-006D keine Migration oder Projektabhängigkeit hinzugefügt. Bestehende identity-access-Versionen 1/2 und Organisationsmigrationen bleiben unverändert. Die Runtime bleibt gesperrt.
+- known_failures: Keine Fehler in den lokalen Dokumentationsprüfungen. WebAuthn ist noch nicht implementiert oder gebaut. Windows-Linker und Docker fehlen lokal. Die CI des Dokumentationskopfes ist im PR zu prüfen.
+- dependencies: #53, #54, #55, #59, #60, #61, #68, #69 und #70 offen und grün. Keine ungefragte Integration.
+- security_notes: Die drei WebAuthn-Fragen sind gestellt, aber unbeantwortet. Auch localhost ist bislang nur als Testbeschränkung vorgeschlagen. Bibliotheksverhalten darf keine Projektentscheidung ersetzen. Keine produktiven Domains, Schlüssel oder Anmeldefreigaben erzeugt. Bisherige offene MFA-, Wiederherstellungs-, Sitzungs- und Rollenfragen bleiben offen.
 
 ## P0-Abschluss
 
@@ -175,10 +175,23 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
   JavaScript-Syntax, git diff --check und Gitleaks. Rust- und PostgreSQL-Ausführung stammen aus Linux-CI.
 - Keine produktiven Vorgabewerte, erlaubenden RLS-Policies oder HTTP-Anmeldung. Offene Interviewentscheidungen bleiben offen.
 
+## KC-006D: Vertragsvorbereitung und Entscheidungssperre
+
+- [ADR-032](../architecture/ADR-032_WebAuthn_Vorbereitung.md) und der [Vertragsentwurf](../../contracts/identity-access/webauthn-v1.md) dokumentieren den nächsten begrenzten Umfang.
+- Bibliothekskandidaten webauthn-rs und webauthn-authenticator-rs 0.5.5: Rust 1.88, MPL-2.0 laut Paketmetadaten.
+  Der Passkey-Ablauf verlangt Benutzerverifikation und lässt synchronisierte Schlüssel zu. Beides ist angefragt, noch nicht als Projektregel bestätigt.
+- Ein getrennter ignorierter Prüfgraph mit 143 Paketen einschließlich Prüfpaket besteht cargo-audit 0.22.2 mit --deny warnings.
+  Frisch aktualisierte RustSec-Datenbank: b19b2c83c2493961ccb12f9fc4699a00fb2c6c44, 1.345 Hinweise.
+  Kein Anwendungscode gebaut. Kein Projekt-Lockfile-Nachweis, keine Lizenzfreigabe und kein OpenSSL-Build daraus ableiten.
+- Lokal erfolgreich: Struktur-/Verweisprüfung für 50 Issues und 46 Dokumente, 44 Node-Tests, git diff --check und Gitleaks.
+- Keine neue Laufzeitfunktion, Abhängigkeit im Projekt-Lockfile oder Migration. #65 bleibt vollständig offen.
+- Die Fragen stehen in [DECISIONS_PENDING](DECISIONS_PENDING.md). Eine allgemeine Aufforderung zur Weiterarbeit beantwortet sie nicht.
+  Unabhängige Vertrags-/Bibliotheksvorbereitung ist erfolgt. Abhängige Implementierung erst nach Antwort fortsetzen.
+
 ## Nächste drei Aktionen
 
-1. Aktuellen Kopf und CI von PR #70 prüfen. Bei grünen Ergänzungsnachweisen KC-006D / #65 mit WebAuthn-Vertrag und geprüfter Bibliothekswahl beginnen. Keine vollständige Anmeldung in einem PR.
-2. Antworten zu MFA, Sitzungswerten, Wiederherstellung und produktiver Identitäts-/Poolbindung berücksichtigen. Vor Laufzeitfreigabe zusätzlich Versuchslimits und Prüfschlüsselbildung klären. Ohne Antwort keine abhängigen Regeln, Cookies oder Freigaben einbauen.
-3. PR #70 persönlich prüfen lassen. Integrationsfolge #53, #54, #55, #59, #60, #61, #68, #69, #70; nach Basisintegration neu prüfen. Keine ungefragte Integration.
+1. Antworten zu den drei WebAuthn-Fragen zuordnen. Auf dem vorhandenen Branch zuerst Vertrag und ADR-032 aktualisieren und versionieren. Erst danach den bestätigten Ablauf aus #65 implementieren; keine Vorbereitung wiederholen.
+2. Aktuellen Kopf und CI von PR #71 prüfen. Später vollständigen Projekt-Lockfile-Diff, RustSec und OpenSSL-Voraussetzungen prüfen. Protokolltests und neue Migration erst im bestätigten Umfang ergänzen.
+3. Übrige offene MFA-/Wiederherstellungs-/Sitzungs- und Rollenfragen beachten. Integrationsfolge #53, #54, #55, #59, #60, #61, #68, #69, #70, #71; nach Basisintegration neu prüfen. Keine ungefragte Integration.
 
-Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/029/030/031, KC-006-Plan, Passwortvertrag und aktuellen GitHub-Stand lesen.
+Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/029/030/031/032, KC-006-Plan, WebAuthn-Vertragsentwurf und aktuellen GitHub-Stand lesen.

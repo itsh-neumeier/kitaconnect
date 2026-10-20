@@ -94,3 +94,16 @@ Prüfstand cd39fe8: alle fünf Pflichtprüfungen für Push und PR erfolgreich.
 [Clippy, Rust-Tests, Build und echte Datenbanktests einschließlich Neustart](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431069566),
 [Secret- und Abhängigkeitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431069880).
 Der folgende Abschlusscheckpoint erhält eigene Prüfungen; den aktuellen Kopf weist PR #70 aus.
+
+## WebAuthn-Vorbereitung für KC-006D
+
+PR #70, Abschlusskopf e003eb055f4137ee66184152ce660e96d838be44, ist vollständig grün und zur Durchsicht bereit.
+Der nächste Schritt bereitet [ADR-032](architecture/ADR-032_WebAuthn_Vorbereitung.md) und den [WebAuthn-Vertragsentwurf](../contracts/identity-access/webauthn-v1.md) vor.
+Der Entwurf benennt Bibliothekskandidaten, serverseitige Einmaligkeit, aktuelle Credential-Prüfung und Negativfälle.
+Ein getrennter lokaler Bibliotheks-Prüfgraph hat die aktuelle RustSec-Prüfung ohne Befund bestanden.
+Dies ist kein ausführbarer WebAuthn- oder Projekt-Abhängigkeitsnachweis.
+
+RP-ID/Ursprung, Benutzerverifikation und die Zulassung synchronisierter Passkeys wurden mit Vorschlägen angefragt.
+Die Antworten stehen aus. Deshalb gibt es in diesem Schritt keine neue Laufzeitimplementierung, Abhängigkeit im Projekt-Lockfile oder Migration.
+Nach der Entscheidung zuerst Vertrag und ADR aktualisieren und versionieren. Danach KC-006D weiter umsetzen.
+Die Akzeptanzkriterien von #65 bleiben offen. Eine vorbereitete Dokumentation schließt das Teilpaket nicht ab.

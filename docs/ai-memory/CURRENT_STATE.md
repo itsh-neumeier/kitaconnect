@@ -8,13 +8,13 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 
 - issue_id: [KC-005B / #57](https://github.com/itsh-neumeier/kitaconnect/issues/57), Teil von KC-005 / #5.
 - branch: codex/kc-005b-dienstrechte-rls auf PR #59 / 87cebbb6d9c6382bcfb1e382a731e9f6b4d4645c.
-- pull_request: [PR #60](https://github.com/itsh-neumeier/kitaconnect/pull/60), Basis codex/kc-005a-schema-provisionierung; Entwurf während laufender Linux-CI.
-- head_commit: Implementierung 0b8a20b8e8c4d0355e628a6a6544fae959a609bd erfolgreich geprüft. Vertrag und ADR-027 zuvor in 8af2253 versioniert. Ergänzter Test und Abschlusscheckpoint folgen gesondert; aktuellen Kopf mit git rev-parse HEAD prüfen.
+- pull_request: [PR #60](https://github.com/itsh-neumeier/kitaconnect/pull/60), Basis codex/kc-005a-schema-provisionierung.
+- head_commit: geprüfter Implementierungsstand aedb4a075e39bacde800ae7e80c8a336b28df711. Vertrag und ADR-027 zuvor in 8af2253 versioniert. Dieser reine Dokumentationscheckpoint folgt gesondert; aktuellen Kopf und zugehörige CI im PR prüfen.
 - objective: Dienstbezogene Objektrechte und FORCE RLS mit zwei Diensten und zwei Einrichtungen im Testcontainer nachweisen.
 - completed: Festes SQL-Testartefakt und Rust-/SQLx-Test eingebaut; explizite Ausführung vor und nach Server-Neustart im vorhandenen Pflichtprüfschritt.
-- remaining: Ergänzten Test und Abschlusscheckpoint in CI prüfen; aktuellen Kopf im PR nachführen und zur Durchsicht bereitstellen. #57 bleibt bis Integration offen.
+- remaining: Persönliche Durchsicht und gesonderter Integrationsauftrag. #57 bleibt bis Integration offen. Nächstes Arbeitspaket ist KC-005C / #58.
 - migration_state: Keine neue ausgelieferte Migration. Neues Artefakt liegt ausschließlich unter database/tests/.
-- known_failures: Keine Fehler im ersten vollständigen Linux-CI-Lauf. Docker und Windows-Linker fehlen lokal; ausführbare Datenbanknachweise stammen aus Linux-CI.
+- known_failures: Keine bekannten Fehler; beide CI-Läufe von aedb4a0 haben fünf erfolgreiche Pflichtprüfungen. Docker und Windows-Linker fehlen lokal; ausführbare Datenbanknachweise stammen aus Linux-CI.
 - dependencies: #53, #54, #55 und #59 offen, grün und zur Durchsicht bereit. Keine ungefragte Integration.
 - security_notes: Test-Loginrollen und Testpolicies gelten nur im isolierten Container. Produktive Identitäts-/Poolbindung bleibt offen; vorhandene Runtime unverändert gesperrt.
 
@@ -95,15 +95,17 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 - SQLx-Nachweise vor und nach Neustart: Dienst-/Einrichtungsgrenzen, positive Schreibpfade, FORCE RLS für Eigentümer,
   Namensverdeckung, Funktionsrechte, Rollen-/Eigentümerwechsel und atomare Rücknahme des Testartefakts.
 - Lokal: 44 Node-Tests, Struktur-/Verweisprüfung für 44 Issues und 39 Dokumente, rustfmt, JavaScript-Syntax und Gitleaks erfolgreich.
-- Der folgende Ergänzungscommit setzt gezielt die Kennung der anderen vorhandenen Einrichtung statt einer unbekannten Kennung.
-  Seine CI wird im PR nachgeführt. Er verändert keine Berechtigungen oder Testpolicies.
+- Ergänzungsstand aedb4a0 setzt gezielt die Kennung der anderen vorhandenen Einrichtung. Alle fünf Pflichtprüfungen des PR-Laufs sind erfolgreich.
+  [CI mit echten Datenbanktests](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39389278957),
+  [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39389279112).
+  Dieser reine Dokumentationscheckpoint erhält eigene CI; Nachweise zum aktuellen Kopf werden im PR nachgeführt.
 - Die Frage nach eigener produktiver Identität und eigenem Pool je Dienst/Einrichtung wurde gestellt; Antwort noch offen.
   Keine solche Produktionsarchitektur ohne ausdrückliche Entscheidung implementieren. Technische Negativtests bleiben möglich.
 
 ## Nächste drei Aktionen
 
-1. KC-005B in Linux-CI prüfen, Fehler beheben und den tatsächlichen Prüfstand in Issue #57 und Folge-PR dokumentieren.
-2. Folge-PR gegen PR #59 zur Durchsicht vorbereiten. Integrationsfolge #53, #54, #55, #59, danach KC-005B; nach Basisintegration neu prüfen.
-3. KC-005C / #58 mit Verbindungswechsel, Fehler-/Abbruchpfaden und konkurrierenden Wartungsabläufen fortsetzen. Keine produktive erlaubende RLS ohne freigegebenen Identitätsnachweis.
+1. KC-005C / #58 vorbereiten: Vertrag vor Implementierung, wiederverwendete Verbindungen nach Erfolg/Fehler/Abbruch und konkurrierende Wartungsabläufe prüfen.
+2. Offene Antwort zur produktiven Identitäts-/Poolbindung berücksichtigen. Keine produktive erlaubende RLS ohne freigegebenen Identitätsnachweis. Synthetische Tests können unabhängig fortgesetzt werden.
+3. PR #60 persönlich prüfen lassen. Integrationsfolge #53, #54, #55, #59, #60; nach Basisintegration neu prüfen. Keine ungefragte Integration.
 
 Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/025/026/027, Testvertrag und aktuellen GitHub-Stand lesen.

@@ -180,6 +180,22 @@ try {
   sql(passwordMigration, { database: 'kc_password_test', transaction: true, expectedState: '42P07' });
   testAdapter('before', 'password', 'passwords_and_durable_attempts_fail_closed', 'kitaconnect-identity-access');
 
+  sql('CREATE DATABASE kc_webauthn_test;');
+  sql(file('provision/002_schema.sql', identityRoot), { database: 'kc_webauthn_test', transaction: true });
+  sql(identityMigration, { database: 'kc_webauthn_test', transaction: true });
+  sql(passwordMigration, { database: 'kc_webauthn_test', transaction: true });
+  const webauthnMigration = `SET SESSION AUTHORIZATION kc_identity_migrator;\n${file('migrations/0003_webauthn.sql', identityRoot)}`;
+  sql(`${webauthnMigration}\nSELECT 1 / 0;`, { database: 'kc_webauthn_test', transaction: true, expectedState: '22012' });
+  sql(`DO $$ BEGIN
+    ASSERT pg_catalog.to_regclass('identity_access.webauthn_accounts') IS NULL;
+    ASSERT pg_catalog.to_regclass('identity_access.webauthn_credentials') IS NULL;
+    ASSERT pg_catalog.to_regclass('identity_access.webauthn_ceremonies') IS NULL;
+    ASSERT (SELECT pg_catalog.array_agg(version ORDER BY version) = ARRAY[1,2] FROM identity_access.schema_versions);
+  END $$;`, { database: 'kc_webauthn_test' });
+  sql(webauthnMigration, { database: 'kc_webauthn_test', transaction: true });
+  sql(webauthnMigration, { database: 'kc_webauthn_test', transaction: true, expectedState: '42P07' });
+  testAdapter('before', 'webauthn', 'webauthn_ceremonies_are_current_and_single_use', 'kitaconnect-identity-access');
+
   requireSuccess(docker(['restart', container]), 'Restart same test database');
   await waitUntilReady();
   sql(file('tests/persisted.sql'));
@@ -191,6 +207,7 @@ try {
   testAdapter('after', 'maintenance', 'concurrent_maintenance_preserves_registry_and_wave_versions');
   testAdapter('after', 'postgres', 'current_sessions_are_atomic_and_fail_closed', 'kitaconnect-identity-access');
   testAdapter('after', 'password', 'passwords_and_durable_attempts_fail_closed', 'kitaconnect-identity-access');
+  testAdapter('after', 'webauthn', 'webauthn_ceremonies_are_current_and_single_use', 'kitaconnect-identity-access');
   console.log('PASS: two carriers and an independent facility, version and role boundaries survive server restart');
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {

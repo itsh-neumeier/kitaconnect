@@ -18,3 +18,7 @@ Sie benötigt eine privilegierte Betriebsverbindung und vergibt keine Anwendungs
 
 KC-005B ergänzt ausschließlich [technische Dienstisolationstests](../contracts/organization-config/service-isolation-test-v1.md).
 Die Testartefakte unter `database/tests/` gehören nicht zu den ausgelieferten Migrationen oder zur Anwendungsprovisionierung.
+
+`identity-access` enthält in KC-006A ein [internes Identitäts-/Sitzungsmodell](../contracts/identity-access/session-model-v1.md).
+Die Bibliothek prüft lokale Zeit- und Zustandsregeln ohne Netzwerk, Speicherung oder Zugangsnachweise.
+Die [KC-006-Planung](../docs/24_KC-006_Authentisierung.md) trennt die späteren Anmeldewege und die Gesamtabnahme.

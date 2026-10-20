@@ -12,6 +12,9 @@
 | Schema-Registry | Geschütztes Verzeichnis der Zuordnung zwischen Einrichtung und geprüftem PostgreSQL-Schema; ein Eintrag erteilt kein Zugriffsrecht | Schemaname als Berechtigungsnachweis |
 | Provisionierung | Geprüftes Anlegen technischer Ressourcen durch eine gesonderte Betriebsidentität | Ungeprüfte automatische Anlage beim Anwendungsstart |
 | Berechtigung | Erlaubnis für eine definierte Aktion auf Daten | Freigabe, wenn technische Autorisierung gemeint ist |
+| Authentisierung | Nachweis und Prüfung einer Identität; erteilt allein keine fachliche Berechtigung | Anmeldung als pauschale Berechtigungsentscheidung |
+| Sitzungsdatensatz | Interner serverseitiger Bestand mit Identitätsbezug, Zeitgrenzen und Lebenszykluszustand | Datensatzkennung als geheimer Browsernachweis |
+| Sitzungsnachweis | Geheimer, vom Server geprüfter Nachweis zur Zuordnung einer Browseranfrage; getrennt von internen Datensatzkennungen | Identitätskennung oder Modellzustand als Anmeldenachweis |
 | Rolle | Bündel definierter Berechtigungen | Profil, wenn Rolle gemeint ist |
 | Sorgeberechtigte Person | Person mit den jeweils geltenden Sorge- und Zugriffsrechten | Elternteil als pauschale Rechtsannahme |
 | Elternbeirat | Gremium der Elternvertretung | Kita-Verwaltung |

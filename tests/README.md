@@ -149,3 +149,12 @@ Sie prüft doppelte Provisionierung, doppelte Testmigration und gleichzeitige Pr
 Eine fehlerhafte Testwelle muss nur den betroffenen Schritt zurücknehmen und vor der nächsten Einrichtung stoppen.
 Bestätigte Versionsstände sowie eine gezielte erfolgreiche Korrektur müssen nach Neustart erhalten bleiben.
 Die Testmigrationshilfe akzeptiert nur zwei feste technische Schritte. Sie ist kein produktiver Orchestrator und kein Wiederherstellungsnachweis.
+
+## KC-006A: Lokales Sitzungsmodell
+
+Elf Rust-Integrationstests prüfen Kennungsgrenzen, Zeitgrenzen und dauerhafte lokale Zustandsübergänge.
+Sie prüfen auch Beobachtung ohne Verlängerung, Aktivität ohne Überschreiten der absoluten Frist, rückläufige Zeit und Rechenüberlauf.
+Ein negativer Dokumentationstest verweigert die Verwendung einer Identitätskennung als Sitzungsdatensatzkennung.
+Die vorhandene Workspace-CI erfasst die neue Bibliothek mit Clippy, Tests und Build.
+Diese Prüfungen sind keine Anmelde-, Kryptografie-, Persistenz- oder verteilten Widerrufsnachweise.
+Es werden keine offenen Sitzungs-, MFA- oder Wiederherstellungsregeln als Vorgabewerte eingebaut.

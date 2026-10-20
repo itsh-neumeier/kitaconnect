@@ -119,7 +119,15 @@
       "Widerrufene Sitzungen und wiederverwendete Recovery-Nachweise werden abgewiesen."
     ],
     "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
-    "status": "planned"
+    "status": "planned",
+    "work_packages": [
+      "KC-006A",
+      "KC-006B",
+      "KC-006C",
+      "KC-006D",
+      "KC-006E",
+      "KC-006F"
+    ]
   },
   {
     "id": "KC-007",
@@ -820,6 +828,117 @@
       "Poolwechsel nach Erfolg, Fehler und Abbruch hinterlässt keinen fremden Kontext; konkurrierende Migrationen bleiben eindeutig."
     ],
     "security_scope": "Nur synthetische Daten. Dienst-, Schema- und Benutzerrechte getrennt prüfen; keine implizite Rechtefreigabe oder produktiven Zugangsdaten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-006A",
+    "phase": "P1",
+    "title": "Internes Identitäts- und Sitzungsmodell",
+    "depends_on": [
+      "KC-004A",
+      "KC-004B"
+    ],
+    "specification": [
+      "docs/02_Technische_Architektur.md",
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Kennungstypen, explizite Zeitgrenzen und dauerhafte lokale Zustandsübergänge sind ohne Anmeldung oder Berechtigungsvergabe geprüft."
+    ],
+    "security_scope": "Nur synthetische Daten. Keine produktiven Konten, Secrets oder fachlichen Rechte. Offene Sicherheitsentscheidungen vor abhängiger Implementierung bestätigen lassen.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-006B",
+    "phase": "P1",
+    "title": "Sitzungszustand persistent und atomar widerrufbar speichern",
+    "depends_on": [
+      "KC-006A"
+    ],
+    "specification": [
+      "docs/02_Technische_Architektur.md",
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Aktuelle Sitzungsprüfung, Ablauf, atomarer Widerruf und konkurrierende Änderungen haben echte PostgreSQL-Nachweise."
+    ],
+    "security_scope": "Nur synthetische Daten. Keine produktiven Konten, Secrets oder fachlichen Rechte. Offene Sicherheitsentscheidungen vor abhängiger Implementierung bestätigen lassen.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-006C",
+    "phase": "P1",
+    "title": "Passwortprüfung mit Argon2id und Anfragemengenbegrenzung",
+    "depends_on": [
+      "KC-006B"
+    ],
+    "specification": [
+      "docs/02_Technische_Architektur.md",
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Geprüfte Argon2id-Prüfung, negative Fälle und Anfragemengenbegrenzung halten bestätigte MFA-Grenzen ein."
+    ],
+    "security_scope": "Nur synthetische Daten. Keine produktiven Konten, Secrets oder fachlichen Rechte. Offene Sicherheitsentscheidungen vor abhängiger Implementierung bestätigen lassen.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-006D",
+    "phase": "P1",
+    "title": "Passkeys mit WebAuthn prüfen",
+    "depends_on": [
+      "KC-006B"
+    ],
+    "specification": [
+      "docs/02_Technische_Architektur.md",
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Challenge, RP-ID, Ursprung, Benutzerverifikation und Wiederverwendung werden positiv und negativ geprüft."
+    ],
+    "security_scope": "Nur synthetische Daten. Keine produktiven Konten, Secrets oder fachlichen Rechte. Offene Sicherheitsentscheidungen vor abhängiger Implementierung bestätigen lassen.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-006E",
+    "phase": "P1",
+    "title": "TOTP und einmalige Wiederherstellung absichern",
+    "depends_on": [
+      "KC-006B"
+    ],
+    "specification": [
+      "docs/02_Technische_Architektur.md",
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Bestätigte MFA-/Wiederherstellungsregeln und atomare Einmalnutzung sind einschließlich Zeitfenster und Konkurrenz geprüft."
+    ],
+    "security_scope": "Nur synthetische Daten. Keine produktiven Konten, Secrets oder fachlichen Rechte. Offene Sicherheitsentscheidungen vor abhängiger Implementierung bestätigen lassen.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-006F",
+    "phase": "P1",
+    "title": "Anmeldewege und aktuelle Sitzungsprüfung integrieren",
+    "depends_on": [
+      "KC-006C",
+      "KC-006D",
+      "KC-006E"
+    ],
+    "specification": [
+      "docs/02_Technische_Architektur.md",
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Vier Anmelde-/Wiederherstellungswege, geschützte Cookies, aktueller Widerruf und Ausfallverweigerung sind integriert; ursprüngliche Gesamtkriterien bleiben bestehen."
+    ],
+    "security_scope": "Nur synthetische Daten. Keine produktiven Konten, Secrets oder fachlichen Rechte. Offene Sicherheitsentscheidungen vor abhängiger Implementierung bestätigen lassen.",
     "status": "planned"
   }
 ]

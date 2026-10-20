@@ -227,3 +227,10 @@ Es werden keine Fachobjekte oder produktiven Zugänge angelegt.
 [ADR-028](architecture/ADR-028_Pool_und_Wartungstests.md) konkretisiert die technischen Tests aus KC-005C.
 Wiederverwendung wird anhand derselben Datenbankprozesskennung geprüft. Konkurrierende Wartung muss beobachtbar an PostgreSQL-Sperren warten.
 Testmigrationen bleiben von produktiver Provisionierung getrennt. Die produktive Identitäts-/Poolbindung bleibt offen.
+
+## ADR-029 – Identitäts- und Sitzungsmodell
+
+[ADR-029](architecture/ADR-029_Identitaets_und_Sitzungsmodell.md) beginnt KC-006 mit einem internen Modell im zuständigen Dienst.
+Die sechs Teilpakete erhalten alle ursprünglichen Anmelde- und Widerrufsanforderungen.
+Konkrete Sitzungswerte, MFA-Zuordnung und Wiederherstellung bleiben bis zur ausdrücklichen Antwort offen.
+Das Modell erhält keine eingebauten Vorgabewerte und erteilt keine Anmeldung oder Berechtigung.

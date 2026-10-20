@@ -19,3 +19,6 @@ Er ist kein öffentlicher API-Vertrag und keine Freigabe von Fachzugriffen.
 
 Der [Dienstisolation-Testvertrag](organization-config/service-isolation-test-v1.md) beschreibt die technischen Proben aus KC-005B.
 Seine Loginrollen und erlaubenden Policies gelten ausschließlich im Testcontainer.
+
+Der [Pool- und Wartungstestvertrag](organization-config/pool-maintenance-test-v1.md) ergänzt Wiederverwendung nach Fehlern und Abbruch sowie konkurrierende Wartung.
+Er definiert Testhilfen und keine produktive Pool- oder Migrationssteuerung.

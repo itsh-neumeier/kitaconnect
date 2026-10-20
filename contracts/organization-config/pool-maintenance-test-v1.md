@@ -8,7 +8,7 @@ Geltungsbereich: isolierter PostgreSQL-Testcontainer mit synthetischen Daten.
 Ein ausschließlich im Test angelegter SQLx-Pool verwendet genau eine Verbindung und die Testidentität `kc_test_care_1`.
 Nach Rückgabe setzt ein Pool-Hook Sitzungsparameter und Rolle zurück. Ein fehlgeschlagener Hook verwirft die Verbindung.
 Die nächste Ausleihe prüft die ursprüngliche Datenbankidentität. Die Einrichtung stammt nicht aus einer frei gesetzten Variable.
-Die PostgreSQL-Prozesskennung muss nach Erfolg, SQL-Fehler, Datenbankabbruch und verworfenener Rust-Operation gleich bleiben.
+Die PostgreSQL-Prozesskennung muss nach Erfolg, SQL-Fehler, Datenbankabbruch und verworfener Rust-Operation gleich bleiben.
 So kann eine neue Verbindung den Nachweis der Wiederverwendung nicht verdecken.
 
 Die Tests verändern search_path und den synthetischen Sitzungswert `kc.facility_id`.

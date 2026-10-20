@@ -94,7 +94,9 @@ Keine Antwort zu diesen Punkten aus der allgemeinen Aufforderung zur Weiterarbei
 
 ## KC-006D: Angefragtes WebAuthn-Profil
 
-Stand: 20.10.2026. Drei Rückfragen wurden im Projektchat gestellt. Bisher liegt keine Antwort vor.
+Stand: 20.10.2026. Die Projektleitung hat „Alle drei Vorschläge bestätigen“ geantwortet.
+Bestätigt sind zunächst ausschließlich localhost im isolierten Test, erforderliche Benutzerverifikation und erlaubte synchronisierte Passkeys.
+Die folgende Tabelle dokumentiert die ursprünglichen Fragen; deren Sperren für dieses Testprofil sind durch die ausdrückliche Antwort aufgehoben.
 
 | Thema | Angefragter Vorschlag | Sperre ohne Antwort |
 |---|---|---|
@@ -104,3 +106,4 @@ Stand: 20.10.2026. Drei Rückfragen wurden im Projektchat gestellt. Bisher liegt
 
 [ADR-032](../architecture/ADR-032_WebAuthn_Vorbereitung.md) und der [Vertragsentwurf](../../contracts/identity-access/webauthn-v1.md) sind vorbereitende Unterlagen.
 Nach der Antwort zuerst Vertrag und ADR aktualisieren und versionieren. Erst danach abhängigen Code implementieren.
+Die produktive Domain und die übrigen MFA-/Wiederherstellungs-/Rollenentscheidungen bleiben offen.

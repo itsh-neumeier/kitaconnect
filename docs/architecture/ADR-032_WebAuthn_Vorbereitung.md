@@ -1,6 +1,6 @@
 # ADR-032 – WebAuthn-Vertrag und offene Freigaben
 
-Datum: 20.10.2026. Status: Entwurf für KC-006D / #65. Keine Implementierungsfreigabe der offenen Sicherheitsregeln.
+Datum: 20.10.2026. Status: bestätigtes Testprofil und technische Konkretisierung für KC-006D / #65.
 Grundlage: Spezifikation v5.9, ADR-019 und ADR-029 bis ADR-031.
 
 ## Geprüfter Istzustand
@@ -15,7 +15,7 @@ Für die Serverprüfung wird webauthn-rs 0.5.5 vorgeschlagen.
 Die Paketmetadaten nennen Rust 1.88 und MPL-2.0. Der Projektcompiler Rust 1.99 erfüllt die Mindestversion.
 Die Bibliothek prüft das Protokoll und die Signaturen. KitaConnect entwickelt dafür keine eigene Kryptografie.
 Der Passkey-Ablauf dieser Version verlangt Benutzerverifikation und erlaubt synchronisierte Authentikatoren.
-Diese Eigenschaften sind ausdrücklich angefragt. Sie gelten noch nicht als bestätigte KitaConnect-Regeln.
+Diese Eigenschaften sind durch „Alle drei Vorschläge bestätigen“ ausdrücklich bestätigt.
 
 Für synthetische Protokolltests kommt webauthn-authenticator-rs 0.5.5 mit dem Testmerkmal `softpasskey` in Betracht.
 Es gilt ebenfalls MPL-2.0 und Rust 1.88. Das Merkmal verwendet OpenSSL und weitere Testabhängigkeiten.
@@ -46,7 +46,7 @@ Ein erfolgreicher nativer Build wurde in diesem Vorbereitungsschritt nicht behau
 Der [Vertragsentwurf](../../contracts/identity-access/webauthn-v1.md) beschreibt Zuständigkeiten, aktuelle Prüfung und Negativfälle.
 Nach ausdrücklicher Entscheidung werden Vertrag und dieser ADR vor Implementierung aktualisiert und versioniert.
 
-## Offene Entscheidungen
+## Bestätigte Entscheidungen und verbleibende Grenzen
 
 | Punkt | Angefragter Vorschlag | Folge ohne Antwort |
 |---|---|---|
@@ -54,9 +54,17 @@ Nach ausdrücklicher Entscheidung werden Vertrag und dieser ADR vor Implementier
 | Benutzerverifikation | Für den eigenständigen Passkey-Weg immer erforderlich. Keine Festlegung der MFA-Pflicht anderer Wege. | Kein aktivierter Passkey-Ablauf und keine Übernahme des Bibliotheksverhaltens als Projektentscheidung. |
 | Synchronisierte Passkeys | Zulassen, wenn Benutzerverifikation erfüllt ist. | Keine Entscheidung für synchronisierte oder ausschließlich gerätegebundene Schlüssel vorwegnehmen. |
 
-Die drei Rückfragen wurden im Projektchat gestellt. Eine Antwort steht noch aus.
-Eine allgemeine Aufforderung zur Weiterarbeit ist keine Antwort auf diese Sicherheitsfragen.
+Die Projektleitung hat alle drei Vorschläge im Projektchat ausdrücklich bestätigt.
+Damit gelten zunächst ausschließlich localhost im isolierten Test, erforderliche Benutzerverifikation und erlaubte synchronisierte Passkeys.
+Die produktive Domain bleibt ausdrücklich offen. Die Tabelle dokumentiert die ursprünglich angefragten Vorschläge und ihre damaligen Sperren.
+Der Adapter erhält keine produktive Ausweichkonfiguration und legt keine allgemeine MFA-Pflicht fest.
 Die bisherigen offenen MFA-, Wiederherstellungs- und produktiven Datenbankfragen bleiben bestehen.
+
+Der [aktualisierte Vertrag](../../contracts/identity-access/webauthn-v1.md) wird vor Code versioniert.
+Eine neue Migration ergänzt Kontobindung, Credentials und ausschließlich serverseitige Vorgänge.
+Vorgänge werden vor der Antwortprüfung dauerhaft verbraucht. Eine gemeinsame Kontosperre und Versionskennung verhindern Erfolg aus veraltetem Credential-Bestand.
+Der Adapter begrenzt Antwortgröße, Credential-Zahl, gespeicherte Vorgänge und laufende Signaturprüfungen.
+Konkrete produktive Grenzwerte und HTTP-Anbindung bleiben ausgenommen.
 
 ## Alternativen und Grenzen
 

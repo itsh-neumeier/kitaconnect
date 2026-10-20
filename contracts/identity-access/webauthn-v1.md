@@ -1,7 +1,7 @@
-# Interner Vertragsentwurf: WebAuthn v1
+# Interner Vertrag: WebAuthn v1
 
-Stand: 20.10.2026. KC-006D / #65. Status: Entwurf; Sicherheitsantworten stehen aus.
-Dieser Entwurf ist keine Freigabe eines produktiven Anmeldewegs.
+Stand: 20.10.2026. KC-006D / #65. Sicherheitsprofil am 20.10.2026 ausdrücklich bestätigt.
+Dieser Vertrag ist keine Freigabe eines produktiven Anmeldewegs.
 Die Bibliotheksprüfung und offenen Punkte stehen in [ADR-032](../../docs/architecture/ADR-032_WebAuthn_Vorbereitung.md).
 
 ## Zuständigkeit und Grenzen
@@ -12,20 +12,21 @@ Ein positives Ergebnis ist ein aktueller lokaler Identitätsnachweis und keine f
 Sitzungserzeugung, Cookies, aktuelle Mitgliedschaft und Objekt-/Feldrechte folgen den gesonderten Verträgen in KC-006F und KC-008.
 Die Registrierung benötigt einen bereits geprüften Zuständigkeitsnachweis. Dieser Entwurf führt keinen ungeprüften Ersteinrichtungs- oder Wiederherstellungsweg ein.
 
-## Noch zu bestätigendes Prüfprofil
+## Bestätigtes Prüfprofil
 
 Eine produktive RP-ID und ein erlaubter Ursprung sind noch nicht festgelegt.
-Auch die vorgeschlagene Beschränkung dieses Arbeitspakets auf localhost ist noch nicht bestätigt.
-Bei Bestätigung soll das isolierte Testprofil genau RP-ID `localhost` und Ursprung `http://localhost:3000` verwenden.
+Die Projektleitung hat „Alle drei Vorschläge bestätigen“ geantwortet.
+Der Adapter dieses Arbeitspakets verwendet ausschließlich RP-ID `localhost` und Ursprung `http://localhost:3000` im isolierten Test.
 Ein solches Profil darf keine produktive Ausweichkonfiguration sein.
 Weitere Ports, Subdomains, eingebettete Zugangsdaten und unvollständige Ursprungsangaben werden nicht automatisch zugelassen.
 Client-Header dürfen die serverseitig konfigurierte RP-ID oder den Ursprung nicht ersetzen.
 
-Benutzerverifikation für jeden Passkey-Vorgang und die Zulassung synchronisierter Passkeys sind angefragt.
-Die Bibliothekswahl webauthn-rs 0.5.5 ist an die ausdrückliche Entscheidung über diese Eigenschaften gebunden.
-Solange die Antwort fehlt, wird kein davon abhängiger Ablauf implementiert.
+Benutzerverifikation für jeden Passkey-Vorgang und die Zulassung synchronisierter Passkeys sind ausdrücklich bestätigt.
+webauthn-rs 0.5.5 übernimmt die Protokollprüfung. Die allgemeinen MFA-Regeln anderer Anmeldewege bleiben offen.
 Ein Timeout der Browserabfrage ersetzt keine serverseitige Ablaufprüfung.
 Der Aufrufer muss positive Laufzeit- und Mengengrenzen ausdrücklich übergeben; produktive Vorgabewerte werden hier nicht festgelegt.
+Der Adapter begrenzt Antworten auf 65.536 Bytes und höchstens 32 Credentials je Identität.
+Eine feste Obergrenze von 32 Credentials gilt auch für die explizite Mengenkonfiguration.
 
 ## Geplanter serverseitiger Ablauf
 
@@ -46,6 +47,12 @@ Der Bestand muss Credential-Kennungen eindeutig zuordnen. Ein Credential einer a
 Ein zwischenzeitlicher Widerruf oder eine Änderung des Credential-Bestands muss ein altes positives Ergebnis entwerten.
 Zähler und Sicherungskennzeichen benötigen eine an die bestätigte Passkey-Regel gebundene Prüfung.
 Eine Challenge bleibt unabhängig vom Verhalten eines Authentikatorzählers einmalig.
+Jeder Vorgang speichert die aktuelle Versionskennung des zugeordneten Credential-Bestands.
+Registrierung, Widerruf und erfolgreiche Anmeldung ändern diese Kennung unter derselben Kontosperre.
+Ein Vorgang mit altem Bestand muss neu begonnen werden. Auch parallel begonnene Anmeldungen können dadurch einen neuen Vorgang benötigen.
+Fehlgeschlagene Abschlussprüfungen bleiben verbraucht. Ein Fehler nach Verbrauch nimmt diesen Verbrauch nicht zurück.
+Abgelaufene Vorgänge dürfen bei neuer Anlage entfernt werden; der Server begrenzt die Zahl gespeicherter Vorgänge ausdrücklich.
+Signaturprüfungen laufen begrenzt außerhalb des asynchronen Ausführungsfadens.
 Neue Datenbankobjekte erhalten erzwungene RLS ohne erlaubende Runtime-Policy.
 Positive Speichertests verwenden ausschließlich die isolierte Test-Betriebsidentität.
 

@@ -252,3 +252,7 @@ Ein positives Passwortergebnis ersetzt weder MFA noch eine aktuelle Freigabe. Di
 [ADR-032](architecture/ADR-032_WebAuthn_Vorbereitung.md) dokumentiert die Bibliotheksprüfung und den Vertragsentwurf für KC-006D.
 RP-ID/Ursprung, Benutzerverifikation und synchronisierte Passkeys sind ausdrücklich angefragt.
 Die Rückfragen sind offen. Der Entwurf enthält keine neue Laufzeitimplementierung oder bestätigte Passkey-Regel.
+
+Am 20.10.2026 bestätigt die Projektleitung ausdrücklich alle drei WebAuthn-Vorschläge.
+Für KC-006D gelten ausschließlich localhost im isolierten Test, erforderliche Benutzerverifikation und erlaubte synchronisierte Passkeys.
+Produktive Domain und die übrigen offenen Sicherheitsentscheidungen bleiben offen. Vertrag und ADR-032 werden vor Implementierung aktualisiert.

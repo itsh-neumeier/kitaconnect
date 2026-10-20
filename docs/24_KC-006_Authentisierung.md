@@ -58,3 +58,14 @@ Stand 5abb46e6345e4d0e5417ead35e9f96d12deea947: fünf Pflichtprüfungen des erst
 Elf Modelltests und der negative Kennungstypvertrag sind erfolgreich. Neue externe Abhängigkeiten waren nicht erforderlich.
 [PR #68](https://github.com/itsh-neumeier/kitaconnect/pull/68) führt den Prüfstand des folgenden Dokumentationscheckpoints nach.
 KC-006A bleibt bis Integration offen. Nächster Schritt ist KC-006B / #63; die Gesamtabnahme von KC-006 bleibt offen.
+
+## Aktueller Sitzungsbestand aus KC-006B
+
+[PR #69](https://github.com/itsh-neumeier/kitaconnect/pull/69) ergänzt den [Speichervertrag](../contracts/identity-access/session-storage-v1.md) und ADR-030.
+Stand 6d7425ea316e533496f1f5597c0845fda94c352d: erster vollständiger CI-Lauf mit fünf erfolgreichen Pflichtprüfungen.
+[Build und echte SQLx-/PostgreSQL-Nachweise](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39420733257),
+[Secret- und Abhängigkeitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39420733188).
+Aktuelle Zustandsprüfung und Widerruf sind im internen Speicheradapter vor und nach Server-Neustart geprüft.
+Die Anwendung bleibt durch RLS gesperrt. Positive Tests verwenden ausschließlich die Test-Betriebsidentität.
+Dies ist keine Anmeldung, aktuelle Mitgliedschaftsprüfung oder Benutzerberechtigung. Die offenen Interviewentscheidungen bleiben offen.
+KC-006B bleibt bis Integration offen. Nächstes Teilpaket ist KC-006C / #64.

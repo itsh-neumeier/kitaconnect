@@ -16,3 +16,6 @@ Der [Speichervertrag](organization-config/storage-v1.md) und der [Adaptervertrag
 ergänzen die Datenbankstruktur und die interne SQLx-Anbindung. Sie erteilen keine Benutzerrechte.
 Der [Schema-Wartungsvertrag](organization-config/schema-provisioning-v1.md) ergänzt die privilegierte Registrierung leerer Einrichtungsschemas.
 Er ist kein öffentlicher API-Vertrag und keine Freigabe von Fachzugriffen.
+
+Der [Dienstisolation-Testvertrag](organization-config/service-isolation-test-v1.md) beschreibt die technischen Proben aus KC-005B.
+Seine Loginrollen und erlaubenden Policies gelten ausschließlich im Testcontainer.

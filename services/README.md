@@ -15,3 +15,6 @@ Der [P1-Plan](../docs/22_P1_Start_KC-004.md) und der
 Der [Adaptervertrag](../contracts/organization-config/adapter-v1.md) beschreibt die Speicherung und ihre verbleibenden Grenzen.
 Eine gesonderte [Wartungs-API](../contracts/organization-config/schema-provisioning-v1.md) provisioniert leere Einrichtungsschemas atomar.
 Sie benötigt eine privilegierte Betriebsverbindung und vergibt keine Anwendungsrechte.
+
+KC-005B ergänzt ausschließlich [technische Dienstisolationstests](../contracts/organization-config/service-isolation-test-v1.md).
+Die Testartefakte unter `database/tests/` gehören nicht zu den ausgelieferten Migrationen oder zur Anwendungsprovisionierung.

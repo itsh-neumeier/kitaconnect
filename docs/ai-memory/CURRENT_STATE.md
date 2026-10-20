@@ -6,16 +6,17 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 
 ## Arbeitsstand
 
-- issue_id: [KC-005A / #56](https://github.com/itsh-neumeier/kitaconnect/issues/56), Teil von KC-005 / #5.
-- branch: codex/kc-005a-schema-provisionierung auf PR #55 / a8db9ca.
-- pull_request: [PR #59](https://github.com/itsh-neumeier/kitaconnect/pull/59), Basis codex/kc-004b-sqlx-adapter.
-- head_commit: geprüfter Stand 518415ee4e267252e29de6b34b08632d72f17705; Wartungsvertrag und ADR-026 zuvor in 0011c36 versioniert. Dieser Abschlusscheckpoint folgt gesondert; aktuellen Kopf mit git rev-parse HEAD prüfen.
-- objective: Leere Einrichtungsschemas mit Registry atomar provisionieren und prüfen; keine Laufzeitfreigabe.
-- completed: Neue NOLOGIN-Wartungs-/Schemaeigentümerrollen, Migration 0002, atomare Rust-Wartungs-API und echte PostgreSQL-Tests erfolgreich. Backlog bildet Grundmodelle und Gesamtabnahmen ohne verdeckten Zyklus ab.
-- remaining: Abschlusscheckpoint in CI prüfen; PR #59 zur Durchsicht bereitstellen. #56 bleibt bis Integration offen.
-- migration_state: Neue gesonderte Rollen-/Datenbank-Provisionierung und Migration 0002 nach 0001. Keine produktive Datenbank oder Loginidentität angelegt.
-- known_failures: Keine bekannten fehlgeschlagenen Pflichtprüfungen. Windows-C++-Linker und Docker/psql fehlen; ausführbare Nachweise stammen aus Linux-CI.
-- dependencies: #53, #54, #55 offen und grün. Keine ungefragte Integration; Folge-PR gegen codex/kc-004b-sqlx-adapter. Nach Basisintegration retargeten und erneut prüfen.
+- issue_id: [KC-005B / #57](https://github.com/itsh-neumeier/kitaconnect/issues/57), Teil von KC-005 / #5.
+- branch: codex/kc-005b-dienstrechte-rls auf PR #59 / 87cebbb6d9c6382bcfb1e382a731e9f6b4d4645c.
+- pull_request: Vorbereitung gegen codex/kc-005a-schema-provisionierung; Nummer nach Anlage ergänzen.
+- head_commit: Vertrag und ADR-027 in 8af2253 vor Implementierung versioniert. Aktuellen Implementierungskopf mit git rev-parse HEAD prüfen.
+- objective: Dienstbezogene Objektrechte und FORCE RLS mit zwei Diensten und zwei Einrichtungen im Testcontainer nachweisen.
+- completed: Festes SQL-Testartefakt und Rust-/SQLx-Test eingebaut; explizite Ausführung vor und nach Server-Neustart im vorhandenen Pflichtprüfschritt.
+- remaining: Linux-CI ausführen und Fehler beheben; Nachweise in Issue und PR sichern. #57 bleibt bis Integration offen.
+- migration_state: Keine neue ausgelieferte Migration. Neues Artefakt liegt ausschließlich unter database/tests/.
+- known_failures: Noch kein ausführbarer Nachweis der neuen Datenbanktests. Docker und Windows-Linker fehlen lokal; Linux-CI ist erforderlich.
+- dependencies: #53, #54, #55 und #59 offen, grün und zur Durchsicht bereit. Keine ungefragte Integration.
+- security_notes: Test-Loginrollen und Testpolicies gelten nur im isolierten Container. Produktive Identitäts-/Poolbindung bleibt offen; vorhandene Runtime unverändert gesperrt.
 
 ## P0-Abschluss
 
@@ -87,8 +88,8 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Nächste drei Aktionen
 
-1. Abschlusscheckpoint von PR #59 in Linux-CI prüfen und PR zur Durchsicht bereitstellen. Integrationsfolge #53, #54, #55, #59; nach Basis-Merges retargeten und neu prüfen. Keine ungefragte Integration.
-2. Erfolgreiche Rollen-, Registry-, Rollback- und Neustartnachweise in Issue, PR und Checkpoint sichern.
-3. KC-005B mit expliziter Dienst-/Objektliste und begründetem RLS-Kontext vorbereiten. Keine selbst gesetzte Kontextvariable allein als Identitätsnachweis zulassen.
+1. KC-005B in Linux-CI prüfen, Fehler beheben und den tatsächlichen Prüfstand in Issue #57 und Folge-PR dokumentieren.
+2. Folge-PR gegen PR #59 zur Durchsicht vorbereiten. Integrationsfolge #53, #54, #55, #59, danach KC-005B; nach Basisintegration neu prüfen.
+3. KC-005C / #58 mit Verbindungswechsel, Fehler-/Abbruchpfaden und konkurrierenden Wartungsabläufen fortsetzen. Keine produktive erlaubende RLS ohne freigegebenen Identitätsnachweis.
 
-Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/025/026, Wartungsvertrag und aktuellen GitHub-Stand lesen.
+Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/025/026/027, Testvertrag und aktuellen GitHub-Stand lesen.

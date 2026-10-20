@@ -141,6 +141,7 @@ try {
   sql(registryMigration, { database: 'kc_facility_schema_test', transaction: true });
   sql('CREATE ROLE kc_facility_test_maintenance LOGIN INHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_facility_provisioner TO kc_facility_test_maintenance WITH INHERIT TRUE, SET TRUE, ADMIN FALSE;');
   testAdapter('before', 'provisioning', 'schema_provisioning_is_atomic_and_restricted');
+  testAdapter('before', 'isolation', 'service_objects_enforce_roles_and_rls');
 
   requireSuccess(docker(['restart', container]), 'Restart same test database');
   await waitUntilReady();
@@ -148,6 +149,7 @@ try {
   sql(file('tests/roles.sql'));
   testAdapter('after');
   testAdapter('after', 'provisioning', 'schema_provisioning_is_atomic_and_restricted');
+  testAdapter('after', 'isolation', 'service_objects_enforce_roles_and_rls');
   console.log('PASS: two carriers and an independent facility, version and role boundaries survive server restart');
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {

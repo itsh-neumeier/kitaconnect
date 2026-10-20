@@ -116,7 +116,11 @@ async fn service_objects_enforce_roles_and_rls() {
                 1
             );
             assert_eq!(count(&mut runtime, &format!("SELECT {function}")).await, 1);
-            execute(&mut runtime, "SET kc.facility_id = '999'; RESET ROLE").await;
+            execute(
+                &mut runtime,
+                &format!("SET kc.facility_id = '{}'; RESET ROLE", 3 - facility),
+            )
+            .await;
             assert_eq!(
                 count(&mut runtime, &format!("SELECT count(*) FROM {table}")).await,
                 1

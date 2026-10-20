@@ -6,17 +6,17 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 
 ## Arbeitsstand
 
-- issue_id: [KC-006B / #63](https://github.com/itsh-neumeier/kitaconnect/issues/63), Teil von KC-006 / #6.
-- branch: codex/kc-006b-sitzungsspeicher auf PR #68 / c7711e8a7eba7941bdf270e5a5429e1b3059e29e.
-- pull_request: [PR #69](https://github.com/itsh-neumeier/kitaconnect/pull/69), Basis codex/kc-006a-sitzungsmodell.
-- head_commit: geprüfte Implementierung 6d7425ea316e533496f1f5597c0845fda94c352d. Vertrag und ADR-030 zuvor in 2487f86 versioniert. Dieser Dokumentationscheckpoint folgt gesondert; aktuellen Kopf und CI im PR prüfen.
-- objective: Getrennter Plattformbestand mit abgeleiteten Sitzungsnachweisen, aktueller Prüfung und atomarem Widerruf.
-- completed: NOLOGIN-Rollen, Migration 0001, Betriebssystem-Zufallsnachweise, SHA-256-Ableitung und SQLx-Adapter eingebaut. Echte Datenbanktests einschließlich beobachteter Zeilensperrkonkurrenz und Neustart erfolgreich.
-- remaining: Persönliche/sprachliche Durchsicht und gesonderter Integrationsauftrag. #63 bleibt bis Integration offen. Als Nächstes KC-006C / #64 mit begrenztem Argon2id-Vertrag vorbereiten.
-- migration_state: Neue dienstbezogene Provisionierung und identity-access-Migration 0001. Keine vorhandene Organisationsmigration geändert. Runtime bleibt durch FORCE RLS ohne erlaubende Policy gesperrt.
-- known_failures: Keine bekannten Fehler; fünf Pflichtprüfungen des ersten vollständigen CI-Laufs erfolgreich. Windows-Linker und Docker fehlen lokal.
-- dependencies: #53, #54, #55, #59, #60, #61 und #68 offen und grün. Keine ungefragte Integration.
-- security_notes: Keine Anmeldung, Cookies, Mitgliedschaft oder fachliche Rechtefreigabe. Positive Speichertests verwenden nur die Test-Betriebsidentität. Offene MFA-, Sitzungsdauer-, Wiederherstellungs- und produktive Rollenbindungsfragen bleiben unbeantwortet.
+- issue_id: [KC-006C / #64](https://github.com/itsh-neumeier/kitaconnect/issues/64), Teil von KC-006 / #6.
+- branch: codex/kc-006c-passwortpruefung auf PR #69 / e0e1214fd88e65ebc34c2db81286990388b59571.
+- pull_request: [PR #70](https://github.com/itsh-neumeier/kitaconnect/pull/70), Basis codex/kc-006b-sitzungsspeicher.
+- head_commit: Kernimplementierung 2ec3983 mit vollständigem CI-Nachweis. Ergänzende Negativtests und Abnahmegrenzen in 404c04c. Vertrag und ADR-031 zuvor in 3f964e6 versioniert. Dieser Checkpoint folgt gesondert; aktuellen Kopf und dessen CI im PR prüfen.
+- objective: Begrenzter Argon2id-Passwortfaktor mit dauerhafter Reservierung von Versuchen, ohne Anmeldefreigabe.
+- completed: Feste Profile, begrenzte Hasharbeit, einheitliche Fehler, Parameteraktualisierung und Migration 0002 eingebaut. Kernnachweise einschließlich echter Sperrkonkurrenz und Server-Neustart erfolgreich. Zusätzliche Tests prüfen Hashänderung ohne Versionswechsel, Eigentümer-RLS und ausbleibende Sitzungserzeugung.
+- remaining: CI des ergänzten Kopfes im PR prüfen; bei Fehler korrigieren. Persönliche/sprachliche Durchsicht und gesonderter Integrationsauftrag. #64 bleibt bis Integration offen. Danach KC-006D / #65 mit WebAuthn-Vertrag vorbereiten.
+- migration_state: Neue identity-access-Migration 0002. Migration 0001 und Organisationsmigrationen bleiben unverändert. FORCE RLS ohne erlaubende Policy sperrt weiterhin die Runtime. Getrennter synthetischer Passwort-Testbestand mit Versionen 1 und 2.
+- known_failures: Erste SQLx-Typanforderung im Test in 2ec3983 behoben. Fünf Pflichtprüfungen des ersten vollständigen Laufs erfolgreich. Windows-Linker und Docker fehlen lokal. Keine unbelegten lokalen Rust-/Datenbankerfolge behaupten.
+- dependencies: #53, #54, #55, #59, #60, #61, #68 und #69 offen und grün. Keine ungefragte Integration.
+- security_notes: Ein Passwortergebnis ist nur ein Faktor. Keine Anmeldung, Cookies, Mitgliedschaft oder fachliche Rechtefreigabe. Positive Speichertests verwenden nur die Test-Betriebsidentität. MFA-, Sitzungsdauer-, Wiederherstellungs- und produktive Rollenbindungsfragen bleiben offen. Produktive Versuchslimits, Prüfschlüsselbindung und Argon2id-Lastmessungen sind vor Laufzeitfreigabe erforderlich.
 
 ## P0-Abschluss
 
@@ -153,10 +153,29 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 - Das Modell ist keine aktuelle Benutzerberechtigung. Jeder geschützte Vorgang muss aktuell prüfen; keine positive Ergebniszwischenspeicherung.
   Die Anwendungsrolle bleibt gesperrt. Die drei Interviewvorschläge und die produktive Rollenbindung sind nicht bestätigt.
 
+## KC-006C: Prüfstand und Passwortgrenzen
+
+- Vertrag und ADR-031 wurden in 3f964e6 vor Implementierung versioniert.
+- Kernstand 2ec3983: erster vollständiger CI-Lauf mit fünf erfolgreichen Pflichtprüfungen.
+  [Clippy, Rust-Tests, Build und echte Datenbanktests](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39430379027),
+  [Secret- und Abhängigkeitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39430379035).
+- Der neue Datenbanktest ist vor und nach Neustart ausdrücklich erfolgreich ausgeführt.
+  Geprüft: richtige und falsche Passwörter, unbekannte Kennungen, ungültige Formate, begrenzte Parameter und Aktualisierung,
+  konkurrierender Versionswechsel, atomare Sitzungswiderrufe bei Passwortpflege und reservierte Versuche über Neustart.
+  Schlüssellimit, Gesamtlimit, Mengenlimit, Konfigurationsabweichung und rückläufige Datenbankzeit werden negativ geprüft.
+- Ein weiterer Rust-Test belegt, dass ein Aufrufabbruch die Begrenzung laufender Hasharbeit nicht vorzeitig freigibt.
+- 404c04c ergänzt die konkurrierende Hashänderung bei unveränderter Versionskennung, Eigentümer-RLS und fehlende Sitzungserzeugung.
+  Dieser Checkpoint erhält mit den Ergänzungen eigene CI. Den aktuellen vollständigen Nachweis im PR nachführen.
+- Fünf neue Lockfile-Pakete: argon2 0.6.0, base64ct 1.8.3, blake2 0.11.0, password-hash 0.6.1 und phc 0.6.1.
+  Bestehende Paketversionen wurden nicht aktualisiert. Tokio wird auch für begrenzte Hintergrundarbeit verwendet.
+- Lokal erfolgreich: 44 Node-Tests, Struktur-/Verweisprüfung für 50 Issues und 45 Dokumente, Rustfmt,
+  JavaScript-Syntax, git diff --check und Gitleaks. Rust- und PostgreSQL-Ausführung stammen aus Linux-CI.
+- Keine produktiven Vorgabewerte, erlaubenden RLS-Policies oder HTTP-Anmeldung. Offene Interviewentscheidungen bleiben offen.
+
 ## Nächste drei Aktionen
 
-1. KC-006C / #64 mit begrenztem Vertrag für Argon2id, Bibliotheks-/Parameterprüfung und Anfragemengenbegrenzung vorbereiten. Keine vollständige Anmeldung in einem PR.
-2. Antworten zu MFA, Sitzungswerten, Wiederherstellung und produktiver Identitäts-/Poolbindung berücksichtigen. Ohne Antwort keine abhängigen Regeln, Cookies oder Freigaben einbauen.
-3. PR #69 persönlich prüfen lassen. Integrationsfolge #53, #54, #55, #59, #60, #61, #68, #69; nach Basisintegration neu prüfen. Keine ungefragte Integration.
+1. Aktuellen Kopf und CI von PR #70 prüfen. Bei grünen Ergänzungsnachweisen KC-006D / #65 mit WebAuthn-Vertrag und geprüfter Bibliothekswahl beginnen. Keine vollständige Anmeldung in einem PR.
+2. Antworten zu MFA, Sitzungswerten, Wiederherstellung und produktiver Identitäts-/Poolbindung berücksichtigen. Vor Laufzeitfreigabe zusätzlich Versuchslimits und Prüfschlüsselbildung klären. Ohne Antwort keine abhängigen Regeln, Cookies oder Freigaben einbauen.
+3. PR #70 persönlich prüfen lassen. Integrationsfolge #53, #54, #55, #59, #60, #61, #68, #69, #70; nach Basisintegration neu prüfen. Keine ungefragte Integration.
 
-Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/029/030, KC-006-Plan, Speichervertrag und aktuellen GitHub-Stand lesen.
+Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/029/030/031, KC-006-Plan, Passwortvertrag und aktuellen GitHub-Stand lesen.

@@ -215,3 +215,9 @@ Die vorhandenen PostgreSQL-Tests prüfen ihn vor und nach einem echten Server-Ne
 Wartungsrechte bleiben getrennt von Laufzeitrechten. Die Schema-Registry wird mit einer neuen Migration ergänzt.
 Der Backlog trennt Grundmodell und Gesamtabnahme von KC-004; Teilpaketabhängigkeiten werden einschließlich Gesamtabnahme auf Zyklen geprüft.
 Die ursprünglichen Fach- und Abnahmekriterien bleiben bestehen.
+
+## ADR-027 – Technischer Nachweis der Dienstisolation
+
+[ADR-027](architecture/ADR-027_Dienstisolation_Testaufbau.md) legt für KC-005B synthetische Proben mit getrennten Dienstrechten und erzwungener RLS fest.
+Die Bindung an Test-Loginrollen gilt nur im isolierten Container. Produktive Identitätsnachweise und erlaubende Policies bleiben gesondert zu entscheiden.
+Es werden keine Fachobjekte oder produktiven Zugänge angelegt.

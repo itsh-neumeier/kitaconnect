@@ -49,12 +49,14 @@ Zähler und Sicherungskennzeichen benötigen eine an die bestätigte Passkey-Reg
 Eine Challenge bleibt unabhängig vom Verhalten eines Authentikatorzählers einmalig.
 Jeder Vorgang speichert die aktuelle Versionskennung des zugeordneten Credential-Bestands.
 Registrierung, Widerruf und erfolgreiche Anmeldung ändern diese Kennung unter derselben Kontosperre.
+Alle Credential-Schreibzugriffe müssen diesen Ablauf verwenden. Externe direkte Schreibzugriffe ohne Kontosperre und Versionsänderung sind nicht erlaubt.
 Ein Vorgang mit altem Bestand muss neu begonnen werden. Auch parallel begonnene Anmeldungen können dadurch einen neuen Vorgang benötigen.
 Fehlgeschlagene Abschlussprüfungen bleiben verbraucht. Ein Fehler nach Verbrauch nimmt diesen Verbrauch nicht zurück.
 Abgelaufene Vorgänge dürfen bei neuer Anlage entfernt werden; der Server begrenzt die Zahl gespeicherter Vorgänge ausdrücklich.
 Signaturprüfungen laufen begrenzt außerhalb des asynchronen Ausführungsfadens.
 Neue Datenbankobjekte erhalten erzwungene RLS ohne erlaubende Runtime-Policy.
 Positive Speichertests verwenden ausschließlich die isolierte Test-Betriebsidentität.
+Bibliothekszustände und Antworten dürfen auch über Bibliotheks-Debugausgaben nicht protokolliert werden.
 
 ## Testplan vor Abnahme
 

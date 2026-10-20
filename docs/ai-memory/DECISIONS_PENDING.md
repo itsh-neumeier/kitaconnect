@@ -92,18 +92,17 @@ Diese Punkte wurden noch nicht als Interviewentscheidung bestätigt. Synthetisch
 Vor produktiver Nutzung muss das Argon2id-Profil auf der bestätigten Referenzhardware gemessen werden.
 Keine Antwort zu diesen Punkten aus der allgemeinen Aufforderung zur Weiterarbeit ableiten.
 
-## KC-006D: Angefragtes WebAuthn-Profil
+## KC-006D: Bestätigtes WebAuthn-Testprofil
 
 Stand: 20.10.2026. Die Projektleitung hat „Alle drei Vorschläge bestätigen“ geantwortet.
 Bestätigt sind zunächst ausschließlich localhost im isolierten Test, erforderliche Benutzerverifikation und erlaubte synchronisierte Passkeys.
-Die folgende Tabelle dokumentiert die ursprünglichen Fragen; deren Sperren für dieses Testprofil sind durch die ausdrückliche Antwort aufgehoben.
+Die bisherigen Sperren für dieses Testprofil sind durch die ausdrückliche Antwort aufgehoben.
 
-| Thema | Angefragter Vorschlag | Sperre ohne Antwort |
+| Thema | Bestätigter Stand | Verbleibende Grenze |
 |---|---|---|
-| Anmeldedomain | Eine RP-ID und ein ausdrücklich freigegebener HTTPS-Ursprung je Installation. Alternativ produktive Domain offen lassen und zunächst nur localhost testen. | Keine produktive Domain erfinden. Auch die vorgeschlagene Testbeschränkung noch nicht als bestätigt behandeln. |
-| Benutzerverifikation | Bei jedem Passkey-Vorgang erforderlich, etwa durch Geräte-PIN oder Biometrie. | Kein davon abhängiger aktivierter Passkey-Ablauf. MFA-Regeln anderer Anmeldewege bleiben getrennt offen. |
-| Synchronisierte Passkeys | Mit Benutzerverifikation zulassen. | Weder diese Zulassung noch eine Beschränkung auf gerätegebundene Schlüssel unterstellen. |
+| Anmeldedomain | Zunächst nur localhost im isolierten Test. | Produktive RP-ID und HTTPS-Ursprung offen. |
+| Benutzerverifikation | Bei jedem Passkey-Vorgang erforderlich. | Allgemeine MFA-Regeln anderer Anmeldewege bleiben offen. |
+| Synchronisierte Passkeys | Mit Benutzerverifikation erlaubt. | Kompatibilität konkreter Geräte und Passwortmanager bleibt gesondert zu prüfen. |
 
-[ADR-032](../architecture/ADR-032_WebAuthn_Vorbereitung.md) und der [Vertragsentwurf](../../contracts/identity-access/webauthn-v1.md) sind vorbereitende Unterlagen.
-Nach der Antwort zuerst Vertrag und ADR aktualisieren und versionieren. Erst danach abhängigen Code implementieren.
+[ADR-032](../architecture/ADR-032_WebAuthn_Vorbereitung.md) und der [Vertrag](../../contracts/identity-access/webauthn-v1.md) wurden nach der Antwort in ae85a5f vor Code aktualisiert und versioniert.
 Die produktive Domain und die übrigen MFA-/Wiederherstellungs-/Rollenentscheidungen bleiben offen.

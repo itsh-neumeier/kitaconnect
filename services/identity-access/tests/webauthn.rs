@@ -212,6 +212,16 @@ async fn webauthn_ceremonies_are_current_and_single_use() {
     // A correctly signed response from another enrolled device is still not this identity's credential.
     let mut other_device = auth();
     let other_key = registration(&service, &mut connection, other, &mut other_device).await;
+    let duplicate_error = sqlx::query("INSERT INTO identity_access.webauthn_credentials (credential_id, identity_id, data) SELECT credential_id, $1::text::numeric, data FROM identity_access.webauthn_credentials WHERE identity_id = $2::text::numeric")
+        .bind(other.value().to_string()).bind(identity.value().to_string()).execute(&mut connection).await.unwrap_err();
+    assert_eq!(
+        duplicate_error
+            .as_database_error()
+            .unwrap()
+            .code()
+            .as_deref(),
+        Some("23505")
+    );
     let (token, options) = service
         .start_authentication(&mut connection, identity)
         .await
@@ -449,6 +459,73 @@ async fn webauthn_ceremonies_are_current_and_single_use() {
     error(
         service
             .finish_authentication(&mut connection, identity, &old, &response)
+            .await
+            .unwrap_err(),
+    );
+
+    // A malformed or oversized answer consumes its reference before response parsing.
+    let (token, response) = assertion(&service, &mut connection, identity, &mut device).await;
+    error(
+        service
+            .finish_authentication(&mut connection, identity, &token, &vec![0; 65_537])
+            .await
+            .unwrap_err(),
+    );
+    error(
+        service
+            .finish_authentication(&mut connection, identity, &token, &response)
+            .await
+            .unwrap_err(),
+    );
+
+    // Expiry is checked again after waiting for the account lock, not just at consumption.
+    let short = Arc::new(LocalhostWebauthn::new(CeremonyLimits::new(3, 100, 8).unwrap()).unwrap());
+    let (token, response) = assertion(&short, &mut connection, identity, &mut device).await;
+    let mut expiry_guard = connect("postgres").await;
+    let mut expiry_tx = expiry_guard.begin().await.unwrap();
+    sqlx::query("SELECT identity_id FROM identity_access.webauthn_accounts WHERE identity_id = $1::text::numeric FOR UPDATE").bind(identity.value().to_string()).execute(&mut *expiry_tx).await.unwrap();
+    let mut reader = connect("postgres").await;
+    let reader_pid = pid(&mut reader).await;
+    let worker = Arc::clone(&short);
+    let pending = tokio::spawn(async move {
+        worker
+            .finish_authentication(&mut reader, identity, &token, &response)
+            .await
+    });
+    waiters(&mut connection, &[reader_pid]).await;
+    tokio::time::timeout(Duration::from_secs(5), async {
+        loop {
+            let expired: bool = sqlx::query_scalar("SELECT floor(EXTRACT(epoch FROM clock_timestamp())) >= min(expires_at) FROM identity_access.webauthn_ceremonies WHERE identity_id = $1::text::numeric AND consumed AND expires_at > created_at + 1")
+                .bind(identity.value().to_string()).fetch_one(&mut connection).await.unwrap();
+            if expired { break; }
+            tokio::time::sleep(Duration::from_millis(20)).await;
+        }
+    }).await.unwrap();
+    expiry_tx.commit().await.unwrap();
+    error(pending.await.unwrap().unwrap_err());
+
+    // Cancellation after durable consumption cannot restore the ceremony.
+    let (token, response) = assertion(&service, &mut connection, identity, &mut device).await;
+    let retry = duplicate(&token);
+    let mut cancellation_guard = connect("postgres").await;
+    let mut cancellation_tx = cancellation_guard.begin().await.unwrap();
+    sqlx::query("SELECT identity_id FROM identity_access.webauthn_accounts WHERE identity_id = $1::text::numeric FOR UPDATE").bind(identity.value().to_string()).execute(&mut *cancellation_tx).await.unwrap();
+    let mut reader = connect("postgres").await;
+    let reader_pid = pid(&mut reader).await;
+    let worker = Arc::clone(&service);
+    let answer = response.clone();
+    let pending = tokio::spawn(async move {
+        worker
+            .finish_authentication(&mut reader, identity, &token, &answer)
+            .await
+    });
+    waiters(&mut connection, &[reader_pid]).await;
+    pending.abort();
+    assert!(pending.await.unwrap_err().is_cancelled());
+    cancellation_tx.commit().await.unwrap();
+    error(
+        service
+            .finish_authentication(&mut connection, identity, &retry, &response)
             .await
             .unwrap_err(),
     );

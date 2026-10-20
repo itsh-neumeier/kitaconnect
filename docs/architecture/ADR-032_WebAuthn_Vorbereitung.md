@@ -41,22 +41,22 @@ Der Nachweis gilt für diesen Prüfgraphen. Er ersetzt weder den späteren Proje
 Das Build-Skript des Test-Authentikators verlangt OpenSSL ab Version 3.0.
 Ein erfolgreicher nativer Build wurde in diesem Vorbereitungsschritt nicht behauptet.
 
-## Vertragsvorbereitung
+## Vertrag und bestätigte Umsetzung
 
-Der [Vertragsentwurf](../../contracts/identity-access/webauthn-v1.md) beschreibt Zuständigkeiten, aktuelle Prüfung und Negativfälle.
-Nach ausdrücklicher Entscheidung werden Vertrag und dieser ADR vor Implementierung aktualisiert und versioniert.
+Der [Vertrag](../../contracts/identity-access/webauthn-v1.md) beschreibt Zuständigkeiten, aktuelle Prüfung und Negativfälle.
+Die bestätigten Regeln wurden in ae85a5f vor Code versioniert.
 
 ## Bestätigte Entscheidungen und verbleibende Grenzen
 
-| Punkt | Angefragter Vorschlag | Folge ohne Antwort |
+| Punkt | Bestätigter Stand | Verbleibende Grenze |
 |---|---|---|
-| RP-ID und Ursprung | Eine RP-ID und ein ausdrücklicher HTTPS-Ursprung je Installation; keine Platzhalter oder zusätzlichen Subdomains. Alternativ zunächst ausschließlich localhost im isolierten Test. | Keine eingebauten produktiven Domains und keine davon abhängige Implementierung. |
-| Benutzerverifikation | Für den eigenständigen Passkey-Weg immer erforderlich. Keine Festlegung der MFA-Pflicht anderer Wege. | Kein aktivierter Passkey-Ablauf und keine Übernahme des Bibliotheksverhaltens als Projektentscheidung. |
-| Synchronisierte Passkeys | Zulassen, wenn Benutzerverifikation erfüllt ist. | Keine Entscheidung für synchronisierte oder ausschließlich gerätegebundene Schlüssel vorwegnehmen. |
+| RP-ID und Ursprung | Ausschließlich localhost im isolierten Test. | Produktive Domain bleibt offen; kein produktiver Ausweichwert. |
+| Benutzerverifikation | Für den Passkey-Weg immer erforderlich. | Allgemeine MFA-Zuordnung anderer Anmeldewege bleibt offen. |
+| Synchronisierte Passkeys | Mit Benutzerverifikation erlaubt. | Geräte- und Browserkompatibilität benötigt gesonderte Nachweise. |
 
 Die Projektleitung hat alle drei Vorschläge im Projektchat ausdrücklich bestätigt.
 Damit gelten zunächst ausschließlich localhost im isolierten Test, erforderliche Benutzerverifikation und erlaubte synchronisierte Passkeys.
-Die produktive Domain bleibt ausdrücklich offen. Die Tabelle dokumentiert die ursprünglich angefragten Vorschläge und ihre damaligen Sperren.
+Die produktive Domain bleibt ausdrücklich offen.
 Der Adapter erhält keine produktive Ausweichkonfiguration und legt keine allgemeine MFA-Pflicht fest.
 Die bisherigen offenen MFA-, Wiederherstellungs- und produktiven Datenbankfragen bleiben bestehen.
 
@@ -73,6 +73,24 @@ Clientseitig gespeicherter Prüfzustand kann Wiederverwendung ermöglichen und w
 Eine reine Fortschrittsmarkierung ohne echte positive und negative Protokolltests erfüllt #65 nicht.
 Dieser Entwurf erfüllt deshalb noch keine Implementierungs- oder Gesamtabnahme.
 
+## Projektabhängigkeiten nach Bestätigung
+
+Der tatsächliche Projekt-Lockfile enthält 68 neue transitive Pakete für die Server- und Testbibliotheken.
+Bereits vorhandene Versionen bleiben bis auf zwei gezielte TLS-Sicherheitsaktualisierungen unverändert.
+Die frisch aktualisierte RustSec-Datenbank hat RUSTSEC-2026-0382 für rustls-webpki 0.103.15 und RUSTSEC-2026-0381 für webpki-roots 1.0.9 gemeldet.
+Die Hinweise betreffen mögliche Zertifikatspfade über nicht mehr vertrauenswürdige emSign-Zwischenstellen.
+rustls-webpki 0.103.16 und webpki-roots 1.0.10 beheben die gemeldeten Paketprobleme laut RustSec.
+Nach diesen gezielten Aktualisierungen besteht der Projekt-Lockfile cargo-audit 0.22.2 mit --deny warnings.
+Geprüft wurden 229 Pakete mit 1.348 RustSec-Hinweisen, Datenbankstand e6f94f3760d5e6c54c1b05f204002263bc025524.
+Die laufende Linux-CI muss zusätzlich Build, OpenSSL-Anbindung und echte Datenbanktests belegen.
+
+Die Credential-Pflege des Adapters verwendet stets die Kontosperre und ändert die Versionskennung.
+Direkte externe Änderungen an Credential-Daten ohne diese Sperre und Versionsänderung sind nicht Teil des Schreibvertrags.
+Dies gilt auch für künftige erlaubende Runtime-Policies; eine solche Policy wird hier nicht angelegt.
+
+Die synthetische Authentikator-Bibliothek prüft serverseitige Protokolleigenschaften.
+Sie belegt keine erfolgreiche Synchronisierung mit einem bestimmten Passwortmanager oder eine echte biometrische Prüfung.
+
 ## Quellen
 
 - [webauthn-rs 0.5.5: Paketmetadaten](https://crates.io/crates/webauthn-rs/0.5.5)
@@ -80,3 +98,5 @@ Dieser Entwurf erfüllt deshalb noch keine Implementierungs- oder Gesamtabnahme.
 - [Serverseitiger Zustand und Credential-Aktualisierung](https://docs.rs/webauthn-rs/0.5.5/src/webauthn_rs/interface.rs.html)
 - [Test-Authentikator 0.5.5](https://crates.io/crates/webauthn-authenticator-rs/0.5.5)
 - [W3C WebAuthn Level 3](https://www.w3.org/TR/webauthn-3/)
+- [RUSTSEC-2026-0382](https://rustsec.org/advisories/RUSTSEC-2026-0382)
+- [RUSTSEC-2026-0381](https://rustsec.org/advisories/RUSTSEC-2026-0381)

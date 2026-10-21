@@ -192,3 +192,13 @@ Jede geschützte Prüfung verlangt eine aktuelle Organisationsantwort sowie loka
 Beobachteter Ablauf bleibt endgültig. Lokale Abmeldung konkurriert über dieselbe Identitätssperre und bleibt bei Organisationsausfall möglich.
 Neue Migration 0006 bleibt durch FORCE RLS geschlossen. Die eigene Testdatenbank kc_session_check_test prüft Fehler, Konkurrenz und Neustart.
 Rotation, zweckgebundene erneute Faktorprüfung und der echte Organisations-/Gateway-Vertrag folgen weiter. Die Gesamtabnahme bleibt offen.
+
+## KC-006F: Atomare Rotation
+
+PR #76 besteht am Kopf 846d199 alle zehn Prüfungen. Neue Sitzungsprüftests sind vor/nach Neustart erfolgreich.
+Der [Rotationsvertrag](../contracts/identity-access/session-rotation-v1.md) und [ADR-038](architecture/ADR-038_Atomare_Sitzungsrotation.md) wurden in e48d65a vor Code versioniert.
+Rotation bestätigt alten Widerruf, neuen Datensatz, unveränderte Anmeldebindung und Nachfolger atomar. Sie verlängert keine Frist und verjüngt keine Authentisierungszeit.
+Abmeldung widerruft auch Rotationsnachfolger derselben Anmeldung. Andere Anmeldungen bleiben erhalten.
+Migration 0007 erlaubt die dafür nötige Mehrfachbindung und erhält den einmaligen Anmeldevorgangsverbrauch. Alte Migrationen bleiben unverändert.
+Neue Datenbanktests prüfen insbesondere tatsächliche Rotationskonkurrenz, Abmeldung gegen Rotation, Fehlerrücknahme und Kandidatenrücknahme bei Ablauf während Schreibwartezeit.
+Die native CI des Folge-PRs muss diese Fälle bestätigen. Erneute Faktorprüfung, Organisation, Gateway und Browser-/TLS-/mTLS-Nachweise bleiben offen.

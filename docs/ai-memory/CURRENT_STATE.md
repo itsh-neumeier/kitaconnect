@@ -7,15 +7,15 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 ## Arbeitsstand
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
-- branch: codex/kc-006f-sitzungspruefung auf PR #75 / 82c3a3aa0480f316669f85a8e8d8ae35d2ca6a3c.
-- pull_request: Eigener Folge-PR für aktuelle Sitzungsprüfung auf codex/p1-pr-durchsicht; aktuellen Kopf und Nummer in GitHub prüfen.
-- head_commit: Prüfvertrag und ADR-037 in 35f3ed3 vor Implementierung versioniert. Dieser Implementierungscheckpoint erhält eigene CI; endgültiger Kopf steht im PR.
+- branch: codex/kc-006f-sitzungsrotation auf PR #76 / 846d199.
+- pull_request: Eigener Rotations-Folge-PR auf codex/kc-006f-sitzungspruefung; Nummer und aktuellen Kopf in GitHub prüfen.
+- head_commit: Rotationsvertrag und ADR-038 in e48d65a vor Code versioniert. Dieser Implementierungscheckpoint erhält eigene CI; aktueller Kopf steht im PR.
 - objective: Offenen Backlog nach ausdrücklichem Folgeauftrag automatisch in kleinen abhängigen Paketen weiterbearbeiten. Aktueller Schritt: KC-006F, aktuelle Sitzungsprüfung und lokale Abmeldung.
-- completed: PR #75 am Kopf 82c3a3a mit allen zehn Prüfungen grün. Alle 17 ursprünglichen PRs besitzen technische Empfehlungen. Aktueller Schritt ergänzt dauerhaft kürzbare Sitzungsgrenzen, aktuelle Organisationsabfrage, MFA-/Zusatzfristprüfung, Wiederherstellungssperre und lokale Abmeldung. Neue native Fehlertests und separate Testdatenbank ergänzt.
-- remaining: Native CI dieses Schritts prüfen und Fehler beheben. Danach Rotation und zweckgebundene erneute Faktorprüfung vor Code festlegen. Echter Organisationsadapter, Gateway sowie Browser-/TLS-/mTLS-Nachweise fehlen weiter. Die [Arbeitsfolge](WORK_QUEUE.md) erfasst alle 44 offenen Issues und ihre Voraussetzungen. Keine unvollständigen Issues schließen. Persönliche/sprachliche Durchsicht und gesonderter Merge-Auftrag sind weiterhin nicht dokumentiert.
-- migration_state: Neue Identitätsmigration 0006 ergänzt session_policy_observations mit Schutztrigger und FORCE RLS. Migrationen 0001 bis 0005 bleiben unverändert. Keine neue Abhängigkeit. Neue separate Testdatenbank kc_session_check_test; bisherige Testdatenbanken behalten ihre frühen Versionsstände.
-- known_failures: Neue native Sitzungsprüftests sind noch durch CI zu bestätigen. Lokal fehlen Windows-Linker und Docker; diese bekannten Fehler nicht erneut ausführen. #47 bleibt wegen SvelteKit-/TypeScript-7-Fehler, #48 wegen Node-26-Typen bei Node 24 von der Integration ausgeschlossen.
-- test_commands: cargo fmt --all --check; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, neuer expliziter SQLx-Test session_check/session_checks_preserve_current_policy_and_logout vor und nach Neustart sowie alle bisherigen Datenbanktests.
+- completed: PR #76 am Kopf 846d199 besteht alle zehn Prüfungen einschließlich neuer Sitzungsprüfung vor/nach Neustart. PRs #73 bis #76 sind zur gesammelten Durchsicht bereit. Rotation ist implementiert: neue zufällige Nachweise, atomarer alter Widerruf, unveränderte Ausgangsgrenzen und Authentisierungszeit, lokale Nachfolgerbindung und Abmeldung derselben Anmeldung. Neue Fehler-, Konkurrenz- und Neustarttests ergänzt.
+- remaining: Neue native Rotations-CI bestätigen und Fehler beheben. Danach zweckgebundene erneute Faktorprüfung vor Code festlegen. Die zusätzliche HTTPS-Test-Origin für kommende Browser-/Gateway-Tests ist ausdrücklich angefragt; Antwort steht aus. Echter Organisationsadapter, Gateway sowie Browser-/TLS-/mTLS-Nachweise fehlen weiter. Alle 44 offenen Issues bleiben nach WORK_QUEUE geordnet; keine unvollständigen Gesamtissues schließen.
+- migration_state: Neue Identitätsmigration 0007 ergänzt session_rotation_links und Schutztrigger; sie entfernt die bisherige Eindeutigkeit der Vorgangsreferenz für Rotationsnachfolger. Der einmalige Vorgangsverbrauch bleibt unverändert. Migrationen 0001 bis 0006 bleiben unverändert; keine neue Abhängigkeit. Neue Testdatenbank kc_session_rotation_test. Frühere Datenbanktests behalten ihre Versionsstände.
+- known_failures: Neue native Rotationsfälle sind durch CI zu bestätigen. Keine offene Fehlermeldung aus PR #76. Windows-Linker und Docker fehlen lokal; diese bekannten Fehler nicht erneut ausführen. #47/#48 behalten die begründete Ablehnungsempfehlung.
+- test_commands: cargo fmt --all --check; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, neuer expliziter SQLx-Test session_rotation/rotation_preserves_login_and_logout_lineage vor/nach Neustart sowie alle bisherigen zwölf getrennten Datenbank-Testgruppen.
 - dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72 und #73 offen. PR #73 am Abschlusskopf vollständig grün. Keine ungefragte Integration.
 - security_notes: MFA-Pflicht, Offline-Wiederherstellung, Benachrichtigungsaufträge, WebAuthn-Testprofil, beide MFA-Kombinationen und Cookie-/CSRF-Schutz sind bestätigt. Fristen sind pro Einrichtung einstellbar; 900/28.800/300 Sekunden sind bestätigte Voreinstellungen und Obergrenzen. Diese Fragen nicht erneut stellen. Bestehende positive Faktor-Ergebnisse sind weiterhin keine einmaligen Sitzungsabschlussnachweise. Produktiver Schlüsselbetrieb, Domain, Versuchslimits und Rollen-/Poolbindung bleiben gesondert.
 
@@ -291,6 +291,12 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 - Die aktuelle CI muss die ergänzten Ablauftests bestätigen. Abschlussnachweise und Kopf werden in PR #74 und Issue #67 nachgeführt. KC-006F bleibt bis zur übrigen Integration offen.
 
 ## Nächste drei Aktionen
+
+Aktueller Rotationsstand nach PR #76:
+
+1. Folge-PR und CI der Rotation prüfen. Kandidatenrücknahme, Ablauf während Schreibwartezeit und Abmeldung gegen Rotation vor/nach Neustart bestätigen.
+2. Danach zweckgebundene erneute Faktorprüfung vorbereiten. Die ursprüngliche absolute Frist und bisher strengsten Grenzen bleiben verbindlich.
+3. Antwort zum zusätzlichen HTTPS-Testprofil übernehmen, sobald sie vorliegt. Ohne Antwort dieses Profil nicht implementieren. Unabhängige Organisations-/Gateway-Vorbereitung gemäß WORK_QUEUE fortsetzen.
 
 Der Folgeauftrag umfasst den gesamten offenen Backlog. Aktuell zuerst den Folge-PR für Sitzungsprüfung und seine CI prüfen.
 Danach Rotation und zweckgebundene erneute Faktorprüfung vor Code festlegen. Die [Arbeitsfolge](WORK_QUEUE.md) ist die Fortsetzungsgrundlage.

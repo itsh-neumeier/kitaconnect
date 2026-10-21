@@ -268,6 +268,24 @@ try {
   sql('CREATE ROLE kc_session_check_runtime LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_identity_runtime TO kc_session_check_runtime WITH INHERIT TRUE, SET FALSE;', { database: 'kc_session_check_test', transaction: true });
   testAdapter('before', 'session_check', 'session_checks_preserve_current_policy_and_logout', 'kitaconnect-identity-access');
 
+  sql('CREATE DATABASE kc_session_rotation_test;');
+  sql(file('provision/002_schema.sql', identityRoot), { database: 'kc_session_rotation_test', transaction: true });
+  for (const migration of [identityMigration, passwordMigration, webauthnMigration, mfaMigration, loginMigration, observationMigration]) {
+    sql(migration, { database: 'kc_session_rotation_test', transaction: true });
+  }
+  const rotationMigration = `SET SESSION AUTHORIZATION kc_identity_migrator;\n${file('migrations/0007_session_rotation.sql', identityRoot)}`;
+  sql(`${rotationMigration}\nSELECT 1 / 0;`, { database: 'kc_session_rotation_test', transaction: true, expectedState: '22012' });
+  sql(`DO $$ BEGIN
+    ASSERT pg_catalog.to_regclass('identity_access.session_rotation_links') IS NULL;
+    ASSERT pg_catalog.to_regprocedure('identity_access.guard_session_rotation()') IS NULL;
+    ASSERT EXISTS(SELECT FROM pg_catalog.pg_constraint WHERE conrelid='identity_access.session_login_bindings'::regclass AND conname='session_login_bindings_flow_fingerprint_key');
+    ASSERT (SELECT pg_catalog.array_agg(version ORDER BY version)=ARRAY[1,2,3,4,5,6] FROM identity_access.schema_versions);
+  END $$;`, { database: 'kc_session_rotation_test' });
+  sql(rotationMigration, { database: 'kc_session_rotation_test', transaction: true });
+  sql(rotationMigration, { database: 'kc_session_rotation_test', transaction: true, expectedState: 'P0001' });
+  sql('CREATE ROLE kc_session_rotation_runtime LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_identity_runtime TO kc_session_rotation_runtime WITH INHERIT TRUE, SET FALSE;', { database: 'kc_session_rotation_test', transaction: true });
+  testAdapter('before', 'session_rotation', 'rotation_preserves_login_and_logout_lineage', 'kitaconnect-identity-access');
+
   requireSuccess(docker(['restart', container]), 'Restart same test database');
   await waitUntilReady();
   sql(file('tests/persisted.sql'));
@@ -284,6 +302,7 @@ try {
   testAdapter('after', 'session_policy', 'facility_session_policies_are_versioned_and_restricted');
   testAdapter('after', 'login', 'login_completion_is_atomic_and_current', 'kitaconnect-identity-access');
   testAdapter('after', 'session_check', 'session_checks_preserve_current_policy_and_logout', 'kitaconnect-identity-access');
+  testAdapter('after', 'session_rotation', 'rotation_preserves_login_and_logout_lineage', 'kitaconnect-identity-access');
   console.log('PASS: two carriers and an independent facility, version and role boundaries survive server restart');
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {

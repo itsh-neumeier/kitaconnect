@@ -1,9 +1,9 @@
-# ADR-033 – TOTP und Wiederherstellung vorbereiten
+# ADR-033 – TOTP und atomare Wiederherstellung
 
 Datum: 21.10.2026. Status: bestätigte Regeln und technische Konkretisierung für KC-006E / #66.
 Grundlage: Spezifikation v5.9, ADR-019 und ADR-029 bis ADR-032.
 
-## Istzustand
+## Ausgangszustand vor KC-006E
 
 PR #71 ist offen und zur Durchsicht bereit. Kopf 74c5e1731be0db55f1ef8698d7119f8fcd5cce7c besteht alle fünf Pflichtprüfungen für Push und PR.
 Die WebAuthn-Bestätigung betrifft localhost, Benutzerverifikation und synchronisierte Passkeys.

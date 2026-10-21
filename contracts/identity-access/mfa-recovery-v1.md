@@ -45,7 +45,7 @@ Ein ersetzter Satz darf nicht parallel weiter gültig bleiben.
 Verbrauch und nötige Zustandsänderungen benötigen eine gemeinsame atomare Prüfung.
 Zwei konkurrierende Verwendungen desselben Codes dürfen höchstens einen Erfolg ergeben.
 Widerrufene, verbrauchte, fremde oder falsch geformte Codes werden mit derselben begrenzten Fehlerdarstellung abgewiesen.
-Der vorgeschlagene Ablauf widerruft bestehende Sitzungen und führt in einen eingeschränkten Zustand zur erforderlichen Faktorneueinrichtung.
+Der bestätigte Ablauf widerruft bestehende Sitzungen und führt in einen eingeschränkten Zustand zur erforderlichen Faktorneueinrichtung.
 Er gibt keine normale Sitzung oder Erlaubnis zum Überspringen einer bestätigten MFA-Pflicht aus.
 E-Mail allein und ein nicht freigegebenes Ersatzverfahren dürfen keine MFA-Rücksetzung auslösen.
 Diese Regeln sind ausdrücklich bestätigt.
@@ -61,7 +61,7 @@ Die konkrete Prüfung der übergreifenden Anmelde- und Änderungszwecke folgt KC
 Bestätigt sind ein Sicherheitsprotokoll und ein atomar vorgemerkter Benachrichtigungsauftrag für Einrichtung, Wechsel, Widerruf und Wiederherstellung.
 Das Ziel muss bereits bestätigt sein. Eine ungeprüfte neue Kontaktadresse darf das bisherige Ziel nicht ersetzen.
 Aufträge enthalten keine TOTP-Geheimnisse, Codes, Sitzungsnachweise oder vollständigen Fachinhalte.
-KC-006E würde nur den Auftrag speichern. Der spätere Nachrichtendienst übernimmt den Versand.
+KC-006E speichert nur den Auftrag. Der spätere Nachrichtendienst übernimmt den Versand.
 Der interne Adapter speichert ausschließlich Aufträge und versendet keine Nachricht.
 
 ## Technische Konkretisierung vor Implementierung
@@ -90,7 +90,8 @@ Ein bestätigter Faktorwiderruf entfernt auch den zugehörigen Offline-Code-Satz
 
 Wiederherstellung widerruft bestehende Sitzungen, entfernt den bisherigen TOTP-Bestand und sperrt normale Anmeldeabschlüsse bis zur Faktorneueinrichtung.
 Die Sperre muss in KC-006F auch bei Passwort- und Passkey-Nachweisen aktuell geprüft werden.
-Änderungen des MFA-Bestands entwerten außerdem laufende Passkey-Vorgänge über deren aktuelle Versionskennung.
+Aktivierung, Widerruf und Wiederherstellung entwerten außerdem laufende Passkey-Vorgänge über deren aktuelle Versionskennung.
+Die Vorbereitung eines noch nicht aktiven Faktors ersetzt den aktiven Faktor nicht und widerruft keine Sitzung.
 Die Sperrreihenfolge ist MFA-Konto, Passkey-Konto, Sitzungsbestand und Ereignisbestand. Verbrauch und Ereignisauftrag liegen in derselben Fachtransaktion.
 Die Versuchszählung und Nonce-Reservierung bleiben davon getrennt dauerhaft verbraucht.
 
@@ -124,4 +125,4 @@ Ein fehlgeschlagener Prüfversuch darf durch Abbruch oder Rücknahme einer spät
 Tests verwenden nur synthetische Identitäten und eigene Zufallswerte beziehungsweise ausdrücklich öffentliche RFC-Testvektoren.
 Produktive Konten, Schlüssel, Geheimnisse und Kontaktziele werden nicht angelegt.
 Der vollständige Projekt-Lockfile, RustSec, Build und echte Datenbanktests müssen nach Übernahme gesondert bestehen.
-Dieser Entwurf ist kein Implementierungs- oder Abnahmenachweis.
+Dieser Vertrag ersetzt die gesonderten Test- und Abnahmenachweise nicht.

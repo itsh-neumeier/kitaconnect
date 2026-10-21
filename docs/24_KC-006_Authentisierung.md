@@ -141,4 +141,8 @@ Vertrag und ADR-033 wurden in cffb194 vor Implementierung aktualisiert. Diese Fr
 Der Adapter verwendet die gemeinsame Versuchsreservierung aus KC-006C und entwertet laufende Passkey-Vorgänge über KC-006D.
 Diese technischen Abhängigkeiten verlangen kein vorhandenes Passwort oder Passkey als fachliche Voraussetzung für TOTP.
 Migration 0004 ergänzt verschlüsselte TOTP-Faktoren, abgeleitete Offline-Codes, Wiederherstellungszustand und atomare Ereignisaufträge.
-PR #72 bleibt bis zum vollständigen Linux-CI-Nachweis ein Entwurf. Der produktive Schlüsselbetrieb bleibt offen.
+Stand ed44bb0 besteht den ersten vollständigen Linux-CI-Lauf einschließlich MFA-Datenbanktests vor und nach Neustart.
+[CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580138747),
+[Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580138793).
+Der folgende Dokumentationscheckpoint erhält eigene Prüfungen; aktuellen Kopf und Bereitschaft weist PR #72 aus.
+Der produktive Schlüsselbetrieb bleibt offen. KC-006E bleibt bis Integration offen; nächstes Teilpaket ist KC-006F / #67.

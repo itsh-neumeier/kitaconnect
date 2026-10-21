@@ -173,3 +173,13 @@ Erzwungene RLS bleibt ohne erlaubende Runtime-Policy bestehen. Der Leseweg legt 
 Die neue Testdatenbank kc_session_policy_test bleibt von bestehenden Testbeständen getrennt.
 Die CI muss Werteprüfung, Konkurrenz, Rücknahme, Rechte und Neustart nachweisen.
 Gateway, Mitgliedschafts-Prüfvertrag, atomare Faktorübergabe und laufende Sitzungsprüfung folgen weiterhin. Die Gesamtkriterien von #67 bleiben offen.
+
+## KC-006F: Lokaler Anmeldeabschluss
+
+PR #73 ist auf f5f0586 vollständig grün. Der nächste begrenzte Teil liegt in PR #74 auf #73.
+[ADR-036](architecture/ADR-036_Einmaliger_Anmeldeabschluss.md) und der [Anmeldeabschlussvertrag](../contracts/identity-access/login-completion-v1.md) sind vor Code versioniert.
+Neue Faktorvarianten merken echte Prüferfolge in derselben Faktortransaktion vor. Einmaliger Verbrauch und neue Sitzung mit Einrichtungsbindung bilden eine lokale Transaktion.
+Ein gemeinsamer Sperrvertrag und eine Bestandsableitung verhindern Erfolg aus zwischenzeitlich veränderten Anmeldedaten.
+Neue Migration 0005 erhält die RLS-Sperre; alte Migrationen bleiben unverändert. Die eigene Datenbank kc_login_test prüft Grenzen, Fehler, Konkurrenz und Neustart.
+Die Organisationsantwort wird über eine interne Adaptergrenze angefordert. Nur Tests verwenden zunächst ein ausdrücklich synthetisches Testdoppel.
+Gateway, aktuelle geschützte Aktionen, Rotation/Abmeldung und Browser-/TLS-/mTLS-Nachweise bleiben weiter offen. Der aktuelle CI-Stand wird in PR #74 nachgeführt.

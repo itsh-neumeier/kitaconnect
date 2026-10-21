@@ -30,3 +30,7 @@ Die produktive Anwendungsrolle bleibt ohne erlaubende RLS-Policy gesperrt; eine 
 KC-006F ergänzt einen [versionierten Einstellungsspeicher](../contracts/organization-config/session-policy-v1.md) in organization-config.
 Er speichert die bestätigten Sitzungsfristen pro Einrichtung und schützt Änderungen mit einem erwarteten Versionsstand.
 Die spätere Browseranmeldung muss diese Einstellungen über den geprüften Dienstvertrag anwenden; der Speicheradapter selbst gewährt keinen Zugriff.
+
+Ein [lokaler Anmeldeabschluss](../contracts/identity-access/login-completion-v1.md) bindet echte Faktorprüfungen an einmalige Vorgänge und bestätigt Verbrauch, Sitzung und Einrichtung gemeinsam.
+Die Organisation wird über eine vertrauenswürdige Adaptergrenze angefordert; deren neue Tests verwenden ein ausdrücklich synthetisches Testdoppel.
+Öffentliche Browseranmeldung, aktuelle geschützte Aktionen und Netzwerk-/mTLS-Anbindung bleiben gesondert umzusetzen.

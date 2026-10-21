@@ -31,6 +31,7 @@ struct SyntheticOrganization {
     denied: bool,
     wrong_identity: bool,
     delay: Duration,
+    pause: Option<(Arc<tokio::sync::Notify>, Arc<tokio::sync::Notify>)>,
 }
 impl SyntheticOrganization {
     fn new(identity: IdentityId) -> Self {
@@ -45,6 +46,7 @@ impl SyntheticOrganization {
             denied: false,
             wrong_identity: false,
             delay: Duration::ZERO,
+            pause: None,
         }
     }
 }
@@ -58,6 +60,10 @@ impl OrganizationAuthority for SyntheticOrganization {
             return Err(LoginError);
         }
         tokio::time::sleep(self.delay).await;
+        if let Some((entered, release)) = &self.pause {
+            entered.notify_one();
+            release.notified().await;
+        }
         OrganizationContext::new(
             if self.wrong_identity {
                 id(u128::MAX)
@@ -352,10 +358,10 @@ async fn login_completion_is_atomic_and_current() {
     clean(&mut c).await;
     // An enabled TOTP cannot be bypassed even when a synthetic membership does not mandate MFA.
     sqlx::query("INSERT INTO identity_access.mfa_notification_contacts VALUES ($1::text::numeric,'00000000-0000-4000-8000-000000000001',0)").bind(a.value().to_string()).execute(&mut c).await.unwrap();
-    let mfa = MfaService::new(
+    let mfa = Arc::new(MfaService::new(
         Arc::new(EphemeralMfaKey::generate().unwrap()),
         MfaLimits::new(300, 300, 4, 1, attempts()).unwrap(),
-    );
+    ));
     let enrollment = mfa.begin_enrollment(&mut c, a, None).await.unwrap();
     let future = time(&mut c).await + 30;
     let recovery = mfa
@@ -394,10 +400,55 @@ async fn login_completion_is_atomic_and_current() {
             .await
             .is_err()
     );
-    // Recovery after a verified password invalidates that pending flow and revokes the session.
+    // Recovery waits on the identity gate held by completion, then revokes its new session too.
     let stale = begin(&mut c, a, LoginRoute::Password, &mut a_org).await;
     prove_password(&checker, &mut c, a, &password, &stale).await;
-    mfa.recover(&mut c, a, &recovery.codes()[0]).await.unwrap();
+    let completing = begin(&mut c, a, LoginRoute::Password, &mut a_org).await;
+    prove_password(&checker, &mut c, a, &password, &completing).await;
+    sqlx::query("UPDATE identity_access.totp_factors SET last_step=NULL WHERE identity_id=$1::text::numeric")
+        .bind(a.value().to_string()).execute(&mut c).await.unwrap(); // Independent race fixture only.
+    let future = time(&mut c).await + 30;
+    mfa.verify_for_login(&mut c, a, &code(&enrollment, future), &completing)
+        .await
+        .unwrap();
+    let entered = Arc::new(tokio::sync::Notify::new());
+    let release = Arc::new(tokio::sync::Notify::new());
+    let mut completing_org = a_org.clone();
+    completing_org.pause = Some((entered.clone(), release.clone()));
+    let mut completing_connection = connect("postgres").await;
+    let completion = tokio::spawn(async move {
+        login::finish(
+            &mut completing_connection,
+            &completing,
+            session(base + 2000),
+            &mut completing_org,
+        )
+        .await
+    });
+    tokio::time::timeout(Duration::from_secs(10), entered.notified())
+        .await
+        .unwrap();
+    let mut recovery_connection = connect("postgres").await;
+    let recovery_pid = pid(&mut recovery_connection).await;
+    let recovery_engine = mfa.clone();
+    let recovery_code =
+        kitaconnect_identity_access::mfa::RecoveryCode::from_bytes(recovery.codes()[0].expose())
+            .unwrap();
+    let recovery_task = tokio::spawn(async move {
+        recovery_engine
+            .recover(&mut recovery_connection, a, &recovery_code)
+            .await
+    });
+    wait(&mut c, recovery_pid).await;
+    release.notify_one();
+    let just_issued = completion.await.unwrap().unwrap();
+    recovery_task.await.unwrap().unwrap();
+    assert!(
+        kitaconnect_identity_access::postgres::inspect(&mut c, &just_issued)
+            .await
+            .unwrap()
+            .is_none()
+    );
     assert!(
         login::finish(&mut c, &stale, session(base + 1100), &mut a_org)
             .await

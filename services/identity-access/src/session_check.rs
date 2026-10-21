@@ -114,8 +114,8 @@ struct Binding {
     required: bool,
 }
 async fn binding(c: &mut PgConnection, r: &SessionRecord) -> Result<Binding, CheckError> {
-    let row=sqlx::query("SELECT b.facility_id::text,b.policy_version::text,b.step_up_seconds::text,b.authenticated_at::text,b.mfa,f.identity_id::text AS flow_identity,f.facility_id::text AS flow_facility,f.policy_version::text AS initial_version,f.proven_at::text,f.created_at::text AS flow_created,f.expires_at::text AS flow_expires,f.idle_seconds::text AS initial_idle,f.absolute_seconds::text AS initial_absolute,f.step_up_seconds::text AS initial_step,f.consumed,f.invalidated,f.password_ok,f.totp_ok,f.passkey_ok,f.mfa_required FROM identity_access.session_login_bindings b JOIN identity_access.login_flows f ON f.fingerprint=b.flow_fingerprint WHERE b.session_id=$1::text::numeric")
-        .bind(r.id.value().to_string()).fetch_one(c).await?;
+    let row=sqlx::query("SELECT b.flow_fingerprint,b.facility_id::text,b.policy_version::text,b.step_up_seconds::text,b.authenticated_at::text,b.mfa,f.route,f.identity_id::text AS flow_identity,f.facility_id::text AS flow_facility,f.policy_version::text AS initial_version,f.proven_at::text,f.created_at::text AS flow_created,f.expires_at::text AS flow_expires,f.idle_seconds::text AS initial_idle,f.absolute_seconds::text AS initial_absolute,f.step_up_seconds::text AS initial_step,f.consumed,f.invalidated,f.password_ok,f.totp_ok,f.passkey_ok,f.mfa_required FROM identity_access.session_login_bindings b JOIN identity_access.login_flows f ON f.fingerprint=b.flow_fingerprint WHERE b.session_id=$1::text::numeric")
+        .bind(r.id.value().to_string()).fetch_one(&mut *c).await?;
     let facility = LoginFacilityId::new(
         row.try_get::<String, _>("facility_id")?
             .parse()
@@ -144,17 +144,50 @@ async fn binding(c: &mut PgConnection, r: &SessionRecord) -> Result<Binding, Che
         || r.limits.idle_seconds > number(&row, "initial_idle")?
         || r.limits.absolute_seconds > number(&row, "initial_absolute")?
         || strong != mfa
+        || !matches!(row.try_get::<&str, _>("route")?, "password" | "passkey")
     {
         return Err(CheckError);
     }
-    Ok(Binding {
+    let mut binding = Binding {
         facility,
         version,
         step_up,
         authenticated,
         mfa,
         required: row.try_get("mfa_required")?,
-    })
+    };
+    // Read protected migration metadata on every check; missing rights or SQL errors deny.
+    let installed: bool = sqlx::query_scalar(
+        "SELECT EXISTS(SELECT FROM identity_access.schema_versions WHERE version>=8)",
+    )
+    .fetch_one(&mut *c)
+    .await?;
+    if installed {
+        let receipt=sqlx::query("SELECT r.authenticated_at::text,f.route,f.consumed,f.invalidated,f.password_ok,f.totp_ok,f.passkey_ok,f.proven_at::text,f.identity_id::text,f.facility_id::text FROM identity_access.step_up_receipts r JOIN identity_access.login_flows f ON f.fingerprint=r.proof_fingerprint WHERE r.origin_flow=$1 ORDER BY r.authenticated_at DESC LIMIT 1")
+            .bind(row.try_get::<Vec<u8>, _>("flow_fingerprint")?).fetch_optional(&mut *c).await?;
+        if let Some(receipt) = receipt {
+            let time = number(&receipt, "authenticated_at")?;
+            if !matches!(
+                receipt.try_get::<&str, _>("route")?,
+                "reauth_password" | "reauth_passkey"
+            ) || !receipt.try_get::<bool, _>("consumed")?
+                || receipt.try_get::<bool, _>("invalidated")?
+                || !(receipt.try_get::<bool, _>("passkey_ok")?
+                    || (receipt.try_get::<bool, _>("password_ok")?
+                        && receipt.try_get::<bool, _>("totp_ok")?))
+                || number(&receipt, "proven_at")? != time
+                || time < binding.authenticated
+                || time > r.last_observed_at
+                || receipt.try_get::<String, _>("identity_id")? != r.identity.value().to_string()
+                || receipt.try_get::<String, _>("facility_id")? != facility.value().to_string()
+            {
+                return Err(CheckError);
+            }
+            binding.authenticated = time;
+            binding.mfa = true;
+        }
+    }
+    Ok(binding)
 }
 #[derive(PartialEq, Eq)]
 pub(crate) struct Observation {
@@ -329,6 +362,20 @@ pub(crate) struct CheckedSession {
     context: CurrentSession,
 }
 impl CheckedSession {
+    pub(crate) fn policy(&self) -> OrganizationContext {
+        OrganizationContext {
+            identity: self.record.identity,
+            facility: self.context.facility,
+            version: self.observed.version,
+            idle: self.observed.raw[0],
+            absolute: self.observed.raw[1],
+            step_up: self.observed.raw[2],
+            mfa_required: self.observed.required,
+        }
+    }
+    pub(crate) fn step_up_seconds(&self) -> u64 {
+        self.observed.caps[2]
+    }
     pub(crate) fn observe_time(&mut self, time: u64) -> Result<bool, CheckError> {
         self.record.observe(time).map_err(|_| CheckError)?;
         let absolute = self
@@ -352,6 +399,24 @@ pub(crate) async fn checked_in_transaction(
     token: &SessionToken,
     facility: LoginFacilityId,
     requirement: Requirement,
+    authority: &mut impl OrganizationAuthority,
+) -> Result<Option<CheckedSession>, CheckError> {
+    checked_for_purpose(c, token, facility, Some(requirement), authority).await
+}
+// This private preparation does not grant a public positive authentication context.
+pub(crate) async fn target_in_transaction(
+    c: &mut PgConnection,
+    token: &SessionToken,
+    facility: LoginFacilityId,
+    authority: &mut impl OrganizationAuthority,
+) -> Result<Option<CheckedSession>, CheckError> {
+    checked_for_purpose(c, token, facility, None, authority).await
+}
+async fn checked_for_purpose(
+    c: &mut PgConnection,
+    token: &SessionToken,
+    facility: LoginFacilityId,
+    requirement: Option<Requirement>,
     authority: &mut impl OrganizationAuthority,
 ) -> Result<Option<CheckedSession>, CheckError> {
     if !c.is_in_transaction() {
@@ -429,13 +494,14 @@ pub(crate) async fn checked_in_transaction(
         record.state = SessionState::Expired;
     }
     save_observation(&mut *c, record.id, &observed, old.is_some()).await?;
-    let mfa_required = observed.required || !matches!(requirement, Requirement::Standard);
-    let recent = !matches!(requirement, Requirement::RecentMultiFactor)
+    let mfa_required = observed.required || !matches!(requirement, Some(Requirement::Standard));
+    let recent = !matches!(requirement, Some(Requirement::RecentMultiFactor))
         || time
             < b.authenticated
                 .checked_add(observed.caps[2])
                 .ok_or(CheckError)?;
-    let allowed = record.state == SessionState::Active && (!mfa_required || b.mfa) && recent;
+    let allowed = record.state == SessionState::Active
+        && (requirement.is_none() || ((!mfa_required || b.mfa) && recent));
     save_record(&mut *c, &record).await?;
     let result = CurrentSession {
         session: record.id,

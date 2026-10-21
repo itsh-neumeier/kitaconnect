@@ -50,6 +50,13 @@ async fn rotate_in_transaction(
     let Some(mut checked) = checked else {
         return Ok(None);
     };
+    rotate_checked(tx, &mut checked, successor).await
+}
+pub(crate) async fn rotate_checked(
+    tx: &mut PgConnection,
+    checked: &mut session_check::CheckedSession,
+    successor: SessionRecordId,
+) -> Result<Option<SessionToken>, CheckError> {
     if checked.record.id == successor {
         return Err(CheckError);
     }

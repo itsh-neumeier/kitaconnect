@@ -272,6 +272,7 @@ struct Flow {
     identity: IdentityId,
     facility: LoginFacilityId,
     route: LoginRoute,
+    step_up: bool,
     context: OrganizationContext,
     created: u64,
     expires: u64,
@@ -298,15 +299,18 @@ impl Flow {
                 .map_err(|_| LoginError)?,
         )
         .ok_or(LoginError)?;
-        let route = match row.try_get::<&str, _>("route")? {
-            "password" => LoginRoute::Password,
-            "passkey" => LoginRoute::Passkey,
+        let (route, step_up) = match row.try_get::<&str, _>("route")? {
+            "password" => (LoginRoute::Password, false),
+            "passkey" => (LoginRoute::Passkey, false),
+            "reauth_password" => (LoginRoute::Password, true),
+            "reauth_passkey" => (LoginRoute::Passkey, true),
             _ => return Err(LoginError),
         };
         Ok(Self {
             identity,
             facility,
             route,
+            step_up,
             context: OrganizationContext::new(
                 identity,
                 facility,
@@ -397,6 +401,9 @@ pub(crate) async fn record_factor(
         return Ok(FactorRecord::Expired);
     }
     flow.live(time)?;
+    if flow.step_up && !check_step_up_target(connection, token, &flow).await? {
+        return Ok(FactorRecord::Expired);
+    }
     let material = material(connection, identity).await?;
     if material.recovery
         || flow
@@ -445,59 +452,10 @@ pub async fn begin(
         .current(identity, facility)
         .await?
         .bound(identity, facility)?;
-    let token = LoginToken(SessionToken::generate().map_err(|_| LoginError)?);
     let mut tx = connection
         .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
         .await?;
-    let result: Result<LoginToken, LoginError> = async {
-        sqlx::query("SELECT pg_advisory_xact_lock(184006,5)")
-            .execute(&mut *tx)
-            .await?;
-        lock_identity(&mut tx, identity).await?;
-        let time = now(&mut tx).await?;
-        sqlx::query("INSERT INTO identity_access.login_limits (id,lifetime,pending,per_identity,last_observed) VALUES (1,$1,$2,$3,0) ON CONFLICT DO NOTHING")
-            .bind(i32::try_from(limits.lifetime).map_err(|_|LoginError)?).bind(i64::from(limits.pending)).bind(i64::from(limits.per_identity)).execute(&mut *tx).await?;
-        let quota=sqlx::query("SELECT lifetime,pending,per_identity,last_observed::text FROM identity_access.login_limits WHERE id=1 FOR UPDATE").fetch_one(&mut *tx).await?;
-        if quota.try_get::<i32, _>("lifetime")?
-            != i32::try_from(limits.lifetime).map_err(|_| LoginError)?
-            || quota.try_get::<i64, _>("pending")? != i64::from(limits.pending)
-            || quota.try_get::<i64, _>("per_identity")? != i64::from(limits.per_identity)
-            || time < number(&quota, "last_observed")?
-        {
-            return Err(LoginError);
-        }
-        let updated = sqlx::query(
-            "UPDATE identity_access.login_limits SET last_observed=$1::text::numeric WHERE id=1",
-        )
-        .bind(time.to_string())
-        .execute(&mut *tx)
-        .await?;
-        if updated.rows_affected() != 1 {
-            return Err(LoginError);
-        }
-        let material = material(&mut tx, identity).await?;
-        if material.recovery {
-            return Err(LoginError);
-        }
-        sqlx::query("DELETE FROM identity_access.login_flows WHERE NOT consumed AND expires_at<=$1::text::numeric").bind(time.to_string()).execute(&mut *tx).await?;
-        let (total,own):(i64,i64)=sqlx::query_as("SELECT count(*),count(*) FILTER(WHERE identity_id=$1::text::numeric) FROM identity_access.login_flows WHERE NOT consumed")
-            .bind(identity.value().to_string()).fetch_one(&mut *tx).await?;
-        if total >= i64::from(limits.pending) || own >= i64::from(limits.per_identity) {
-            return Err(LoginError);
-        }
-        let expires = time
-            .checked_add(u64::from(limits.lifetime))
-            .ok_or(LoginError)?;
-        let written=sqlx::query("INSERT INTO identity_access.login_flows (fingerprint,identity_id,facility_id,route,policy_version,idle_seconds,absolute_seconds,step_up_seconds,mfa_required,created_at,expires_at,last_observed) VALUES ($1,$2::text::numeric,$3::text::numeric,$4,$5::text::numeric,$6::text::numeric,$7::text::numeric,$8::text::numeric,$9,$10::text::numeric,$11::text::numeric,$10::text::numeric)")
-            .bind(token.0.fingerprint().as_slice()).bind(identity.value().to_string()).bind(facility.value().to_string()).bind(route.text()).bind(context.version.to_string())
-            .bind(context.idle.to_string()).bind(context.absolute.to_string()).bind(context.step_up.to_string()).bind(context.mfa_required).bind(time.to_string()).bind(expires.to_string()).execute(&mut *tx).await?;
-        if written.rows_affected() != 1 {
-            return Err(LoginError);
-        }
-
-        Ok(token)
-    }.await;
-    match result {
+    match insert_flow(&mut tx, route, limits, context, false).await {
         Ok(value) => {
             tx.commit().await?;
             Ok(value)
@@ -507,6 +465,69 @@ pub async fn begin(
             Err(error)
         }
     }
+}
+
+async fn insert_flow(
+    connection: &mut PgConnection,
+    route: LoginRoute,
+    limits: LoginLimits,
+    context: OrganizationContext,
+    step_up: bool,
+) -> Result<LoginToken, LoginError> {
+    let identity = context.identity;
+    let facility = context.facility;
+    let token = LoginToken(SessionToken::generate().map_err(|_| LoginError)?);
+    let route = match (route, step_up) {
+        (LoginRoute::Password, true) => "reauth_password",
+        (LoginRoute::Passkey, true) => "reauth_passkey",
+        (route, false) => route.text(),
+    };
+    sqlx::query("SELECT pg_advisory_xact_lock(184006,5)")
+        .execute(&mut *connection)
+        .await?;
+    lock_identity(&mut *connection, identity).await?;
+    let time = now(&mut *connection).await?;
+    sqlx::query("INSERT INTO identity_access.login_limits (id,lifetime,pending,per_identity,last_observed) VALUES (1,$1,$2,$3,0) ON CONFLICT DO NOTHING")
+            .bind(i32::try_from(limits.lifetime).map_err(|_|LoginError)?).bind(i64::from(limits.pending)).bind(i64::from(limits.per_identity)).execute(&mut *connection).await?;
+    let quota=sqlx::query("SELECT lifetime,pending,per_identity,last_observed::text FROM identity_access.login_limits WHERE id=1 FOR UPDATE").fetch_one(&mut *connection).await?;
+    if quota.try_get::<i32, _>("lifetime")?
+        != i32::try_from(limits.lifetime).map_err(|_| LoginError)?
+        || quota.try_get::<i64, _>("pending")? != i64::from(limits.pending)
+        || quota.try_get::<i64, _>("per_identity")? != i64::from(limits.per_identity)
+        || time < number(&quota, "last_observed")?
+    {
+        return Err(LoginError);
+    }
+    let updated = sqlx::query(
+        "UPDATE identity_access.login_limits SET last_observed=$1::text::numeric WHERE id=1",
+    )
+    .bind(time.to_string())
+    .execute(&mut *connection)
+    .await?;
+    if updated.rows_affected() != 1 {
+        return Err(LoginError);
+    }
+    let material = material(&mut *connection, identity).await?;
+    if material.recovery {
+        return Err(LoginError);
+    }
+    sqlx::query("DELETE FROM identity_access.login_flows WHERE route IN ('password','passkey') AND NOT consumed AND expires_at<=$1::text::numeric").bind(time.to_string()).execute(&mut *connection).await?;
+    let (total,own):(i64,i64)=sqlx::query_as("SELECT count(*),count(*) FILTER(WHERE identity_id=$1::text::numeric) FROM identity_access.login_flows WHERE NOT consumed AND expires_at>$2::text::numeric")
+            .bind(identity.value().to_string()).bind(time.to_string()).fetch_one(&mut *connection).await?;
+    if total >= i64::from(limits.pending) || own >= i64::from(limits.per_identity) {
+        return Err(LoginError);
+    }
+    let expires = time
+        .checked_add(u64::from(limits.lifetime))
+        .ok_or(LoginError)?;
+    let written=sqlx::query("INSERT INTO identity_access.login_flows (fingerprint,identity_id,facility_id,route,policy_version,idle_seconds,absolute_seconds,step_up_seconds,mfa_required,created_at,expires_at,last_observed) VALUES ($1,$2::text::numeric,$3::text::numeric,$4,$5::text::numeric,$6::text::numeric,$7::text::numeric,$8::text::numeric,$9,$10::text::numeric,$11::text::numeric,$10::text::numeric)")
+            .bind(token.0.fingerprint().as_slice()).bind(identity.value().to_string()).bind(facility.value().to_string()).bind(route).bind(context.version.to_string())
+            .bind(context.idle.to_string()).bind(context.absolute.to_string()).bind(context.step_up.to_string()).bind(context.mfa_required).bind(time.to_string()).bind(expires.to_string()).execute(&mut *connection).await?;
+    if written.rows_affected() != 1 {
+        return Err(LoginError);
+    }
+
+    Ok(token)
 }
 
 /// Local completion only. Every later protected action still needs current membership,
@@ -531,6 +552,7 @@ pub async fn finish(
         let identity = IdentityId::new(identity.parse().map_err(|_| LoginError)?).ok_or(LoginError)?;
         lock_identity(&mut tx, identity).await?;
         let flow = flow(&mut tx, token).await?;
+        if flow.step_up { return Err(LoginError); }
         let time = now(&mut tx).await?;
         if retire_expired(&mut tx, token, &flow, time).await? {
             return Ok(None);
@@ -592,6 +614,174 @@ pub async fn finish(
         }
 
         Ok(Some(session_token))
+    }.await;
+    match result {
+        Ok(value) => {
+            tx.commit().await?;
+            value.ok_or(LoginError)
+        }
+        Err(error) => {
+            tx.rollback().await?;
+            Err(error)
+        }
+    }
+}
+
+async fn check_step_up_target(
+    c: &mut PgConnection,
+    token: &LoginToken,
+    flow: &Flow,
+) -> Result<bool, LoginError> {
+    let row=sqlx::query("SELECT trim_scale(s.id)::text AS id,trim_scale(s.identity_id)::text AS identity_id,trim_scale(s.created_at)::text AS created_at,trim_scale(s.absolute_expires_at)::text AS absolute_expires_at,trim_scale(s.idle_seconds)::text AS idle_seconds,trim_scale(s.last_activity_at)::text AS last_activity_at,trim_scale(s.last_observed_at)::text AS last_observed_at,s.state,o.idle_cap,o.absolute_cap FROM identity_access.step_up_targets t JOIN identity_access.sessions s ON s.id=t.session_id AND s.fingerprint=t.session_fingerprint JOIN identity_access.session_login_bindings b ON b.session_id=s.id AND b.flow_fingerprint=t.origin_flow JOIN identity_access.session_policy_observations o ON o.session_id=s.id WHERE t.flow_fingerprint=$1 AND s.identity_id=$2::text::numeric AND b.facility_id=$3::text::numeric FOR UPDATE OF s,o")
+        .bind(token.0.fingerprint().as_slice()).bind(flow.identity.value().to_string()).bind(flow.facility.value().to_string()).fetch_one(&mut *c).await?;
+    let mut record = crate::postgres::decode(&row).map_err(|_| LoginError)?;
+    if record.state != crate::SessionState::Active {
+        return Err(LoginError);
+    }
+    let time = now(&mut *c).await?;
+    record.observe(time).map_err(|_| LoginError)?;
+    let idle = u64::try_from(row.try_get::<i32, _>("idle_cap")?).map_err(|_| LoginError)?;
+    let absolute = u64::try_from(row.try_get::<i32, _>("absolute_cap")?).map_err(|_| LoginError)?;
+    if idle == 0
+        || idle > record.limits.idle_seconds
+        || absolute == 0
+        || absolute > record.limits.absolute_seconds
+    {
+        return Err(LoginError);
+    }
+    if time
+        >= record
+            .created_at
+            .checked_add(absolute)
+            .ok_or(LoginError)?
+            .min(
+                record
+                    .last_activity_at
+                    .checked_add(idle)
+                    .ok_or(LoginError)?,
+            )
+    {
+        record.state = crate::SessionState::Expired;
+    }
+    crate::session_check::save_record(&mut *c, &record)
+        .await
+        .map_err(|_| LoginError)?;
+    if record.state != crate::SessionState::Active {
+        let written=sqlx::query("UPDATE identity_access.login_flows SET invalidated=true,last_observed=$2::text::numeric WHERE fingerprint=$1 AND NOT consumed")
+            .bind(token.0.fingerprint().as_slice()).bind(time.to_string()).execute(&mut *c).await?;
+        if written.rows_affected() != 1 {
+            return Err(LoginError);
+        }
+        return Ok(false);
+    }
+    if retire_expired(&mut *c, token, flow, time).await? {
+        return Ok(false);
+    }
+    flow.live(time)?;
+    Ok(true)
+}
+
+/// Prepares actual MFA proof for this exact session. It grants no domain access.
+pub async fn begin_step_up(
+    connection: &mut PgConnection,
+    target: &SessionToken,
+    facility: LoginFacilityId,
+    route: LoginRoute,
+    limits: LoginLimits,
+    authority: &mut impl OrganizationAuthority,
+) -> Result<LoginToken, LoginError> {
+    autocommit(connection)?;
+    let mut tx = connection
+        .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
+        .await?;
+    let result:Result<Option<LoginToken>,LoginError>=async {
+        // Same global-before-identity order as normal begin, before any target lock.
+        sqlx::query("SELECT pg_advisory_xact_lock(184006,5)").execute(&mut *tx).await?;
+        let Some(mut checked)=crate::session_check::target_in_transaction(&mut tx,target,facility,authority).await.map_err(|_|LoginError)? else { return Ok(None); };
+        let mut candidate=tx.begin().await?;
+        let token=insert_flow(&mut candidate,route,limits,checked.policy(),true).await?;
+        let written=sqlx::query("INSERT INTO identity_access.step_up_targets (flow_fingerprint,session_id,session_fingerprint,origin_flow) SELECT $1,$2::text::numeric,$3,flow_fingerprint FROM identity_access.session_login_bindings WHERE session_id=$2::text::numeric")
+            .bind(token.0.fingerprint().as_slice()).bind(checked.record.id.value().to_string()).bind(target.fingerprint().as_slice()).execute(&mut *candidate).await?;
+        if written.rows_affected()!=1 { return Err(LoginError); }
+        if !checked.observe_time(now(&mut candidate).await?).map_err(|_|LoginError)? {
+            candidate.rollback().await?;
+            crate::session_check::save_record(&mut tx,&checked.record).await.map_err(|_|LoginError)?;
+            return Ok(None);
+        }
+        crate::session_check::save_record(&mut candidate,&checked.record).await.map_err(|_|LoginError)?;
+        candidate.commit().await?;
+        Ok(Some(token))
+    }.await;
+    match result {
+        Ok(value) => {
+            tx.commit().await?;
+            value.ok_or(LoginError)
+        }
+        Err(error) => {
+            tx.rollback().await?;
+            Err(error)
+        }
+    }
+}
+
+/// Completes actual MFA proof and bearer rotation in one local transaction.
+pub async fn finish_step_up(
+    connection: &mut PgConnection,
+    target: &SessionToken,
+    token: &LoginToken,
+    successor: SessionRecordId,
+    facility: LoginFacilityId,
+    authority: &mut impl OrganizationAuthority,
+) -> Result<SessionToken, LoginError> {
+    autocommit(connection)?;
+    let mut tx = connection
+        .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
+        .await?;
+    let result:Result<Option<SessionToken>,LoginError>=async {
+        let Some(mut checked)=crate::session_check::target_in_transaction(&mut tx,target,facility,authority).await.map_err(|_|LoginError)? else { return Ok(None); };
+        let flow=flow(&mut tx,token).await?;
+        if !flow.step_up || flow.identity!=checked.record.identity || flow.facility!=facility { return Err(LoginError); }
+        let exact:bool=sqlx::query_scalar("SELECT EXISTS(SELECT FROM identity_access.step_up_targets WHERE flow_fingerprint=$1 AND session_id=$2::text::numeric AND session_fingerprint=$3)")
+            .bind(token.0.fingerprint().as_slice()).bind(checked.record.id.value().to_string()).bind(target.fingerprint().as_slice()).fetch_one(&mut *tx).await?;
+        if !exact { return Err(LoginError); }
+        let time=now(&mut tx).await?;
+        if retire_expired(&mut tx,token,&flow,time).await? { return Ok(None); }
+        flow.live(time)?;
+        let material=material(&mut tx,checked.record.identity).await?;
+        if material.recovery || flow.digest.as_deref()!=Some(material.digest.as_slice())
+            || !(flow.passkey || (flow.password && flow.totp)) { return Err(LoginError); }
+        let current=checked.policy();
+        if current.version<flow.context.version || (current.version==flow.context.version &&
+            (current.idle,current.absolute,current.step_up)!=(flow.context.idle,flow.context.absolute,flow.context.step_up)) { return Err(LoginError); }
+        let authenticated=flow.proven.ok_or(LoginError)?;
+        if time>=authenticated.checked_add(checked.step_up_seconds()).ok_or(LoginError)? { return Err(LoginError); }
+        let original=checked.record.id;
+        let mut candidate=tx.begin().await?;
+        let consumed:bool=sqlx::query_scalar("UPDATE identity_access.login_flows SET consumed=true,last_observed=$2::text::numeric WHERE fingerprint=$1 AND NOT consumed RETURNING consumed")
+            .bind(token.0.fingerprint().as_slice()).bind(time.to_string()).fetch_one(&mut *candidate).await?;
+        if !consumed { return Err(LoginError); }
+        let next=crate::session_rotation::rotate_checked(&mut candidate,&mut checked,successor).await.map_err(|_|LoginError)?;
+        if let Some(next)=next {
+            let written=sqlx::query("INSERT INTO identity_access.step_up_receipts (proof_fingerprint,successor,origin_flow,authenticated_at) SELECT $1,$2::text::numeric,origin_flow,$3::text::numeric FROM identity_access.step_up_targets WHERE flow_fingerprint=$1")
+                .bind(token.0.fingerprint().as_slice()).bind(successor.value().to_string()).bind(authenticated.to_string()).execute(&mut *candidate).await?;
+            if written.rows_affected()!=1 { return Err(LoginError); }
+            let final_time=now(&mut candidate).await?;
+            let live=checked.observe_time(final_time).map_err(|_|LoginError)?;
+            if live && final_time<flow.expires && final_time<authenticated.checked_add(checked.step_up_seconds()).ok_or(LoginError)? {
+                crate::session_check::save_record(&mut candidate,&checked.record).await.map_err(|_|LoginError)?;
+                candidate.commit().await?;
+                return Ok(Some(next));
+            }
+            // Restore the whole candidate, including proof consumption and the receipt.
+            candidate.rollback().await?;
+            checked.record.id=original;
+            crate::session_check::save_record(&mut tx,&checked.record).await.map_err(|_|LoginError)?;
+            retire_expired(&mut tx,token,&flow,final_time).await?;
+            return Ok(None);
+        }
+        candidate.rollback().await?;
+        crate::session_check::save_record(&mut tx,&checked.record).await.map_err(|_|LoginError)?;
+        Ok(None)
     }.await;
     match result {
         Ok(value) => {

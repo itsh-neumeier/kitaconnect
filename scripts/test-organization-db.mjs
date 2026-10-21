@@ -315,6 +315,14 @@ try {
   sql(file('tests/step_up_storage.sql', identityRoot), { database: 'kc_step_up_storage_test', transaction: true });
   console.log('PASS: synthetic step-up storage constraints and closed RLS (before restart)');
 
+  sql('CREATE DATABASE kc_step_up_test;');
+  sql(file('provision/002_schema.sql', identityRoot), { database: 'kc_step_up_test', transaction: true });
+  for (const migration of [identityMigration, passwordMigration, webauthnMigration, mfaMigration, loginMigration, observationMigration, rotationMigration, stepUpMigration]) {
+    sql(migration, { database: 'kc_step_up_test', transaction: true });
+  }
+  sql('CREATE ROLE kc_step_up_runtime LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_identity_runtime TO kc_step_up_runtime WITH INHERIT TRUE, SET FALSE;', { database: 'kc_step_up_test', transaction: true });
+  testAdapter('before', 'step_up', 'additional_proof_is_bound_and_rotated', 'kitaconnect-identity-access');
+
   requireSuccess(docker(['restart', container]), 'Restart same test database');
   await waitUntilReady();
   sql(file('tests/persisted.sql'));
@@ -335,6 +343,7 @@ try {
   sql(file('tests/step_up_persisted.sql', identityRoot), { database: 'kc_step_up_storage_test', transaction: true });
   sql(file('tests/step_up_storage.sql', identityRoot), { database: 'kc_step_up_storage_test', transaction: true });
   console.log('PASS: synthetic step-up storage constraints and closed RLS (after restart)');
+  testAdapter('after', 'step_up', 'additional_proof_is_bound_and_rotated', 'kitaconnect-identity-access');
   console.log('PASS: two carriers and an independent facility, version and role boundaries survive server restart');
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {

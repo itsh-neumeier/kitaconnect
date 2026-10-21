@@ -151,6 +151,12 @@ async fn totp_and_recovery_are_atomic_and_protected() {
         0
     );
     let first = service.begin_enrollment(&mut c, a, None).await.unwrap();
+    let used: i64 = sqlx::query_scalar("SELECT used FROM identity_access.mfa_nonce_counters WHERE key_tag = (SELECT key_tag FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric)")
+        .bind(a.value().to_string()).fetch_one(&mut c).await.unwrap();
+    assert_eq!(used, 2); // Missing-contact rollback did not release its nonce.
+    let mut outer = c.begin().await.unwrap();
+    assert!(service.begin_enrollment(&mut outer, a, None).await.is_err());
+    outer.rollback().await.unwrap();
     assert!(!service.status(&mut c, a).await.unwrap().totp_active);
     let initial_time = time(&mut c).await;
     assert!(
@@ -170,6 +176,14 @@ async fn totp_and_recovery_are_atomic_and_protected() {
         .await
         .unwrap();
     assert_eq!(initial_codes.codes().len(), 4);
+    let stored: Vec<Vec<u8>> = sqlx::query_scalar("SELECT fingerprint FROM identity_access.mfa_recovery_codes WHERE identity_id = $1::text::numeric")
+        .bind(a.value().to_string()).fetch_all(&mut c).await.unwrap();
+    assert!(stored.iter().all(|digest| {
+        initial_codes
+            .codes()
+            .iter()
+            .all(|raw| digest.as_slice() != raw.expose().as_slice())
+    }));
     assert!(
         service
             .verify(&mut c, a, &code(&first, future))
@@ -316,8 +330,9 @@ async fn totp_and_recovery_are_atomic_and_protected() {
             .is_err()
     );
     seed_session(&mut c, a).await;
-    sqlx::query("INSERT INTO identity_access.webauthn_accounts VALUES ($1::text::numeric, '00000000-0000-4000-8000-000000000001', $2, 0)")
-        .bind(a.value().to_string()).bind([1u8;32].as_slice()).execute(&mut c).await.unwrap();
+    sqlx::query("INSERT INTO identity_access.webauthn_accounts VALUES ($1::text::numeric, $3::text::uuid, $2, 0)")
+        .bind(a.value().to_string()).bind([1u8;32].as_slice())
+        .bind(format!("00000000-0000-4000-8000-{:012x}",a.value())).execute(&mut c).await.unwrap();
     // A suppressed outbox insert must roll back consumption, factor deletion and session revocation.
     sql(&mut c,"CREATE FUNCTION public.kc_mfa_suppress() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RETURN NULL; END $$; CREATE TRIGGER kc_mfa_suppress BEFORE INSERT ON identity_access.mfa_notification_outbox FOR EACH ROW EXECUTE FUNCTION public.kc_mfa_suppress();").await;
     let before_events = count(
@@ -325,6 +340,7 @@ async fn totp_and_recovery_are_atomic_and_protected() {
         "SELECT count(*) FROM identity_access.mfa_security_events",
     )
     .await;
+    let before_attempts = count(&mut c, "SELECT used FROM identity_access.password_budget").await;
     assert!(
         service
             .recover(&mut c, a, &issued_new.codes()[0])
@@ -333,6 +349,10 @@ async fn totp_and_recovery_are_atomic_and_protected() {
     );
     assert!(!service.status(&mut c, a).await.unwrap().recovery_required);
     assert!(service.status(&mut c, a).await.unwrap().totp_active);
+    assert_eq!(
+        count(&mut c, "SELECT used FROM identity_access.password_budget").await,
+        before_attempts + 1
+    );
     assert_eq!(
         count(
             &mut c,

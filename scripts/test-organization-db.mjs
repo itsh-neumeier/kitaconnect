@@ -211,6 +211,7 @@ try {
     ASSERT pg_catalog.to_regclass('identity_access.mfa_notification_contacts') IS NULL;
     ASSERT pg_catalog.to_regclass('identity_access.mfa_security_events') IS NULL;
     ASSERT pg_catalog.to_regclass('identity_access.mfa_notification_outbox') IS NULL;
+    ASSERT pg_catalog.to_regprocedure('identity_access.guard_mfa_nonce()') IS NULL;
     ASSERT (SELECT pg_catalog.array_agg(version ORDER BY version) = ARRAY[1,2,3] FROM identity_access.schema_versions);
   END $$;`, { database: 'kc_mfa_test' });
   sql(mfaMigration, { database: 'kc_mfa_test', transaction: true });

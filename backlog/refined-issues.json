@@ -909,7 +909,8 @@
     "title": "TOTP und einmalige Wiederherstellung absichern",
     "depends_on": [
       "KC-006B",
-      "KC-006C"
+      "KC-006C",
+      "KC-006D"
     ],
     "specification": [
       "docs/02_Technische_Architektur.md",

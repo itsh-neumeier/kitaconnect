@@ -65,6 +65,7 @@ Die konkrete Rechtezuordnung bleibt KC-008 vorbehalten. Sitzungsgrenzen und prod
 Der aktualisierte Vertrag wird vor Implementierung versioniert.
 
 Der Adapter verwendet die bestehende dauerhafte Versuchsreservierung aus KC-006C; diese technische Voraussetzung wird im Backlog ergänzt.
+Die Entwertung laufender Passkey-Vorgänge verwendet den Versionsbestand aus KC-006D. Auch diese technische Abhängigkeit steht im Backlog.
 AES-GCM verwendet im Test einen frischen zufälligen RAM-Schlüssel und vorab dauerhaft reservierte eindeutige Zähler-Nonces.
 Der Schlüssel kann weder importiert noch exportiert werden. Produktiver Schlüsselanbieter und Rotation werden dadurch nicht freigegeben.
 Ein Datenbanktrigger schützt vorhandene Nonce-Zähler gegen Rücksetzung und übersprungene Werte. Die Laufzeitrolle erhält kein Löschrecht.

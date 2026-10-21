@@ -13,8 +13,9 @@ PR #78 / ad150c9 und #79 / 088d24f korrigieren die eigenen Fehlertransaktionen i
 PR #80 / 5a4d5aa bestätigt die Speichergrundlage nach Vertrag/ADR-039 mit zehn grünen Prüfungen.
 PR #81 / 7813bcb bestätigt die tatsächlichen Bibliotheksprüfungen und den atomaren Zusatzabschluss mit zehn grünen Prüfungen.
 PR #82 / 9ad5c23 bestätigt aktuellen Mitgliedschafts-Lesebestand mit zehn grünen Prüfungen vor/nach Neustart.
-Der aktive Folgebranch codex/kc-006f-diensttoken-grundlage ergänzt ausschließlich internen Diensttokenbestand und Datenbanknachweise nach ADR-019/042.
-Die konkrete MFA-Zuordnung wurde ausdrücklich bestätigt und in a86b202 dokumentiert. Vor abhängigem Code folgt ein konkreter Vertrag; Mitgliedschaft allein gewährt keine Fachrechte.
+PR #83 / 00bad74 ergänzt ausschließlich internen Diensttokenbestand und Datenbanknachweise nach ADR-019/042; native Datenbank-CI läuft noch.
+Der aktive Folgebranch codex/kc-006f-mfa-zuordnung ergänzt die ausdrücklich bestätigte MFA-Zuordnung nach vorherigem Vertrag/ADR-043 in b7b9b65.
+Die Aktion stammt vom zuständigen Dienst; unbekannte Einstufung verweigert Zugriff. Mitgliedschaft und MFA allein gewähren keine Fachrechte.
 Die früheren SQL-Tests mit synthetischen Faktor-Markierungen bleiben als Speicherprüfungen getrennt ausgewiesen.
 Danach folgen bestätigte MFA-Einstufung und der echte Organisations-/Gateway-Vertrag. Zusätzliche Faktorprüfung ist mit PR #81 bereits technisch geprüft.
 Die 17 ursprünglichen PRs sind technisch durchgesehen. Korrektur-PR #75 ist vollständig grün.

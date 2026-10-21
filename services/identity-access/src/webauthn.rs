@@ -247,35 +247,44 @@ impl LocalhostWebauthn {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
-        crate::login::lock_identity(&mut tx, identity)
-            .await
-            .map_err(|_| WebauthnError)?;
-        sqlx::query("SELECT pg_catalog.pg_advisory_xact_lock(184006, 3)")
+        let result: Result<(Account, u64), WebauthnError> = async {
+            crate::login::lock_identity(&mut tx, identity)
+                .await
+                .map_err(|_| WebauthnError)?;
+            sqlx::query("SELECT pg_catalog.pg_advisory_xact_lock(184006, 3)")
+                .execute(&mut *tx)
+                .await?;
+            let mut handle = [0; 16];
+            getrandom::fill(&mut handle).map_err(|_| WebauthnError)?;
+            sqlx::query("INSERT INTO identity_access.webauthn_accounts (identity_id, user_handle, revision, last_observed) VALUES ($1::text::numeric, $2::text::uuid, $3, 0) ON CONFLICT (identity_id) DO NOTHING")
+                .bind(identity.value().to_string()).bind(Uuid::from_bytes(handle).to_string()).bind(random_revision()?.as_slice()).execute(&mut *tx).await?;
+            let account = account(&mut tx, identity).await?;
+            let time = now(&mut tx).await?;
+            if time < account.observed {
+                return Err(WebauthnError);
+            }
+            sqlx::query(
+                "DELETE FROM identity_access.webauthn_ceremonies WHERE expires_at <= $1::text::numeric",
+            )
+            .bind(time.to_string())
             .execute(&mut *tx)
             .await?;
-        let mut handle = [0; 16];
-        getrandom::fill(&mut handle).map_err(|_| WebauthnError)?;
-        sqlx::query("INSERT INTO identity_access.webauthn_accounts (identity_id, user_handle, revision, last_observed) VALUES ($1::text::numeric, $2::text::uuid, $3, 0) ON CONFLICT (identity_id) DO NOTHING")
-            .bind(identity.value().to_string()).bind(Uuid::from_bytes(handle).to_string()).bind(random_revision()?.as_slice()).execute(&mut *tx).await?;
-        let account = account(&mut tx, identity).await?;
-        let time = now(&mut tx).await?;
-        if time < account.observed {
-            return Err(WebauthnError);
+            let count: i64 =
+                sqlx::query_scalar("SELECT count(*) FROM identity_access.webauthn_ceremonies")
+                    .fetch_one(&mut *tx)
+                    .await?;
+            if count >= i64::from(self.limits.pending) {
+                return Err(WebauthnError);
+            }
+            Ok((account, time))
+        }.await;
+        match result {
+            Ok((account, time)) => Ok((tx, account, time)),
+            Err(error) => {
+                tx.rollback().await?;
+                Err(error)
+            }
         }
-        sqlx::query(
-            "DELETE FROM identity_access.webauthn_ceremonies WHERE expires_at <= $1::text::numeric",
-        )
-        .bind(time.to_string())
-        .execute(&mut *tx)
-        .await?;
-        let count: i64 =
-            sqlx::query_scalar("SELECT count(*) FROM identity_access.webauthn_ceremonies")
-                .fetch_one(&mut *tx)
-                .await?;
-        if count >= i64::from(self.limits.pending) {
-            return Err(WebauthnError);
-        }
-        Ok((tx, account, time))
     }
 
     async fn save(
@@ -310,33 +319,46 @@ impl LocalhostWebauthn {
         identity: IdentityId,
     ) -> Result<(CeremonyToken, CreationChallengeResponse), WebauthnError> {
         let (mut tx, account, time) = self.begin(connection, identity).await?;
-        let keys = keys(&mut tx, identity, self.limits.credentials).await?;
-        if keys.len() >= self.limits.credentials as usize {
-            return Err(WebauthnError);
+        let result: Result<(CeremonyToken, CreationChallengeResponse), WebauthnError> = async {
+            let keys = keys(&mut tx, identity, self.limits.credentials).await?;
+            if keys.len() >= self.limits.credentials as usize {
+                return Err(WebauthnError);
+            }
+            // Only an opaque handle is sent to the authenticator: no email, names or child data.
+            let name = account.handle.to_string();
+            let (options, state) = self
+                .engine
+                .start_passkey_registration(
+                    account.handle,
+                    &name,
+                    &name,
+                    Some(keys.iter().map(|key| key.cred_id().clone()).collect()),
+                )
+                .map_err(|_| WebauthnError)?;
+            let token = self
+                .save(
+                    &mut tx,
+                    identity,
+                    &account,
+                    time,
+                    "register",
+                    serde_json::to_string(&state)?,
+                )
+                .await?;
+
+            Ok((token, options))
         }
-        // Only an opaque handle is sent to the authenticator: no email, names or child data.
-        let name = account.handle.to_string();
-        let (options, state) = self
-            .engine
-            .start_passkey_registration(
-                account.handle,
-                &name,
-                &name,
-                Some(keys.iter().map(|key| key.cred_id().clone()).collect()),
-            )
-            .map_err(|_| WebauthnError)?;
-        let token = self
-            .save(
-                &mut tx,
-                identity,
-                &account,
-                time,
-                "register",
-                serde_json::to_string(&state)?,
-            )
-            .await?;
-        tx.commit().await?;
-        Ok((token, options))
+        .await;
+        match result {
+            Ok(value) => {
+                tx.commit().await?;
+                Ok(value)
+            }
+            Err(error) => {
+                tx.rollback().await?;
+                Err(error)
+            }
+        }
     }
     pub async fn start_authentication(
         &self,
@@ -344,26 +366,39 @@ impl LocalhostWebauthn {
         identity: IdentityId,
     ) -> Result<(CeremonyToken, RequestChallengeResponse), WebauthnError> {
         let (mut tx, account, time) = self.begin(connection, identity).await?;
-        let keys = keys(&mut tx, identity, self.limits.credentials).await?;
-        if keys.is_empty() {
-            return Err(WebauthnError);
+        let result: Result<(CeremonyToken, RequestChallengeResponse), WebauthnError> = async {
+            let keys = keys(&mut tx, identity, self.limits.credentials).await?;
+            if keys.is_empty() {
+                return Err(WebauthnError);
+            }
+            let (options, state) = self
+                .engine
+                .start_passkey_authentication(&keys)
+                .map_err(|_| WebauthnError)?;
+            let token = self
+                .save(
+                    &mut tx,
+                    identity,
+                    &account,
+                    time,
+                    "authenticate",
+                    serde_json::to_string(&state)?,
+                )
+                .await?;
+
+            Ok((token, options))
         }
-        let (options, state) = self
-            .engine
-            .start_passkey_authentication(&keys)
-            .map_err(|_| WebauthnError)?;
-        let token = self
-            .save(
-                &mut tx,
-                identity,
-                &account,
-                time,
-                "authenticate",
-                serde_json::to_string(&state)?,
-            )
-            .await?;
-        tx.commit().await?;
-        Ok((token, options))
+        .await;
+        match result {
+            Ok(value) => {
+                tx.commit().await?;
+                Ok(value)
+            }
+            Err(error) => {
+                tx.rollback().await?;
+                Err(error)
+            }
+        }
     }
 
     async fn consume(
@@ -377,10 +412,22 @@ impl LocalhostWebauthn {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
-        let row = sqlx::query("UPDATE identity_access.webauthn_ceremonies SET consumed = true WHERE fingerprint = $1 AND NOT consumed RETURNING identity_id::text, profile, purpose, created_at::text, expires_at::text, expected_revision, state")
-            .bind(token.0.fingerprint().as_slice()).fetch_optional(&mut *tx).await?.ok_or(WebauthnError)?;
-        let time = now(&mut tx).await?; // Read only after the winning row update acquired its lock.
-        tx.commit().await?; // Failed validation, cancellation or later rollback never restores the attempt.
+        let result: Result<_, WebauthnError> = async {
+            let row = sqlx::query("UPDATE identity_access.webauthn_ceremonies SET consumed = true WHERE fingerprint = $1 AND NOT consumed RETURNING identity_id::text, profile, purpose, created_at::text, expires_at::text, expected_revision, state")
+                .bind(token.0.fingerprint().as_slice()).fetch_optional(&mut *tx).await?.ok_or(WebauthnError)?;
+            let time = now(&mut tx).await?; // Read after the winning update acquired its lock.
+            Ok((row, time))
+        }.await;
+        let (row, time) = match result {
+            Ok(value) => {
+                tx.commit().await?; // Later validation or cancellation never restores the attempt.
+                value
+            }
+            Err(error) => {
+                tx.rollback().await?;
+                return Err(error);
+            }
+        };
         let created = number(&row, "created_at")?;
         let expires = number(&row, "expires_at")?;
         if row.try_get::<String, _>("identity_id")? != identity.value().to_string()
@@ -438,36 +485,48 @@ impl LocalhostWebauthn {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
-        crate::login::lock_identity(&mut tx, identity)
-            .await
-            .map_err(|_| WebauthnError)?;
-        let account = self.current(&mut tx, identity, &consumed).await?;
-        Self::finish_time(&mut tx, &account, &consumed).await?;
-        let state: PasskeyRegistration = serde_json::from_str(&consumed.state)?;
-        let response: RegisterPublicKeyCredential = serde_json::from_slice(response)?;
-        let engine = Arc::clone(&self.engine);
-        let key = verify(move || {
-            engine
-                .finish_passkey_registration(&response, &state)
-                .map_err(|_| WebauthnError)
-        })
-        .await?;
-        let current = keys(&mut tx, identity, self.limits.credentials).await?;
-        if current.len() >= self.limits.credentials as usize
-            || !(1..=1024).contains(&key.cred_id().len())
-        {
-            return Err(WebauthnError);
+        let result: Result<CredentialRef, WebauthnError> = async {
+            crate::login::lock_identity(&mut tx, identity)
+                .await
+                .map_err(|_| WebauthnError)?;
+            let account = self.current(&mut tx, identity, &consumed).await?;
+            Self::finish_time(&mut tx, &account, &consumed).await?;
+            let state: PasskeyRegistration = serde_json::from_str(&consumed.state)?;
+            let response: RegisterPublicKeyCredential = serde_json::from_slice(response)?;
+            let engine = Arc::clone(&self.engine);
+            let key = verify(move || {
+                engine
+                    .finish_passkey_registration(&response, &state)
+                    .map_err(|_| WebauthnError)
+            })
+            .await?;
+            let current = keys(&mut tx, identity, self.limits.credentials).await?;
+            if current.len() >= self.limits.credentials as usize
+                || !(1..=1024).contains(&key.cred_id().len())
+            {
+                return Err(WebauthnError);
+            }
+            let reference = CredentialRef(key.cred_id().as_slice().to_vec());
+            let result = sqlx::query("INSERT INTO identity_access.webauthn_credentials (credential_id, identity_id, data) VALUES ($1, $2::text::numeric, $3)")
+                .bind(reference.expose()).bind(identity.value().to_string()).bind(serde_json::to_string(&key)?).execute(&mut *tx).await?;
+            if result.rows_affected() != 1 {
+                return Err(WebauthnError);
+            }
+            let time = Self::finish_time(&mut tx, &account, &consumed).await?;
+            observe(&mut tx, identity, time, &random_revision()?).await?;
+
+            Ok(reference)
+        }.await;
+        match result {
+            Ok(value) => {
+                tx.commit().await?;
+                Ok(value)
+            }
+            Err(error) => {
+                tx.rollback().await?;
+                Err(error)
+            }
         }
-        let reference = CredentialRef(key.cred_id().as_slice().to_vec());
-        let result = sqlx::query("INSERT INTO identity_access.webauthn_credentials (credential_id, identity_id, data) VALUES ($1, $2::text::numeric, $3)")
-            .bind(reference.expose()).bind(identity.value().to_string()).bind(serde_json::to_string(&key)?).execute(&mut *tx).await?;
-        if result.rows_affected() != 1 {
-            return Err(WebauthnError);
-        }
-        let time = Self::finish_time(&mut tx, &account, &consumed).await?;
-        observe(&mut tx, identity, time, &random_revision()?).await?;
-        tx.commit().await?;
-        Ok(reference)
     }
     pub async fn finish_authentication(
         &self,
@@ -508,57 +567,68 @@ impl LocalhostWebauthn {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
-        crate::login::lock_identity(&mut tx, identity)
-            .await
-            .map_err(|_| WebauthnError)?;
-        let account = self.current(&mut tx, identity, &consumed).await?;
-        Self::finish_time(&mut tx, &account, &consumed).await?;
-        let state: PasskeyAuthentication = serde_json::from_str(&consumed.state)?;
-        let response: PublicKeyCredential = serde_json::from_slice(response)?;
-        if response
-            .get_user_unique_id()
-            .is_some_and(|handle| handle != account.handle.as_bytes())
-        {
-            return Err(WebauthnError);
-        }
-        let engine = Arc::clone(&self.engine);
-        let result = verify(move || {
-            engine
-                .finish_passkey_authentication(&response, &state)
-                .map_err(|_| WebauthnError)
-        })
-        .await?;
-        if !result.user_verified() {
-            return Err(WebauthnError);
-        }
-        let mut keys = keys(&mut tx, identity, self.limits.credentials).await?;
-        let key = keys
-            .iter_mut()
-            .find(|key| key.cred_id() == result.cred_id())
-            .ok_or(WebauthnError)?;
-        key.update_credential(&result).ok_or(WebauthnError)?;
-        let written = sqlx::query("UPDATE identity_access.webauthn_credentials SET data = $2 WHERE credential_id = $1 AND identity_id = $3::text::numeric")
-            .bind(key.cred_id().as_slice()).bind(serde_json::to_string(key)?).bind(identity.value().to_string()).execute(&mut *tx).await?;
-        if written.rows_affected() != 1 {
-            return Err(WebauthnError);
-        }
-        let time = Self::finish_time(&mut tx, &account, &consumed).await?;
-        observe(&mut tx, identity, time, &random_revision()?).await?;
-        if let Some(flow) = flow {
-            let recorded =
-                crate::login::record_factor(&mut tx, identity, flow, crate::login::Factor::Passkey)
-                    .await
-                    .map_err(|_| WebauthnError)?;
-            match recorded {
-                crate::login::FactorRecord::Recorded => {}
-                crate::login::FactorRecord::Expired => {
-                    tx.commit().await?;
-                    return Err(WebauthnError);
+        let result: Result<Option<PasskeyEvidence>, WebauthnError> = async {
+            crate::login::lock_identity(&mut tx, identity)
+                .await
+                .map_err(|_| WebauthnError)?;
+            let account = self.current(&mut tx, identity, &consumed).await?;
+            Self::finish_time(&mut tx, &account, &consumed).await?;
+            let state: PasskeyAuthentication = serde_json::from_str(&consumed.state)?;
+            let response: PublicKeyCredential = serde_json::from_slice(response)?;
+            if response
+                .get_user_unique_id()
+                .is_some_and(|handle| handle != account.handle.as_bytes())
+            {
+                return Err(WebauthnError);
+            }
+            let engine = Arc::clone(&self.engine);
+            let result = verify(move || {
+                engine
+                    .finish_passkey_authentication(&response, &state)
+                    .map_err(|_| WebauthnError)
+            })
+            .await?;
+            if !result.user_verified() {
+                return Err(WebauthnError);
+            }
+            let mut keys = keys(&mut tx, identity, self.limits.credentials).await?;
+            let key = keys
+                .iter_mut()
+                .find(|key| key.cred_id() == result.cred_id())
+                .ok_or(WebauthnError)?;
+            key.update_credential(&result).ok_or(WebauthnError)?;
+            let written = sqlx::query("UPDATE identity_access.webauthn_credentials SET data = $2 WHERE credential_id = $1 AND identity_id = $3::text::numeric")
+                .bind(key.cred_id().as_slice()).bind(serde_json::to_string(key)?).bind(identity.value().to_string()).execute(&mut *tx).await?;
+            if written.rows_affected() != 1 {
+                return Err(WebauthnError);
+            }
+            let time = Self::finish_time(&mut tx, &account, &consumed).await?;
+            observe(&mut tx, identity, time, &random_revision()?).await?;
+            if let Some(flow) = flow {
+                let recorded =
+                    crate::login::record_factor(&mut tx, identity, flow, crate::login::Factor::Passkey)
+                        .await
+                        .map_err(|_| WebauthnError)?;
+                match recorded {
+                    crate::login::FactorRecord::Recorded => {}
+                    crate::login::FactorRecord::Expired => {
+                        return Ok(None);
+                    }
                 }
             }
+
+            Ok(Some(PasskeyEvidence(identity)))
+        }.await;
+        match result {
+            Ok(value) => {
+                tx.commit().await?;
+                value.ok_or(WebauthnError)
+            }
+            Err(error) => {
+                tx.rollback().await?;
+                Err(error)
+            }
         }
-        tx.commit().await?;
-        Ok(PasskeyEvidence(identity))
     }
 
     /// Internal authenticated maintenance only. Invalidates all outstanding snapshots for this identity.
@@ -572,21 +642,33 @@ impl LocalhostWebauthn {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
-        crate::login::lock_identity(&mut tx, identity)
-            .await
-            .map_err(|_| WebauthnError)?;
-        let account = account(&mut tx, identity).await?;
-        let time = now(&mut tx).await?;
-        if time < account.observed {
-            return Err(WebauthnError);
+        let result: Result<bool, WebauthnError> = async {
+            crate::login::lock_identity(&mut tx, identity)
+                .await
+                .map_err(|_| WebauthnError)?;
+            let account = account(&mut tx, identity).await?;
+            let time = now(&mut tx).await?;
+            if time < account.observed {
+                return Err(WebauthnError);
+            }
+            let result = sqlx::query("DELETE FROM identity_access.webauthn_credentials WHERE identity_id = $1::text::numeric AND credential_id = $2")
+                .bind(identity.value().to_string()).bind(credential.expose()).execute(&mut *tx).await?;
+            observe(&mut tx, identity, time, &random_revision()?).await?;
+            crate::login::revoke_sessions(&mut tx, identity)
+                .await
+                .map_err(|_| WebauthnError)?;
+
+            Ok(result.rows_affected() == 1)
+        }.await;
+        match result {
+            Ok(value) => {
+                tx.commit().await?;
+                Ok(value)
+            }
+            Err(error) => {
+                tx.rollback().await?;
+                Err(error)
+            }
         }
-        let result = sqlx::query("DELETE FROM identity_access.webauthn_credentials WHERE identity_id = $1::text::numeric AND credential_id = $2")
-            .bind(identity.value().to_string()).bind(credential.expose()).execute(&mut *tx).await?;
-        observe(&mut tx, identity, time, &random_revision()?).await?;
-        crate::login::revoke_sessions(&mut tx, identity)
-            .await
-            .map_err(|_| WebauthnError)?;
-        tx.commit().await?;
-        Ok(result.rows_affected() == 1)
     }
 }

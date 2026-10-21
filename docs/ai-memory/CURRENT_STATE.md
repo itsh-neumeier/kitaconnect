@@ -10,13 +10,13 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 - branch: codex/kc-006e-mfa-vertrag auf PR #71 / 74c5e1731be0db55f1ef8698d7119f8fcd5cce7c.
 - pull_request: [PR #72](https://github.com/itsh-neumeier/kitaconnect/pull/72), Entwurf; Basis codex/kc-006d-webauthn-vertrag.
 - head_commit: Vertragsvorbereitung 12e2cd7814423a768520c2fcb776f95b3f8a2665. Dieser Checkpoint folgt gesondert; aktuellen Kopf und CI in PR #72 prüfen.
-- objective: TOTP- und Wiederherstellungsvertrag vorbereiten; ausdrückliche Sicherheitsentscheidungen vor abhängigen Abläufen anfordern.
+- objective: Bestätigte TOTP-, Wiederherstellungs- und Benachrichtigungsregeln in KC-006E implementieren und nachweisen.
 - completed: Vertragsentwurf, ADR-033, Bibliotheksprüfung und konkrete Testmatrix versioniert. Getrennter lokaler Abhängigkeits-Prüfgraph ohne Befund geprüft. PR #71 ist unverändert offen, zur Durchsicht bereit und am Abschlusskopf vollständig grün.
-- remaining: Antworten zur gemeinsamen MFA-/Wiederherstellungsfrage sowie zur Benachrichtigungsregel abwarten. Danach zuerst Vertrag und ADR aktualisieren und versionieren, dann #66 auf diesem Branch umsetzen. Alle Kriterien von #66 bleiben offen.
-- migration_state: In KC-006E keine Migration und keine Projektabhängigkeit ergänzt. Bestehende identity-access-Versionen 1/2/3 und Organisationsmigrationen bleiben unverändert. Runtime bleibt durch FORCE RLS gesperrt.
+- remaining: Neue MFA-Implementierung, Migration 0004 und PostgreSQL-Tests in Linux-CI prüfen. PR #72 bleibt bis zum Nachweis ein Entwurf. Keine Integration beauftragt.
+- migration_state: Neue Migration 0004 ergänzt MFA-Bestand. Bestehende identity-access-Versionen 1/2/3 und Organisationsmigrationen bleiben unverändert. Runtime bleibt durch FORCE RLS gesperrt. Der neue Testbestand kc_mfa_test bleibt von bisherigen Testdatenbanken getrennt.
 - known_failures: Keine Fehler in den lokalen Dokumentationsprüfungen oder im getrennten Bibliotheks-Prüfgraphen. Keine TOTP-/Wiederherstellungsimplementierung oder nativen Builds behaupten. Windows-Linker und Docker fehlen lokal. CI des Dokumentationskopfes im PR prüfen.
 - dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70 und #71 offen und grün. Keine ungefragte Integration.
-- security_notes: Allgemeine MFA-/Wiederherstellungsregeln bleiben unbeantwortet. Zusätzlich ist Sicherheitsprotokoll plus atomarer Benachrichtigungsauftrag an bestätigten Kontakt angefragt. Keine Nachrichten versendet. WebAuthn-Bestätigung nicht auf diese Regeln übertragen. Produktiver Schlüsselanbieter, Nonce-Eindeutigkeit und Rotation benötigen vor produktiver Nutzung einen geprüften Vertrag.
+- security_notes: Die Projektleitung bestätigt ausdrücklich alle MFA-, Wiederherstellungs- und Benachrichtigungsregeln. Vertrag und ADR-033 sind in cffb194 vor Implementierung aktualisiert. Keine Nachrichten versendet. Produktiver Schlüsselanbieter und Rotation bleiben gesperrt; der Adapter verwendet ausschließlich frische RAM-Schlüssel mit dauerhaft reservierten Zähler-Nonces. Browser-Sitzungswerte bleiben offen.
 
 ## P0-Abschluss
 

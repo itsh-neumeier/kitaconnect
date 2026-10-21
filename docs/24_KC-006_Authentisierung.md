@@ -19,7 +19,7 @@ ADR-019 gilt für Dienstidentitäten und aktuelle Rechteprüfung weiter.
 | KC-006B | [#63](https://github.com/itsh-neumeier/kitaconnect/issues/63) | Geschützter Sitzungsbestand, aktuelle Abfrage und atomarer Widerruf | KC-006A |
 | KC-006C | [#64](https://github.com/itsh-neumeier/kitaconnect/issues/64) | Argon2id-Passwortprüfung und Anfragemengenbegrenzung | KC-006B |
 | KC-006D | [#65](https://github.com/itsh-neumeier/kitaconnect/issues/65) | WebAuthn-Registrierung und Anmeldung mit Negativfällen | KC-006B |
-| KC-006E | [#66](https://github.com/itsh-neumeier/kitaconnect/issues/66) | TOTP und atomar einmalige Wiederherstellung | KC-006B; bestätigte MFA-/Wiederherstellungsregeln |
+| KC-006E | [#66](https://github.com/itsh-neumeier/kitaconnect/issues/66) | TOTP und atomar einmalige Wiederherstellung | KC-006B und KC-006C; bestätigte MFA-/Wiederherstellungsregeln |
 | KC-006F | [#67](https://github.com/itsh-neumeier/kitaconnect/issues/67) | Dienstverträge, Gateway-Anbindung und Gesamtnachweise | KC-006C/D/E |
 
 Nur KC-006A ist in diesem Arbeitsschritt aktiv. Jedes folgende Paket erhält einen begrenzten Vertrag vor Implementierung.

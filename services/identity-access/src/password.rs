@@ -328,7 +328,7 @@ impl AttemptLimits {
     }
 }
 
-async fn reserve(
+pub(crate) async fn reserve(
     connection: &mut PgConnection,
     key: AttemptKey,
     limits: AttemptLimits,

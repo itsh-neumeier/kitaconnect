@@ -1,0 +1,234 @@
+{
+  "repository": "itsh-neumeier/kitaconnect",
+  "date": "2026-10-18",
+  "timezone": "Europe/Berlin",
+  "authorization": {
+    "source": "Projektchat",
+    "response": "Ja",
+    "scope": "Persönliche und sprachliche Durchsicht bestätigt; PRs #39 bis #44 integrieren und danach P0-Abnahme vorbereiten."
+  },
+  "approved_content_commit": "9aa59486ef46b81988fa7994469db004739e65f5",
+  "main_commit": "68f39f19295b1c723e75b257b73d890dbbe5b9b6",
+  "content_matches_approved_commit": true,
+  "method": "merge",
+  "pull_requests": [
+    {
+      "pr": 39,
+      "head": "1d5066d38b5629070dad0e9eb5719deb2c4fc69b",
+      "merge": "637f6778f1380943a7c79145cc87eaff3d161030",
+      "merged": true,
+      "merged_at": "2026-10-18T15:43:40Z",
+      "main_checks": [
+        {
+          "name": "structure",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39141782138/job/117717526790"
+        },
+        {
+          "name": "rust",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39141782138/job/117717526581"
+        },
+        {
+          "name": "web",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39141782138/job/117717526810"
+        },
+        {
+          "name": "secrets",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39141782151/job/117717526535"
+        },
+        {
+          "name": "dependencies",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39141782151/job/117717526413"
+        }
+      ]
+    },
+    {
+      "pr": 40,
+      "head": "3e8efdd94ce012164c67c5f77e3ba338dec1c9f3",
+      "merge": "e1f6b1772393ae7fb205c3cd644b8a69a44ec1c5",
+      "merged": true,
+      "merged_at": "2026-10-18T15:45:17Z",
+      "main_checks": [
+        {
+          "name": "structure",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39141906755/job/117717876858"
+        },
+        {
+          "name": "rust",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39141906755/job/117717877041"
+        },
+        {
+          "name": "web",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39141906755/job/117717877046"
+        },
+        {
+          "name": "secrets",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39141906855/job/117717877439"
+        },
+        {
+          "name": "dependencies",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39141906855/job/117717877360"
+        }
+      ]
+    },
+    {
+      "pr": 41,
+      "head": "984a349c5e104c6ce1b3376daa75c329616f65cd",
+      "merge": "874e24253edd8297cd0f389051afb116813f46be",
+      "merged": true,
+      "merged_at": "2026-10-18T15:46:48Z",
+      "main_checks": [
+        {
+          "name": "structure",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142018087/job/117718201994"
+        },
+        {
+          "name": "rust",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142018087/job/117718202120"
+        },
+        {
+          "name": "web",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142018087/job/117718202130"
+        },
+        {
+          "name": "secrets",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142018189/job/117718202363"
+        },
+        {
+          "name": "dependencies",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142018189/job/117718202174"
+        }
+      ]
+    },
+    {
+      "pr": 42,
+      "head": "f3b4719d8534334c0d06514c29bd054cf9665f40",
+      "merge": "3c6f2244fd8b95e6d3750336918a4fb475113a90",
+      "merged": true,
+      "merged_at": "2026-10-18T15:48:12Z",
+      "main_checks": [
+        {
+          "name": "structure",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142121978/job/117718508679"
+        },
+        {
+          "name": "rust",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142121978/job/117718508650"
+        },
+        {
+          "name": "web",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142121978/job/117718508511"
+        },
+        {
+          "name": "secrets",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142122117/job/117718508763"
+        },
+        {
+          "name": "dependencies",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142122117/job/117718508929"
+        }
+      ]
+    },
+    {
+      "pr": 43,
+      "head": "9ab3b4ac95a0c2a57dbadf68b84e7b1fbbb7a078",
+      "merge": "66a2b20afc0a17244acb2c97a6b7d9ce1233188c",
+      "merged": true,
+      "merged_at": "2026-10-18T15:49:22Z",
+      "main_checks": [
+        {
+          "name": "structure",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142208525/job/117718761384"
+        },
+        {
+          "name": "rust",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142208525/job/117718761571"
+        },
+        {
+          "name": "web",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142208525/job/117718761227"
+        },
+        {
+          "name": "secrets",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142208540/job/117718761280"
+        },
+        {
+          "name": "dependencies",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142208540/job/117718761156"
+        }
+      ]
+    },
+    {
+      "pr": 44,
+      "head": "7960b4b2f2e84111f69b36c27380543fd21c2cda",
+      "merge": "68f39f19295b1c723e75b257b73d890dbbe5b9b6",
+      "merged": true,
+      "merged_at": "2026-10-18T15:50:27Z",
+      "main_checks": [
+        {
+          "name": "structure",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142292618/job/117718998948"
+        },
+        {
+          "name": "rust",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142292618/job/117718998878"
+        },
+        {
+          "name": "web",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142292618/job/117718998946"
+        },
+        {
+          "name": "secrets",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142292652/job/117718998864"
+        },
+        {
+          "name": "dependencies",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142292652/job/117718998636"
+        }
+      ]
+    }
+  ],
+  "p0_overall_accepted": true,
+  "p1_authorized": true,
+  "unmerged_dependabot_prs": [
+    45,
+    46,
+    47,
+    48
+  ],
+  "phase_authorization": {
+    "source": "Projektchat",
+    "date": "2026-10-18",
+    "response": "P0 abnehmen, und P1 freigeben",
+    "scope": "P0-Gesamtabnahme und gesonderter P1-Auftrag; spätere Fachprüfungen behalten ihre Sperren."
+  }
+}

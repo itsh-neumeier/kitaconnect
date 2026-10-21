@@ -122,13 +122,14 @@ Keine dieser Zurückstellungen ist eine erteilte Fachfreigabe.
 | Datenschutzverantwortliche und Datenkategoriefristen | Keine personenbezogenen Echtdaten verarbeiten und keine Fristen erfinden | Vor Umsetzung der betroffenen Lösch-/Aufbewahrungsregel; spätestens vor Produktivbetrieb |
 | Regionale Personal- und Betreuungsregelwerke | Keine rechtlich ungeprüfte Regel als verbindlich anwenden | Vor Implementierungsabnahme in KC-016/KC-017 |
 | Rechtswirkung digitaler Verträge | Keine Rechtswirksamkeit behaupten oder ungeprüften Vertrag produktiv verwenden | Vor Freigabe der Vertragsfunktion in KC-012 |
-| Unabhängiges Sicherheits-/Datenschutzreview und Branchschutz | Keine P0-Gesamtabnahme oder eigenständigen Merges ohne erforderliche Prüfung | KC-038 vor Integration gemäß Review-Regeln |
+| Sicherheits-/Datenschutzprüfung und Branchschutz | Keine P0-Gesamtabnahme oder eigenständigen Merges ohne erforderliche Prüfung und Auftrag | KC-038; für genehmigende GitHub-Reviews gilt die später bestätigte ADR-022 |
 
 Die Dokumentationsprüfung und P0-Arbeit mit synthetischen Daten dürfen weitergehen.
 Die bewusste Zurückstellung verändert weder die Spezifikation noch die unabhängigen Prüfpflichten.
 
 Ergänzung vom 18.10.2026: Die Projektleitung benennt Timo Neumeier, `@itsh-neumeier`,
 für allgemeine Sicherheits- und Datenschutzprüfungen. Diese Zuständigkeit belegt weder eine erfolgte Prüfung
-noch eine unabhängige Gegenprüfung eigener Änderungen. Die unabhängige PR-Prüfung bleibt für seine eigenen PRs offen.
+noch eine unabhängige Fachprüfung. Die später bestätigte Konto-Ausnahme nach ADR-022 betrifft ausschließlich genehmigende GitHub-Reviews.
+Die Projektleitung hat persönliche/sprachliche Durchsicht und Integration #39 bis #44 anschließend ausdrücklich bestätigt.
 Rechteinhaber, juristische Lizenzprüfung und unabhängige Wahlprüfung bleiben ausdrücklich gesondert offen.
 Die fachlich und rechtlich zuständigen Personen müssen vor den gesperrten Aktionen benannt sein.

@@ -3,7 +3,8 @@
 Stand: 18.10.2026. Grundlage: Spezifikation v5.9.
 Ausgangscommit: `bdb3f9fcf1c077c2359e17488062bf6c1d2a8c60` aus PR #43.
 Umfang: ursprüngliche Unterlagen 01 bis 12, Fachwortverzeichnis und Nachweis der Redaktion.
-Die Änderungen sind zur Prüfung vorbereitet. Persönliche sprachliche Prüfung und Integration stehen aus.
+Die Projektleitung hat persönliche und sprachliche Durchsicht bestätigt. PR #44 ist integriert.
+Der [Integrationsnachweis](21_P0_Integration_und_Abnahmevorbereitung.md) dokumentiert den Abschluss dieses Arbeitspakets.
 
 ## Verfahren
 
@@ -19,7 +20,7 @@ Die manuelle redaktionelle Eigenprüfung umfasst die folgende Tabelle.
 Sie ist keine unabhängige Genehmigung des Pull Requests.
 Vor Merge muss die manuelle sprachliche Prüfung bestätigt sein.
 Nach der ausdrücklichen Entscheidung in ADR-022 darf die Projektleitung bei eigenen PRs auf das zusätzliche genehmigende GitHub-Review verzichten.
-Die persönliche Prüfung bleibt vorgesehen und wird nicht als bereits erfolgt behauptet.
+Die Projektleitung hat die persönliche und sprachliche Prüfung für die freigegebene Integration inzwischen bestätigt.
 
 ## Nachweis je Unterlage
 
@@ -84,5 +85,5 @@ Zuständigkeiten, Rechte, Fristen, Betriebsziele und Entwicklungsphasen werden d
 Das Fachwortverzeichnis ergänzt deutsche Begriffe und Erläuterungen vorhandener Abkürzungen.
 Die deutsche Richtlinie ist eine eigene Adaption. Es wird keine formelle ASD-STE100-Konformität behauptet.
 
-KC-036 bleibt bis zur bestätigten manuellen sprachlichen Prüfung und Integration offen.
+KC-036 ist nach bestätigter manueller sprachlicher Prüfung und Integration abgeschlossen.
 P0-Gesamtabnahme, Fachfreigaben und Freigabe einer weiteren Entwicklungsphase stehen weiterhin aus.

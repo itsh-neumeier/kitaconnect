@@ -93,3 +93,32 @@ Trigger verweigern spätere Änderung und Löschung auch durch die Eigentümerro
 Die isolierten Speicherprüfungen verwenden ausdrücklich synthetische Faktor-Markierungen.
 Sie beweisen Datenbankbedingungen, Migration, Rücknahme, Einmaligkeit, RLS und Neustart.
 Tatsächliche Faktorprüfung, aktuelle Zielprüfung bei jedem Faktor, atomarer Abschluss mit Rotation und Verwendung des Belegs bleiben im folgenden Rust-Adapter zu implementieren und gesondert zu testen.
+
+## Folgeschritt: Rust-Adapter
+
+Der Folgeadapter verwendet dieselben tatsächlichen Faktortransaktionen wie die normale Anmeldung.
+Er unterscheidet den neuen Zweck beim Decodieren. Der normale Abschluss MUSS beide Zusatzprüfzwecke ausdrücklich abweisen.
+Die ursprüngliche Sitzungsbindung MUSS weiterhin auf einen normalen Anmeldevorgang zeigen.
+
+Ein privater Sitzungsprüfpfad darf ausschließlich den Beginn und Abschluss der Zusatzprüfung vorbereiten.
+Er prüft Mitgliedschaft, Wiederherstellung, Zustand und strengste Fristen weiterhin aktuell.
+Er gewährt keinen öffentlichen positiven MFA-Kontext für eine schwache Sitzung.
+Jede neue Faktorvormerkung prüft die gespeicherte genaue Zielbindung und die lokalen Sitzungsfristen erneut.
+Ein beobachteter Ablauf wird dauerhaft gespeichert. Widerruf oder Rotation des Ziels verweigern die Vormerkung.
+
+Der gemeinsame Vorgangsanfang erhält einen internen Zusatzparameter für den Zweck.
+Er entfernt nur abgelaufene normale Vorgänge. Gebundene Zusatzvorgänge bleiben wegen ihrer Herkunftsbelege erhalten.
+Abgelaufene Vorgänge zählen nicht gegen das bestehende Limit aktiver Vorgänge.
+Dies erhält die bisherige Mengenregel, deren normale abgelaufene Vorgänge vor der Zählung gelöscht werden.
+Eine Lösch- oder Aufbewahrungsrichtlinie für dauerhafte Belege wird dadurch nicht festgelegt.
+
+Der Abschluss bestätigt Vorgangsverbrauch, Rotation und Beleg in einer Transaktion.
+Eine private Kandidatentransaktion nimmt diese drei Änderungen bei Fehler oder Ablauf gemeinsam zurück.
+Danach werden erforderliche endgültige Ablaufzustände in der äußeren eigenen Transaktion bestätigt.
+Auch nach einer Schreibwartezeit werden Sitzungs- und Vorgangsfrist erneut geprüft.
+Der neue Beleg muss bei Abschluss noch innerhalb der strengsten zusätzlichen Frist liegen.
+
+Aktuelle Sitzungsprüfung liest bei installiertem Speicherteil den neuesten unveränderlichen Beleg derselben Anmeldung.
+Sie prüft Zweck, vollständige MFA, Faktorzeit und Herkunft erneut. Fehler verweigern Zugriff.
+Die Versionsabfrage verwendet den vorhandenen geschützten Migrationsbestand ohne positiven Zwischenspeicher.
+Ältere isolierte Datenbanken behalten ihre bisherigen Nachweise. Es wird kein zusätzliches produktives Datenbankrecht vergeben.

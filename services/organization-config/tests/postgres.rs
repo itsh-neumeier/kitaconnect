@@ -45,6 +45,29 @@ async fn storage_adapter_controls_references() {
     // The fixture administrator is used only to exercise storage behind fail-closed RLS.
     // It is not an application identity or a proposed production permission.
     let mut admin = connect("postgres").await;
+    // A successful SQL command is not evidence that a BEFORE trigger inserted a row.
+    // Run in both phases; all fixture DDL is removed again before the normal cases.
+    sqlx::raw_sql("CREATE FUNCTION organization_config.suppress_registration() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RETURN NULL; END $$; CREATE TRIGGER suppress_registration BEFORE INSERT ON organization_config.carriers FOR EACH ROW EXECUTE FUNCTION organization_config.suppress_registration(); CREATE TRIGGER suppress_registration BEFORE INSERT ON organization_config.facilities FOR EACH ROW EXECUTE FUNCTION organization_config.suppress_registration();")
+        .execute(&mut admin).await.unwrap();
+    assert!(matches!(
+        postgres::register_carrier(&mut admin, carrier(88)).await,
+        Err(StorageError::WriteNotConfirmed)
+    ));
+    assert!(matches!(
+        postgres::register_facility(&mut admin, facility(88), None).await,
+        Err(StorageError::WriteNotConfirmed)
+    ));
+    assert!(
+        !postgres::contains_carrier(&mut admin, carrier(88))
+            .await
+            .unwrap()
+    );
+    assert_eq!(
+        postgres::facility(&mut admin, facility(88)).await.unwrap(),
+        None
+    );
+    sqlx::raw_sql("DROP TRIGGER suppress_registration ON organization_config.carriers; DROP TRIGGER suppress_registration ON organization_config.facilities; DROP FUNCTION organization_config.suppress_registration();")
+        .execute(&mut admin).await.unwrap();
     if phase == "before" {
         postgres::register_carrier(&mut admin, carrier(1))
             .await

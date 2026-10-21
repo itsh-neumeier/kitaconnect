@@ -28,7 +28,7 @@ Dies ist eine technische KI-Vorprüfung. Sie ersetzt keine persönliche Prüfung
 | [#60](https://github.com/itsh-neumeier/kitaconnect/pull/60) | 3dcf78f | 10/10 grün | Als Testnachweis übernehmen. Getrennte Dienst-/Einrichtungsproben, RLS und Namensverdeckung geprüft. Synthetische Loginrollen sind keine produktive Rollenentscheidung. |
 | [#61](https://github.com/itsh-neumeier/kitaconnect/pull/61) | 4fa55b0 | 10/10 grün | Als Testnachweis übernehmen. Gleicher Datenbankprozess nach Poolrückgabe, Widerruf und reale Wartungskonkurrenz geprüft. Keine allgemeine produktive Migrationssteuerung. |
 | [#68](https://github.com/itsh-neumeier/kitaconnect/pull/68) | c7711e8 | 10/10 grün | Als internes Sitzungsmodell übernehmen. Typgrenzen, Zeitüberlauf, rückläufige Zeit und endgültige Zustände geprüft. Modellzustand erteilt keine Berechtigung. |
-| [#69](https://github.com/itsh-neumeier/kitaconnect/pull/69) | e0e1214 | 10/10 grün | Als internen Sitzungsspeicher übernehmen. Zufallsnachweise, abgeleitete Speicherung, Ablauf, Widerruf, Fehler und Neustart geprüft. create_session bleibt interner Speicherzugang; spätere Browseranmeldung muss login::finish verwenden. |
+| [#69](https://github.com/itsh-neumeier/kitaconnect/pull/69) | e0e1214 | 10/10 grün | Mit Korrektur der Schreibbestätigung als internen Sitzungsspeicher übernehmen. Identitäts- und Sitzungsanlage müssen genau eine Zeile bestätigen. create_session bleibt interner Speicherzugang; spätere Browseranmeldung muss login::finish verwenden. |
 | [#70](https://github.com/itsh-neumeier/kitaconnect/pull/70) | e003eb0 | 10/10 grün | Als begrenzten Passwortfaktor übernehmen. Argon2id-Profile, blockierende Arbeit, dauerhaft reservierte Versuche und Bestandswechsel geprüft. Produktive Limits und Referenzmessungen fehlen. |
 | [#71](https://github.com/itsh-neumeier/kitaconnect/pull/71) | 74c5e17 | 10/10 grün | Nur im bestätigten localhost-Testumfang übernehmen. Bibliotheksprüfung, Benutzerverifikation, Einmalverbrauch und Bestandsbindung geprüft. Kein produktiver Ursprung, Browser-/TLS- oder vollständiger Anmeldenachweis. |
 | [#72](https://github.com/itsh-neumeier/kitaconnect/pull/72) | cb3d8f6 | 10/10 grün | Nur im dokumentierten lokalen MFA-Umfang übernehmen. TOTP, Nonce-Zähler, einmalige Wiederherstellung, Sitzungswiderruf und atomare Ereignisaufträge geprüft. RAM-Schlüssel und Testkontakte sind keine produktive Schlüssel-/Kontaktverwaltung. |
@@ -43,6 +43,11 @@ Der Folgebranch präzisiert den Vertrag vor Code. Beide Anlageoperationen verlan
 Ein echter PostgreSQL-Test prüft unterdrückte Träger- und Einrichtungsanlage vor und nach Neustart.
 Die Korrektur liegt getrennt über #74. Sie verändert keine bestehende Migration, Rollenregel oder fachliche Anforderung.
 Die neue native CI muss den Korrekturstand bestätigen; Abschlussnachweise stehen im zugehörigen PR.
+
+Die gleiche fehlende Bestätigung betrifft Identitäts- und Sitzungsanlage in #69.
+Der Sitzungsvertrag wurde in 8816a18 vor der zweiten Korrektur präzisiert.
+Auch diese beiden Anlagen verlangen nun genau eine betroffene Zeile. Die Sitzungsanlage gibt bei einer unterdrückten Anlage keinen Nachweis aus.
+Der echte Sitzungs-Datenbanktest prüft beide Fehler vor und nach Neustart. Neue oder geänderte Migrationen sind dafür nicht erforderlich.
 
 #47 bleibt wegen des belegten Webfehlers von der Integration ausgeschlossen.
 Eine Umstellung auf TypeScript 7 braucht eine gemeinsam kompatible SvelteKit-/Prüfwerkzeugkette und eigene positive Nachweise.
@@ -63,7 +68,7 @@ Alle 17 ursprünglichen PR-Beschreibungen enthalten jetzt die jeweilige technisc
 
 1. Persönliche und sprachliche Durchsicht gesammelt auf Grundlage dieses Berichts und des Korrektur-PRs durchführen.
 2. P1-Kette in der Reihenfolge #53 → #54 → #55 → #59 → #60 → #61 → #68 → #69 → #70 → #71 → #72 → #73 → #74 übernehmen.
-   Den Korrektur-PR unmittelbar danach übernehmen. #55 bleibt bis zur Korrektur ohne produktive Freigabe.
+   Den Korrektur-PR unmittelbar danach übernehmen. #55 und #69 bleiben bis zur Korrektur ohne produktive Freigabe.
 3. Nach jeder Integration den nächsten PR auf main ausrichten. Aktuelle Basis, unveränderten Umfang und alle fünf Pflichtprüfungen erneut prüfen.
    Bei Konflikten oder fehlgeschlagenen Prüfungen anhalten und den Fehler beheben. Keine Prüfungen umgehen.
 4. #45 und #46 auf dem vollständigen P1-Stand abgleichen und mit frischer CI gesondert übernehmen. Neue Workflow-Verwendungen dürfen keine alte Action-Version behalten.

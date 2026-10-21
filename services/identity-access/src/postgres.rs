@@ -60,10 +60,14 @@ pub async fn register_identity(
     identity: IdentityId,
 ) -> Result<(), StorageError> {
     require_autocommit(connection)?;
-    sqlx::query("INSERT INTO identity_access.identities (id) VALUES ($1::text::numeric)")
-        .bind(identity.value().to_string())
-        .execute(connection)
-        .await?;
+    let result =
+        sqlx::query("INSERT INTO identity_access.identities (id) VALUES ($1::text::numeric)")
+            .bind(identity.value().to_string())
+            .execute(connection)
+            .await?;
+    if result.rows_affected() != 1 {
+        return Err(StorageError::WriteNotConfirmed);
+    }
     Ok(())
 }
 
@@ -81,11 +85,14 @@ pub async fn create_session(
         .await?;
     let created = now(&mut transaction).await?;
     let record = SessionRecord::new(id, identity, created, limits)?;
-    sqlx::query("INSERT INTO identity_access.sessions (id, identity_id, fingerprint, created_at, absolute_expires_at, idle_seconds, last_activity_at, last_observed_at, state) \
+    let result = sqlx::query("INSERT INTO identity_access.sessions (id, identity_id, fingerprint, created_at, absolute_expires_at, idle_seconds, last_activity_at, last_observed_at, state) \
         VALUES ($1::text::numeric, $2::text::numeric, $3, $4::text::numeric, $5::text::numeric, $6::text::numeric, $4::text::numeric, $4::text::numeric, 'active')")
         .bind(id.value().to_string()).bind(identity.value().to_string()).bind(token.fingerprint().as_slice())
         .bind(created.to_string()).bind(record.absolute_expires_at().to_string()).bind(limits.idle_seconds.to_string())
         .execute(&mut *transaction).await?;
+    if result.rows_affected() != 1 {
+        return Err(StorageError::WriteNotConfirmed);
+    }
     transaction.commit().await?;
     Ok(token)
 }

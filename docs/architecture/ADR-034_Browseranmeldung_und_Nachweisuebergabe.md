@@ -27,7 +27,7 @@ Das Gateway erhält keine Datenbankrolle. Identitätsbestand bleibt bei identity
 Die lokale Identitätstransaktion kann keine fremde Mitgliedschaft atomar einschließen. Der aktuelle Organisationsaufruf bleibt für geschützte Prüfungen erforderlich.
 Prüfzeitpunkte und konkurrierender dienstübergreifender Widerruf benötigen vor Code einen konkreten Vertrag; eine alte positive Antwort ist keine dauerhafte Freigabe.
 Fachliche Rechteverwaltung, Föderation und produktiver Schlüsselbetrieb werden nicht in diesen Vorbereitungsschritt vorgezogen.
-Eine Entscheidung über Fristen, MFA-Kombination und Browser-Schutz wird mit konkreten Vorschlägen angefordert.
+Die Entscheidungen über Fristen, MFA-Kombination und Browser-Schutz sind ausdrücklich bestätigt.
 
 ## Bestätigte Antworten
 
@@ -53,7 +53,8 @@ Solche Fachregeln werden nicht aus synthetischen Testzuordnungen abgeleitet.
 5. Browser-, TLS- und Dienstidentitätsnachweise getrennt prüfen; ursprüngliche Gesamtkriterien vollständig nachführen.
 
 Reine Routertests erfüllen keinen mTLS-, Browser- oder produktiven RLS-Nachweis.
-Diese Vorbereitung ergänzt keine Abhängigkeit, Migration oder Laufzeitfunktion. Alle Kriterien von #67 bleiben offen.
+Der ursprüngliche Vorbereitungsschritt 20a88bf ergänzte keine Abhängigkeit, Migration oder Laufzeitfunktion.
+ADR-035 konkretisiert danach den ersten Einstellungsspeicher. Die Gesamtkriterien von #67 bleiben bis zur weiteren Integration offen.
 
 ## Quellen
 

@@ -20,6 +20,8 @@ Der Adapter gewährt keine Berechtigung. Die RLS-Sperre aus Migration 0001 bleib
 Ein fehlender Treffer ist kein Beleg, dass die Kennung installationsweit nicht existiert.
 Jede Änderung verwendet genau eine SQL-Anweisung. Mehrere Änderungen können durch eine vom Aufrufer geführte Transaktion zusammengefasst werden.
 Der Adapter bestätigt oder verwirft diese Transaktion nicht selbst.
+Eine erfolgreiche Anlage muss genau eine betroffene Zeile bestätigen. Unterdrückt ein Trigger die Anlage,
+meldet der Adapter einen Fehler. Bei einer äußeren Transaktion bleibt deren Rücknahme Aufgabe des Aufrufers.
 Er bietet weder Transfer noch Änderung oder Löschung bestehender Zuordnungen an.
 
 ## Kennungen und Fehler
@@ -44,6 +46,8 @@ Die Verbindung läuft über einen kurzlebigen Unix-Socket des eigenen Containers
 
 Die Tests prüfen positive Anlage und Rücklesen, beide Kennungsgrenzen, Null-Träger,
 doppelte Kennungen, unbekannte Träger, Rücknahme einer mehrteiligen Transaktion und Persistenz nach Server-Neustart.
+Zusätzliche Fehlertests unterdrücken die Träger- und Einrichtungsanlage durch einen Testtrigger.
+Beide Aufrufe müssen einen Fehler melden und dürfen keinen Datensatz hinterlassen.
 Eine gesonderte Test-Loginrolle erhält ausschließlich die Laufzeitrechte.
 Unter dieser Identität müssen Lesen durch RLS gefiltert und Schreiben verweigert werden.
 Nur die Test-Betriebsidentität darf positive Testdaten trotz RLS anlegen.

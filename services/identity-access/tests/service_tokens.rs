@@ -21,7 +21,7 @@ async fn connect(user: &str) -> PgConnection {
     .await
     .unwrap()
 }
-async fn sql(c: &mut PgConnection, text: &str) {
+async fn sql(c: &mut PgConnection, text: &'static str) {
     sqlx::raw_sql(text).execute(c).await.unwrap();
 }
 async fn clock(c: &mut PgConnection) -> u64 {
@@ -157,10 +157,14 @@ async fn service_tokens_are_current_and_bound() {
     assert_eq!(active.certificate(), identity.certificate());
     assert_eq!(active.expires_at() - active.created_at(), 300);
     assert_ne!(fingerprint(&token).as_slice(), token.expose());
-    assert_eq!(
-        count(&mut c).await,
-        if after { count(&mut witness).await } else { 1 }
-    );
+    let stored: Vec<u8> = sqlx::query_scalar(
+        "SELECT fingerprint FROM identity_access.service_tokens WHERE fingerprint=$1",
+    )
+    .bind(fingerprint(&token))
+    .fetch_one(&mut c)
+    .await
+    .unwrap();
+    assert_eq!(stored, fingerprint(&token));
     let unknown = ServiceToken::from_bytes(&[7; 32]).unwrap();
     assert!(
         service_tokens::introspect(&mut c, &cfg, organization, &unknown)
@@ -405,6 +409,96 @@ async fn service_tokens_are_current_and_bound() {
     support::assert_idle(&mut witness, connection_pid).await;
     assert_eq!(count(&mut c).await, before);
     sql(&mut c,"DROP TRIGGER reject_service_commit ON identity_access.service_tokens; DROP FUNCTION public.reject_service_commit();").await;
+
+    let registry_token = service_tokens::issue(
+        &mut c,
+        &cfg,
+        identity,
+        Name::OrganizationConfig,
+        Scope::MembershipRead,
+        30,
+    )
+    .await
+    .unwrap();
+    sql(&mut c,"UPDATE identity_access.service_clients SET version=version+1 WHERE name='organization-config'").await;
+    assert!(
+        service_tokens::introspect(&mut c, &cfg, organization, &registry_token)
+            .await
+            .unwrap()
+            .is_none()
+    );
+    assert_eq!(state(&mut c, &registry_token).await, "revoked");
+    let update_token = service_tokens::issue(
+        &mut c,
+        &cfg,
+        identity,
+        Name::OrganizationConfig,
+        Scope::MembershipRead,
+        30,
+    )
+    .await
+    .unwrap();
+    sql(&mut c,"CREATE FUNCTION public.suppress_service_update() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RETURN NULL; END $$;
+        CREATE TRIGGER suppress_service_update BEFORE UPDATE ON identity_access.service_tokens FOR EACH ROW EXECUTE FUNCTION public.suppress_service_update();").await;
+    assert!(
+        service_tokens::introspect(&mut c, &cfg, organization, &update_token)
+            .await
+            .is_err()
+    );
+    support::assert_idle(&mut witness, connection_pid).await;
+    sql(&mut c,"DROP TRIGGER suppress_service_update ON identity_access.service_tokens; DROP FUNCTION public.suppress_service_update();").await;
+    assert!(
+        service_tokens::introspect(&mut c, &cfg, organization, &update_token)
+            .await
+            .unwrap()
+            .is_some()
+    );
+
+    // A short registered certificate caps issuance; future and overlong certificates fail.
+    let time = clock(&mut c).await;
+    let short_peer = PeerReference::new(Name::IdentityAccess, [14 + offset; 32]);
+    sqlx::query("INSERT INTO identity_access.service_certificates VALUES($1,'identity-access',$2::text::numeric,$3::text::numeric,false)")
+        .bind(short_peer.certificate().as_slice()).bind((time-1).to_string()).bind((time+30).to_string()).execute(&mut c).await.unwrap();
+    let capped = service_tokens::issue(
+        &mut c,
+        &cfg,
+        short_peer,
+        Name::OrganizationConfig,
+        Scope::MembershipRead,
+        300,
+    )
+    .await
+    .unwrap();
+    assert_eq!(
+        service_tokens::introspect(&mut c, &cfg, organization, &capped)
+            .await
+            .unwrap()
+            .unwrap()
+            .expires_at(),
+        time + 30
+    );
+    let future_peer = PeerReference::new(Name::IdentityAccess, [15 + offset; 32]);
+    sqlx::query("INSERT INTO identity_access.service_certificates VALUES($1,'identity-access',$2::text::numeric,$3::text::numeric,false)")
+        .bind(future_peer.certificate().as_slice()).bind((time+600).to_string()).bind((time+900).to_string()).execute(&mut c).await.unwrap();
+    assert!(
+        service_tokens::issue(
+            &mut c,
+            &cfg,
+            future_peer,
+            Name::OrganizationConfig,
+            Scope::MembershipRead,
+            30
+        )
+        .await
+        .is_err()
+    );
+    support::assert_idle(&mut witness, connection_pid).await;
+    let error=sqlx::query("INSERT INTO identity_access.service_certificates VALUES($1,'identity-access',1,86402,false)")
+        .bind([16+offset;32].as_slice()).execute(&mut c).await.unwrap_err();
+    assert_eq!(
+        error.as_database_error().unwrap().code().as_deref(),
+        Some("23514")
+    );
 
     let certificate_token = service_tokens::issue(
         &mut c,

@@ -76,6 +76,7 @@ Alle beteiligten Aufrufer müssen dieselbe Grenzkonfiguration verwenden; abweich
 Der Test-Schlüsselanbieter erzeugt Schlüsselmaterial und Schlüsselkennung frisch im Arbeitsspeicher. Es gibt keine Import-, Export- oder produktive Ladestelle.
 Ein dauerhafter Datenbankzähler reserviert jede AES-GCM-Nonce vor der Verschlüsselung in einer eigenen bestätigten Operation.
 Je Schlüsselkennung sind höchstens 2^32-1 Verschlüsselungen erlaubt. Die 96-Bit-Nonce kodiert den eindeutigen Zähler; verbrauchte Zähler werden nicht zurückgesetzt.
+Ein Datenbanktrigger erlaubt bei vorhandenen Zählern ausschließlich den nächsten Wert. Die Laufzeitrolle darf Zähler weder löschen noch deren Kennung ändern.
 Identität, Faktor und Schlüsselkennung werden als zusätzliche authentisierte Daten gebunden.
 Fehlender Schlüssel, falscher Bezug und beschädigter Chiffretext werden ohne Ausweichschlüssel abgewiesen.
 
@@ -85,6 +86,7 @@ Nach Wiederherstellung verlangt die Faktorneueinrichtung stattdessen einen begre
 Im Bestand liegt nur dessen Ableitung. Dieser Nachweis ist keine normale Sitzung.
 Ein anderer noch unbenutzter Offline-Code kann bei verlorenem Wiederherstellungsnachweis einen neuen begrenzten Vorgang eröffnen.
 Die erfolgreiche Faktoraktivierung ersetzt den Offline-Code-Satz vollständig und gibt den neuen Satz einmal aus.
+Ein bestätigter Faktorwiderruf entfernt auch den zugehörigen Offline-Code-Satz. Alte Codes dürfen diesen Widerruf nicht aufheben.
 
 Wiederherstellung widerruft bestehende Sitzungen, entfernt den bisherigen TOTP-Bestand und sperrt normale Anmeldeabschlüsse bis zur Faktorneueinrichtung.
 Die Sperre muss in KC-006F auch bei Passwort- und Passkey-Nachweisen aktuell geprüft werden.

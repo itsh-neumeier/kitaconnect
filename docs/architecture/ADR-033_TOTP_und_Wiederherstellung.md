@@ -67,6 +67,8 @@ Der aktualisierte Vertrag wird vor Implementierung versioniert.
 Der Adapter verwendet die bestehende dauerhafte Versuchsreservierung aus KC-006C; diese technische Voraussetzung wird im Backlog ergänzt.
 AES-GCM verwendet im Test einen frischen zufälligen RAM-Schlüssel und vorab dauerhaft reservierte eindeutige Zähler-Nonces.
 Der Schlüssel kann weder importiert noch exportiert werden. Produktiver Schlüsselanbieter und Rotation werden dadurch nicht freigegeben.
+Ein Datenbanktrigger schützt vorhandene Nonce-Zähler gegen Rücksetzung und übersprungene Werte. Die Laufzeitrolle erhält kein Löschrecht.
+Der bestätigte Faktorwiderruf entwertet auch den zugehörigen Offline-Code-Satz. Dadurch kann ein alter Code den Widerruf nicht aufheben.
 Eine neue Migration ergänzt MFA-Bestand, verschlüsselte Faktoren, abgeleitete Offline-Codes, begrenzte Wiederherstellungsnachweise und atomare Ereignisaufträge.
 Vorbereitete Faktoren ersetzen den aktiven Faktor erst nach gültiger Bestätigung. Alte Zeitschritte werden nicht erneut akzeptiert.
 Wiederherstellung sperrt normale Anmeldeabschlüsse bis zur Neueinrichtung; die spätere Gateway-Anbindung muss diese aktuelle Sperre auch bei anderen Nachweisarten prüfen.

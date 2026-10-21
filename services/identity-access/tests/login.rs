@@ -18,6 +18,8 @@ use webauthn_authenticator_rs::{AuthenticatorBackend, softpasskey::SoftPasskey};
 use webauthn_rs::prelude::*;
 use zeroize::Zeroizing;
 
+mod support;
+
 // Explicit service test double: no production membership, network or mTLS claim.
 #[derive(Clone)]
 struct SyntheticOrganization {
@@ -275,6 +277,8 @@ async fn assertion(
 #[ignore = "requires scripts/test-organization-db.mjs isolated PostgreSQL fixture"]
 async fn login_completion_is_atomic_and_current() {
     let mut c = connect("postgres").await;
+    let connection_pid = pid(&mut c).await;
+    let mut cleanup_witness = connect("postgres").await;
     let after = std::env::var("KC_ORG_TEST_PHASE").unwrap() == "after";
     if after {
         assert!(count(&mut c,"SELECT count(*) FROM identity_access.login_flows WHERE consumed AND identity_id BETWEEN 1 AND 4").await>=4);
@@ -402,6 +406,7 @@ async fn login_completion_is_atomic_and_current() {
             .await
             .is_err()
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     let wrong_route = begin(&mut c, user, LoginRoute::Passkey, &mut org).await;
     assert!(
         checker
@@ -416,6 +421,7 @@ async fn login_completion_is_atomic_and_current() {
             .await
             .is_err()
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     clean(&mut c).await;
     // An enabled TOTP cannot be bypassed even when a synthetic membership does not mandate MFA.
     sqlx::query("INSERT INTO identity_access.mfa_notification_contacts VALUES ($1::text::numeric,'00000000-0000-4000-8000-000000000001',0)").bind(a.value().to_string()).execute(&mut c).await.unwrap();

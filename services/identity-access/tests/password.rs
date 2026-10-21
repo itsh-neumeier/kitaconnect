@@ -10,6 +10,8 @@ use sqlx::{
 };
 use std::time::Duration;
 
+mod support;
+
 async fn connect(user: &str) -> PgConnection {
     PgConnection::connect_with(
         &PgConnectOptions::new()
@@ -79,6 +81,8 @@ async fn pid(connection: &mut PgConnection) -> i32 {
 #[ignore = "requires the isolated PostgreSQL fixture in scripts/test-organization-db.mjs"]
 async fn passwords_and_durable_attempts_fail_closed() {
     let mut connection = connect("postgres").await;
+    let connection_pid = pid(&mut connection).await;
+    let mut cleanup_witness = connect("postgres").await;
     let phase = std::env::var("KC_ORG_TEST_PHASE").unwrap();
     let checker = std::sync::Arc::new(PasswordChecker::new().await.unwrap());
     if phase == "after" {
@@ -94,6 +98,7 @@ async fn passwords_and_durable_attempts_fail_closed() {
             .await
             .unwrap_err();
         assert_eq!(error, PasswordError);
+        support::assert_idle(&mut cleanup_witness, connection_pid).await;
         assert_eq!(used(&mut connection).await, 1);
         let versions: Vec<i32> = sqlx::query_scalar(
             "SELECT version FROM identity_access.schema_versions ORDER BY version",
@@ -109,6 +114,13 @@ async fn passwords_and_durable_attempts_fail_closed() {
         .await
         .unwrap();
     checker.store(&mut connection, id(), input()).await.unwrap();
+    assert!(
+        checker
+            .store(&mut connection, IdentityId::new(999).unwrap(), input())
+            .await
+            .is_err()
+    );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     let sessions_before: i64 = sqlx::query_scalar("SELECT count(*) FROM identity_access.sessions")
         .fetch_one(&mut connection)
         .await
@@ -369,6 +381,7 @@ async fn passwords_and_durable_attempts_fail_closed() {
             .unwrap_err(),
         PasswordError
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     assert_eq!(used(&mut connection).await, 1);
     checker
         .check(&mut connection, key(11), bounded, Some(id()), input())
@@ -381,6 +394,7 @@ async fn passwords_and_durable_attempts_fail_closed() {
             .unwrap_err(),
         PasswordError
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     assert_eq!(used(&mut connection).await, 2);
     assert_eq!(
         checker
@@ -389,6 +403,7 @@ async fn passwords_and_durable_attempts_fail_closed() {
             .unwrap_err(),
         PasswordError
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     assert_eq!(used(&mut connection).await, 2);
     sqlx::query("UPDATE identity_access.password_budget SET last_observed = floor(EXTRACT(epoch FROM clock_timestamp())) + 3600").execute(&mut connection).await.unwrap();
     assert_eq!(
@@ -398,6 +413,7 @@ async fn passwords_and_durable_attempts_fail_closed() {
             .unwrap_err(),
         PasswordError
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     assert_eq!(used(&mut connection).await, 2);
     sqlx::raw_sql("UPDATE identity_access.password_budget SET window_start = 0, last_observed = 0; UPDATE identity_access.password_attempts SET window_start = 0;").execute(&mut connection).await.unwrap();
     checker

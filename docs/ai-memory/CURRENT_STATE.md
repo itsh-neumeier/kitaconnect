@@ -6,18 +6,18 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 
 ## Arbeitsstand
 
-- issue_id: [KC-006E / #66](https://github.com/itsh-neumeier/kitaconnect/issues/66), Teil von KC-006 / #6.
-- branch: codex/kc-006e-mfa-vertrag auf PR #71 / 74c5e1731be0db55f1ef8698d7119f8fcd5cce7c.
-- pull_request: [PR #72](https://github.com/itsh-neumeier/kitaconnect/pull/72), Basis codex/kc-006d-webauthn-vertrag. Abschlussprüfungen und Bereitschaft zur Durchsicht im PR nachführen.
-- head_commit: Implementierungsabschluss ed44bb0. Dieser reine Dokumentationscheckpoint folgt gesondert; aktuellen Kopf und CI in PR #72 prüfen.
-- objective: Bestätigte TOTP-, Wiederherstellungs- und Benachrichtigungsregeln in KC-006E implementieren und nachweisen.
-- completed: Bestätigter Vertrag vor Code versioniert; TOTP, verschlüsselte Faktoren, einmalige Offline-Codes, begrenzte Wiederherstellungsnachweise und atomare Sicherheits-/Benachrichtigungsaufträge implementiert. Erster vollständiger Linux-CI-Lauf auf ed44bb0 erfolgreich, einschließlich MFA-Datenbanktests vor und nach Neustart.
-- remaining: Persönliche und sprachliche Durchsicht sowie gesonderter Integrationsauftrag. KC-006E bis Integration offen lassen. Nächstes Teilpaket ist KC-006F / #67; offene Sitzungswerte vor abhängigen Regeln beantworten. Keine Integration beauftragt.
-- migration_state: Neue Migration 0004 ergänzt MFA-Bestand. Bestehende identity-access-Versionen 1/2/3 und Organisationsmigrationen bleiben unverändert. Runtime bleibt durch FORCE RLS gesperrt. Der neue Testbestand kc_mfa_test bleibt von bisherigen Testdatenbanken getrennt.
-- known_failures: Erste CI-Fehler in SQLx-Testhelfern und einer doppelten synthetischen Kennung sind behoben. Stand ed44bb0 besteht den vollständigen Linux-Lauf. Windows-Linker und Docker fehlen lokal. Keine lokalen ausführbaren Rust-/Datenbankerfolge behaupten.
-- test_commands: cargo fmt --all --check; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node scripts/check-github-rules.mjs; node scripts/fixtures.mjs --check; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, cargo test/build --workspace --locked und node scripts/test-organization-db.mjs.
-- dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70 und #71 offen und grün. Keine ungefragte Integration.
-- security_notes: Die Projektleitung bestätigt ausdrücklich alle MFA-, Wiederherstellungs- und Benachrichtigungsregeln. Vertrag und ADR-033 sind in cffb194 vor Implementierung aktualisiert. Keine Nachrichten versendet. Produktiver Schlüsselanbieter und Rotation bleiben gesperrt; der Adapter verwendet ausschließlich frische RAM-Schlüssel mit dauerhaft reservierten Zähler-Nonces. Browser-Sitzungswerte bleiben offen.
+- issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
+- branch: codex/kc-006f-anmeldevertrag auf PR #72 / cb3d8f62d1fde50dcb67b96468534cf8876fbe1a.
+- pull_request: [PR #73](https://github.com/itsh-neumeier/kitaconnect/pull/73), Entwurf; Basis codex/kc-006e-mfa-vertrag.
+- head_commit: Vertragsvorbereitung 20a88bfd140c02bca083b6b7ca57db88f6bc6a6d. Dieser reine Dokumentationscheckpoint folgt gesondert; aktuellen Kopf und CI in PR #73 prüfen.
+- objective: Browser-Anmeldevertrag und atomare Nachweisübergabe vorbereiten; offene Sicherheitsregeln vor abhängiger Implementierung klären.
+- completed: ADR-034, Browser-Anmeldevertrag, verfeinerte Akzeptanzkriterien und Testmatrix versioniert. Die Autorität von organization-config über Mitgliedschaften bleibt erhalten. PR #72 ist offen, zur Durchsicht bereit und an seinem Abschlusskopf vollständig grün.
+- remaining: Drei Interviewantworten zu Sitzungsfristen, Passkey-Gleichstellung bei MFA-Pflicht und Cookie-/CSRF-Regeln zuordnen. Antworten zuerst in Vertrag und ADR versionieren. Dann konkreten Speicher-/Sperrvertrag und begrenzte Umsetzung von #67 ausarbeiten. Alle Akzeptanzkriterien von #67 bleiben offen.
+- migration_state: Keine neue Migration oder Abhängigkeit in KC-006F. Identity-access-Versionen 1 bis 4 bleiben unverändert; Organisationsmigrationen bleiben unverändert. Runtime bleibt durch FORCE RLS gesperrt.
+- known_failures: Keine Fehler in lokalen Dokumentationsprüfungen oder Node-Tests. Keine neue Anmeldefunktion und keine neuen ausführbaren Diensttests behaupten. Windows-Linker und Docker fehlen lokal. CI des Vorbereitungskopfes im PR nachführen.
+- test_commands: node --test scripts/*.test.mjs; node scripts/check-project.mjs; git diff --check; Gitleaks. Die unveränderte Workspace-CI prüft zusätzlich Rust, Web und bestehende echte Datenbanktests.
+- dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70, #71 und #72 offen. PR #72 am Abschlusskopf vollständig grün. Keine ungefragte Integration.
+- security_notes: MFA-Pflicht, Offline-Wiederherstellung, Benachrichtigungsaufträge und WebAuthn-Testprofil sind bestätigt; nicht erneut fragen. Die drei KC-006F-Fragen sind offen. Bestehende positive Faktor-Ergebnisse sind keine einmaligen Sitzungsabschlussnachweise. Eine lokale Identitätstransaktion kann fremde Mitgliedschaft nicht atomar einschließen. Produktiver Schlüsselbetrieb, Domain, Versuchslimits und Rollen-/Poolbindung bleiben gesondert.
 
 ## P0-Abschluss
 
@@ -247,10 +247,21 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 - Lokal erfolgreich: Rustfmt, 44 Node-Tests, Struktur-/Verweisprüfung für 50 Issues und 47 Dokumente, Regelsatzprüfung, synthetische Fixtures, JavaScript-Syntax, git diff --check und Gitleaks.
 - Für KC-006F wurde die noch offene Frage zu 15 Minuten Inaktivität, 8 Stunden absoluter Laufzeit und 5 Minuten zusätzlicher Authentisierung erneut gestellt. Antwort steht aus. Produktive Domain, Versuchslimits, Prüfschlüsselbindung, Rollenbindung und Schlüsselbetrieb bleiben gesondert offen.
 
+## KC-006F: Vorbereitung und offene Interviewantworten
+
+- Fortsetzungsprüfung abgeschlossen: PR #72 ist offen und kein Entwurf mehr. Abschlusskopf cb3d8f62d1fde50dcb67b96468534cf8876fbe1a besteht alle zehn Pflichtprüfungen.
+  [CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580909505),
+  [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580909278).
+- [ADR-034](../architecture/ADR-034_Browseranmeldung_und_Nachweisuebergabe.md) und der [Browser-Anmeldevertrag](../../contracts/identity-access/browser-auth-v1.md) sind in 20a88bf versioniert. PR #73 bleibt ein Entwurf.
+- Die drei Fragen wurden gemeinsam mit Vorschlägen gestellt. Eine Antwort steht aus. Die Aufforderung „Weiter“ bestätigt keine der Sicherheitsregeln.
+- Technische Richtung: versionierte und einmalige Nachweisübergabe aus der tatsächlichen Faktorprüfung; atomarer lokaler Sitzungsabschluss; aktuelle Mitgliedschaft beim Organisationsdienst. Kein ungeprüftes create_session nach einem alten positiven Ergebnis.
+- Kein Gateway-Dienst, keine Browseranmeldung, kein Mitgliedschaftsadapter, keine Migration und keine neue Abhängigkeit ergänzt. Keine bestehende Funktion aus KC-006E erneut implementiert.
+- Lokal erfolgreich: 44 Node-Tests, Struktur-/Verweisprüfung für 50 Issues und 48 Dokumente, git diff --check und Gitleaks. Keine neuen Tests für die reine Dokumentationsänderung geschrieben. Aktuelle CI-Nachweise im PR nachführen.
+
 ## Nächste drei Aktionen
 
-1. Aktuellen Kopf und CI von PR #72 prüfen. Bei grünem Abschluss KC-006E nicht erneut implementieren. Issue #66 bleibt bis Integration offen. Mit KC-006F / #67 auf einem neuen Branch auf #72 fortsetzen; vor Code Vertrag und ADR versionieren.
-2. Die bereits gestellte Sitzungsfrage zuordnen. Ohne ausdrückliche Antwort keine davon abhängigen Anmelderegeln festlegen. Die MFA-/Wiederherstellungsfragen sind beantwortet. Weitere produktive Rollen-, Domain-, Versuchs- und Schlüsselentscheidungen getrennt behandeln.
-3. Persönliche/sprachliche Durchsicht und Integrationsauftrag beachten. Integrationsfolge #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72; nach Basisintegration neu prüfen. Keine ungefragte Integration.
+1. Aktuellen Kopf und CI von PR #73 prüfen. Auf dem vorhandenen Branch fortsetzen; Vertragsvorbereitung und KC-006E nicht wiederholen. Die drei Interviewantworten zuordnen und zuerst in Vertrag sowie ADR-034 versionieren.
+2. Vor Code den konkreten Speicher-/Sperrvertrag für einmalige Nachweisübergabe ausarbeiten. Die Mitgliedschaft bleibt bei organization-config; Prüfzeitpunkte und konkurrierender dienstübergreifender Entzug benötigen ausdrückliche Nachweise. Keine fremden Tabellen oder pauschalen Berechtigungen einführen.
+3. Bestätigten Browser-Schutz und begrenzte Gateway-Anbindung danach implementieren und testen. Persönliche/sprachliche Durchsicht und Integrationsauftrag beachten. Integrationsfolge #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72, #73; nach Basisintegration neu prüfen. Keine ungefragte Integration.
 
-Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/029/030/031/032/033, KC-006-Plan, MFA-Vertragsentwurf und aktuellen GitHub-Stand lesen.
+Vor Fortsetzung AGENTS, CLAUDE, ADR-014/015/019/029/030/031/032/033/034, KC-006-Plan, Browser-Anmeldevertrag und aktuellen GitHub-Stand lesen.

@@ -37,3 +37,7 @@ Die Organisations-Testgrenze ist kein mTLS- oder produktiver Mitgliedschaftsnach
 Produktive Domain, Schlüssel-/Rollenbindung, konkrete Verwaltungsrechte und Betriebsgrenzwerte bleiben gesondert.
 Neue Migration 0005 erhält geschlossene RLS; alte Migrationen bleiben unverändert.
 Die Gesamtabnahme von KC-006F bleibt bis zur übrigen Integration offen.
+
+## Technische Quelle
+
+[PostgreSQL 18: transaktionsgebundene Advisory-Locks und getrennte Schlüsselräume](https://www.postgresql.org/docs/18/functions-admin.html#FUNCTIONS-ADVISORY-LOCKS).

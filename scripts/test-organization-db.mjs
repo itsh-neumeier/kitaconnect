@@ -233,6 +233,24 @@ try {
   sql(policyMigration, { database: 'kc_session_policy_test', transaction: true, expectedState: 'P0001' });
   testAdapter('before', 'session_policy', 'facility_session_policies_are_versioned_and_restricted');
 
+  sql('CREATE DATABASE kc_login_test;');
+  sql(file('provision/002_schema.sql', identityRoot), { database: 'kc_login_test', transaction: true });
+  for (const migration of [identityMigration, passwordMigration, webauthnMigration, mfaMigration]) {
+    sql(migration, { database: 'kc_login_test', transaction: true });
+  }
+  const loginMigration = `SET SESSION AUTHORIZATION kc_identity_migrator;\n${file('migrations/0005_login_flows.sql', identityRoot)}`;
+  sql(`${loginMigration}\nSELECT 1 / 0;`, { database: 'kc_login_test', transaction: true, expectedState: '22012' });
+  sql(`DO $$ BEGIN
+    ASSERT pg_catalog.to_regclass('identity_access.login_flows') IS NULL;
+    ASSERT pg_catalog.to_regclass('identity_access.login_limits') IS NULL;
+    ASSERT pg_catalog.to_regclass('identity_access.session_login_bindings') IS NULL;
+    ASSERT pg_catalog.to_regprocedure('identity_access.guard_login_flow()') IS NULL;
+    ASSERT (SELECT pg_catalog.array_agg(version ORDER BY version)=ARRAY[1,2,3,4] FROM identity_access.schema_versions);
+  END $$;`, { database: 'kc_login_test' });
+  sql(loginMigration, { database: 'kc_login_test', transaction: true });
+  sql(loginMigration, { database: 'kc_login_test', transaction: true, expectedState: 'P0001' });
+  testAdapter('before', 'login', 'login_completion_is_atomic_and_current', 'kitaconnect-identity-access');
+
   requireSuccess(docker(['restart', container]), 'Restart same test database');
   await waitUntilReady();
   sql(file('tests/persisted.sql'));
@@ -247,6 +265,7 @@ try {
   testAdapter('after', 'webauthn', 'webauthn_ceremonies_are_current_and_single_use', 'kitaconnect-identity-access');
   testAdapter('after', 'mfa', 'totp_and_recovery_are_atomic_and_protected', 'kitaconnect-identity-access');
   testAdapter('after', 'session_policy', 'facility_session_policies_are_versioned_and_restricted');
+  testAdapter('after', 'login', 'login_completion_is_atomic_and_current', 'kitaconnect-identity-access');
   console.log('PASS: two carriers and an independent facility, version and role boundaries survive server restart');
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {

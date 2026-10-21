@@ -298,3 +298,9 @@ Der Prüfvertrag wird vor Code versioniert. Rotation, erneute Faktorprüfung und
 [ADR-038](architecture/ADR-038_Atomare_Sitzungsrotation.md) beschreibt den atomaren Nachweiswechsel innerhalb derselben Anmeldung.
 Fristen und Authentisierungszeit bleiben erhalten. Abmeldung widerruft auch deren Rotationsnachfolger.
 Der Rotationsvertrag wird vor Code versioniert. Browser- und Dienstidentitätsnachweise bleiben gesondert.
+
+## ADR-040 – Abschluss eigener Transaktionen
+
+[ADR-040](architecture/ADR-040_Abschluss_eigener_Transaktionen.md) hält die Korrektur nach dem Rotationsnachweis fest.
+Eigene Fehlerpfade warten Rollback ab. Bereits bestätigte Versuchslimits und dauerhafte Ablaufzustände bleiben erhalten.
+Die weiteren Adapter werden in kleinen Paketen mit getrennten Datenbankzeugen geprüft.

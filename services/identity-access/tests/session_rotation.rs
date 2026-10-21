@@ -192,6 +192,18 @@ async fn unchanged(c: &mut PgConnection, a: u128, b: u128) {
 #[tokio::test]
 #[ignore = "requires scripts/test-organization-db.mjs isolated PostgreSQL fixture"]
 async fn rotation_preserves_login_and_logout_lineage() {
+    if tokio::time::timeout(Duration::from_secs(30), rotation_cases())
+        .await
+        .is_err()
+    {
+        let mut diagnostic = connect("postgres").await;
+        let rows:Vec<String>=sqlx::query_scalar("SELECT concat(pid,':',state,':',wait_event_type,':',wait_event,':',left(query,120)) FROM pg_stat_activity WHERE datname=current_database() AND pid<>pg_backend_pid() ORDER BY pid")
+            .fetch_all(&mut diagnostic).await.unwrap();
+        panic!("rotation fixture timeout; database waits: {rows:?}");
+    }
+}
+async fn rotation_cases() {
+    println!("rotation fixture: setup and repeated rotation");
     let after = std::env::var("KC_ORG_TEST_PHASE").unwrap() == "after";
     let base = if after { 10000 } else { 0 };
     let mut c = connect("postgres").await;
@@ -214,6 +226,7 @@ async fn rotation_preserves_login_and_logout_lineage() {
         step: 60,
         ..Default::default()
     };
+    println!("rotation fixture: first rotate");
     let next = session_rotation::rotate(&mut c, &first, sid(base + 1001), facility(), &mut a)
         .await
         .unwrap();
@@ -259,6 +272,7 @@ async fn rotation_preserves_login_and_logout_lineage() {
     );
     assert_eq!(state(&mut c, base + 2).await, "active");
 
+    println!("rotation fixture: concurrent rotations");
     // Two rotations are both real lock waiters, never two independent snapshots.
     a = SyntheticAuthority::default();
     let race = seed(&mut c, base + 3, base + 3, true, 0, 28800).await;
@@ -291,6 +305,7 @@ async fn rotation_preserves_login_and_logout_lineage() {
         .bind((base+3).to_string()).fetch_one(&mut c).await.unwrap();
     assert_eq!(total, 1);
 
+    println!("rotation fixture: concurrent logout");
     // Logout waits behind an in-flight rotation, then revokes its newly issued successor.
     let root = seed(&mut c, base + 4, base + 4, true, 0, 28800).await;
     let entered = Arc::new(Notify::new());
@@ -325,6 +340,7 @@ async fn rotation_preserves_login_and_logout_lineage() {
     assert!(!checked(&mut c, &issued, &mut a).await);
     assert_eq!(state(&mut c, base + 1006).await, "revoked");
 
+    println!("rotation fixture: suppressed writes and commit failure");
     // Suppressed writes and commit failure must restore the old session.
     let valid = seed(&mut c, base + 6, base + 6, true, 0, 28800).await;
     sql(&mut c,"CREATE FUNCTION public.suppress_rotation() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RETURN NULL; END $$; CREATE TRIGGER suppress_rotation BEFORE INSERT ON identity_access.sessions FOR EACH ROW EXECUTE FUNCTION public.suppress_rotation();").await;
@@ -355,6 +371,7 @@ async fn rotation_preserves_login_and_logout_lineage() {
     sql(&mut c,"DROP TRIGGER fail_rotation_commit ON identity_access.session_rotation_links; DROP FUNCTION public.fail_rotation_commit();").await;
     assert!(checked(&mut c, &valid, &mut a).await);
 
+    println!("rotation fixture: candidate expiry");
     // Candidate insert really waits on a conflicting uncommitted primary key until expiry.
     let expiring = seed(&mut c, base + 5, base + 5, true, 0, 4).await;
     let deadline: u64 = sqlx::query_scalar::<_, String>(
@@ -390,6 +407,7 @@ async fn rotation_preserves_login_and_logout_lineage() {
         .bind((base+5).to_string()).fetch_one(&mut c).await.unwrap();
     assert_eq!(no_link, 0);
 
+    println!("rotation fixture: recovery, outer transaction and RLS");
     // Recovery and an unbound low-level session cannot become a rotation success.
     sqlx::query("INSERT INTO identity_access.mfa_accounts (identity_id,last_observed,recovery_required) VALUES ($1::text::numeric,0,true)")
         .bind((base+6).to_string()).execute(&mut c).await.unwrap();

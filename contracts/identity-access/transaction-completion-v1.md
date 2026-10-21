@@ -30,3 +30,13 @@ Tests prüfen zusätzlich Rücknahme, erhaltene Versuchszähler und bleibende Ab
 Der erste Korrekturschritt umfasst Sitzungsbestand, Passwortadapter und Einrichtungseinstellungen.
 TOTP, WebAuthn und zusammengesetzte Anmeldung folgen nach derselben Prüfung getrennt.
 Migrationen, Abhängigkeiten, fachliche Rechte und produktive Grenzwerte bleiben unverändert.
+
+## Folgeschritt: Faktoradapter und Anmeldeabschluss
+
+Der Folgebranch nach PR #78 korrigiert TOTP, WebAuthn und den zusammengesetzten Anmeldeabschluss.
+Interne Hilfsfunktionen, die eine laufende eigene Transaktion an ihren Aufrufer übergeben, beenden nur ihren Fehlerpfad.
+Der Aufrufer bleibt für den erfolgreichen Abschluss verantwortlich.
+Der WebAuthn-Verbrauch bestätigt die Herausforderung vor der anschließenden Bibliotheksprüfung weiterhin dauerhaft.
+Der dauerhafte Verbrauch von Verschlüsselungs-Nonces bleibt außerhalb der späteren Faktortransaktion bestehen.
+Eine bestätigte Ablaufmarkierung im Anmeldevorgang wird als absichtlich negatives Ergebnis gemeinsam mit geprüften Faktorzuständen bestätigt.
+Die getrennten Zeugen prüfen jeweils die offen gehaltene Fehlerverbindung vor jedem weiteren Zugriff auf diese Verbindung.

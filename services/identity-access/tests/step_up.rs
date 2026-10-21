@@ -249,7 +249,12 @@ async fn additional_proof_is_bound_and_rotated() {
         MfaLimits::new(300, 300, 4, 1, attempts()).unwrap(),
     );
     let enrollment = mfa.begin_enrollment(&mut c, a, None).await.unwrap();
-    let now = time(&mut c).await;
+    let mut now = time(&mut c).await;
+    // Leave enough space before a TOTP boundary for the previous-step enrollment code.
+    if now % 30 > 25 {
+        tokio::time::sleep(Duration::from_secs(30 - now % 30)).await;
+        now = time(&mut c).await;
+    }
     let recovery = mfa
         .activate(
             &mut c,
@@ -497,6 +502,44 @@ async fn additional_proof_is_bound_and_rotated() {
     support::assert_idle(&mut witness, pids[0]).await;
     support::assert_idle(&mut witness, pids[1]).await;
     let strong = l.or(r).unwrap();
+    let changed = begin(&mut c, &strong, LoginRoute::Passkey, &mut org).await;
+    assert!(passkey(&webauthn, &mut c, b, &mut device, &changed).await);
+    let (registration, options) = webauthn.start_registration(&mut c, b).await.unwrap();
+    let answer = SoftPasskey::new(true)
+        .perform_register(
+            Url::parse("http://localhost:3000").unwrap(),
+            options.public_key,
+            300_000,
+        )
+        .unwrap();
+    webauthn
+        .finish_registration(
+            &mut c,
+            b,
+            &registration,
+            &serde_json::to_vec(&answer).unwrap(),
+        )
+        .await
+        .unwrap();
+    assert!(
+        login::finish_step_up(
+            &mut c,
+            &strong,
+            &changed,
+            sid(base + 2008),
+            fid(1),
+            &mut org
+        )
+        .await
+        .is_err()
+    );
+    support::assert_idle(&mut witness, cp).await;
+    absent(&mut c, base + 2008).await;
+    assert!(
+        session_check::check(&mut c, &strong, fid(1), Requirement::Standard, &mut org)
+            .await
+            .is_ok()
+    );
     let flow = begin(&mut c, &strong, LoginRoute::Passkey, &mut org).await;
     assert!(passkey(&webauthn, &mut c, b, &mut device, &flow).await);
     let rotated = session_rotation::rotate(&mut c, &strong, sid(base + 2005), fid(1), &mut org)
@@ -531,11 +574,61 @@ async fn additional_proof_is_bound_and_rotated() {
             .is_err()
     );
 
-    // Expiry after begin is made terminal by the actual factor transaction.
+    // An actual receipt INSERT waits in a fixture trigger until the target expires.
     org.version = 2;
     org.mfa = false;
     org.absolute = 3;
     org.step = 3;
+    let waiting = root(&mut c, &checker, &secret, &mut org, base + 5).await;
+    let pending = begin(&mut c, &waiting, LoginRoute::Passkey, &mut org).await;
+    assert!(passkey(&webauthn, &mut c, b, &mut device, &pending).await);
+    let deadline: u64 = sqlx::query_scalar::<_, String>(
+        "SELECT absolute_expires_at::text FROM identity_access.sessions WHERE id=$1::text::numeric",
+    )
+    .bind((base + 5).to_string())
+    .fetch_one(&mut c)
+    .await
+    .unwrap()
+    .parse()
+    .unwrap();
+    sql(&mut c,"CREATE FUNCTION public.step_pause() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN PERFORM pg_advisory_xact_lock(184006,99); RETURN NEW; END $$; CREATE TRIGGER step_pause BEFORE INSERT ON identity_access.step_up_receipts FOR EACH ROW EXECUTE FUNCTION public.step_pause();").await;
+    let mut pause = guard.begin().await.unwrap();
+    sqlx::query("SELECT pg_advisory_xact_lock(184006,99)")
+        .execute(&mut *pause)
+        .await
+        .unwrap();
+    let mut reader = connect("postgres").await;
+    let reader_pid = pid(&mut reader).await;
+    let (failed, ()) = tokio::join!(
+        login::finish_step_up(
+            &mut reader,
+            &waiting,
+            &pending,
+            sid(base + 2010),
+            fid(1),
+            &mut org
+        ),
+        async {
+            tokio::time::timeout(Duration::from_secs(5),async {loop {
+                let waiting:bool=sqlx::query_scalar("SELECT EXISTS(SELECT FROM pg_catalog.pg_stat_activity WHERE pid=$1 AND wait_event_type='Lock')").bind(reader_pid).fetch_one(&mut witness).await.unwrap();
+                if waiting{break;}tokio::time::sleep(Duration::from_millis(10)).await;
+            }}).await.unwrap();
+            tokio::time::timeout(Duration::from_secs(5), async {
+                while time(&mut witness).await < deadline {
+                    tokio::time::sleep(Duration::from_millis(20)).await;
+                }
+            })
+            .await
+            .unwrap();
+            pause.commit().await.unwrap();
+        }
+    );
+    assert!(failed.is_err());
+    support::assert_idle(&mut witness, reader_pid).await;
+    assert_eq!(state(&mut c, base + 5).await, "expired");
+    absent(&mut c, base + 2010).await;
+    sql(&mut c,"DROP TRIGGER step_pause ON identity_access.step_up_receipts; DROP FUNCTION public.step_pause();").await;
+    // Expiry after begin is also terminal in the actual factor transaction.
     let short = root(&mut c, &checker, &secret, &mut org, base + 3).await;
     let flow = begin(&mut c, &short, LoginRoute::Passkey, &mut org).await;
     tokio::time::sleep(Duration::from_secs(3)).await;

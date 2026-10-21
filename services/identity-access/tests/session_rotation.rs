@@ -192,7 +192,9 @@ async fn unchanged(c: &mut PgConnection, a: u128, b: u128) {
 #[tokio::test]
 #[ignore = "requires scripts/test-organization-db.mjs isolated PostgreSQL fixture"]
 async fn rotation_preserves_login_and_logout_lineage() {
-    if tokio::time::timeout(Duration::from_secs(30), rotation_cases())
+    let cases = rotation_cases();
+    tokio::pin!(cases);
+    if tokio::time::timeout(Duration::from_secs(30), &mut cases)
         .await
         .is_err()
     {
@@ -271,6 +273,22 @@ async fn rotation_cases() {
             .is_err()
     );
     assert_eq!(state(&mut c, base + 2).await, "active");
+    let mut witness = connect("postgres").await;
+    let mut permitted = SyntheticAuthority {
+        version: 2,
+        idle: 120,
+        absolute: 3600,
+        step: 60,
+        ..Default::default()
+    };
+    assert!(
+        tokio::time::timeout(
+            Duration::from_secs(3),
+            checked(&mut witness, &separate, &mut permitted)
+        )
+        .await
+        .expect("failed caller must release its lock before returning")
+    );
 
     println!("rotation fixture: concurrent rotations");
     // Two rotations are both real lock waiters, never two independent snapshots.

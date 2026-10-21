@@ -21,8 +21,26 @@ pub async fn rotate(
     let mut tx = connection
         .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
         .await?;
+    match rotate_in_transaction(&mut tx, token, successor, facility, authority).await {
+        Ok(result) => {
+            tx.commit().await?;
+            result.ok_or(CheckError)
+        }
+        Err(error) => {
+            tx.rollback().await?;
+            Err(error)
+        }
+    }
+}
+async fn rotate_in_transaction(
+    tx: &mut PgConnection,
+    token: &SessionToken,
+    successor: SessionRecordId,
+    facility: LoginFacilityId,
+    authority: &mut impl OrganizationAuthority,
+) -> Result<Option<SessionToken>, CheckError> {
     let checked = session_check::checked_in_transaction(
-        &mut tx,
+        &mut *tx,
         token,
         facility,
         Requirement::Standard,
@@ -30,8 +48,7 @@ pub async fn rotate(
     )
     .await?;
     let Some(mut checked) = checked else {
-        tx.commit().await?;
-        return Err(CheckError);
+        return Ok(None);
     };
     if checked.record.id == successor {
         return Err(CheckError);
@@ -62,13 +79,11 @@ pub async fn rotate(
     let live = checked.observe_time(session_check::now(&mut candidate).await?)?;
     if !live {
         candidate.rollback().await?;
-        session_check::save_record(&mut tx, &checked.record).await?;
-        tx.commit().await?;
-        return Err(CheckError);
+        session_check::save_record(&mut *tx, &checked.record).await?;
+        return Ok(None);
     }
     checked.record.id = successor;
     session_check::save_record(&mut candidate, &checked.record).await?;
     candidate.commit().await?;
-    tx.commit().await?;
-    Ok(next)
+    Ok(Some(next))
 }

@@ -67,10 +67,10 @@ function testAdapter(phase, target = 'postgres', test = 'storage_adapter_control
     cwd: root, encoding: 'utf8', timeout: 180_000, maxBuffer: 8 * 1024 * 1024,
     env: { ...process.env, KC_ORG_TEST_SOCKET: socketDirectory, KC_ORG_TEST_PHASE: phase },
   });
-  if (result.error) {
+  if (result.error || result.status !== 0) {
     console.error(result.stdout || 'No test output before process timeout');
     console.error(result.stderr || '');
-    throw result.error;
+    if (result.error) throw result.error;
   }
   requireSuccess(result, `Rust adapter test (${phase})`);
   if (!/test result: ok\. 1 passed;/.test(result.stdout)) throw new Error('Rust adapter test was not executed');

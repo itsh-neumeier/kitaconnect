@@ -21,6 +21,8 @@ Authentisierungszeit, MFA-Stärke und bereits beobachtete Verschärfungen bleibe
 Rotation zählt nicht als Aktivität oder erneute Faktorprüfung.
 Eine neue Policy-Version darf Grenzen weiter kürzen; eine Lockerung verlängert sie nicht.
 Ein zweiter konkurrierender Rotationsversuch mit demselben alten Nachweis darf keine weitere Sitzung erzeugen.
+Fehlerpfade warten den vollständigen Rollback vor der Rückgabe ab.
+Eine danach offen gehaltene Verbindung darf keine Identitätssperre behalten und den Gewinner blockieren.
 Abbruch, Fehler, unterdrückte Änderung oder fehlgeschlagener Commit geben keinen neuen Nachweis aus.
 
 ## Anmeldelinie und Abmeldung

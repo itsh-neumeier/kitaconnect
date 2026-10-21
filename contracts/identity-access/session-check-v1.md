@@ -59,6 +59,7 @@ Sie konkurriert über dieselbe Identitäts- und Sitzungssperre. Unterdrückter W
 Das spätere Gateway muss vor Abmeldung CSRF und Origin prüfen sowie das Cookie passend entfernen.
 
 Alle mehrteiligen Operationen verlangen Autocommit als Aufrufzustand und verwenden eigene READ-COMMITTED-Transaktionen.
+Bei einer Fehlerrückgabe müssen sie den Rollback abwarten. Das Verwerfen einer Transaktionshülle allein reicht bei einer weiterhin offenen Verbindung nicht.
 Neue Tabellen erhalten FORCE RLS ohne erlaubende Runtime-Policy.
 Alte Migrationen, Rollenentscheidungen und externe Abhängigkeiten bleiben unverändert.
 

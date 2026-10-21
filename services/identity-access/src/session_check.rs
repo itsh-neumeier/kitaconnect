@@ -294,17 +294,31 @@ async fn current(
 ) -> Result<CurrentSession, CheckError> {
     autocommit(c)?;
     let mut tx = c.begin_with("BEGIN ISOLATION LEVEL READ COMMITTED").await?;
-    let checked = checked_in_transaction(&mut tx, token, facility, requirement, authority).await?;
+    let checked =
+        match checked_in_transaction(&mut tx, token, facility, requirement, authority).await {
+            Ok(value) => value,
+            Err(error) => {
+                tx.rollback().await?;
+                return Err(error);
+            }
+        };
     let Some(mut checked) = checked else {
         tx.commit().await?;
         return Err(CheckError);
     };
     if activity {
-        checked
+        if checked
             .record
             .record_activity(checked.record.last_observed_at)
-            .map_err(|_| CheckError)?;
-        save_record(&mut tx, &checked.record).await?;
+            .is_err()
+        {
+            tx.rollback().await?;
+            return Err(CheckError);
+        }
+        if let Err(error) = save_record(&mut tx, &checked.record).await {
+            tx.rollback().await?;
+            return Err(error);
+        }
     }
     tx.commit().await?;
     Ok(checked.context)
@@ -443,14 +457,25 @@ pub(crate) async fn checked_in_transaction(
 pub async fn logout(c: &mut PgConnection, token: &SessionToken) -> Result<(), CheckError> {
     autocommit(c)?;
     let mut tx = c.begin_with("BEGIN ISOLATION LEVEL READ COMMITTED").await?;
-    let Some(identity) = identity(&mut tx, token).await? else {
-        tx.commit().await?;
+    match logout_in_transaction(&mut tx, token).await {
+        Ok(()) => tx.commit().await.map_err(CheckError::from),
+        Err(error) => {
+            tx.rollback().await?;
+            Err(error)
+        }
+    }
+}
+async fn logout_in_transaction(
+    tx: &mut PgConnection,
+    token: &SessionToken,
+) -> Result<(), CheckError> {
+    let Some(identity) = identity(&mut *tx, token).await? else {
         return Ok(());
     };
-    login::lock_identity(&mut tx, identity)
+    login::lock_identity(&mut *tx, identity)
         .await
         .map_err(|_| CheckError)?;
-    let record = record(&mut tx, token).await?;
+    let record = record(&mut *tx, token).await?;
     if record.identity != identity {
         return Err(CheckError);
     }
@@ -461,6 +486,5 @@ pub async fn logout(c: &mut PgConnection, token: &SessionToken) -> Result<(), Ch
     if ids.is_empty() || written.rows_affected() != ids.len() as u64 {
         return Err(CheckError);
     }
-    tx.commit().await?;
     Ok(())
 }

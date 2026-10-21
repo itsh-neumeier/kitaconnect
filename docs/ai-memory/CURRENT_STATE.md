@@ -1,22 +1,22 @@
 # Projektstatus und Fortsetzung
 
-Aktualisiert: 20.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
+Aktualisiert: 21.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
 Ausdrückliche Antwort der Projektleitung: „P0 abnehmen, und P1 freigeben“.
 P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nicht erneut abfragen.
 
 ## Arbeitsstand
 
-- issue_id: [KC-006D / #65](https://github.com/itsh-neumeier/kitaconnect/issues/65), Teil von KC-006 / #6.
-- branch: codex/kc-006d-webauthn-vertrag auf PR #70 / e003eb055f4137ee66184152ce660e96d838be44.
-- pull_request: [PR #71](https://github.com/itsh-neumeier/kitaconnect/pull/71), Entwurf; Basis codex/kc-006c-passwortpruefung.
-- head_commit: Kernimplementierung ff12df6deecb4550b1c97497b72dda8029d33916 mit vollständigem CI-Nachweis. Bestätigte Regeln zuvor in ae85a5f versioniert. Dieser Checkpoint folgt mit ergänzenden Negativtests; aktuellen Kopf und dessen CI in PR #71 prüfen.
-- objective: WebAuthn im ausdrücklich bestätigten localhost-Testprofil mit serverseitiger Einmaligkeit und aktuellem Credential-Bestand prüfen.
-- completed: Alle drei Vorschläge durch „Alle drei Vorschläge bestätigen“ angenommen: zunächst localhost, erforderliche Benutzerverifikation, erlaubte synchronisierte Passkeys. Vertrag/ADR vor Code aktualisiert. Adapter, Migration 0003 und echte Protokoll-/Datenbanktests implementiert. Erster vollständiger Linux-Lauf einschließlich OpenSSL, RLS, Sperrkonkurrenz und Neustart erfolgreich.
-- remaining: CI der ergänzten Negativtests und dieses Checkpoints prüfen. Persönliche/sprachliche Durchsicht und gesonderter Integrationsauftrag. #65 bleibt bis Integration offen. Danach KC-006E / #66; dessen offene MFA-/Wiederherstellungsregeln vor abhängiger Implementierung klären.
-- migration_state: Neue identity-access-Migration 0003, getrennte Testdatenbank mit Versionen 1/2/3. Bestehende Migrationen 1/2 und Organisationsmigrationen bleiben unverändert. Die Runtime bleibt durch FORCE RLS ohne erlaubende Policies gesperrt.
-- known_failures: Keine Fehler im ersten vollständigen WebAuthn-CI-Lauf. Frisch gemeldete TLS-Paketprobleme RUSTSEC-2026-0382/0381 durch gezielte Updates auf rustls-webpki 0.103.16 und webpki-roots 1.0.10 behoben. Windows-Linker und Docker fehlen lokal; ausführbare Nachweise stammen aus Linux-CI.
-- dependencies: #53, #54, #55, #59, #60, #61, #68, #69 und #70 offen und grün. Keine ungefragte Integration.
-- security_notes: Die drei WebAuthn-Testregeln sind ausdrücklich bestätigt; nicht erneut fragen. Produktive Domain bleibt offen. Keine HTTP-Anmeldung, Sitzungserzeugung oder Fachberechtigung. Kein Nachweis tatsächlicher Geräte-Biometrie oder einer Synchronisierung mit bestimmten Passwortmanagern. Die übrigen MFA-, Wiederherstellungs-, Sitzungs- und Rollenfragen bleiben offen.
+- issue_id: [KC-006E / #66](https://github.com/itsh-neumeier/kitaconnect/issues/66), Teil von KC-006 / #6.
+- branch: codex/kc-006e-mfa-vertrag auf PR #71 / 74c5e1731be0db55f1ef8698d7119f8fcd5cce7c.
+- pull_request: [PR #72](https://github.com/itsh-neumeier/kitaconnect/pull/72), Entwurf; Basis codex/kc-006d-webauthn-vertrag.
+- head_commit: Vertragsvorbereitung 12e2cd7814423a768520c2fcb776f95b3f8a2665. Dieser Checkpoint folgt gesondert; aktuellen Kopf und CI in PR #72 prüfen.
+- objective: TOTP- und Wiederherstellungsvertrag vorbereiten; ausdrückliche Sicherheitsentscheidungen vor abhängigen Abläufen anfordern.
+- completed: Vertragsentwurf, ADR-033, Bibliotheksprüfung und konkrete Testmatrix versioniert. Getrennter lokaler Abhängigkeits-Prüfgraph ohne Befund geprüft. PR #71 ist unverändert offen, zur Durchsicht bereit und am Abschlusskopf vollständig grün.
+- remaining: Antworten zur gemeinsamen MFA-/Wiederherstellungsfrage sowie zur Benachrichtigungsregel abwarten. Danach zuerst Vertrag und ADR aktualisieren und versionieren, dann #66 auf diesem Branch umsetzen. Alle Kriterien von #66 bleiben offen.
+- migration_state: In KC-006E keine Migration und keine Projektabhängigkeit ergänzt. Bestehende identity-access-Versionen 1/2/3 und Organisationsmigrationen bleiben unverändert. Runtime bleibt durch FORCE RLS gesperrt.
+- known_failures: Keine Fehler in den lokalen Dokumentationsprüfungen oder im getrennten Bibliotheks-Prüfgraphen. Keine TOTP-/Wiederherstellungsimplementierung oder nativen Builds behaupten. Windows-Linker und Docker fehlen lokal. CI des Dokumentationskopfes im PR prüfen.
+- dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70 und #71 offen und grün. Keine ungefragte Integration.
+- security_notes: Allgemeine MFA-/Wiederherstellungsregeln bleiben unbeantwortet. Zusätzlich ist Sicherheitsprotokoll plus atomarer Benachrichtigungsauftrag an bestätigten Kontakt angefragt. Keine Nachrichten versendet. WebAuthn-Bestätigung nicht auf diese Regeln übertragen. Produktiver Schlüsselanbieter, Nonce-Eindeutigkeit und Rotation benötigen vor produktiver Nutzung einen geprüften Vertrag.
 
 ## P0-Abschluss
 
@@ -209,10 +209,29 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 - Lokal erfolgreich: Rustfmt, JavaScript-Syntax, 44 Node-Tests, Struktur-/Regelsatzprüfung,
   synthetische Fixtures, git diff --check und Gitleaks. Keine lokalen Rust-/PostgreSQL-Erfolge behaupten.
 
+## KC-006E: Unabhängige Vorbereitung und offene Antworten
+
+- [ADR-033](../architecture/ADR-033_TOTP_und_Wiederherstellung.md) und der [Vertragsentwurf](../../contracts/identity-access/mfa-recovery-v1.md) sind in 12e2cd7 versioniert.
+- Bibliothekskandidaten: totp-rs 6.0.0, MIT, Rust 1.88; aes-gcm 0.11.1, Apache-2.0 oder MIT, Rust 1.85 laut Paketmetadaten.
+  Keine eigene Kryptografie vorgesehen. Ein TOTP-Geheimnis benötigt geschützte entschlüsselbare Speicherung; dessen Hash genügt nicht.
+  Ein passender TOTP-Zeitschritt muss im Dienst selbst dauerhaft und atomar verbraucht werden.
+- Getrennter ignorierter Prüfgraph mit 32 Paketen einschließlich Prüfpaket besteht cargo-audit 0.22.2 mit --deny warnings.
+  Frisch aktualisierte RustSec-Datenbank: e6f94f3760d5e6c54c1b05f204002263bc025524, 1.348 Hinweise.
+  Kein Projekt-Lockfile- oder nativer Buildnachweis, keine juristische oder produktive Schlüsselbetriebsfreigabe.
+- Lokal erfolgreich: Struktur-/Verweisprüfung für 50 Issues und 47 Dokumente, git diff --check und Gitleaks.
+  Keine neuen Tests für die reine Dokumentationsänderung geschrieben. CI des aktuellen Kopfes im PR nachführen.
+- Zwei Interviewfragen sind gestellt: gemeinsame Bestätigung von MFA-Zuordnung und Wiederherstellung;
+  zusätzlich Sicherheitsprotokoll und Benachrichtigungsauftrag bei Einrichtung, Wechsel, Widerruf und Wiederherstellung.
+  Beide Antworten stehen aus. Die bisherige WebAuthn-Antwort und „Weiter machen“ bestätigen diese Regeln nicht.
+- Die frühere Fortsetzungsprüfung zu PR #71 ist abgeschlossen: Kopf 74c5e17 besteht alle fünf Pflichtprüfungen von Push und PR,
+  einschließlich ergänzter Datenbanktests vor/nach Neustart. PR #71 ist kein Entwurf mehr.
+  [CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39491483136),
+  [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39491483085).
+
 ## Nächste drei Aktionen
 
-1. Aktuellen Kopf und CI von PR #71 prüfen. Bei grünen Ergänzungsnachweisen KC-006E / #66 vorbereiten. Die bereits bestätigten drei WebAuthn-Regeln nicht erneut abfragen.
-2. Vor abhängigen TOTP-/Wiederherstellungsabläufen die bisherigen offenen Sicherheitsvorschläge ausdrücklich klären. WebAuthn-Bestätigung nicht auf andere Anmeldewege oder produktive Domains übertragen.
-3. Persönliche/sprachliche Durchsicht und Integrationsauftrag beachten. Integrationsfolge #53, #54, #55, #59, #60, #61, #68, #69, #70, #71; nach Basisintegration neu prüfen. Keine ungefragte Integration.
+1. Die zwei offenen Interviewantworten zuordnen. Auf dem vorhandenen Branch zuerst Vertrag und ADR-033 aktualisieren und versionieren. Erst danach abhängige Abläufe aus #66 implementieren; die vorbereitete Bibliotheksrecherche nicht wiederholen.
+2. Aktuellen Kopf und CI von PR #72 prüfen. Vor Implementierung Zeit-/Versuchsgrenzen, Nonce-Eindeutigkeit und Test-Schlüsselschutz konkretisieren. Projekt-Lockfile und echte PostgreSQL-Nachweise gesondert prüfen.
+3. Übrige offene Sitzungs-/Rollen-/Betriebsfragen sowie persönliche/sprachliche Durchsicht und Integrationsauftrag beachten. Integrationsfolge #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72; nach Basisintegration neu prüfen. Keine ungefragte Integration.
 
-Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/029/030/031/032, KC-006-Plan, WebAuthn-Vertragsentwurf und aktuellen GitHub-Stand lesen.
+Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/029/030/031/032/033, KC-006-Plan, MFA-Vertragsentwurf und aktuellen GitHub-Stand lesen.

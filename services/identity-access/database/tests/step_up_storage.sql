@@ -102,7 +102,8 @@ DO $$ BEGIN
     BEGIN
         INSERT INTO identity_access.step_up_receipts VALUES(decode(repeat('00',32),'hex'),1,decode(repeat('00',32),'hex'),1);
         RAISE EXCEPTION 'runtime insert unexpectedly permitted';
-    EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+    -- BEFORE triggers can reject the row before the RLS INSERT check runs.
+    EXCEPTION WHEN insufficient_privilege OR check_violation THEN NULL; END;
 END $$;
 RESET ROLE;
 -- Visibility is an explicit administrator fixture, never a runtime policy.

@@ -53,9 +53,11 @@ Eine nicht bestätigte Zustandsaktualisierung darf keinen positiven Treffer erze
 Ein Datenbanktrigger verhindert zusätzlich Reaktivierung, rückläufige Zeit und Änderungen unveränderlicher Sitzungsfelder.
 
 - Identitätsanlage speichert nur eine interne Kennung; doppelte Kennungen scheitern.
+  Erfolg verlangt genau eine betroffene Zeile. Ein Trigger, der die Anlage unterdrückt, muss zu einem Fehler führen.
 - Sitzungsanlage erhält interne Kennungen und ausdrücklich gewählte Grenzen.
   Sie erzeugt den Nachweis, bestimmt die Datenbankzeit und speichert nur dessen Ableitung.
   Erfolg bestätigt die gesamte Anlage; ein Fehler gibt keinen nutzbaren Nachweis zurück.
+  Auch hier muss genau eine betroffene Zeile bestätigt sein, bevor die Transaktion bestätigt wird.
 - Aktuelle Prüfung sucht über die Ableitung und sperrt den Sitzungsdatensatz mit `FOR UPDATE`.
   Fehlende, abgelaufene oder widerrufene Sitzungen liefern keinen positiven Treffer.
   Ein beobachteter Ablauf wird im selben Vorgang gespeichert.

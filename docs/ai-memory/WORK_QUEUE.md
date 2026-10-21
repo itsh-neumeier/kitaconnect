@@ -9,8 +9,9 @@ Diese Liste ist eine Momentaufnahme und kein Abschlussnachweis. GitHub bleibt ve
 
 KC-006F / #67: PR #76 bestätigt aktuelle Sitzungsprüfung und lokale Abmeldung mit zehn grünen Prüfungen.
 PR #77 / 5927631 bestätigt Rotation und deren Fehlerkorrektur mit zehn aktuellen grünen Prüfungen.
-PR #78 / ad150c9 korrigiert den Abschluss eigener Fehlertransaktionen in Sitzungsbestand, Passwortadapter und Einrichtungseinstellungen; native CI prüfen.
-Der getrennte Folgebranch codex/kc-006f-faktortransaktionen korrigiert TOTP, WebAuthn und Anmeldeabschluss nach Folgevertrag f61b594.
+PR #78 / ad150c9 und #79 / 088d24f korrigieren die eigenen Fehlertransaktionen in allen geprüften Adaptern; jeweils zehn aktuelle Prüfungen grün.
+Der aktive Folgebranch codex/kc-006f-zusatzauthentisierung ergänzt zunächst nur die Speichergrundlage nach Vertrag/ADR-039.
+Neue SQL-Tests mit synthetischen Faktor-Markierungen sind keine tatsächlichen Zusatzprüfungen. Der Rust-Adapter folgt getrennt.
 Danach folgen zweckgebundene erneute Faktorprüfung und der echte Organisations-/Gateway-Vertrag.
 Die 17 ursprünglichen PRs sind technisch durchgesehen. Korrektur-PR #75 ist vollständig grün.
 Die gesammelte persönliche und sprachliche Durchsicht ist noch nicht erfolgt. Daraus keinen Merge-Auftrag oder erfülltes Review ableiten.

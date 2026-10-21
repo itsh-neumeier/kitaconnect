@@ -50,6 +50,9 @@ Der TOTP-Schrittzähler ist ausgenommen; dessen separate dauerhafte Einmalprüfu
 Weitere Faktoren und Abschluss verlangen denselben Bestand. Änderungen führen zur Verweigerung und einem neuen Anmeldevorgang.
 Auch eine unabhängige Passkey-Prüfung kann durch deren Versionsfortschritt einen offenen Vorgang konservativ entwerten.
 Die erste Vormerkzeit wird nicht durch einen weiteren Faktor verjüngt.
+Ein als abgelaufen erkannter Vorgang wird dauerhaft als ungültig markiert. Ein späterer Zeitrücksprung darf ihn nicht reaktivieren.
+Erkennt die tatsächliche Faktorprüfung den Ablauf erst nach erfolgreicher Verifikation, bestätigt sie ausschließlich die Faktorzustände und diese Sperre; sie merkt keinen Anmeldeerfolg vor und gibt einen Fehler zurück.
+Dies kann einen bereits richtig geprüften TOTP-Schritt verbrauchen oder eine gültige Passwort-Hashaktualisierung bewahren. Es erteilt keine Sitzung und gibt keine neue Nachweisreferenz aus.
 Eine Wiederherstellung erzeugt keinen dieser Erfolgsmarker und keine normale Sitzung.
 
 ## Lokaler Sitzungsabschluss

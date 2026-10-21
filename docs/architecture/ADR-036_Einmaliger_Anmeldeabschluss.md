@@ -27,6 +27,8 @@ Ursprüngliche und aktuelle Einrichtungsfristen werden durch das Minimum verbund
 Auch die ursprünglich erforderliche Authentisierungsstärke darf während desselben Vorgangs nicht herabgesetzt werden.
 Ein eingerichteter aktiver TOTP-Faktor macht die Passwortanmeldung mehrstufig; der bestätigte Passkey mit Benutzerverifikation bleibt eine zulässige Alternative.
 Der Ablauf wird nach einer wartenden Organisationsprüfung erneut geprüft.
+Beobachteter Ablauf wird dauerhaft als ungültiger Vorgang bestätigt, damit ein Zeitrücksprung ihn nicht reaktiviert.
+Die vorgangsgebundenen Faktorprüfungen dürfen in diesem Fall geprüfte Faktorzustände und die Sperre bestätigen, geben aber keinen Erfolgsmarker oder Sitzungsnachweis aus.
 Passwortpflege und Passkey-Entzug widerrufen bestehende Sitzungen in derselben Transaktion.
 
 ## Abnahmegrenzen

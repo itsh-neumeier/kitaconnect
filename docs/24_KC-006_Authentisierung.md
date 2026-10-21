@@ -22,7 +22,8 @@ ADR-019 gilt für Dienstidentitäten und aktuelle Rechteprüfung weiter.
 | KC-006E | [#66](https://github.com/itsh-neumeier/kitaconnect/issues/66) | TOTP und atomar einmalige Wiederherstellung | KC-006B, KC-006C und KC-006D; bestätigte MFA-/Wiederherstellungsregeln |
 | KC-006F | [#67](https://github.com/itsh-neumeier/kitaconnect/issues/67) | Dienstverträge, Gateway-Anbindung und Gesamtnachweise | KC-006C/D/E |
 
-Nur KC-006A ist in diesem Arbeitsschritt aktiv. Jedes folgende Paket erhält einen begrenzten Vertrag vor Implementierung.
+Die folgenden Abschnitte dokumentieren die einzelnen Arbeitsschritte. Den aktuellen Stand führt der [Checkpoint](ai-memory/CURRENT_STATE.md).
+Jedes folgende Paket erhält einen begrenzten Vertrag vor Implementierung.
 KC-006D setzt kein Passwort voraus. Die drei Nachweisverfahren dürfen nach KC-006B unabhängig vorbereitet werden.
 KC-006F prüft aktuelle Authentisierung und Mitgliedschaft. Es gewährt keine pauschalen Objekt- oder Feldrechte.
 Eine Mitgliedschaft ist allein keine Fachberechtigung. Die spätere KC-008-Prüfung bleibt erforderlich.
@@ -38,7 +39,7 @@ Es gibt keine Login-API, Passwortprüfung oder selbst entwickelte Kryptografie.
 ## Offene Sicherheitsentscheidungen
 
 Die [Entscheidungsliste](ai-memory/DECISIONS_PENDING.md) nennt konkrete Vorschläge und den jeweiligen Antwortstand.
-Offen sind MFA-Zuordnung, Browser-Sitzungsgrenzen und Wiederherstellungsablauf.
+MFA-Zuordnung und Wiederherstellungsablauf sind inzwischen ausdrücklich bestätigt. Browser-Sitzungsgrenzen bleiben offen.
 Eine ausbleibende Antwort ist keine Freigabe. Abhängige Laufzeitfunktionen bleiben bis zur Entscheidung gesperrt.
 KC-006A kann unabhängig davon mit ausdrücklich übergebenen Grenzen und synthetischen Testwerten umgesetzt werden.
 Die bereits angefragte produktive Datenbankidentitäts-/Poolbindung bleibt offen und wird nicht erneut als entschieden behandelt.
@@ -146,3 +147,17 @@ Stand ed44bb0 besteht den ersten vollständigen Linux-CI-Lauf einschließlich MF
 [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580138793).
 Der folgende Dokumentationscheckpoint erhält eigene Prüfungen; aktuellen Kopf und Bereitschaft weist PR #72 aus.
 Der produktive Schlüsselbetrieb bleibt offen. KC-006E bleibt bis Integration offen; nächstes Teilpaket ist KC-006F / #67.
+
+## KC-006F: Vertragsvorbereitung
+
+PR #72 ist auf cb3d8f62d1fde50dcb67b96468534cf8876fbe1a vollständig grün und zur Durchsicht bereit.
+KC-006F beginnt mit [ADR-034](architecture/ADR-034_Browseranmeldung_und_Nachweisuebergabe.md)
+und dem [Browser-Anmeldevertrag](../contracts/identity-access/browser-auth-v1.md).
+Die bisherigen positiven Faktor-Ergebnisse sind keine atomaren oder einmaligen Sitzungsabschlussnachweise.
+Der Entwurf beschreibt die erforderliche Übergabe, Bestandsversionen, gemeinsame lokale Sperrgrenze und konkrete negative Tests.
+Er erhält die Organisationshoheit über Mitgliedschaften. Eine lokale Sitzungstransaktion ersetzt keine aktuelle Prüfung bei organization-config.
+
+Reihenfolge innerhalb von #67: Antworten versionieren; konkreten Speicher-/Sperrvertrag festlegen; Identitätsdienst und aktuellen Mitgliedschafts-Prüfvertrag ergänzen;
+Rust-Gateway mit bestätigtem Browser-Schutz anbinden; Browser-, TLS- und Dienstidentitätsnachweise gesondert führen.
+Sitzungsfristen, Passkey-Gleichstellung bei MFA-Pflicht und Cookie-/CSRF-Regeln sind im Interview ausdrücklich angefragt.
+Antworten stehen aus. Der Vorbereitungsschritt ergänzt keine Laufzeitfunktion, Abhängigkeit oder Migration. Alle Kriterien von #67 bleiben offen.

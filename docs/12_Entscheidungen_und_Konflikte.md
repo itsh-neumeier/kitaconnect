@@ -266,3 +266,12 @@ Alle Antworten stehen aus. Der Entwurf aktiviert keine dieser Regeln und enthäl
 
 Am 21.10.2026 bestätigt die Projektleitung ausdrücklich alle vorgelegten MFA-/Wiederherstellungs- und Benachrichtigungsregeln.
 Vertrag und ADR-033 werden vor Code aktualisiert. Rechtezuordnung, Browser-Sitzungswerte und produktiver Schlüsselbetrieb bleiben gesondert.
+
+## ADR-034 – Browseranmeldung und Nachweisübergabe vorbereiten
+
+[ADR-034](architecture/ADR-034_Browseranmeldung_und_Nachweisuebergabe.md) beginnt KC-006F mit einem begrenzten Vertragsentwurf.
+Der Entwurf behandelt atomare Nachweisübergabe, Sitzungserzeugung, aktuelle Mitgliedschaft und die Gateway-Grenze.
+Er ändert keine Datenhoheit: identity-access verwaltet Identitäten und Sitzungen; organization-config verwaltet Mitgliedschaften.
+Eine lokale Transaktion ersetzt keine aktuelle dienstübergreifende Prüfung.
+Sitzungsfristen, die Erfüllung der MFA-Pflicht durch Passkeys und Cookie-/CSRF-Regeln sind ausdrücklich angefragt und noch offen.
+Keine abhängige Laufzeitfunktion, Migration oder produktive Freigabe wird daraus abgeleitet.

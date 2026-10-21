@@ -938,7 +938,10 @@
       "docs/10_Datenschutz_und_Sicherheit.md"
     ],
     "acceptance": [
-      "Vier Anmelde-/Wiederherstellungswege, geschützte Cookies, aktueller Widerruf und Ausfallverweigerung sind integriert; ursprüngliche Gesamtkriterien bleiben bestehen."
+      "Vier Anmelde-/Wiederherstellungswege, geschützte Cookies, aktueller Widerruf und Ausfallverweigerung sind integriert; ursprüngliche Gesamtkriterien bleiben bestehen.",
+      "Die Übergabe von Faktorprüfung zu Sitzungsabschluss bindet den tatsächlich geprüften Bestand und ist atomar einmalig; alte positive Ergebnisse und konkurrierende Wiederverwendung werden abgewiesen.",
+      "Aktuelle Mitgliedschaft wird beim zuständigen Organisationsdienst geprüft; eine lokale Identitätstransaktion wird nicht als dienstübergreifender Nachweis behandelt.",
+      "Sitzungsfristen, MFA-Kombination und Cookie-/CSRF-Regeln sind vor abhängiger Implementierung ausdrücklich bestätigt; Router-, Browser-, TLS- und Dienstidentitätsnachweise werden getrennt ausgewiesen."
     ],
     "security_scope": "Nur synthetische Daten. Keine produktiven Konten, Secrets oder fachlichen Rechte. Offene Sicherheitsentscheidungen vor abhängiger Implementierung bestätigen lassen.",
     "status": "planned"

@@ -58,5 +58,6 @@ Diese Richtlinie ist eine **Anforderung und redaktionelle Vorgabe**.
 Die Dokumente sind ab v5.9 mit ihr verknüpft.
 KC-036 dokumentiert den ersten redaktionellen Prüfdurchgang für die ursprünglichen Unterlagen 01 bis 12.
 Der [Prüfbericht](19_Redaktionspruefung_KC-036.md) nennt Umfang, unveränderte Fachgrenzen und offene Formulierungen.
-Die unabhängige sprachliche PR-Prüfung und Integration stehen noch aus.
+Die Projektleitung hat die persönliche und sprachliche Durchsicht für PRs #39 bis #44 bestätigt.
+Diese PRs sind integriert. Die genehmigende Review-Ausnahme folgt ADR-022; Fachprüfungen bleiben gesondert.
 Der Prüfdurchgang ist weder eine Fachfreigabe noch ein formeller Konformitätsnachweis.

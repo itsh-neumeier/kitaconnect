@@ -9,12 +9,12 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
 - branch: codex/kc-006f-anmeldeabschluss auf PR #73 / f5f0586d3802d37effc996bfee63478c51fffaa8.
 - pull_request: [PR #74](https://github.com/itsh-neumeier/kitaconnect/pull/74), Entwurf; Basis codex/kc-006f-anmeldevertrag.
-- head_commit: Kernimplementierung 1c64cf6, neue SQLx-Tests aafa802. Dieser Checkpoint ergänzt einen deterministischen Wiederherstellungs-Konkurrenztest; aktuellen Kopf und CI in PR #74 prüfen.
+- head_commit: Kernimplementierung 1c64cf6, neue SQLx-Tests aafa802, Wiederherstellungs-Konkurrenztest bec4c91 und dauerhafte Ablaufsperre d25ed9e. Dieser Dokumentationscheckpoint erhält eigene CI; aktuellen Kopf in PR #74 prüfen.
 - objective: Tatsächlich geprüfte Faktoren einmalig und atomar in eine lokal gebundene Sitzung überführen.
 - completed: Vertrag und ADR-036 in fb6bdd3, gemeinsame Grenzkonfiguration in 123014b vor Code versioniert. Passwort-, TOTP- und Passkey-Varianten merken Erfolg in der Faktortransaktion vor. Identitätssperre, Bestandsbindung, Mengenlimits, lokaler Abschluss und Einrichtungsbindung implementiert. Neue Datenbanktests einschließlich echter Faktorbibliotheken ergänzt.
 - remaining: CI des aktuellen Kopfes nachführen und Fehler beheben. Danach auf eigenem Folgebranch aktuellen Sitzungsprüfvertrag sowie Rotation/Abmeldung ausarbeiten. Echter Organisations-/Mitgliedschaftsadapter, Gateway, Cookie-/CSRF-Durchsetzung und Browser-/TLS-/mTLS-Nachweise fehlen weiterhin. KC-006F bleibt offen.
 - migration_state: Neue Identitätsmigration 0005 ergänzt login_limits, login_flows und session_login_bindings sowie Schutztrigger. Alte Identitätsmigrationen 0001 bis 0004 und Organisationsmigrationen bleiben unverändert. Keine neue Abhängigkeit. Runtime bleibt durch FORCE RLS gesperrt; neue eigene Testdatenbank kc_login_test.
-- known_failures: Kernstand 1c64cf6 besteht den vollständigen Push-Lauf mit bisherigen Datenbanktests. Der parallele PR-Lauf scheiterte am Docker-Hub-Timeout vor Testcontainer-Erstellung; aktuelle Läufe nach neuen Tests prüfen. Neue Login-Datenbankerfolge noch nicht behaupten. Windows-Linker und Docker fehlen lokal.
+- known_failures: Keine offene Codefehler-Meldung am zuletzt vollständig geprüften Stand bec4c91. Dessen beide Rust-Läufe einschließlich neuer Login- und Konkurrenztests sind erfolgreich. Die Ablaufsperre d25ed9e und dieser Checkpoint erhalten eigene CI; aktuelle Ergebnisse im PR nachführen. Ein früherer Docker-Hub-Timeout trat vor Testcontainer-Erstellung auf. Windows-Linker und Docker fehlen lokal.
 - test_commands: cargo fmt --all --check; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, expliziter SQLx-Test login/login_completion_is_atomic_and_current vor und nach Neustart sowie alle bisherigen getrennten Datenbanktests.
 - dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72 und #73 offen. PR #73 am Abschlusskopf vollständig grün. Keine ungefragte Integration.
 - security_notes: MFA-Pflicht, Offline-Wiederherstellung, Benachrichtigungsaufträge, WebAuthn-Testprofil, beide MFA-Kombinationen und Cookie-/CSRF-Schutz sind bestätigt. Fristen sind pro Einrichtung einstellbar; 900/28.800/300 Sekunden sind bestätigte Voreinstellungen und Obergrenzen. Diese Fragen nicht erneut stellen. Bestehende positive Faktor-Ergebnisse sind weiterhin keine einmaligen Sitzungsabschlussnachweise. Produktiver Schlüsselbetrieb, Domain, Versuchslimits und Rollen-/Poolbindung bleiben gesondert.
@@ -279,6 +279,16 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 - Neue Tests prüfen echte Passwort-/TOTP-/Passkey-Erfolge, fehlende Faktoren, falsche Bindung/Route, zwei tatsächlich wartende Abschlüsse, mit Abschluss konkurrierende Wiederherstellung und sofortigen Widerruf der gerade erzeugten Sitzung, veränderten Bestand, aktuelle Mitgliedschaftsverweigerung, Policy-Verschärfung/-Lockerung, Commitfehler, unterdrückten Eintrag, Ablauf nach Organisationswartezeit, Grenzen, RLS und Neustart.
 - Kernstand: [erster vollständiger Push-Lauf](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39588080448), [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39588080343). Dieser Lauf umfasst noch nicht die neuen SQLx-Tests aus aafa802; aktuelle Nachweise im PR nachführen.
 - Lokal sind Rustfmt, Struktur-/Verweisprüfung und Gitleaks erfolgreich. Keine neuen externen Bibliotheken oder Lockfile-Änderungen. Der aktuelle Checkpoint erhält eigene CI.
+
+## KC-006F: Dauerhafte Ablaufsperre und ergänzte Nachweise
+
+- bec4c91 besteht beide Rust-Läufe einschließlich echter Login-Tests vor und nach Neustart. Die Wiederherstellung wartet nachweisbar an derselben Identitätssperre wie der Abschluss. Nach dem Abschluss widerruft sie auch die gerade erzeugte Sitzung.
+  [CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39589510033),
+  [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39589510090).
+- df54e28 konkretisiert den endgültigen Ablauf im Vertrag und ADR vor der Korrektur d25ed9e. Ein beobachteter Ablauf sperrt den Vorgang dauerhaft. Ein späterer Zeitrücksprung darf ihn nicht reaktivieren.
+- Neue Datenbanktests prüfen den Ablauf bei tatsächlicher Passwort-, TOTP- und Passkey-Prüfung sowie vor und nach der Organisationswartezeit. Geprüfte Faktorzustände dürfen dabei bestätigt werden; es entsteht kein Erfolgsmarker und keine Sitzung. Der Schutztrigger verhindert das Aufheben der Sperre.
+- Die neue, noch nicht integrierte Migration 0005 ergänzt dafür invalidated. Migrationen 0001 bis 0004 bleiben unverändert. Keine neue Abhängigkeit, kein Gateway und kein produktiver Organisationsadapter.
+- Die aktuelle CI muss die ergänzten Ablauftests bestätigen. Abschlussnachweise und Kopf werden in PR #74 und Issue #67 nachgeführt. KC-006F bleibt bis zur übrigen Integration offen.
 
 ## Nächste drei Aktionen
 

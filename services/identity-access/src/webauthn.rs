@@ -545,9 +545,17 @@ impl LocalhostWebauthn {
         let time = Self::finish_time(&mut tx, &account, &consumed).await?;
         observe(&mut tx, identity, time, &random_revision()?).await?;
         if let Some(flow) = flow {
-            crate::login::record_factor(&mut tx, identity, flow, crate::login::Factor::Passkey)
-                .await
-                .map_err(|_| WebauthnError)?;
+            let recorded =
+                crate::login::record_factor(&mut tx, identity, flow, crate::login::Factor::Passkey)
+                    .await
+                    .map_err(|_| WebauthnError)?;
+            match recorded {
+                crate::login::FactorRecord::Recorded => {}
+                crate::login::FactorRecord::Expired => {
+                    tx.commit().await?;
+                    return Err(WebauthnError);
+                }
+            }
         }
         tx.commit().await?;
         Ok(PasskeyEvidence(identity))

@@ -287,7 +287,7 @@ impl PasswordChecker {
             }
         }
         if let Some(flow) = flow {
-            crate::login::record_factor(
+            let recorded = crate::login::record_factor(
                 &mut transaction,
                 identity,
                 flow,
@@ -295,6 +295,13 @@ impl PasswordChecker {
             )
             .await
             .map_err(|_| PasswordError)?;
+            match recorded {
+                crate::login::FactorRecord::Recorded => {}
+                crate::login::FactorRecord::Expired => {
+                    transaction.commit().await?;
+                    return Err(PasswordError);
+                }
+            }
         }
         transaction.commit().await?;
         Ok(PasswordEvidence { identity })

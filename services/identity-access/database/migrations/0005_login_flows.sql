@@ -28,6 +28,7 @@ CREATE TABLE identity_access.login_flows (
     expires_at identity_access.epoch_second NOT NULL CHECK (expires_at>created_at AND expires_at-created_at<=300),
     last_observed identity_access.epoch_second NOT NULL CHECK (last_observed>=created_at),
     consumed boolean NOT NULL DEFAULT false,
+    invalidated boolean NOT NULL DEFAULT false,
     proof_digest bytea CHECK (octet_length(proof_digest)=32),
     password_ok boolean NOT NULL DEFAULT false,
     totp_ok boolean NOT NULL DEFAULT false,
@@ -58,7 +59,7 @@ BEGIN
         NEW.step_up_seconds,NEW.mfa_required,NEW.created_at,NEW.expires_at)
         IS DISTINCT FROM (OLD.fingerprint,OLD.identity_id,OLD.facility_id,OLD.route,OLD.policy_version,OLD.idle_seconds,OLD.absolute_seconds,
         OLD.step_up_seconds,OLD.mfa_required,OLD.created_at,OLD.expires_at)
-        OR NEW.last_observed<OLD.last_observed OR (OLD.consumed AND NEW IS DISTINCT FROM OLD)
+        OR NEW.last_observed<OLD.last_observed OR ((OLD.consumed OR OLD.invalidated) AND NEW IS DISTINCT FROM OLD)
         OR (OLD.password_ok AND NOT NEW.password_ok) OR (OLD.totp_ok AND NOT NEW.totp_ok) OR (OLD.passkey_ok AND NOT NEW.passkey_ok)
         OR (OLD.proof_digest IS NOT NULL AND NEW.proof_digest IS DISTINCT FROM OLD.proof_digest)
         OR (OLD.proven_at IS NOT NULL AND NEW.proven_at IS DISTINCT FROM OLD.proven_at) THEN
@@ -77,6 +78,6 @@ ALTER TABLE identity_access.login_limits FORCE ROW LEVEL SECURITY;
 REVOKE ALL ON identity_access.login_flows,identity_access.session_login_bindings,identity_access.login_limits FROM PUBLIC;
 GRANT SELECT,INSERT ON identity_access.login_flows,identity_access.session_login_bindings,identity_access.login_limits TO kc_identity_runtime;
 GRANT UPDATE (last_observed) ON identity_access.login_limits TO kc_identity_runtime;
-GRANT UPDATE (proof_digest,password_ok,totp_ok,passkey_ok,proven_at,last_observed,consumed),DELETE ON identity_access.login_flows TO kc_identity_runtime;
+GRANT UPDATE (proof_digest,password_ok,totp_ok,passkey_ok,proven_at,last_observed,consumed,invalidated),DELETE ON identity_access.login_flows TO kc_identity_runtime;
 -- No permissive policies or cross-service foreign keys.
 INSERT INTO identity_access.schema_versions VALUES (5);

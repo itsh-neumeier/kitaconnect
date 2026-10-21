@@ -595,9 +595,17 @@ impl MfaService {
         }
         observe(&mut tx, identity, time).await?;
         if let Some(flow) = flow {
-            crate::login::record_factor(&mut tx, identity, flow, crate::login::Factor::Totp)
-                .await
-                .map_err(|_| MfaError)?;
+            let recorded =
+                crate::login::record_factor(&mut tx, identity, flow, crate::login::Factor::Totp)
+                    .await
+                    .map_err(|_| MfaError)?;
+            match recorded {
+                crate::login::FactorRecord::Recorded => {}
+                crate::login::FactorRecord::Expired => {
+                    tx.commit().await?;
+                    return Err(MfaError);
+                }
+            }
         }
         tx.commit().await?;
         Ok(MfaEvidence(identity))

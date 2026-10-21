@@ -131,6 +131,67 @@ async fn time(c: &mut PgConnection) -> u64 {
         .parse()
         .unwrap()
 }
+async fn force_expired(c: &mut PgConnection, flow: &LoginToken) {
+    // Synthetic clock fixture only. Production bindings cannot be changed this way.
+    let at = time(c).await;
+    let fingerprint = fingerprint_of(c, flow).await;
+    sql(
+        c,
+        "ALTER TABLE identity_access.login_flows DISABLE TRIGGER login_flow_guard;",
+    )
+    .await;
+    sqlx::query("UPDATE identity_access.login_flows SET created_at=$2::text::numeric,expires_at=$3::text::numeric,proven_at=CASE WHEN proof_digest IS NULL THEN NULL ELSE $4::text::numeric END WHERE fingerprint=$1")
+        .bind(fingerprint).bind((at-61).to_string()).bind((at-1).to_string()).bind((at-60).to_string()).execute(&mut *c).await.unwrap();
+    sql(
+        c,
+        "ALTER TABLE identity_access.login_flows ENABLE TRIGGER login_flow_guard;",
+    )
+    .await;
+}
+async fn cannot_reactivate(
+    c: &mut PgConnection,
+    flow: &LoginToken,
+    org: &mut SyntheticOrganization,
+    record: u128,
+) {
+    let fingerprint = fingerprint_of(c, flow).await;
+    let invalidated: bool = sqlx::query_scalar(
+        "SELECT invalidated FROM identity_access.login_flows WHERE fingerprint=$1",
+    )
+    .bind(&fingerprint)
+    .fetch_one(&mut *c)
+    .await
+    .unwrap();
+    assert!(invalidated);
+    assert!(
+        sqlx::query(
+            "UPDATE identity_access.login_flows SET invalidated=false WHERE fingerprint=$1"
+        )
+        .bind(&fingerprint)
+        .execute(&mut *c)
+        .await
+        .is_err()
+    );
+    // Simulate a deadline becoming future again; the terminal marker must still refuse it.
+    sql(
+        c,
+        "ALTER TABLE identity_access.login_flows DISABLE TRIGGER login_flow_guard;",
+    )
+    .await;
+    sqlx::query(
+        "UPDATE identity_access.login_flows SET expires_at=created_at+300 WHERE fingerprint=$1",
+    )
+    .bind(&fingerprint)
+    .execute(&mut *c)
+    .await
+    .unwrap();
+    sql(
+        c,
+        "ALTER TABLE identity_access.login_flows ENABLE TRIGGER login_flow_guard;",
+    )
+    .await;
+    assert!(login::finish(c, flow, session(record), org).await.is_err());
+}
 fn code(enrollment: &Enrollment, time: u64) -> TotpCode {
     let totp = totp_rs::Builder::new()
         .with_secret(totp_rs::Secret::new_stack(*enrollment.secret.expose()))
@@ -400,6 +461,26 @@ async fn login_completion_is_atomic_and_current() {
             .await
             .is_err()
     );
+    // Expiration after valid TOTP verification is permanent; no success marker is issued.
+    let expired = begin(&mut c, a, LoginRoute::Password, &mut a_org).await;
+    prove_password(&checker, &mut c, a, &password, &expired).await;
+    force_expired(&mut c, &expired).await;
+    sqlx::query("UPDATE identity_access.totp_factors SET last_step=NULL WHERE identity_id=$1::text::numeric").bind(a.value().to_string()).execute(&mut c).await.unwrap();
+    let current = time(&mut c).await + 30;
+    assert!(
+        mfa.verify_for_login(&mut c, a, &code(&enrollment, current), &expired)
+            .await
+            .is_err()
+    );
+    let marked: bool =
+        sqlx::query_scalar("SELECT totp_ok FROM identity_access.login_flows WHERE fingerprint=$1")
+            .bind(fingerprint_of(&mut connect("postgres").await, &expired).await)
+            .fetch_one(&mut c)
+            .await
+            .unwrap();
+    assert!(!marked);
+    cannot_reactivate(&mut c, &expired, &mut a_org, base + 2200).await;
+    clean(&mut c).await;
     // Recovery waits on the identity gate held by completion, then revokes its new session too.
     let stale = begin(&mut c, a, LoginRoute::Password, &mut a_org).await;
     prove_password(&checker, &mut c, a, &password, &stale).await;
@@ -494,6 +575,17 @@ async fn login_completion_is_atomic_and_current() {
         .await
         .unwrap();
     b_org.mfa = true;
+    let expired = begin(&mut c, b, LoginRoute::Passkey, &mut b_org).await;
+    force_expired(&mut c, &expired).await;
+    let (challenge, response) = assertion(&engine, &mut c, b, &mut client).await;
+    assert!(
+        engine
+            .finish_authentication_for_login(&mut c, b, &challenge, &response, &expired)
+            .await
+            .is_err()
+    );
+    cannot_reactivate(&mut c, &expired, &mut b_org, base + 2201).await;
+    clean(&mut c).await;
     let flow = begin(&mut c, b, LoginRoute::Passkey, &mut b_org).await;
     let (challenge, response) = assertion(&engine, &mut c, b, &mut client).await;
     engine
@@ -684,6 +776,34 @@ async fn login_completion_is_atomic_and_current() {
             .await
             .is_err()
     );
+    // Valid password verification of an expired flow also persists its terminal state.
+    let expired = begin(&mut c, user, LoginRoute::Password, &mut org).await;
+    force_expired(&mut c, &expired).await;
+    assert!(
+        checker
+            .check_for_login(
+                &mut c,
+                key(user),
+                attempts(),
+                Some(user),
+                Password::new(password.expose()).unwrap(),
+                &expired
+            )
+            .await
+            .is_err()
+    );
+    cannot_reactivate(&mut c, &expired, &mut org, base + 2202).await;
+    clean(&mut c).await;
+    let expired = begin(&mut c, user, LoginRoute::Password, &mut org).await;
+    prove_password(&checker, &mut c, user, &password, &expired).await;
+    force_expired(&mut c, &expired).await;
+    assert!(
+        login::finish(&mut c, &expired, session(base + 2203), &mut org)
+            .await
+            .is_err()
+    );
+    cannot_reactivate(&mut c, &expired, &mut org, base + 2203).await;
+    clean(&mut c).await;
     // Expiration while waiting on the external authority is rechecked after the wait.
     let flow = begin(&mut c, user, LoginRoute::Password, &mut org).await;
     prove_password(&checker, &mut c, user, &password, &flow).await;
@@ -707,6 +827,7 @@ async fn login_completion_is_atomic_and_current() {
             .is_err()
     );
     org.delay = Duration::ZERO;
+    cannot_reactivate(&mut c, &flow, &mut org, base + 2204).await;
     clean(&mut c).await;
     // Shared limits are immutable to callers; quotas count pending flows only.
     assert!(

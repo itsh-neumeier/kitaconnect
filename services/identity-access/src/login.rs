@@ -273,6 +273,7 @@ struct Flow {
     expires: u64,
     observed: u64,
     consumed: bool,
+    invalidated: bool,
     digest: Option<Vec<u8>>,
     password: bool,
     totp: bool,
@@ -315,6 +316,7 @@ impl Flow {
             expires: number(row, "expires_at")?,
             observed: number(row, "last_observed")?,
             consumed: row.try_get("consumed")?,
+            invalidated: row.try_get("invalidated")?,
             digest: row.try_get("proof_digest")?,
             password: row.try_get("password_ok")?,
             totp: row.try_get("totp_ok")?,
@@ -326,7 +328,12 @@ impl Flow {
         })
     }
     fn live(&self, time: u64) -> Result<(), LoginError> {
-        if self.consumed || time < self.created || time < self.observed || time >= self.expires {
+        if self.consumed
+            || self.invalidated
+            || time < self.created
+            || time < self.observed
+            || time >= self.expires
+        {
             Err(LoginError)
         } else {
             Ok(())
@@ -334,7 +341,7 @@ impl Flow {
     }
 }
 async fn flow(connection: &mut PgConnection, token: &LoginToken) -> Result<Flow, LoginError> {
-    let row=sqlx::query("SELECT identity_id::text, facility_id::text, route, policy_version::text, idle_seconds::text, absolute_seconds::text, step_up_seconds::text, mfa_required, created_at::text, expires_at::text, last_observed::text, consumed, proof_digest, password_ok, totp_ok, passkey_ok, proven_at::text FROM identity_access.login_flows WHERE fingerprint=$1 FOR UPDATE")
+    let row=sqlx::query("SELECT identity_id::text, facility_id::text, route, policy_version::text, idle_seconds::text, absolute_seconds::text, step_up_seconds::text, mfa_required, created_at::text, expires_at::text, last_observed::text, consumed, invalidated, proof_digest, password_ok, totp_ok, passkey_ok, proven_at::text FROM identity_access.login_flows WHERE fingerprint=$1 FOR UPDATE")
         .bind(token.0.fingerprint().as_slice()).fetch_one(connection).await?;
     Flow::decode(&row)
 }
@@ -344,19 +351,48 @@ pub(crate) enum Factor {
     Totp,
     Passkey,
 }
+#[must_use]
+pub(crate) enum FactorRecord {
+    Recorded,
+    Expired,
+}
+async fn retire_expired(
+    connection: &mut PgConnection,
+    token: &LoginToken,
+    flow: &Flow,
+    time: u64,
+) -> Result<bool, LoginError> {
+    if flow.consumed
+        || flow.invalidated
+        || time < flow.observed
+        || time < flow.created
+        || time < flow.expires
+    {
+        return Ok(false);
+    }
+    let retired:bool=sqlx::query_scalar("UPDATE identity_access.login_flows SET invalidated=true,last_observed=$2::text::numeric WHERE fingerprint=$1 RETURNING invalidated")
+        .bind(token.0.fingerprint().as_slice()).bind(time.to_string()).fetch_one(connection).await?;
+    if !retired {
+        return Err(LoginError);
+    }
+    Ok(true)
+}
 /// Called only from actual verifier success paths, before their transaction commits.
 pub(crate) async fn record_factor(
     connection: &mut PgConnection,
     identity: IdentityId,
     token: &LoginToken,
     factor: Factor,
-) -> Result<(), LoginError> {
+) -> Result<FactorRecord, LoginError> {
     let flow = flow(connection, token).await?;
     let time = now(connection).await?;
-    flow.live(time)?;
     if flow.identity != identity {
         return Err(LoginError);
     }
+    if retire_expired(connection, token, &flow, time).await? {
+        return Ok(FactorRecord::Expired);
+    }
+    flow.live(time)?;
     let material = material(connection, identity).await?;
     if material.recovery
         || flow
@@ -389,7 +425,7 @@ pub(crate) async fn record_factor(
     {
         return Err(LoginError);
     }
-    Ok(())
+    Ok(FactorRecord::Recorded)
 }
 
 pub async fn begin(
@@ -478,7 +514,12 @@ pub async fn finish(
     let identity = IdentityId::new(identity.parse().map_err(|_| LoginError)?).ok_or(LoginError)?;
     lock_identity(&mut tx, identity).await?;
     let flow = flow(&mut tx, token).await?;
-    flow.live(now(&mut tx).await?)?;
+    let time = now(&mut tx).await?;
+    if retire_expired(&mut tx, token, &flow, time).await? {
+        tx.commit().await?;
+        return Err(LoginError);
+    }
+    flow.live(time)?;
     if flow.identity != identity {
         return Err(LoginError);
     }
@@ -508,6 +549,10 @@ pub async fn finish(
         return Err(LoginError);
     }
     let time = now(&mut tx).await?;
+    if retire_expired(&mut tx, token, &flow, time).await? {
+        tx.commit().await?;
+        return Err(LoginError);
+    }
     flow.live(time)?;
     let idle = flow.context.idle.min(current.idle);
     let absolute = flow.context.absolute.min(current.absolute);

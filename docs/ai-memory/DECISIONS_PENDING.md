@@ -183,3 +183,15 @@ Veröffentlichte Portfolios und einfache Kontaktdaten behalten ihre gesonderten 
 Alternativen waren MFA für alle personenbezogenen Fachzugriffe oder ausdrückliches Offenlassen.
 Die Antwort steht aus. Keine dieser Varianten wird ohne Antwort implementiert.
 Die interne Mitgliedschaftsabfrage und bereits bestätigte Authentisierungsprotokolle bleiben davon unabhängig.
+
+## KC-008 / KC-006F: Konkrete MFA-Zuordnung bestätigt
+
+Am 21.10.2026 bestätigt die Projektleitung ausdrücklich: „Diese Zuordnung bestätigen“.
+Die oben vorgelegte Zuordnung ist damit verbindlich. Nicht erneut abfragen.
+Rollen-/Rechteverwaltung, sicherheitsrelevante Einstellungen und Zugriff auf Gesundheitsdaten,
+Sorgerechtsbeschränkungen, Personalakten sowie interne Entwicklungsakten verlangen aktuelle zusätzliche MFA.
+Normale Anmeldung allein gewährt dafür keinen Zugriff. Unbekannte Einstufungen werden abgewiesen.
+Veröffentlichte Portfolios und einfache Kontaktdaten behalten ihre gesonderten Objekt-/Feldrechte.
+Die Grundpflicht für Verwaltungsrechte und besonders sensible Daten bleibt bestehen.
+Die Umsetzung wird vor Code in einem eigenen Rechte-/MFA-Vertrag konkretisiert.
+Das zusätzliche HTTPS-Testprofil bleibt weiterhin ausdrücklich offen.

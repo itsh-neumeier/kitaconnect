@@ -22,6 +22,7 @@ Bestätigter Widerruf muss beim nächsten Lesen wirken. Die Abfrage vermeidet ei
 ## Grenzen
 
 Die Mitgliedschaft erteilt keine Fachrechte und entscheidet allein nicht über MFA.
-Die konkrete Zuordnung für Verwaltung und sensible Daten ist angefragt und bleibt bis zur Antwort offen.
+Die konkrete Zuordnung für Verwaltung und sensible Daten wurde am 21.10.2026 ausdrücklich bestätigt.
+Ihre Umsetzung folgt in einem eigenen Rechte-/MFA-Vertrag; Mitgliedschaft allein liefert diese Entscheidung nicht.
 Es entsteht keine öffentliche Mitgliedschaftsverwaltung, Übertragungsregel oder erlaubende Laufzeitpolicy.
 Netzwerk, Dienstidentität, aktueller Rechteumfang und KC-004C benötigen gesonderte Nachweise.

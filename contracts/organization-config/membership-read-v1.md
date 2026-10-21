@@ -43,7 +43,7 @@ Die lokale Abfrage behauptet keine dienstübergreifende Atomarität.
 Dieser Teil implementiert weder Netzwerktransport noch mTLS oder Diensttokens.
 Er ersetzt keinen vollständigen OrganizationAuthority-Adapter des Identitätsdienstes.
 Dieser benötigt zusätzlich die aktuelle MFA-/Zweckentscheidung aus dem zuständigen Rechtebereich.
-Die konkrete MFA-Zuordnung ist ausdrücklich angefragt. Bis zur Antwort wird sie nicht umgesetzt.
+Die konkrete MFA-Zuordnung wurde am 21.10.2026 ausdrücklich bestätigt und wird in einem eigenen Rechte-/MFA-Vertrag umgesetzt.
 Unbekannte notwendige Rechte-/Policy-Daten müssen Zugriff verweigern.
 Eine echte geschützte Dienstintegration und KC-004C bleiben eigene Nachweise.
 

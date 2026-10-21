@@ -76,3 +76,20 @@ Commitfehler, unterdrückte Beleganlage, Kandidatenfehler, Ablauf während Warte
 Migration, RLS und Neustart benötigen eigene negative Nachweise.
 Synthetische Organisationsantworten bleiben ausdrücklich Testdoppel; sie ersetzen keine mTLS- oder produktive Mitgliedschaftsprüfung.
 Gateway und Browser-/TLS-Nachweise bleiben gesondert. Das zusätzliche HTTPS-Testprofil benötigt weiterhin eine ausdrückliche Antwort.
+
+## Erster überprüfbarer Teil: Speichergrundlage
+
+Der erste Folge-PR legt ausschließlich die Speichergrundlage an.
+Migration 0008 ergänzt die Routen `reauth_password` und `reauth_passkey` sowie unveränderliche Zielbindungen und Authentisierungsbelege.
+Der bisherige Rust-Adapter weist diese unbekannten Routen weiterhin ab.
+Dieser Schritt erzeugt keine neue öffentliche Operation und erneuert keine tatsächliche Authentisierung.
+
+Eine Zielbindung darf nur vor dem ersten Faktor an einen neuen Vorgang und die genaue aktive Sitzung angelegt werden.
+Ein Beleg erfordert einen verbrauchten starken Zusatzvorgang, die Zielbindung und die bereits atomar angelegte Rotationsverknüpfung.
+Er bindet den Nachfolger und die ursprüngliche Anmeldung. Fremde Ziele, normale Vorgänge, fehlende MFA und veränderte Zeiten werden abgewiesen.
+Neue Tabellen erhalten ausschließlich SELECT/INSERT für die weiterhin gesperrte Laufzeitrolle.
+Trigger verweigern spätere Änderung und Löschung auch durch die Eigentümerrolle bei sichtbaren Zeilen.
+
+Die isolierten Speicherprüfungen verwenden ausdrücklich synthetische Faktor-Markierungen.
+Sie beweisen Datenbankbedingungen, Migration, Rücknahme, Einmaligkeit, RLS und Neustart.
+Tatsächliche Faktorprüfung, aktuelle Zielprüfung bei jedem Faktor, atomarer Abschluss mit Rotation und Verwendung des Belegs bleiben im folgenden Rust-Adapter zu implementieren und gesondert zu testen.

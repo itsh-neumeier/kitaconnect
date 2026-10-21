@@ -340,6 +340,26 @@ try {
   sql('CREATE ROLE kc_membership_runtime LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_org_runtime TO kc_membership_runtime WITH INHERIT TRUE, SET FALSE;', { database: 'kc_membership_test', transaction: true });
   testAdapter('before', 'membership', 'memberships_are_current_and_read_only');
 
+  sql('CREATE DATABASE kc_service_token_test;');
+  sql(file('provision/002_schema.sql', identityRoot), { database: 'kc_service_token_test', transaction: true });
+  for (const migration of [identityMigration, passwordMigration, webauthnMigration, mfaMigration, loginMigration, observationMigration, rotationMigration, stepUpMigration]) {
+    sql(migration, { database: 'kc_service_token_test', transaction: true });
+  }
+  const serviceTokenMigration = `SET SESSION AUTHORIZATION kc_identity_migrator;\n${file('migrations/0009_service_tokens.sql', identityRoot)}`;
+  sql(`${serviceTokenMigration}\nSELECT 1 / 0;`, { database: 'kc_service_token_test', transaction: true, expectedState: '22012' });
+  sql(`DO $$ BEGIN
+    ASSERT to_regclass('identity_access.service_tokens') IS NULL;
+    ASSERT to_regclass('identity_access.service_authority') IS NULL;
+    ASSERT to_regclass('identity_access.service_clients') IS NULL;
+    ASSERT to_regclass('identity_access.service_certificates') IS NULL;
+    ASSERT to_regclass('identity_access.service_grants') IS NULL;
+    ASSERT (SELECT array_agg(version ORDER BY version)=ARRAY[1,2,3,4,5,6,7,8] FROM identity_access.schema_versions);
+  END $$;`, { database: 'kc_service_token_test' });
+  sql(serviceTokenMigration, { database: 'kc_service_token_test', transaction: true });
+  sql(serviceTokenMigration, { database: 'kc_service_token_test', transaction: true, expectedState: 'P0001' });
+  sql('CREATE ROLE kc_service_token_runtime LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_identity_runtime TO kc_service_token_runtime WITH INHERIT TRUE, SET FALSE;', { database: 'kc_service_token_test', transaction: true });
+  testAdapter('before', 'service_tokens', 'service_tokens_are_current_and_bound', 'kitaconnect-identity-access');
+
   requireSuccess(docker(['restart', container]), 'Restart same test database');
   await waitUntilReady();
   sql(file('tests/persisted.sql'));
@@ -362,6 +382,7 @@ try {
   console.log('PASS: synthetic step-up storage constraints and closed RLS (after restart)');
   testAdapter('after', 'step_up', 'additional_proof_is_bound_and_rotated', 'kitaconnect-identity-access');
   testAdapter('after', 'membership', 'memberships_are_current_and_read_only');
+  testAdapter('after', 'service_tokens', 'service_tokens_are_current_and_bound', 'kitaconnect-identity-access');
   console.log('PASS: two carriers and an independent facility, version and role boundaries survive server restart');
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {

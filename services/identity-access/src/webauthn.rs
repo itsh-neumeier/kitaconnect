@@ -247,6 +247,9 @@ impl LocalhostWebauthn {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
+        crate::login::lock_identity(&mut tx, identity)
+            .await
+            .map_err(|_| WebauthnError)?;
         sqlx::query("SELECT pg_catalog.pg_advisory_xact_lock(184006, 3)")
             .execute(&mut *tx)
             .await?;
@@ -435,6 +438,9 @@ impl LocalhostWebauthn {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
+        crate::login::lock_identity(&mut tx, identity)
+            .await
+            .map_err(|_| WebauthnError)?;
         let account = self.current(&mut tx, identity, &consumed).await?;
         Self::finish_time(&mut tx, &account, &consumed).await?;
         let state: PasskeyRegistration = serde_json::from_str(&consumed.state)?;
@@ -470,6 +476,29 @@ impl LocalhostWebauthn {
         token: &CeremonyToken,
         response: &[u8],
     ) -> Result<PasskeyEvidence, WebauthnError> {
+        self.finish_authentication_inner(connection, identity, token, response, None)
+            .await
+    }
+    pub async fn finish_authentication_for_login(
+        &self,
+        connection: &mut PgConnection,
+        identity: IdentityId,
+        token: &CeremonyToken,
+        response: &[u8],
+        flow: &crate::login::LoginToken,
+    ) -> Result<(), WebauthnError> {
+        self.finish_authentication_inner(connection, identity, token, response, Some(flow))
+            .await
+            .map(|_| ())
+    }
+    async fn finish_authentication_inner(
+        &self,
+        connection: &mut PgConnection,
+        identity: IdentityId,
+        token: &CeremonyToken,
+        response: &[u8],
+        flow: Option<&crate::login::LoginToken>,
+    ) -> Result<PasskeyEvidence, WebauthnError> {
         let consumed = self
             .consume(connection, identity, token, "authenticate")
             .await?;
@@ -479,6 +508,9 @@ impl LocalhostWebauthn {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
+        crate::login::lock_identity(&mut tx, identity)
+            .await
+            .map_err(|_| WebauthnError)?;
         let account = self.current(&mut tx, identity, &consumed).await?;
         Self::finish_time(&mut tx, &account, &consumed).await?;
         let state: PasskeyAuthentication = serde_json::from_str(&consumed.state)?;
@@ -512,6 +544,11 @@ impl LocalhostWebauthn {
         }
         let time = Self::finish_time(&mut tx, &account, &consumed).await?;
         observe(&mut tx, identity, time, &random_revision()?).await?;
+        if let Some(flow) = flow {
+            crate::login::record_factor(&mut tx, identity, flow, crate::login::Factor::Passkey)
+                .await
+                .map_err(|_| WebauthnError)?;
+        }
         tx.commit().await?;
         Ok(PasskeyEvidence(identity))
     }
@@ -527,6 +564,9 @@ impl LocalhostWebauthn {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
+        crate::login::lock_identity(&mut tx, identity)
+            .await
+            .map_err(|_| WebauthnError)?;
         let account = account(&mut tx, identity).await?;
         let time = now(&mut tx).await?;
         if time < account.observed {
@@ -535,6 +575,9 @@ impl LocalhostWebauthn {
         let result = sqlx::query("DELETE FROM identity_access.webauthn_credentials WHERE identity_id = $1::text::numeric AND credential_id = $2")
             .bind(identity.value().to_string()).bind(credential.expose()).execute(&mut *tx).await?;
         observe(&mut tx, identity, time, &random_revision()?).await?;
+        crate::login::revoke_sessions(&mut tx, identity)
+            .await
+            .map_err(|_| WebauthnError)?;
         tx.commit().await?;
         Ok(result.rows_affected() == 1)
     }

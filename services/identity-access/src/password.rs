@@ -169,13 +169,17 @@ impl PasswordChecker {
         let mut transaction = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
+        crate::login::lock_identity(&mut transaction, identity)
+            .await
+            .map_err(|_| PasswordError)?;
         let result = sqlx::query("INSERT INTO identity_access.password_credentials (identity_id, phc, revision) VALUES ($1::text::numeric, $2, $3) ON CONFLICT (identity_id) DO UPDATE SET phc = EXCLUDED.phc, revision = EXCLUDED.revision")
             .bind(identity.value().to_string()).bind(hash.0.as_str()).bind(revision.as_slice()).execute(&mut *transaction).await?;
         if result.rows_affected() != 1 {
             return Err(PasswordError);
         }
-        sqlx::query("UPDATE identity_access.sessions SET state = 'revoked' WHERE identity_id = $1::text::numeric AND state <> 'revoked'")
-            .bind(identity.value().to_string()).execute(&mut *transaction).await?;
+        crate::login::revoke_sessions(&mut transaction, identity)
+            .await
+            .map_err(|_| PasswordError)?;
         transaction.commit().await?;
         Ok(())
     }
@@ -188,6 +192,32 @@ impl PasswordChecker {
         limits: AttemptLimits,
         identity: Option<IdentityId>,
         password: Password,
+    ) -> Result<PasswordEvidence, PasswordError> {
+        self.check_inner(connection, key, limits, identity, password, None)
+            .await
+    }
+    /// Success is recorded in the actual verifier transaction, never from old evidence.
+    pub async fn check_for_login(
+        &self,
+        connection: &mut PgConnection,
+        key: AttemptKey,
+        limits: AttemptLimits,
+        identity: Option<IdentityId>,
+        password: Password,
+        flow: &crate::login::LoginToken,
+    ) -> Result<(), PasswordError> {
+        self.check_inner(connection, key, limits, identity, password, Some(flow))
+            .await
+            .map(|_| ())
+    }
+    async fn check_inner(
+        &self,
+        connection: &mut PgConnection,
+        key: AttemptKey,
+        limits: AttemptLimits,
+        identity: Option<IdentityId>,
+        password: Password,
+        flow: Option<&crate::login::LoginToken>,
     ) -> Result<PasswordEvidence, PasswordError> {
         reserve(connection, key, limits).await?;
         let snapshot = if let Some(identity) = identity {
@@ -241,6 +271,9 @@ impl PasswordChecker {
         let mut transaction = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
+        crate::login::lock_identity(&mut transaction, identity)
+            .await
+            .map_err(|_| PasswordError)?;
         let current: Option<Vec<u8>> = sqlx::query_scalar("SELECT revision FROM identity_access.password_credentials WHERE identity_id = $1::text::numeric AND phc = $2 FOR UPDATE")
             .bind(identity.value().to_string()).bind(old_hash.0.as_str()).fetch_optional(&mut *transaction).await?;
         if current != Some(old_revision) {
@@ -252,6 +285,16 @@ impl PasswordChecker {
             if result.rows_affected() != 1 {
                 return Err(PasswordError);
             }
+        }
+        if let Some(flow) = flow {
+            crate::login::record_factor(
+                &mut transaction,
+                identity,
+                flow,
+                crate::login::Factor::Password,
+            )
+            .await
+            .map_err(|_| PasswordError)?;
         }
         transaction.commit().await?;
         Ok(PasswordEvidence { identity })

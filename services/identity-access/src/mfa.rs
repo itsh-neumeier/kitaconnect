@@ -444,6 +444,9 @@ impl MfaService {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
+        crate::login::lock_identity(&mut tx, identity)
+            .await
+            .map_err(|_| MfaError)?;
         sqlx::query("INSERT INTO identity_access.mfa_accounts (identity_id, last_observed, recovery_required) VALUES ($1::text::numeric, 0, false) ON CONFLICT DO NOTHING")
             .bind(identity.value().to_string()).execute(&mut *tx).await?;
         let account = account(&mut tx, identity).await?;
@@ -504,6 +507,9 @@ impl MfaService {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
+        crate::login::lock_identity(&mut tx, identity)
+            .await
+            .map_err(|_| MfaError)?;
         let account = account(&mut tx, identity).await?;
         let time = time(&mut tx, &account).await?;
         permit(&account, time, proof)?;
@@ -547,10 +553,33 @@ impl MfaService {
         identity: IdentityId,
         code: &TotpCode,
     ) -> Result<MfaEvidence, MfaError> {
+        self.verify_inner(connection, identity, code, None).await
+    }
+    pub async fn verify_for_login(
+        &self,
+        connection: &mut PgConnection,
+        identity: IdentityId,
+        code: &TotpCode,
+        flow: &crate::login::LoginToken,
+    ) -> Result<(), MfaError> {
+        self.verify_inner(connection, identity, code, Some(flow))
+            .await
+            .map(|_| ())
+    }
+    async fn verify_inner(
+        &self,
+        connection: &mut PgConnection,
+        identity: IdentityId,
+        code: &TotpCode,
+        flow: Option<&crate::login::LoginToken>,
+    ) -> Result<MfaEvidence, MfaError> {
         self.reserve(connection, identity).await?;
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
+        crate::login::lock_identity(&mut tx, identity)
+            .await
+            .map_err(|_| MfaError)?;
         let account = account(&mut tx, identity).await?;
         if account.recovery {
             return Err(MfaError);
@@ -565,6 +594,11 @@ impl MfaService {
             return Err(MfaError);
         }
         observe(&mut tx, identity, time).await?;
+        if let Some(flow) = flow {
+            crate::login::record_factor(&mut tx, identity, flow, crate::login::Factor::Totp)
+                .await
+                .map_err(|_| MfaError)?;
+        }
         tx.commit().await?;
         Ok(MfaEvidence(identity))
     }
@@ -579,6 +613,9 @@ impl MfaService {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
+        crate::login::lock_identity(&mut tx, identity)
+            .await
+            .map_err(|_| MfaError)?;
         let account = account(&mut tx, identity).await?;
         let time = time(&mut tx, &account).await?;
         let generation = account.generation.ok_or(MfaError)?;
@@ -614,6 +651,9 @@ impl MfaService {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
+        crate::login::lock_identity(&mut tx, identity)
+            .await
+            .map_err(|_| MfaError)?;
         let account = account(&mut tx, identity).await?;
         if account.recovery {
             return Err(MfaError);

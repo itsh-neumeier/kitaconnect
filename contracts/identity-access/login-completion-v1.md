@@ -10,6 +10,7 @@ Ein Anmeldevorgang gehört zu genau einer Identität, Einrichtung und Route: Pas
 Seine Referenz enthält 32 zufällige Bytes. Nur deren Ableitung wird gespeichert. Die Referenz allein beweist keine Anmeldung.
 Lebensdauer und Mengenlimits werden ausdrücklich übergeben. Die Lebensdauer ist auf höchstens 300 Sekunden begrenzt.
 Es gibt ein globales und ein identitätsbezogenes Limit offener Vorgänge. Abgelaufene unverbrauchte Vorgänge können entfernt werden.
+Alle Aufrufer müssen dieselbe explizite Grenzkonfiguration verwenden. Ein einmal angelegter Grenzsatz wird nicht durch einen Anmeldeaufruf überschrieben; abweichende Werte werden abgewiesen.
 Verbrauchte, einer Sitzung zugeordnete Vorgänge bleiben für deren Bindung erhalten; die spätere Aufbewahrung benötigt einen eigenen Betriebsvertrag.
 
 Ein vertrauenswürdiger Organisationsadapter liefert aktuelle Mitgliedschaft, Einrichtungseinstellungen und MFA-Anforderung.

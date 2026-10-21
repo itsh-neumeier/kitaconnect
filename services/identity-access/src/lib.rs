@@ -8,6 +8,7 @@ pub mod login;
 pub mod mfa;
 pub mod password;
 pub mod postgres;
+pub mod session_check;
 pub mod token;
 pub mod webauthn;
 

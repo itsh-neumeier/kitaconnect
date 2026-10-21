@@ -323,6 +323,23 @@ try {
   sql('CREATE ROLE kc_step_up_runtime LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_identity_runtime TO kc_step_up_runtime WITH INHERIT TRUE, SET FALSE;', { database: 'kc_step_up_test', transaction: true });
   testAdapter('before', 'step_up', 'additional_proof_is_bound_and_rotated', 'kitaconnect-identity-access');
 
+  sql('CREATE DATABASE kc_membership_test;');
+  sql(file('provision/002_schema.sql'), { database: 'kc_membership_test', transaction: true });
+  migrate('kc_membership_test');
+  sql(registryMigration, { database: 'kc_membership_test', transaction: true });
+  sql(policyMigration, { database: 'kc_membership_test', transaction: true });
+  const membershipMigration = `SET SESSION AUTHORIZATION kc_org_migrator;\n${file('migrations/0004_memberships.sql')}`;
+  sql(`${membershipMigration}\nSELECT 1 / 0;`, { database: 'kc_membership_test', transaction: true, expectedState: '22012' });
+  sql(`DO $$ BEGIN
+    ASSERT pg_catalog.to_regclass('organization_config.memberships') IS NULL;
+    ASSERT pg_catalog.to_regprocedure('organization_config.guard_membership()') IS NULL;
+    ASSERT (SELECT array_agg(version ORDER BY version)=ARRAY[1,2,3] FROM organization_config.schema_versions);
+  END $$;`, { database: 'kc_membership_test' });
+  sql(membershipMigration, { database: 'kc_membership_test', transaction: true });
+  sql(membershipMigration, { database: 'kc_membership_test', transaction: true, expectedState: 'P0001' });
+  sql('CREATE ROLE kc_membership_runtime LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_org_runtime TO kc_membership_runtime WITH INHERIT TRUE, SET FALSE;', { database: 'kc_membership_test', transaction: true });
+  testAdapter('before', 'membership', 'memberships_are_current_and_read_only');
+
   requireSuccess(docker(['restart', container]), 'Restart same test database');
   await waitUntilReady();
   sql(file('tests/persisted.sql'));
@@ -344,6 +361,7 @@ try {
   sql(file('tests/step_up_storage.sql', identityRoot), { database: 'kc_step_up_storage_test', transaction: true });
   console.log('PASS: synthetic step-up storage constraints and closed RLS (after restart)');
   testAdapter('after', 'step_up', 'additional_proof_is_bound_and_rotated', 'kitaconnect-identity-access');
+  testAdapter('after', 'membership', 'memberships_are_current_and_read_only');
   console.log('PASS: two carriers and an independent facility, version and role boundaries survive server restart');
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {

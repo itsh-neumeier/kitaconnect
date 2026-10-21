@@ -106,7 +106,7 @@ fn autocommit(connection: &PgConnection) -> Result<(), PolicyError> {
         Ok(())
     }
 }
-fn decode(row: &sqlx::postgres::PgRow) -> Result<FacilitySessionPolicy, PolicyError> {
+pub(crate) fn decode(row: &sqlx::postgres::PgRow) -> Result<FacilitySessionPolicy, PolicyError> {
     fn value(row: &sqlx::postgres::PgRow, name: &str) -> Result<u64, PolicyError> {
         row.try_get::<String, _>(name)?
             .parse()

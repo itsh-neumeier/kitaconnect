@@ -256,3 +256,10 @@ Die Rückfragen sind offen. Der Entwurf enthält keine neue Laufzeitimplementier
 Am 20.10.2026 bestätigt die Projektleitung ausdrücklich alle drei WebAuthn-Vorschläge.
 Für KC-006D gelten ausschließlich localhost im isolierten Test, erforderliche Benutzerverifikation und erlaubte synchronisierte Passkeys.
 Produktive Domain und die übrigen offenen Sicherheitsentscheidungen bleiben offen. Vertrag und ADR-032 werden vor Implementierung aktualisiert.
+
+## ADR-033 – TOTP und Wiederherstellung vorbereiten
+
+[ADR-033](architecture/ADR-033_TOTP_und_Wiederherstellung.md) dokumentiert die Bibliotheksprüfung und den Vertragsentwurf für KC-006E.
+MFA-Zuordnung und Wiederherstellung wurden gemeinsam erneut zur ausdrücklichen Entscheidung gestellt.
+Die Benachrichtigungsregel bei Faktoränderungen und Wiederherstellung ist zusätzlich angefragt.
+Alle Antworten stehen aus. Der Entwurf aktiviert keine dieser Regeln und enthält keine Laufzeitimplementierung.

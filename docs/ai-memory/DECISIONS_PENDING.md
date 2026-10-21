@@ -106,3 +106,18 @@ Die bisherigen Sperren für dieses Testprofil sind durch die ausdrückliche Antw
 
 [ADR-032](../architecture/ADR-032_WebAuthn_Vorbereitung.md) und der [Vertrag](../../contracts/identity-access/webauthn-v1.md) wurden nach der Antwort in ae85a5f vor Code aktualisiert und versioniert.
 Die produktive Domain und die übrigen MFA-/Wiederherstellungs-/Rollenentscheidungen bleiben offen.
+
+## KC-006E: Erneut vorgelegte Regeln und Benachrichtigung
+
+Stand: 21.10.2026. MFA-Zuordnung und Wiederherstellung wurden für #66 erneut gemeinsam zur ausdrücklichen Entscheidung vorgelegt.
+Die Vorschläge aus der bisherigen Tabelle bleiben unverändert. Es liegt noch keine Antwort vor.
+Die WebAuthn-Bestätigung beantwortet diese Fragen nicht.
+
+Zusätzlich ist angefragt: Sicherheitsprotokoll und atomar vorgemerkte Nachricht an einen bereits bestätigten Kontakt
+bei Einrichtung, Wechsel oder Widerruf eines Faktors sowie bei Wiederherstellung. Die Nachricht enthält keine Geheimnisse.
+Der spätere Nachrichtendienst würde den Versand übernehmen. Auch diese Antwort steht aus.
+
+[ADR-033](../architecture/ADR-033_TOTP_und_Wiederherstellung.md) und der [Vertragsentwurf](../../contracts/identity-access/mfa-recovery-v1.md) dokumentieren die unabhängige Vorbereitung.
+Vor abhängiger Implementierung zuerst Antworten in Vertrag und ADR versionieren.
+Produktiver Schlüsselanbieter, Nonce-Eindeutigkeit, Wiederanlauf und Rotation benötigen vor produktiver Nutzung einen geprüften Vertrag.
+Der separate Bibliotheks-Prüfgraph ersetzt weder diese Betriebsentscheidungen noch die vollständige Projektprüfung.

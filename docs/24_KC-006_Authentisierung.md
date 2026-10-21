@@ -128,3 +128,14 @@ Neue RustSec-Hinweise für bestehende TLS-Pakete wurden durch rustls-webpki 0.10
 ADR-032 hält den tatsächlichen Projekt-Lockfile-Nachweis und die verbleibende Lizenzprüfung fest.
 Der folgende Checkpoint ergänzt Negativtests und erhält eigene CI; den aktuellen Kopf weist PR #71 aus.
 KC-006D bleibt bis Integration offen. Nächstes Teilpaket ist KC-006E / #66 mit weiterhin offenen MFA-/Wiederherstellungsregeln.
+
+## Vorbereitung von KC-006E
+
+Kopf 74c5e1731be0db55f1ef8698d7119f8fcd5cce7c von PR #71 besteht alle Pflichtprüfungen einschließlich ergänzter Negativtests.
+Für KC-006E liegen ein [Vertragsentwurf](../contracts/identity-access/mfa-recovery-v1.md) und [ADR-033](architecture/ADR-033_TOTP_und_Wiederherstellung.md) vor.
+Geprüfte Bibliothekskandidaten sind totp-rs 6.0.0 und aes-gcm 0.11.1.
+Ein getrennter lokaler Prüfgraph besteht die aktuelle RustSec-Prüfung; dies ist kein Projekt-Lockfile- oder Buildnachweis.
+
+MFA-Zuordnung, Wiederherstellung und Benachrichtigungsregel stehen weiterhin zur ausdrücklichen Entscheidung aus.
+Deshalb enthält dieser Schritt keine neue Projektabhängigkeit, Migration oder Anmeldefunktion.
+Alle Kriterien von #66 bleiben offen. Nach Antwort zuerst Vertrag und ADR aktualisieren und versionieren, danach den bestätigten Ablauf implementieren.

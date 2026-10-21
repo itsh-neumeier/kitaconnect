@@ -50,6 +50,15 @@ Eine Umstellung auf TypeScript 7 braucht eine gemeinsam kompatible SvelteKit-/Pr
 Beide PRs bleiben bis zur gesammelten Durchsicht offen; eine Ablehnung ist eine begründete Empfehlung, kein verschwiegener Abschluss.
 Die Aktualisierungen #45/#46 benötigen eine aktuelle Main-Basis. Beim späteren Zusammenführen sind alle fünf Checkout- und vier Setup-Node-Verwendungen des P1-Stands abzugleichen.
 
+Diese Main-Aktualisierung ist inzwischen ohne Force-Push erfolgt. #45 steht auf 1712c7a und #46 auf 8ccef99.
+Alle jeweils fünf Prüfungen sind am neuen Kopf erfolgreich. Die Diffs enthalten weiterhin ausschließlich die vorgesehenen Action-Pins.
+[CI #45](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39600343646),
+[Sicherheitsprüfungen #45](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39600343744),
+[CI #46](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39600356339),
+[Sicherheitsprüfungen #46](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39600356345).
+Die Momentaufnahme bewahrt den ursprünglichen Stand und ergänzt diese Folgeprüfung getrennt.
+Alle 17 ursprünglichen PR-Beschreibungen enthalten jetzt die jeweilige technische Empfehlung und den Verweis auf [Korrektur-PR #75](https://github.com/itsh-neumeier/kitaconnect/pull/75).
+
 ## Empfohlene Integrationsfolge nach gesondertem Auftrag
 
 1. Persönliche und sprachliche Durchsicht gesammelt auf Grundlage dieses Berichts und des Korrektur-PRs durchführen.

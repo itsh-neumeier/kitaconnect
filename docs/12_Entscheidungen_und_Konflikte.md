@@ -316,3 +316,9 @@ Die weiteren Adapter werden in kleinen Paketen mit getrennten Datenbankzeugen ge
 [ADR-041](architecture/ADR-041_Interner_Mitgliedschaftsbestand.md) konkretisiert die interne aktuelle Abfrage im Organisationsdienst.
 Aktive Zuordnung und Einrichtungseinstellungen werden gemeinsam gelesen. Die Laufzeit bleibt durch RLS gesperrt.
 Der Datenstand ersetzt weder MFA-/Rechteentscheidung noch geprüfte Dienstkommunikation.
+
+## ADR-042 – Diensttoken-Grundlage
+
+[ADR-042](architecture/ADR-042_Diensttoken_Grundlage.md) konkretisiert die bestätigte ADR-019 für den internen Tokenbestand.
+Aktuelle Zustandsprüfung und echte mTLS-Prüfung erhalten getrennte Nachweise.
+Produktiver Schlüsselbetrieb und Domain bleiben offen. Ein Diensttoken erteilt keine Benutzer- oder Fachrechte.

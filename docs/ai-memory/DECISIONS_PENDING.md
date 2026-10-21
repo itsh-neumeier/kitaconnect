@@ -152,3 +152,16 @@ Unabhängig davon werden [ADR-034](../architecture/ADR-034_Browseranmeldung_und_
 und der [Vertragsentwurf](../../contracts/identity-access/browser-auth-v1.md) vorbereitet.
 Eine allgemeine Aufforderung zur Weiterarbeit beantwortet die drei Fragen nicht.
 Die konkrete Rechtezuordnung, produktive Domain, Versuchslimits und Rollen-/Schlüsselbindung bleiben gesondert.
+
+## KC-006F: Bestätigte Interviewantworten
+
+Am 21.10.2026 antwortet die Projektleitung auf Frage 1 „Einstellbar pro Einrichtung“, auf Frage 2 „Beide Varianten bestätigen“ und auf Frage 3 „Vorschlag bestätigen“.
+Die anschließende Frage zu Voreinstellungen und Obergrenzen beantwortet sie ausdrücklich mit „Diese Voreinstellungen und Obergrenzen bestätigen“.
+
+- Pro Einrichtung einstellbare Fristen: höchstens 900 Sekunden Inaktivität, 28.800 Sekunden absolut und 300 Sekunden zusätzliche Authentisierung. Diese Werte sind auch die Voreinstellungen; Einrichtungen dürfen kürzere Werte wählen.
+- Die MFA-Pflicht kann durch Passwort plus TOTP oder durch einen Passkey mit zwingender Geräte-PIN/Biometrie erfüllt werden.
+- Secure, HttpOnly, SameSite=Strict, keine Domain-Freigabe, serverseitig gebundener CSRF-Nachweis und genaue Origin-Prüfung für zustandsändernde Browseranfragen einschließlich Anmeldung/Abmeldung sind bestätigt. Externe SSO-Regeln folgen KC-007.
+
+Diese vier Antworten ersetzen die zuvor dokumentierten offenen Fragezustände. Nicht erneut fragen.
+Vertrag, ADR-034 und [ADR-035](../architecture/ADR-035_Sitzungsfristen_je_Einrichtung.md) werden vor Code versioniert.
+Produktive Domain, Versuchslimits, konkrete Verwaltungsrechte und Rollen-/Schlüsselbindung bleiben gesondert.

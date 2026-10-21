@@ -275,3 +275,7 @@ Er ändert keine Datenhoheit: identity-access verwaltet Identitäten und Sitzung
 Eine lokale Transaktion ersetzt keine aktuelle dienstübergreifende Prüfung.
 Sitzungsfristen, die Erfüllung der MFA-Pflicht durch Passkeys und Cookie-/CSRF-Regeln sind ausdrücklich angefragt und noch offen.
 Keine abhängige Laufzeitfunktion, Migration oder produktive Freigabe wird daraus abgeleitet.
+
+Am 21.10.2026 bestätigt die Projektleitung beide MFA-Varianten und den Cookie-/CSRF-Vorschlag.
+Die Fristen sind pro Einrichtung einstellbar. In einer Folgeantwort bestätigt die Projektleitung die vorgeschlagenen Voreinstellungen und Obergrenzen.
+[ADR-035](architecture/ADR-035_Sitzungsfristen_je_Einrichtung.md) und der Einstellungsspeichervertrag werden vor Code versioniert.

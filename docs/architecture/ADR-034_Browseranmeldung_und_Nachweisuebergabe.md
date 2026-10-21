@@ -1,6 +1,6 @@
 # ADR-034 – Browseranmeldung und atomare Nachweisübergabe vorbereiten
 
-Datum: 21.10.2026. Status: technischer Entwurf für KC-006F / #67; Sicherheitsentscheidungen offen.
+Datum: 21.10.2026. Status: Sicherheitsregeln bestätigt; technischer Entwurf für KC-006F / #67.
 Grundlage: Spezifikation v5.9, ADR-014/015/019 und ADR-029 bis ADR-033.
 
 ## Ausgangszustand
@@ -29,13 +29,16 @@ Prüfzeitpunkte und konkurrierender dienstübergreifender Widerruf benötigen vo
 Fachliche Rechteverwaltung, Föderation und produktiver Schlüsselbetrieb werden nicht in diesen Vorbereitungsschritt vorgezogen.
 Eine Entscheidung über Fristen, MFA-Kombination und Browser-Schutz wird mit konkreten Vorschlägen angefordert.
 
-## Offene Entscheidungen
+## Bestätigte Antworten
 
 | Thema | Vorgelegter Vorschlag | Grenze |
 |---|---|---|
-| Fristen | 15 Minuten Inaktivität, 8 Stunden absolut, zusätzliche Authentisierung höchstens 5 Minuten; Verkürzung durch Träger erlaubt. | Bisherige Frage bleibt unbeantwortet. Keine abhängige Laufzeitregel. |
-| MFA-Kombination | Passwort plus TOTP oder Passkey mit zwingender Benutzerverifikation erfüllt die MFA-Pflicht. | Passkey-Benutzerverifikation ist bestätigt; ihre Gleichstellung mit Passwort plus TOTP ist neu angefragt. |
-| Browser-Schutz | Secure, HttpOnly, SameSite=Strict, keine Domain-Freigabe; serverseitig gebundener CSRF-Nachweis und genaue Origin-Prüfung. | ADR-015 verlangt Bestätigung vor Implementierung. Externe SSO-Abläufe folgen KC-007. |
+| Fristen | 15 Minuten Inaktivität, 8 Stunden absolut, zusätzliche Authentisierung höchstens 5 Minuten. | Pro Einrichtung einstellbar; diese Voreinstellungen und Obergrenzen sind in der Folgeantwort ausdrücklich bestätigt. |
+| MFA-Kombination | Passwort plus TOTP oder Passkey mit zwingender Benutzerverifikation erfüllt die MFA-Pflicht. | Beide Varianten ausdrücklich bestätigt. |
+| Browser-Schutz | Secure, HttpOnly, SameSite=Strict, keine Domain-Freigabe; serverseitig gebundener CSRF-Nachweis und genaue Origin-Prüfung. | Vorschlag ausdrücklich bestätigt. Externe SSO-Abläufe folgen KC-007. |
+
+Die Antworten werden vor abhängiger Implementierung versioniert. Diese Fragen nicht erneut stellen.
+Der [Speichervertrag für Einrichtungseinstellungen](../../contracts/organization-config/session-policy-v1.md) konkretisiert den ersten begrenzten Umsetzungsschritt.
 
 Produktive Domain, Rollen-/Poolbindung, Versuchslimits und Schlüsselbetrieb bleiben gesondert offen.
 Die Spezifikation verlangt aktuelle Mitgliedschaftsprüfung, legt aber keine neue öffentliche Vergabe- oder Transferregel in KC-006F fest.

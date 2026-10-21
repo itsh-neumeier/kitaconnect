@@ -1,8 +1,9 @@
 # Vertragsentwurf: Browseranmeldung und aktuelle Sitzungsprüfung v1
 
 Stand: 21.10.2026. KC-006F / #67. Grundlage: Spezifikation v5.9 und ADR-015/019/029 bis ADR-034.
-Status: Vorbereitung. Keine HTTP-Anmeldung, Migration oder neue Laufzeitfunktion implementiert.
-Die drei angefragten Sicherheitsentscheidungen sind noch nicht bestätigt.
+Status: bestätigte Sicherheitsregeln; technische Umsetzung folgt in kleinen Schritten.
+Die Projektleitung bestätigt Einstellbarkeit pro Einrichtung sowie die vorgeschlagenen Voreinstellungen und Obergrenzen.
+Die beiden MFA-Varianten und der Cookie-/CSRF-Vorschlag sind ausdrücklich bestätigt.
 
 ## Zuständigkeit und bestehender Stand
 
@@ -22,9 +23,9 @@ Eine spätere Prüfung muss diesen Zwischenraum schließen.
 
 | Thema | Vorschlag | Stand und Sperre |
 |---|---|---|
-| Sitzungsfristen | 15 Minuten Inaktivität, 8 Stunden absolute Laufzeit, höchstens 5 Minuten zusätzliche Authentisierung; Träger dürfen verkürzen. | Ausdrücklich angefragt, noch offen. Keine Vorgabewerte implementieren. |
-| Erfüllung der MFA-Pflicht | Passwort plus TOTP oder Passkey mit zwingender Benutzerverifikation. | Ausdrücklich angefragt, noch offen. Die bestätigte Passkey-Benutzerverifikation entscheidet diese Gleichstellung nicht. |
-| Cookie und CSRF | Secure, HttpOnly, SameSite=Strict, Path=/, keine Domain-Freigabe; serverseitig gebundener CSRF-Nachweis und genaue Origin-Prüfung für zustandsändernde Anfragen einschließlich Anmeldung/Abmeldung. | Gemäß ADR-015 ausdrücklich angefragt, noch offen. Keine abhängige Gateway-Implementierung. |
+| Sitzungsfristen | 15 Minuten Inaktivität, 8 Stunden absolute Laufzeit, 5 Minuten zusätzliche Authentisierung als Voreinstellungen und Obergrenzen; je Einrichtung verkürzbar. | Ausdrücklich bestätigt. 900/28.800/300 Sekunden; keine Verlängerung über diese Grenzen. |
+| Erfüllung der MFA-Pflicht | Passwort plus TOTP oder Passkey mit zwingender Benutzerverifikation. | Beide Varianten ausdrücklich bestätigt. |
+| Cookie und CSRF | Secure, HttpOnly, SameSite=Strict, Path=/, keine Domain-Freigabe; serverseitig gebundener CSRF-Nachweis und genaue Origin-Prüfung für zustandsändernde Anfragen einschließlich Anmeldung/Abmeldung. | Vorschlag ausdrücklich bestätigt. Externe SSO-Regeln bleiben KC-007 vorbehalten. |
 
 Die bestätigte MFA-Pflicht bei Verwaltungsrechten und besonders sensiblen Daten bleibt bestehen.
 Die genaue Rechtezuordnung folgt KC-008. Unbekannte notwendige Policy-Daten führen zur Verweigerung.
@@ -33,7 +34,7 @@ Sie ist kein vierter Weg zu einer unbeschränkten Sitzung. TOTP allein ersetzt k
 
 ## Geplante technische Übergabe
 
-Die folgende technische Richtung schränkt die Umsetzung ein. Sie gibt keine offene Sicherheitsregel frei.
+Die folgende technische Richtung schränkt die Umsetzung ein. Produktive Domain, Dienstrollen und Schlüsselbetrieb bleiben gesondert.
 
 1. Erzeugen Sie einen serverseitigen, zweckgebundenen Anmeldevorgang mit expliziter Frist und Mengenbegrenzung.
 2. Reservieren Sie Prüfversuche dauerhaft vor der Nachweisprüfung. Fehlgeschlagene Fachtransaktionen geben diese Versuche nicht zurück.

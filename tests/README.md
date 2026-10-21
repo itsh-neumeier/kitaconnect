@@ -171,3 +171,25 @@ Die Test-Laufzeitrolle bleibt durch RLS gesperrt und darf weder Eigentümer- noc
 Nach Neustart werden bestätigte Zustände erneut gelesen und neue Nachweise nur im Arbeitsspeicher erzeugt.
 Es wird kein roher Nachweis in einer Datei über den Neustart hinweg gespeichert.
 Die Prüfung weist keine Anmeldung, MFA, Mitgliedschaft oder Benutzerberechtigung nach.
+
+## KC-006F: Interner Diensttokenbestand
+
+Die gesonderte Datenbank `kc_service_token_test` erhält Identitätsmigrationen 0001 bis 0009.
+Der Läufer prüft atomare Migration, verweigerte Wiederholung und den SQLx-Test `service_tokens_are_current_and_bound` vor und nach Neustart.
+Die Prüfung verwendet ausdrücklich synthetische Zertifikatsreferenzen; sie erzeugt keine TLS-Verbindung.
+Sie prüft Installation, Aussteller, Aufrufer, Ziel, Zweck, kurze Zertifikatsgültigkeit, aktuellen Freigabe-/Zertifikatsentzug und endgültige Zustände.
+Ein unabhängiger Datenbankzeuge beobachtet wirkliche Zeilensperrwartende bei Widerruf und Ablauf.
+Fehlende Schreibbestätigung und verzögerter Commitfehler dürfen keinen Nachweis ausgeben.
+Ein unterdrücktes Zustandsupdate darf keinen positiven Prüftreffer liefern.
+Eigene Fehlertransaktionen müssen vor Rückgabe enden; der Zeuge prüft die offen gehaltene Verbindung.
+Laufzeit und Eigentümer bleiben durch FORCE RLS gesperrt. Rohe Tokens bleiben im Arbeitsspeicher.
+
+## KC-006F: Bestätigte MFA-Zuordnung
+
+Der [Aktionsvertrag](../contracts/identity-access/operation-assurance-v1.md) benennt die sechs bestätigten sensiblen Bereiche.
+Der Modelltest prüft ihre Anforderung sowie die Verweigerung unbekannter Einstufungen.
+Der bestehende echte Test `additional_proof_is_bound_and_rotated` verwendet zusätzlich die neue aktionsgebundene Prüfvariante.
+Er verweigert die sensiblen Bereiche nach Ablauf der MFA-Frist und erlaubt weiterhin die normale Authentisierungsprüfung für die zwei gesonderten Datenklassen.
+Nach tatsächlicher erneuter Passwort-/TOTP-Prüfung muss die aktuelle MFA-Anforderung erfüllt sein.
+Unbekannte Einstufung und der widerrufene alte Sitzungsnachweis bleiben gesperrt.
+Diese Fälle laufen vor und nach Neustart. Objekt-/Feldrechte und vollständiges RBAC bleiben gesonderte Nachweise.

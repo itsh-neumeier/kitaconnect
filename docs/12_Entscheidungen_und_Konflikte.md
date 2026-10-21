@@ -331,3 +331,9 @@ Gesundheitsdaten, Sorgerechtsbeschränkungen, Personalakten und interne Entwickl
 Unbekannte Einstufungen verweigern Zugriff. Normale Anmeldung allein gewährt keinen solchen Zugriff.
 Veröffentlichte Portfolios und einfache Kontaktdaten behalten ihre gesonderten Objekt-/Feldrechte.
 Diese Entscheidung gewährt keine neue Rolle oder Fachberechtigung. Der konkrete Umsetzungsvertrag folgt vor Code.
+
+## ADR-043 – Aktionsgebundene MFA-Zuordnung
+
+[ADR-043](architecture/ADR-043_Aktionsgebundene_MFA_Zuordnung.md) konkretisiert die bestätigte Zuordnung vor abhängigem Code.
+Die tatsächliche Aktion bestimmt die aktuelle Authentisierungsanforderung. Unbekannte Einstufungen verweigern Zugriff.
+Aktuelle MFA erteilt keine Objekt-/Feldrechte. Die Gesamtabnahme von KC-008 bleibt gesondert.

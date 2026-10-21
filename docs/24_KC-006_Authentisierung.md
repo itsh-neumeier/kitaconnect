@@ -160,4 +160,16 @@ Er erhält die Organisationshoheit über Mitgliedschaften. Eine lokale Sitzungst
 Reihenfolge innerhalb von #67: Antworten versionieren; konkreten Speicher-/Sperrvertrag festlegen; Identitätsdienst und aktuellen Mitgliedschafts-Prüfvertrag ergänzen;
 Rust-Gateway mit bestätigtem Browser-Schutz anbinden; Browser-, TLS- und Dienstidentitätsnachweise gesondert führen.
 Sitzungsfristen, Passkey-Gleichstellung bei MFA-Pflicht und Cookie-/CSRF-Regeln sind im Interview ausdrücklich angefragt.
-Antworten stehen aus. Der Vorbereitungsschritt ergänzt keine Laufzeitfunktion, Abhängigkeit oder Migration. Alle Kriterien von #67 bleiben offen.
+Die Projektleitung bestätigt beide MFA-Varianten und den Browser-Schutz. Sitzungsfristen sind pro Einrichtung einstellbar.
+Die anschließende Antwort bestätigt 900/28.800/300 Sekunden als Voreinstellungen und Obergrenzen.
+Diese Antworten sind vor Code in 916109c versioniert. Nicht erneut fragen.
+
+## KC-006F: Einstellungsspeicher als erster Umsetzungsschritt
+
+[ADR-035](architecture/ADR-035_Sitzungsfristen_je_Einrichtung.md) und der [Speichervertrag](../contracts/organization-config/session-policy-v1.md) begrenzen diesen Schritt.
+organization-config erhält einen aktuellen Einstellungssatz je Einrichtung mit atomarem Versionsvergleich.
+Die neue Organisationsmigration 0003 ergänzt den Bestand und einen Versionsschutztrigger. Alte Migrationen bleiben unverändert.
+Erzwungene RLS bleibt ohne erlaubende Runtime-Policy bestehen. Der Leseweg legt keine Voreinstellungen an.
+Die neue Testdatenbank kc_session_policy_test bleibt von bestehenden Testbeständen getrennt.
+Die CI muss Werteprüfung, Konkurrenz, Rücknahme, Rechte und Neustart nachweisen.
+Gateway, Mitgliedschafts-Prüfvertrag, atomare Faktorübergabe und laufende Sitzungsprüfung folgen weiterhin. Die Gesamtkriterien von #67 bleiben offen.

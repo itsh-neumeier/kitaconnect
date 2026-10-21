@@ -6,6 +6,7 @@ use std::num::NonZeroU128;
 
 pub mod postgres;
 pub mod provisioning;
+pub mod session_policy;
 
 /// Internal carrier identifier; no public transport format or generation algorithm implied.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]

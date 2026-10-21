@@ -628,6 +628,17 @@ impl MfaService {
         .bind(identity.value().to_string())
         .execute(&mut *tx)
         .await?;
+        sqlx::query(
+            "DELETE FROM identity_access.mfa_recovery_codes WHERE identity_id = $1::text::numeric",
+        )
+        .bind(identity.value().to_string())
+        .execute(&mut *tx)
+        .await?;
+        let updated = sqlx::query("UPDATE identity_access.mfa_accounts SET generation = NULL, permit_hash = NULL, permit_expires = NULL WHERE identity_id = $1::text::numeric")
+            .bind(identity.value().to_string()).execute(&mut *tx).await?;
+        if updated.rows_affected() != 1 {
+            return Err(MfaError);
+        }
         observe(&mut tx, identity, time).await?;
         revoke_sessions(&mut tx, identity).await?;
         event(&mut tx, identity, "revocation", time).await?;

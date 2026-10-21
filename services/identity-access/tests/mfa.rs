@@ -4,7 +4,7 @@ use kitaconnect_identity_access::{
     password::AttemptLimits,
 };
 use sqlx::{
-    Connection, PgConnection, Row,
+    AssertSqlSafe, Connection, PgConnection, Row,
     postgres::{PgConnectOptions, PgSslMode},
 };
 use std::{sync::Arc, time::Duration};
@@ -38,11 +38,15 @@ fn engine() -> MfaService {
         .unwrap(),
     )
 }
-async fn sql(c: &mut PgConnection, value: &str) {
+async fn sql(c: &mut PgConnection, value: &'static str) {
     sqlx::raw_sql(value).execute(c).await.unwrap();
 }
 async fn count(c: &mut PgConnection, value: &str) -> i64 {
-    sqlx::query_scalar(value).fetch_one(c).await.unwrap()
+    // Only fixed fixture identifiers and locally generated numeric IDs enter this helper.
+    sqlx::query_scalar(AssertSqlSafe(value))
+        .fetch_one(c)
+        .await
+        .unwrap()
 }
 async fn time(c: &mut PgConnection) -> u64 {
     let value: String =
@@ -301,7 +305,7 @@ async fn totp_and_recovery_are_atomic_and_protected() {
     );
     // Foreign identities cannot consume the same raw recovery code.
     let second = service.begin_enrollment(&mut c, b, None).await.unwrap();
-    service
+    let second_codes = service
         .activate(&mut c, b, &second, &code(&second, future), None, None)
         .await
         .unwrap();
@@ -443,6 +447,43 @@ async fn totp_and_recovery_are_atomic_and_protected() {
         .unwrap();
     assert_eq!(count(&mut c,"SELECT count(*) FROM identity_access.mfa_security_events e LEFT JOIN identity_access.mfa_notification_outbox o ON o.event_id = e.id WHERE o.event_id IS NULL").await,0);
     assert_eq!(count(&mut c,&format!("SELECT count(*) FROM identity_access.mfa_recovery_codes WHERE identity_id = {} AND consumed",a.value())).await,1);
+    // Revocation must also invalidate its offline codes and revoke sessions atomically.
+    reset_step(&mut c, b).await;
+    seed_session(&mut c, b).await;
+    sql(&mut c,"CREATE FUNCTION public.kc_mfa_suppress() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RETURN NULL; END $$; CREATE TRIGGER kc_mfa_suppress BEFORE UPDATE ON identity_access.sessions FOR EACH ROW EXECUTE FUNCTION public.kc_mfa_suppress();").await;
+    assert!(
+        service
+            .revoke(&mut c, b, &code(&second, future))
+            .await
+            .is_err()
+    );
+    assert!(service.status(&mut c, b).await.unwrap().totp_active);
+    sql(&mut c,"DROP TRIGGER kc_mfa_suppress ON identity_access.sessions; DROP FUNCTION public.kc_mfa_suppress();").await;
+    service
+        .revoke(&mut c, b, &code(&second, future))
+        .await
+        .unwrap();
+    assert!(!service.status(&mut c, b).await.unwrap().totp_active);
+    assert!(
+        service
+            .recover(&mut c, b, &second_codes.codes()[0])
+            .await
+            .is_err()
+    );
+    let second = service.begin_enrollment(&mut c, b, None).await.unwrap();
+    service
+        .activate(&mut c, b, &second, &code(&second, future), None, None)
+        .await
+        .unwrap();
+    // The trigger forbids reset. Only the fixture administrator can prepare exhaustion.
+    assert!(
+        sqlx::query("UPDATE identity_access.mfa_nonce_counters SET used = 1 WHERE key_tag = $1")
+            .bind(snapshot.get::<Vec<u8>, _>("key_tag"))
+            .execute(&mut c)
+            .await
+            .is_err()
+    );
+    sql(&mut c,"ALTER TABLE identity_access.mfa_nonce_counters DISABLE TRIGGER mfa_nonce_transition_guard;").await;
     // Deliberate nonce-budget exhaustion cannot encrypt or replace a factor.
     sqlx::query(
         "UPDATE identity_access.mfa_nonce_counters SET used = 4294967295 WHERE key_tag = $1",
@@ -451,6 +492,11 @@ async fn totp_and_recovery_are_atomic_and_protected() {
     .execute(&mut c)
     .await
     .unwrap();
+    sql(
+        &mut c,
+        "ALTER TABLE identity_access.mfa_nonce_counters ENABLE TRIGGER mfa_nonce_transition_guard;",
+    )
+    .await;
     assert!(service.begin_enrollment(&mut c, b, None).await.is_err());
     // Default-deny RLS applies to runtime and even the owning role.
     let mut runtime = connect("kc_identity_test_runtime").await;

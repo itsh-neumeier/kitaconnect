@@ -17,6 +17,17 @@ CREATE TABLE identity_access.mfa_accounts (
     CHECK ((permit_hash IS NULL) = (permit_expires IS NULL)),
     CHECK (recovery_required OR permit_hash IS NULL)
 );
+CREATE FUNCTION identity_access.guard_mfa_nonce() RETURNS trigger
+LANGUAGE plpgsql SECURITY INVOKER SET search_path = pg_catalog AS $$
+BEGIN
+    IF NEW.key_tag IS DISTINCT FROM OLD.key_tag OR NEW.used <> OLD.used + 1 THEN
+        RAISE EXCEPTION 'invalid MFA nonce transition' USING ERRCODE = '23514';
+    END IF;
+    RETURN NEW;
+END $$;
+REVOKE ALL ON FUNCTION identity_access.guard_mfa_nonce() FROM PUBLIC;
+CREATE TRIGGER mfa_nonce_transition_guard BEFORE UPDATE ON identity_access.mfa_nonce_counters
+    FOR EACH ROW EXECUTE FUNCTION identity_access.guard_mfa_nonce();
 CREATE TABLE identity_access.totp_factors (
     factor_id bytea PRIMARY KEY CHECK (octet_length(factor_id) = 16),
     identity_id identity_access.internal_id NOT NULL REFERENCES identity_access.mfa_accounts(identity_id),

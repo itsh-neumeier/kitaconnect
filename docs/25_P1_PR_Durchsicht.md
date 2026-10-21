@@ -42,12 +42,18 @@ Ein synthetischer BEFORE-INSERT-Trigger mit RETURN NULL kann diesen Zustand erze
 Der Folgebranch präzisiert den Vertrag vor Code. Beide Anlageoperationen verlangen anschließend genau eine betroffene Zeile.
 Ein echter PostgreSQL-Test prüft unterdrückte Träger- und Einrichtungsanlage vor und nach Neustart.
 Die Korrektur liegt getrennt über #74. Sie verändert keine bestehende Migration, Rollenregel oder fachliche Anforderung.
-Die neue native CI muss den Korrekturstand bestätigen; Abschlussnachweise stehen im zugehörigen PR.
+Die native CI bestätigt den Korrekturstand 6a1ccff; aktuelle Abschlussnachweise stehen in PR #75.
 
 Die gleiche fehlende Bestätigung betrifft Identitäts- und Sitzungsanlage in #69.
 Der Sitzungsvertrag wurde in 8816a18 vor der zweiten Korrektur präzisiert.
 Auch diese beiden Anlagen verlangen nun genau eine betroffene Zeile. Die Sitzungsanlage gibt bei einer unterdrückten Anlage keinen Nachweis aus.
 Der echte Sitzungs-Datenbanktest prüft beide Fehler vor und nach Neustart. Neue oder geänderte Migrationen sind dafür nicht erforderlich.
+
+Der [vollständige CI-Lauf auf 6a1ccff](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39600978661) ist erfolgreich.
+Die Organisations- und Sitzungs-SQLx-Tests wurden mit den ergänzten Fehlerfällen ausdrücklich vor und nach Neustart ausgeführt.
+Alle elf getrennten Datenbank-Testgruppen bestehen in beiden Phasen. Clippy, Rust-Tests und Build sind ebenfalls erfolgreich.
+Die [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39600978631) sind erfolgreich.
+Dieser abschließende Dokumentationsstand erhält eigene CI. Die aktuelle Kopf-ID und deren Ergebnisse werden in PR #75 nachgeführt.
 
 #47 bleibt wegen des belegten Webfehlers von der Integration ausgeschlossen.
 Eine Umstellung auf TypeScript 7 braucht eine gemeinsam kompatible SvelteKit-/Prüfwerkzeugkette und eigene positive Nachweise.

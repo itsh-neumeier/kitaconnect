@@ -121,3 +121,11 @@ Der spätere Nachrichtendienst würde den Versand übernehmen. Auch diese Antwor
 Vor abhängiger Implementierung zuerst Antworten in Vertrag und ADR versionieren.
 Produktiver Schlüsselanbieter, Nonce-Eindeutigkeit, Wiederanlauf und Rotation benötigen vor produktiver Nutzung einen geprüften Vertrag.
 Der separate Bibliotheks-Prüfgraph ersetzt weder diese Betriebsentscheidungen noch die vollständige Projektprüfung.
+
+## KC-006E: Ausdrückliche Bestätigung
+
+Am 21.10.2026 bestätigt die Projektleitung „Ja, alle genannten Regeln bestätigen“.
+Damit sind die zuvor vorgelegten MFA-/Wiederherstellungsregeln und Sicherheitsprotokoll plus atomarer Benachrichtigungsauftrag bestätigt.
+Diese Regeln nicht erneut abfragen. Die vorherigen Abschnitte dokumentieren den damaligen Fragezustand.
+Die genaue Rechtezuordnung folgt KC-008. Browser-Sitzungswerte und produktiver Schlüsselbetrieb bleiben offen.
+Vertrag und ADR-033 werden vor Implementierung mit dieser Antwort aktualisiert und versioniert.

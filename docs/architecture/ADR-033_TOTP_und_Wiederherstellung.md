@@ -1,6 +1,6 @@
 # ADR-033 – TOTP und Wiederherstellung vorbereiten
 
-Datum: 21.10.2026. Status: Entwurf für KC-006E / #66; Sicherheitsentscheidungen stehen aus.
+Datum: 21.10.2026. Status: bestätigte Regeln und technische Konkretisierung für KC-006E / #66.
 Grundlage: Spezifikation v5.9, ADR-019 und ADR-029 bis ADR-032.
 
 ## Istzustand
@@ -58,8 +58,18 @@ Ein fehlender Schlüssel darf weder unverschlüsselte Speicherung noch einen Ers
 
 Die ersten beiden Vorschläge wurden im Projektchat gemeinsam erneut zur Entscheidung gestellt.
 Die Benachrichtigungsregel wurde als zusätzliche, für das Akzeptanzkriterium erforderliche Frage gestellt.
-Alle Antworten stehen noch aus. Eine allgemeine Aufforderung zur Weiterarbeit beantwortet diese Fragen nicht.
-Nach der Antwort werden Vertrag und ADR vor abhängiger Implementierung aktualisiert und versioniert.
+Die Projektleitung hat anschließend ausdrücklich „Ja, alle genannten Regeln bestätigen“ geantwortet.
+Damit sind MFA-Zuordnung, einmalige Offline-Wiederherstellung mit Sitzungswiderruf und Faktorneueinrichtung sowie Sicherheitsprotokoll und Benachrichtigungsauftrag bestätigt.
+Die Tabelle dokumentiert die angefragten Regeln und die zuvor bestehenden Sperren.
+Die konkrete Rechtezuordnung bleibt KC-008 vorbehalten. Sitzungsgrenzen und produktiver Schlüsselbetrieb bleiben offen.
+Der aktualisierte Vertrag wird vor Implementierung versioniert.
+
+Der Adapter verwendet die bestehende dauerhafte Versuchsreservierung aus KC-006C; diese technische Voraussetzung wird im Backlog ergänzt.
+AES-GCM verwendet im Test einen frischen zufälligen RAM-Schlüssel und vorab dauerhaft reservierte eindeutige Zähler-Nonces.
+Der Schlüssel kann weder importiert noch exportiert werden. Produktiver Schlüsselanbieter und Rotation werden dadurch nicht freigegeben.
+Eine neue Migration ergänzt MFA-Bestand, verschlüsselte Faktoren, abgeleitete Offline-Codes, begrenzte Wiederherstellungsnachweise und atomare Ereignisaufträge.
+Vorbereitete Faktoren ersetzen den aktiven Faktor erst nach gültiger Bestätigung. Alte Zeitschritte werden nicht erneut akzeptiert.
+Wiederherstellung sperrt normale Anmeldeabschlüsse bis zur Neueinrichtung; die spätere Gateway-Anbindung muss diese aktuelle Sperre auch bei anderen Nachweisarten prüfen.
 
 ## Quellen
 

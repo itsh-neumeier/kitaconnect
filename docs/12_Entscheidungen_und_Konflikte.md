@@ -263,3 +263,6 @@ Produktive Domain und die übrigen offenen Sicherheitsentscheidungen bleiben off
 MFA-Zuordnung und Wiederherstellung wurden gemeinsam erneut zur ausdrücklichen Entscheidung gestellt.
 Die Benachrichtigungsregel bei Faktoränderungen und Wiederherstellung ist zusätzlich angefragt.
 Alle Antworten stehen aus. Der Entwurf aktiviert keine dieser Regeln und enthält keine Laufzeitimplementierung.
+
+Am 21.10.2026 bestätigt die Projektleitung ausdrücklich alle vorgelegten MFA-/Wiederherstellungs- und Benachrichtigungsregeln.
+Vertrag und ADR-033 werden vor Code aktualisiert. Rechtezuordnung, Browser-Sitzungswerte und produktiver Schlüsselbetrieb bleiben gesondert.

@@ -7,6 +7,8 @@ Diese Liste ist eine Momentaufnahme und kein Abschlussnachweis. GitHub bleibt ve
 
 ## Aktueller Schritt
 
+Aktiver Folgebranch: codex/kc-006f-http-client auf #91 / 6967eba. Vertrag/ADR-051 in fd45e30 und transitive Paketprüfung in ea8cd8f stehen vor Code. Tatsächlicher begrenzter Client und vier Netzwerk-Testgruppen sind vorbereitet; native Prüfung folgt. Keine neue Datenbankabhängigkeit, Migration, Rolle oder Fachberechtigung.
+
 Aktiv: PR #91 / codex/kc-006f-oauth-http auf #90. Codekopf e696bbb besteht native Push-CI und Sicherheitsprüfung. Alle achtzehn SQLx-Gruppen einschließlich tatsächlichem HTTP und unabhängigem Abbruchzeugen bestehen vor/nach Neustart. Vertrag/ADR-050 1c47cbf und Bereinigungspräzisierung 35fd4e1 stehen vor dem jeweiligen Code. Aktuellen Nachweiskopf im PR prüfen. Danach begrenzten tatsächlichen HTTP-Client und Organisationsvertrag vorbereiten; diesen Server nicht erneut implementieren.
 
 KC-006F / #67: PR #76 bestätigt aktuelle Sitzungsprüfung und lokale Abmeldung mit zehn grünen Prüfungen.

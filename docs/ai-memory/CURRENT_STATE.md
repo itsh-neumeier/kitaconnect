@@ -7,18 +7,18 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 ## Arbeitsstand
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
-- branch: codex/kc-006f-oauth-http auf PR #90 / 69f50d0.
-- pull_request: [PR #91](https://github.com/itsh-neumeier/kitaconnect/pull/91) auf codex/kc-006f-ausgabemetadaten / PR #90. Persönliche/sprachliche Durchsicht gesammelt; kein Merge-Auftrag.
-- head_commit: Vertrag/OpenAPI/ADR-050 vor Code in 1c47cbf. Bereinigungsvertrag 35fd4e1 vor Korrektur e696bbb866894569bf5c70cb1686f491434a094c. Dies ist der geprüfte Codekopf; aktueller Nachweiskopf steht im PR.
-- objective: Tatsächliche OAuth-Endpunkte auf genau ihrer mTLS-Verbindung mit aktuellen Datenbankprüfungen und ausdrücklich konfigurierten Grenzen.
-- completed: Tatsächlicher begrenzter OAuth-HTTP-Adapter einschließlich aktueller Registrierung, Freigabe, Ausgabe und Introspektion. Codekopf e696bbb besteht alle zehn aktuellen Prüfungen einschließlich nativer Push-CI mit Clippy, Workspace-Tests/Build und allen achtzehn SQLx-Gruppen vor/nach Neustart. Der echte Sperrtest bestätigt serverseitige Bereinigung ohne Freigabe der Testsperre. #88 bis #90 und diesen Adapter nicht erneut implementieren.
-- remaining: Begrenzten tatsächlichen HTTP-Client und aktuellen Organisationsvertrag vorbereiten. Danach Organisationsadapter, Gateway, getrennte Browsernachweise und ursprüngliche Gesamtabnahme. Produktive Rollen-/Poolbindung, Domain, Schlüsselbetrieb und Versuchslimits bleiben gesondert.
+- branch: codex/kc-006f-http-client auf PR #91 / 6967eba.
+- pull_request: Neuer abhängiger Client-Entwurf auf PR #91. Nummer nach Erstellung im PR nachführen.
+- head_commit: Clientvertrag/ADR-051 vor Code in fd45e30; zusätzliche transitive Pakete vor Code in ea8cd8f. Aktuellen Implementierungskopf im PR prüfen.
+- objective: Begrenzten tatsächlichen OAuth-HTTP-Client ohne losgelösten Hintergrundauftrag bereitstellen; Antwortbytes bleiben von Berechtigungsentscheidungen getrennt.
+- completed: PR #91 / Codekopf e696bbb besteht alle zehn Prüfungen einschließlich achtzehn SQLx-Gruppen vor/nach Neustart. Abschlusskopf 6967eba erhält eigene CI. Neuer Client und vier tatsächliche TCP-/mTLS-/HTTP-Testgruppen sind vorbereitet; native Ausführung folgt.
+- remaining: Neue Client-CI und Abbruch-/Grenznachweise auswerten. Aktuellen Abschluss von PR #91 bestätigen. Danach aktuellen Organisationsvertrag und zuständigen Adapter vorbereiten. Gateway, Browser und ursprüngliche Gesamtabnahme bleiben offen.
 - migration_state: Keine Migration oder Datenbankrechte geändert. Neue isolierte Testdatenbank verwendet bestehende Migrationen 1 bis 9. Keine erlaubende Laufzeitpolicy.
-- dependencies: Neue genaue Bindungen für Axum 0.8.9, Hyper 1.12.0, Hyper-Util 0.1.21 und Mime 0.3.17. Lockfile ergänzt nur siebzehn neue Pakete; bestehende Paketversionen bleiben erhalten. MIT beziehungsweise MIT/Apache-2.0 gemäß Paketmanifesten; Sicherheitsprüfung des Codekopfs erfolgreich.
-- known_failures: Windows-Linker und Docker fehlen lokal. Native Ausführung deshalb in Linux-CI. Frühere Clippy- und Testverbindungsfehler sind korrigiert. Der tatsächlich nachgewiesene PostgreSQL-Abbruchfehler ist nach vorherigem Vertrag in e696bbb behoben; keine Warnung oder Prozessprüfung abgeschwächt.
-- test_results: Lokal Rustfmt, gesperrte Offline-Auflösung, 50 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/67 Dokumente, JavaScript-Syntax, git diff --check und Gitleaks erfolgreich. Native Code-CI 39830079947 / Job 120003585056 bestätigt Clippy, Tests/Build, Zeitgrenzenprüfung und achtzehn SQLx-Gruppen vor/nach Neustart. Sicherheitslauf 39830079924 erfolgreich. Der abschließende Nachweiskopf erhält eigene CI; dessen verbindlichen Status im PR prüfen. Statische Vertragsprüfung ist kein vollständiger OpenAPI-Validator.
+- dependencies: Neue direkte Einträge verwenden bereits gesperrte Versionen von Hyper, Hyper-Util, http-body-util, Mime und Zeroize. Hyper-Client ergänzt ausschließlich want 0.3.2 und try-lock 0.2.5, beide MIT. Keine bestehende Version geändert; Sicherheitsprüfung folgt.
+- known_failures: Windows-Linker und Docker fehlen lokal; native Prüfung in Linux-CI. Keine lokale Rust-/PostgreSQL-Ausführung behaupten. Frühere Serverfehler sind behoben. Für den neuen Client noch keinen Erfolg behaupten.
+- test_results: Lokal Rustfmt, gesperrte Offline-Auflösung, Struktur-/Verweisprüfung für 50 Issues/68 Dokumente und git diff --check erfolgreich. Neue tatsächliche Clienttests sind noch nicht nativ bestätigt. Die geprüften Servernachweise von e696bbb bleiben in den folgenden Abschnitten erhalten.
 - test_commands: cargo fmt --all --check; cargo metadata --locked --offline --format-version 1; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI führt Clippy, Workspace-Tests/Build und achtzehn SQLx-Gruppen vor/nach Neustart aus.
-- security_notes: Nur tatsächlicher ConnectionPeer aus derselben Verbindung. Keine Headeridentität, Cookie-Anmeldung, Rollenwechsel oder produktive Vorgaben. Jede Anfrage besitzt eine eigene physische Datenbankverbindung; Abbruch verwirft sie. Synthetische Administration ist keine produktive Laufzeitfreigabe. DNS-/Fingerabdruckbindung, MFA, OAuth-Ausnahme und zusätzliches HTTPS-Browserprofil sind bestätigt. Nicht erneut fragen.
+- security_notes: Der Client übernimmt ausschließlich einen ausdrücklich übergebenen Socket und die vorhandene tatsächliche mTLS-Prüfung. Nur POST zu zwei vorhandenen OAuth-Pfaden; kein Cookie, alternativer Authentisierungsheader oder Redirect. Antwortbytes sind keine Registrierung oder Tokenfreigabe. Produktiver Zertifikatsbetrieb, Domain, Rollen-/Poolbindung und ursprüngliche Gesamtabnahme bleiben getrennt.
 
 Aktuelle bestätigte Testprofile: `http://localhost:3000` und zusätzlich das getrennte `https://localhost:3443` gemäß ADR-049.
 Die zusätzliche Profilfrage ist beantwortet. Nicht erneut fragen. Produktive Domain und Zertifikatsbetrieb bleiben offen.
@@ -352,9 +352,9 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Nächste drei Aktionen
 
-1. Aktuellen Kopf und CI von PR #91 prüfen. Codekopf e696bbb ist mit allen achtzehn Datenbankgruppen vor/nach Neustart bestätigt. Den HTTP-Adapter, die Rückübernahmen und die bestätigten Entscheidungen nicht erneut bearbeiten.
-2. Dienstvertrag für einen begrenzten tatsächlichen HTTP-Client und die aktuelle Organisationsabfrage erstellen. Organisation prüft Tokenzustand über Introspektion und vergleicht die tatsächliche Zertifikatsbindung. Keine Identitätstabellen im Organisationsdienst lesen; keine positive Antwort zwischenspeichern. Unbekannte notwendige Rechte-/MFA-Daten bleiben gesperrt.
-3. Anschließend Organisations-/Gateway-Integration und getrennte Browsernachweise nach ADR-049 ergänzen. Das zusätzliche HTTPS-Profil ist bestätigt. Persönliche/sprachliche Durchsicht gesammelt; kein Merge ohne Auftrag und keine Gesamtissues schließen.
+1. Neue Client-CI prüfen und Fehler beheben. Die vier neuen tatsächlichen HTTP-Testgruppen einschließlich Abbruch und Budgetfreigabe müssen nativ bestehen. Abschlusskopf 6967eba von PR #91 prüfen und dessen aktuellen Nachweis im PR ergänzen.
+2. Danach den aktuellen Organisationsvertrag erstellen. Organisation fragt Tokenzustand beim Identitätsdienst ab und vergleicht die tatsächliche Zertifikatsbindung, Aussteller, Empfänger, Zweck und Zeit. Keine fremden Datenbanktabellen oder positiven Berechtigungscaches.
+3. Organisation, Gateway und getrennte Browsernachweise nach ADR-049 ergänzen. Bereits bestätigte Fragen nicht wiederholen. Unbekannte notwendige Rechte-/MFA-Daten verweigern Zugriff. Persönliche/sprachliche Durchsicht gesammelt; kein Merge ohne Auftrag.
 
 ## OAuth-HTTP-Abschluss und GitHub-Fortsetzung
 

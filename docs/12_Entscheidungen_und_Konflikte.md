@@ -391,3 +391,9 @@ Diese Frage nicht erneut stellen. Ein Browser- oder Gateway-Nachweis ist damit n
 [ADR-050](architecture/ADR-050_OAuth_HTTP_Adapter.md) bindet Router, tatsächliche mTLS-Verbindung und aktuelle Datenbankprüfungen vor Code zusammen.
 Grenzen sind ausdrücklich konfiguriert. Anfrageverbindungen werden bei Abbruch verworfen; produktive Rollen-/Poolbindung bleibt gesondert.
 Die bestehende OAuth-Ausnahme und Zweckmatrix bleiben verbindlich. Keine Fachberechtigung wird ergänzt.
+
+## ADR-051 – Begrenzter OAuth-HTTP-Client
+
+[ADR-051](architecture/ADR-051_Begrenzter_OAuth_HTTP_Client.md) beschreibt den tatsächlichen begrenzten Transport zu den vorhandenen OAuth-Endpunkten vor Code.
+Eine Antwort ist keine Token- oder Fachfreigabe. Der Client erhält keine Datenbankabhängigkeit und startet keinen losgelösten Auftrag.
+Produktiver Zertifikatsbetrieb, Registrierung und nachfolgende Organisationsrechte bleiben getrennte Nachweise.

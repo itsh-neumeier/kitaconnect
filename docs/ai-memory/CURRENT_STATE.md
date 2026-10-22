@@ -7,18 +7,18 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 ## Arbeitsstand
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
-- branch: codex/kc-006f-ausgabemetadaten auf PR #89 / 21f97bd.
-- pull_request: PR #90 auf codex/kc-006f-dienstanmeldung / PR #89.
-- head_commit: Vertrag/ADR-048 vor Code in 7e29e5e, Codekopf 8df211e. Aktueller abschließender Kopf steht im PR. Vorherige Verträge/Bestätigungen 7e072be/10f8565/24324ca bleiben verbindlich.
-- objective: Tatsächliche Ablaufmetadaten der Ausgabe bereitstellen und Ablehnung von nicht verfügbarer Dienstprüfung trennen.
-- completed: PRs #88 / 267aef4 und #89 / 21f97bd sind jeweils vollständig grün. Auch Codekopf 8df211e aus #90 besteht alle zehn aktuellen Prüfungen. Zwei deterministische Zeitfehlerprüfungen und alle siebzehn SQLx-Gruppen vor/nach Neustart einschließlich Restlaufzeit, verzögerter Ausgabe, endgültiger Sperre und grober Fehlerklassen sind bestätigt. Abschließender reiner Nachweiskopf erhält eigene CI; aktuelle Abschlussnachweise im PR prüfen.
-- remaining: Aktuellen Abschlusskopf von PR #90 bestätigen. Danach tatsächlichen Axum-Router mit ausdrücklich konfigurierten Grenzen und getrennten Router-/TLS-/Datenbanknachweisen vorbereiten. Aktuelle Freigabe und Fehlerzuordnung der Ausgabe gesondert berücksichtigen. Zusätzliches HTTPS-Browserprofil ist ausdrücklich bestätigt; ADR-049/Testprofilvertrag stehen vor Code. Organisation, Gateway, Browsernachweise und ursprüngliche Gesamtabnahme bleiben offen.
-- migration_state: Keine Migration, Abhängigkeit, Paketversion oder Datenbankrechte geändert. Vorhandene synthetische Datenbankgruppen erweitert. Keine produktive Konfiguration oder erlaubende RLS-Policy.
-- known_failures: Windows-Linker/Docker fehlen lokal. Native Ausführung deshalb in Linux-CI; keine lokale PostgreSQL-Ausführung behaupten. Die ältere Sicherheits-Rückübernahme ist vollständig geprüft; historische Fehlversuche nicht als aktuellen Stand verwenden. #47/#48 behalten die Ablehnungsempfehlung.
-- test_results: Lokal Rustfmt, gesperrte Offline-Metadatenauflösung, 50 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/66 Dokumente, git diff --check und Gitleaks erfolgreich. Codekopf 8df211e besteht Clippy, Rust-Tests/Build, zwei neue deterministische Zeitprüfungen und alle siebzehn SQLx-Gruppen vor/nach Neustart sowie Web-, Struktur- und Sicherheitsprüfungen. Neue Bestätigung des HTTPS-Testprofils ist ausschließlich dokumentiert und erhält eigene CI. Statische Vertragsinvarianten sind kein vollständiger OpenAPI-Validator. Keine lokale PostgreSQL-Ausführung behaupten.
-- test_commands: cargo fmt --all --check; cargo metadata --locked --offline --no-deps --format-version 1; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, siebzehn SQLx-Gruppen einschließlich tatsächlicher Dienstanmeldung vor/nach Neustart. Lokal 50 Node-Tests erfolgreich.
-- dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72 und #73 offen. PR #73 am Abschlusskopf vollständig grün. Keine ungefragte Integration.
-- security_notes: MFA-Pflicht, Offline-Wiederherstellung, Benachrichtigungsaufträge, WebAuthn-Testprofil, beide MFA-Kombinationen und Cookie-/CSRF-Schutz sind bestätigt. Fristen sind pro Einrichtung einstellbar; 900/28.800/300 Sekunden sind bestätigte Voreinstellungen und Obergrenzen. Diese Fragen nicht erneut stellen. Bestehende positive Faktor-Ergebnisse sind weiterhin keine einmaligen Sitzungsabschlussnachweise. Produktiver Schlüsselbetrieb, Domain, Versuchslimits und Rollen-/Poolbindung bleiben gesondert.
+- branch: codex/kc-006f-oauth-http auf PR #90 / 69f50d0.
+- pull_request: Neuer abhängiger Entwurf auf #90; Nummer nach Erstellung im PR nachführen.
+- head_commit: Vertrag/OpenAPI/ADR-050 vor Code in 1c47cbf. Aktuellen Codekopf im PR prüfen.
+- objective: Tatsächliche OAuth-Endpunkte auf genau ihrer mTLS-Verbindung mit aktuellen Datenbankprüfungen und ausdrücklich konfigurierten Grenzen.
+- completed: PR #90 / 69f50d0 besteht alle zehn aktuellen Prüfungen, einschließlich siebzehn SQLx-Gruppen vor/nach Neustart. Nicht erneut implementieren. Neuer begrenzter HTTP-Adapter und achtzehnte isolierte Datenbankgruppe sind vorbereitet. Native Ausführung steht noch aus.
+- remaining: Native CI und Sicherheitsprüfung des neuen Adapters auswerten und Fehler beheben. Organisationsadapter, Gateway, Browsernachweise und ursprüngliche Gesamtabnahme bleiben offen.
+- migration_state: Keine Migration oder Datenbankrechte geändert. Neue isolierte Testdatenbank verwendet bestehende Migrationen 1 bis 9. Keine erlaubende Laufzeitpolicy.
+- dependencies: Neue genaue Bindungen für Axum 0.8.9, Hyper 1.12.0, Hyper-Util 0.1.21 und Mime 0.3.17. Lockfile ergänzt nur siebzehn neue Pakete; bestehende Paketversionen bleiben erhalten. MIT beziehungsweise MIT/Apache-2.0 gemäß Paketmanifesten; Sicherheitsprüfung folgt in CI.
+- known_failures: Windows-Linker und Docker fehlen lokal. Native Tests deshalb in Linux-CI. Keine lokale PostgreSQL-Ausführung behaupten.
+- test_results: Lokal Rustfmt, gesperrte Offline-Auflösung, 50 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/67 Dokumente, JavaScript-Syntax und git diff --check erfolgreich. Native HTTP-/Datenbanktests und neue Abhängigkeiten noch nicht bestätigt.
+- test_commands: cargo fmt --all --check; cargo metadata --locked --offline --format-version 1; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI führt Clippy, Workspace-Tests/Build und achtzehn SQLx-Gruppen vor/nach Neustart aus.
+- security_notes: Nur tatsächlicher ConnectionPeer aus derselben Verbindung. Keine Headeridentität, Cookie-Anmeldung, Rollenwechsel oder produktive Vorgaben. Jede Anfrage besitzt eine eigene physische Datenbankverbindung; Abbruch verwirft sie. Synthetische Administration ist keine produktive Laufzeitfreigabe. DNS-/Fingerabdruckbindung, MFA, OAuth-Ausnahme und zusätzliches HTTPS-Browserprofil sind bestätigt. Nicht erneut fragen.
 
 Aktuelle bestätigte Testprofile: `http://localhost:3000` und zusätzlich das getrennte `https://localhost:3443` gemäß ADR-049.
 Die zusätzliche Profilfrage ist beantwortet. Nicht erneut fragen. Produktive Domain und Zertifikatsbetrieb bleiben offen.
@@ -352,19 +352,6 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Nächste drei Aktionen
 
-Aktuelle Ausgabemetadaten nach PR #89:
-
-1. Aktuellen Abschlusskopf von PR #90 prüfen. Codekopf 8df211e ist bereits vollständig grün; aktuelle Nachweise und siebzehn Datenbankgruppen vor/nach Neustart im PR bestätigen. #88/#89 und ältere Grundlagen nicht erneut implementieren.
-2. Danach tatsächliche Axum-Endpunkte nach vorherigem Implementierungsvertrag mit ausdrücklich konfigurierten Grenzen und aktueller Registrierung anschließen. Zeitmomentaufnahme und geparste Kennung sind keine Freigabe. Namenszuordnung ist bestätigt; keine Fachrechte aus Diensttoken oder Mitgliedschaft ableiten. Organisation und Gateway danach ergänzen.
-3. Bestätigtes zusätzliches HTTPS-Profil `https://localhost:3443` nach ADR-049 und Testprofilvertrag getrennt vom bestehenden HTTP-WebAuthn-Profil implementieren, sobald die HTTP-/Gateway-Grundlagen vorliegen. Diese Frage nicht erneut stellen. Ausschließlich zur Laufzeit erzeugte Testzertifikate; produktive Domain und Zertifikatsbetrieb bleiben offen.
-
-Der lokale Adapterbranch wurde auf 5a4d5aa übernommen. Der eigene Zwischenstash ist vollständig angewendet und entfernt.
-Keine alte Stash-Wiederherstellung oder Wiederholung des Rebase nötig. Aktuellen Kopf und PR in GitHub prüfen.
-
-Der Folgeauftrag umfasst den gesamten offenen Backlog. PR #77 ist erfolgreich geprüft; nicht erneut implementieren.
-Die [Arbeitsfolge](WORK_QUEUE.md) ist die Fortsetzungsgrundlage.
-Die frühere technische Durchsicht und Adapterkorrekturen aus PR #75 sind erledigt.
-Der [Durchsichtsbericht](../25_P1_PR_Durchsicht.md) enthält die ursprüngliche Integrationsfolge und Ablehnungsempfehlungen für #47/#48.
-Die persönliche/sprachliche Durchsicht erfolgt gesammelt nach technischer Bearbeitung. Ohne gesonderten Merge-Auftrag nichts integrieren.
-
-Vor Fortsetzung AGENTS, CLAUDE, ADR-014/015/019/029/030/031/032/033/034/035/036, KC-006-Plan, Browser-Anmeldevertrag, Anmeldeabschlussvertrag und aktuellen GitHub-Stand lesen.
+1. Neue HTTP-CI einschließlich Clippy, Sicherheitsprüfung und achtzehn Datenbankgruppen vor/nach Neustart auswerten. Fehler beheben; keine ungeprüfte Bereitschaft behaupten.
+2. Tatsächliche Anfragegrenzen, Widerruf auf derselben Verbindung und Verwerfen nach Datenbankwartezeit bestätigen. Checkpoint, Issue #67/#6 und abhängigen PR aktualisieren. Keine Integration ohne gesonderten Auftrag.
+3. Danach aktuellen Organisations-/Gateway-Vertrag und getrennte Browsernachweise nach ADR-049 vorbereiten. Bereits bestätigte Fragen nicht wiederholen; Gesamtissues offen halten.

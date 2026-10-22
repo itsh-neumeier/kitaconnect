@@ -1,255 +1,1278 @@
 {
+  "schema_version": 1,
   "updated_at": "2026-10-22",
   "scope": "KC-006F / #67",
-  "version": "1.54.1",
-  "native_status": "pending",
+  "tokio_version": "1.54.1",
+  "additional_tls_versions": {
+    "rustls-webpki": "0.103.16",
+    "webpki-roots": "1.0.10"
+  },
+  "native_status": "passed",
   "branches": [
     {
       "pr": 55,
       "branch": "codex/kc-004b-sqlx-adapter",
       "original_head": "a8db9ca587c9a03b469439d961812eacf95d9132",
-      "patch_head": "c06961dca3f90055d12cfa0fac8363db2ed1dd4c",
+      "tokio_patch_head": "c06961dca3f90055d12cfa0fac8363db2ed1dd4c",
+      "tls_patch_head": "4d1cd4280cb51888887b381e705fbff0d0e907e6",
+      "head": "4d1cd4280cb51888887b381e705fbff0d0e907e6",
       "manifests": [
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723967624,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "4d1cd4280cb51888887b381e705fbff0d0e907e6",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723967624"
+        },
+        {
+          "id": 39723967657,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "4d1cd4280cb51888887b381e705fbff0d0e907e6",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723967657"
+        },
+        {
+          "id": 39723961735,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "4d1cd4280cb51888887b381e705fbff0d0e907e6",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723961735"
+        },
+        {
+          "id": 39723961663,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "4d1cd4280cb51888887b381e705fbff0d0e907e6",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723961663"
+        }
+      ]
     },
     {
       "pr": 59,
       "branch": "codex/kc-005a-schema-provisionierung",
       "original_head": "87cebbb6d9c6382bcfb1e382a731e9f6b4d4645c",
-      "patch_head": "6c98092a4b7f97fd93779020ebe40cdd21665602",
+      "tokio_patch_head": "6c98092a4b7f97fd93779020ebe40cdd21665602",
+      "tls_patch_head": "4cdb38018a1d01fbc51f25f1d9b2fe34ab7de2db",
+      "head": "4cdb38018a1d01fbc51f25f1d9b2fe34ab7de2db",
       "manifests": [
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723966918,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "4cdb38018a1d01fbc51f25f1d9b2fe34ab7de2db",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723966918"
+        },
+        {
+          "id": 39723966925,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "4cdb38018a1d01fbc51f25f1d9b2fe34ab7de2db",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723966925"
+        },
+        {
+          "id": 39723961675,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "4cdb38018a1d01fbc51f25f1d9b2fe34ab7de2db",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723961675"
+        },
+        {
+          "id": 39723961680,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "4cdb38018a1d01fbc51f25f1d9b2fe34ab7de2db",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723961680"
+        }
+      ]
     },
     {
       "pr": 60,
       "branch": "codex/kc-005b-dienstrechte-rls",
       "original_head": "3dcf78f87480245144e67a550051efa89f52e41e",
-      "patch_head": "d79b160251b5fad3cf75251a5301497fbf548c22",
+      "tokio_patch_head": "d79b160251b5fad3cf75251a5301497fbf548c22",
+      "tls_patch_head": "39345e813984944972303efc402a4ac0a25ffcfa",
+      "head": "39345e813984944972303efc402a4ac0a25ffcfa",
       "manifests": [
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723967456,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "39345e813984944972303efc402a4ac0a25ffcfa",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723967456"
+        },
+        {
+          "id": 39723967386,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "39345e813984944972303efc402a4ac0a25ffcfa",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723967386"
+        },
+        {
+          "id": 39723961821,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "39345e813984944972303efc402a4ac0a25ffcfa",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723961821"
+        },
+        {
+          "id": 39723961861,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "39345e813984944972303efc402a4ac0a25ffcfa",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723961861"
+        }
+      ]
     },
     {
       "pr": 61,
       "branch": "codex/kc-005c-pool-wartung",
       "original_head": "4fa55b0ea37bd9e359dd7ccd82a5dc11ed2a0c81",
-      "patch_head": "03e7633a03ba4230db25f4c510018bc584773f60",
+      "tokio_patch_head": "03e7633a03ba4230db25f4c510018bc584773f60",
+      "tls_patch_head": "fb0768c083d2cc6861afe60e38e2035408434e96",
+      "head": "b3221df30b44a16bbed539e659f876f96918888c",
       "manifests": [
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": {
+        "pr": 61,
+        "branch": "codex/kc-005c-pool-wartung",
+        "base": "codex/kc-005b-dienstrechte-rls",
+        "before": "fb0768c083d2cc6861afe60e38e2035408434e96",
+        "head": "b3221df30b44a16bbed539e659f876f96918888c",
+        "tree": "3c2d319300739f2afb0c7b852be199c8928876d9",
+        "conflict_paths": [
+          "services/organization-config/Cargo.toml"
+        ],
+        "parents": [
+          "fb0768c083d2cc6861afe60e38e2035408434e96",
+          "39345e813984944972303efc402a4ac0a25ffcfa"
+        ],
+        "before_tree": "3c2d319300739f2afb0c7b852be199c8928876d9"
+      },
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39724512040,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "b3221df30b44a16bbed539e659f876f96918888c",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39724512040"
+        },
+        {
+          "id": 39724512020,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "b3221df30b44a16bbed539e659f876f96918888c",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39724512020"
+        },
+        {
+          "id": 39724508379,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "b3221df30b44a16bbed539e659f876f96918888c",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39724508379"
+        },
+        {
+          "id": 39724508354,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "b3221df30b44a16bbed539e659f876f96918888c",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39724508354"
+        }
+      ]
     },
     {
       "pr": 68,
       "branch": "codex/kc-006a-sitzungsmodell",
       "original_head": "c7711e8a7eba7941bdf270e5a5429e1b3059e29e",
-      "patch_head": "4ff782a74b5cb1ed7c953387cbac2d7899e00167",
+      "tokio_patch_head": "4ff782a74b5cb1ed7c953387cbac2d7899e00167",
+      "tls_patch_head": "f63fd5e3e1095402f9a0681a42e049c869acbd6e",
+      "head": "f63fd5e3e1095402f9a0681a42e049c869acbd6e",
       "manifests": [
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723966428,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "f63fd5e3e1095402f9a0681a42e049c869acbd6e",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723966428"
+        },
+        {
+          "id": 39723966314,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "f63fd5e3e1095402f9a0681a42e049c869acbd6e",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723966314"
+        },
+        {
+          "id": 39723960695,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "f63fd5e3e1095402f9a0681a42e049c869acbd6e",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723960695"
+        },
+        {
+          "id": 39723960696,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "f63fd5e3e1095402f9a0681a42e049c869acbd6e",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723960696"
+        }
+      ]
     },
     {
       "pr": 69,
       "branch": "codex/kc-006b-sitzungsspeicher",
       "original_head": "e0e1214fd88e65ebc34c2db81286990388b59571",
-      "patch_head": "80d10c3e1e62186d8a9320cb4f38d4f5ace35578",
+      "tokio_patch_head": "80d10c3e1e62186d8a9320cb4f38d4f5ace35578",
+      "tls_patch_head": "ad945d86199f4fee83c3a1363bb13037bab09fd8",
+      "head": "ad945d86199f4fee83c3a1363bb13037bab09fd8",
       "manifests": [
         "services/identity-access/Cargo.toml",
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723966490,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "ad945d86199f4fee83c3a1363bb13037bab09fd8",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723966490"
+        },
+        {
+          "id": 39723966558,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "ad945d86199f4fee83c3a1363bb13037bab09fd8",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723966558"
+        },
+        {
+          "id": 39723961687,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "ad945d86199f4fee83c3a1363bb13037bab09fd8",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723961687"
+        },
+        {
+          "id": 39723961636,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "ad945d86199f4fee83c3a1363bb13037bab09fd8",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723961636"
+        }
+      ]
     },
     {
       "pr": 70,
       "branch": "codex/kc-006c-passwortpruefung",
       "original_head": "e003eb055f4137ee66184152ce660e96d838be44",
-      "patch_head": "6bca7ce4ba1bb190765f417a4cbb1703e89f11b5",
+      "tokio_patch_head": "6bca7ce4ba1bb190765f417a4cbb1703e89f11b5",
+      "tls_patch_head": "cd0cd916cbe093d459002feb897561f57dd32113",
+      "head": "cd0cd916cbe093d459002feb897561f57dd32113",
       "manifests": [
         "services/identity-access/Cargo.toml",
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723968341,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "cd0cd916cbe093d459002feb897561f57dd32113",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723968341"
+        },
+        {
+          "id": 39723968278,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "cd0cd916cbe093d459002feb897561f57dd32113",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723968278"
+        },
+        {
+          "id": 39723960965,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "cd0cd916cbe093d459002feb897561f57dd32113",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723960965"
+        },
+        {
+          "id": 39723961012,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "cd0cd916cbe093d459002feb897561f57dd32113",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723961012"
+        }
+      ]
     },
     {
       "pr": 71,
       "branch": "codex/kc-006d-webauthn-vertrag",
       "original_head": "74c5e1731be0db55f1ef8698d7119f8fcd5cce7c",
-      "patch_head": "6f63b170ffce57967dd705701f7039431bc52ec1",
+      "tokio_patch_head": "6f63b170ffce57967dd705701f7039431bc52ec1",
+      "tls_patch_head": null,
+      "head": "5154c4e14e1a78819d879d68069685707a6195fc",
       "manifests": [
         "services/identity-access/Cargo.toml",
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": {
+        "pr": 71,
+        "branch": "codex/kc-006d-webauthn-vertrag",
+        "base": "codex/kc-006c-passwortpruefung",
+        "before": "6f63b170ffce57967dd705701f7039431bc52ec1",
+        "head": "5154c4e14e1a78819d879d68069685707a6195fc",
+        "tree": "f3b7898b2c5f67257eaa8867eb57611c87b7fe10",
+        "conflict_paths": [
+          "Cargo.lock",
+          "services/identity-access/Cargo.toml"
+        ],
+        "parents": [
+          "6f63b170ffce57967dd705701f7039431bc52ec1",
+          "cd0cd916cbe093d459002feb897561f57dd32113"
+        ],
+        "before_tree": "f3b7898b2c5f67257eaa8867eb57611c87b7fe10"
+      },
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39724513846,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "5154c4e14e1a78819d879d68069685707a6195fc",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39724513846"
+        },
+        {
+          "id": 39724513852,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "5154c4e14e1a78819d879d68069685707a6195fc",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39724513852"
+        },
+        {
+          "id": 39724508460,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "5154c4e14e1a78819d879d68069685707a6195fc",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39724508460"
+        },
+        {
+          "id": 39724508437,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "5154c4e14e1a78819d879d68069685707a6195fc",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39724508437"
+        }
+      ]
     },
     {
       "pr": 72,
       "branch": "codex/kc-006e-mfa-vertrag",
       "original_head": "cb3d8f62d1fde50dcb67b96468534cf8876fbe1a",
-      "patch_head": "2bf99c8b8c24e263b2b817145256b7597cba26ae",
+      "tokio_patch_head": "2bf99c8b8c24e263b2b817145256b7597cba26ae",
+      "tls_patch_head": null,
+      "head": "2bf99c8b8c24e263b2b817145256b7597cba26ae",
       "manifests": [
         "services/identity-access/Cargo.toml",
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723594296,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "2bf99c8b8c24e263b2b817145256b7597cba26ae",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723594296"
+        },
+        {
+          "id": 39723594728,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "2bf99c8b8c24e263b2b817145256b7597cba26ae",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723594728"
+        },
+        {
+          "id": 39723436557,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "2bf99c8b8c24e263b2b817145256b7597cba26ae",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723436557"
+        },
+        {
+          "id": 39723436575,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "2bf99c8b8c24e263b2b817145256b7597cba26ae",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723436575"
+        }
+      ]
     },
     {
       "pr": 73,
       "branch": "codex/kc-006f-anmeldevertrag",
       "original_head": "f5f0586d3802d37effc996bfee63478c51fffaa8",
-      "patch_head": "1313b314907c4e6125e9e4c5ef2a08ac8c94ef93",
+      "tokio_patch_head": "1313b314907c4e6125e9e4c5ef2a08ac8c94ef93",
+      "tls_patch_head": null,
+      "head": "1313b314907c4e6125e9e4c5ef2a08ac8c94ef93",
       "manifests": [
         "services/identity-access/Cargo.toml",
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723617355,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "1313b314907c4e6125e9e4c5ef2a08ac8c94ef93",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723617355"
+        },
+        {
+          "id": 39723617336,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "1313b314907c4e6125e9e4c5ef2a08ac8c94ef93",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723617336"
+        },
+        {
+          "id": 39723437076,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "1313b314907c4e6125e9e4c5ef2a08ac8c94ef93",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723437076"
+        },
+        {
+          "id": 39723437150,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "1313b314907c4e6125e9e4c5ef2a08ac8c94ef93",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723437150"
+        }
+      ]
     },
     {
       "pr": 74,
       "branch": "codex/kc-006f-anmeldeabschluss",
       "original_head": "58ea681667a0e788bdd5c26ab78e099d12f6e9cc",
-      "patch_head": "6eaec90c57fa7bbbc012d78d7ee6bb4e84ccfd85",
+      "tokio_patch_head": "6eaec90c57fa7bbbc012d78d7ee6bb4e84ccfd85",
+      "tls_patch_head": null,
+      "head": "6eaec90c57fa7bbbc012d78d7ee6bb4e84ccfd85",
       "manifests": [
         "services/identity-access/Cargo.toml",
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723559228,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "6eaec90c57fa7bbbc012d78d7ee6bb4e84ccfd85",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723559228"
+        },
+        {
+          "id": 39723559338,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "6eaec90c57fa7bbbc012d78d7ee6bb4e84ccfd85",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723559338"
+        },
+        {
+          "id": 39723435345,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "6eaec90c57fa7bbbc012d78d7ee6bb4e84ccfd85",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723435345"
+        },
+        {
+          "id": 39723435398,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "6eaec90c57fa7bbbc012d78d7ee6bb4e84ccfd85",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723435398"
+        }
+      ]
     },
     {
       "pr": 75,
       "branch": "codex/p1-pr-durchsicht",
       "original_head": "82c3a3aa0480f316669f85a8e8d8ae35d2ca6a3c",
-      "patch_head": "9195028cb4e529e5545bda2ee21b0b19de6b8a09",
+      "tokio_patch_head": "9195028cb4e529e5545bda2ee21b0b19de6b8a09",
+      "tls_patch_head": null,
+      "head": "9195028cb4e529e5545bda2ee21b0b19de6b8a09",
       "manifests": [
         "services/identity-access/Cargo.toml",
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723596257,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "9195028cb4e529e5545bda2ee21b0b19de6b8a09",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723596257"
+        },
+        {
+          "id": 39723596154,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "9195028cb4e529e5545bda2ee21b0b19de6b8a09",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723596154"
+        },
+        {
+          "id": 39723434589,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "9195028cb4e529e5545bda2ee21b0b19de6b8a09",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723434589"
+        },
+        {
+          "id": 39723434490,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "9195028cb4e529e5545bda2ee21b0b19de6b8a09",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723434490"
+        }
+      ]
     },
     {
       "pr": 76,
       "branch": "codex/kc-006f-sitzungspruefung",
       "original_head": "846d19920cc9d721424206ca7b2f3b203cd8799e",
-      "patch_head": "2f13d6d29419419313f23a28b748a3d8c1aa0cb8",
+      "tokio_patch_head": "2f13d6d29419419313f23a28b748a3d8c1aa0cb8",
+      "tls_patch_head": null,
+      "head": "2f13d6d29419419313f23a28b748a3d8c1aa0cb8",
       "manifests": [
         "services/identity-access/Cargo.toml",
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723567565,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "2f13d6d29419419313f23a28b748a3d8c1aa0cb8",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723567565"
+        },
+        {
+          "id": 39723567495,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "2f13d6d29419419313f23a28b748a3d8c1aa0cb8",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723567495"
+        },
+        {
+          "id": 39723436390,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "2f13d6d29419419313f23a28b748a3d8c1aa0cb8",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723436390"
+        },
+        {
+          "id": 39723436365,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "2f13d6d29419419313f23a28b748a3d8c1aa0cb8",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723436365"
+        }
+      ]
     },
     {
       "pr": 77,
       "branch": "codex/kc-006f-sitzungsrotation",
       "original_head": "5927631b00f39b14b98e4f320a740fcf6f81618c",
-      "patch_head": "bbf1e5c40436aed693d0d25e4f3f5419d18ea2b9",
+      "tokio_patch_head": "bbf1e5c40436aed693d0d25e4f3f5419d18ea2b9",
+      "tls_patch_head": null,
+      "head": "bbf1e5c40436aed693d0d25e4f3f5419d18ea2b9",
       "manifests": [
         "services/identity-access/Cargo.toml",
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723605894,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "bbf1e5c40436aed693d0d25e4f3f5419d18ea2b9",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723605894"
+        },
+        {
+          "id": 39723605819,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "bbf1e5c40436aed693d0d25e4f3f5419d18ea2b9",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723605819"
+        },
+        {
+          "id": 39723434328,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "bbf1e5c40436aed693d0d25e4f3f5419d18ea2b9",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723434328"
+        },
+        {
+          "id": 39723434221,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "bbf1e5c40436aed693d0d25e4f3f5419d18ea2b9",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723434221"
+        }
+      ]
     },
     {
       "pr": 78,
       "branch": "codex/kc-006f-transaktionsabschluss",
       "original_head": "ad150c952fd8bb3a01fc72ca89205d6d1bc11290",
-      "patch_head": "d2302cc6221c5246e8273e686bbd2521c529a16a",
+      "tokio_patch_head": "d2302cc6221c5246e8273e686bbd2521c529a16a",
+      "tls_patch_head": null,
+      "head": "d2302cc6221c5246e8273e686bbd2521c529a16a",
       "manifests": [
         "services/identity-access/Cargo.toml",
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723577134,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "d2302cc6221c5246e8273e686bbd2521c529a16a",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723577134"
+        },
+        {
+          "id": 39723577194,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "d2302cc6221c5246e8273e686bbd2521c529a16a",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723577194"
+        },
+        {
+          "id": 39723433524,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "d2302cc6221c5246e8273e686bbd2521c529a16a",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723433524"
+        },
+        {
+          "id": 39723433573,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "d2302cc6221c5246e8273e686bbd2521c529a16a",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723433573"
+        }
+      ]
     },
     {
       "pr": 79,
       "branch": "codex/kc-006f-faktortransaktionen",
       "original_head": "088d24f58eb6bcbc008c350df1b62631c39c9a6f",
-      "patch_head": "0429f455fd79c134301aa7d9bfc5635dc673bf57",
+      "tokio_patch_head": "0429f455fd79c134301aa7d9bfc5635dc673bf57",
+      "tls_patch_head": null,
+      "head": "0429f455fd79c134301aa7d9bfc5635dc673bf57",
       "manifests": [
         "services/identity-access/Cargo.toml",
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723614171,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "0429f455fd79c134301aa7d9bfc5635dc673bf57",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723614171"
+        },
+        {
+          "id": 39723614054,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "0429f455fd79c134301aa7d9bfc5635dc673bf57",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723614054"
+        },
+        {
+          "id": 39723437547,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "0429f455fd79c134301aa7d9bfc5635dc673bf57",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723437547"
+        },
+        {
+          "id": 39723437512,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "0429f455fd79c134301aa7d9bfc5635dc673bf57",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723437512"
+        }
+      ]
     },
     {
       "pr": 80,
       "branch": "codex/kc-006f-zusatzauthentisierung",
       "original_head": "5a4d5aacf21ed101c4ec4d0220a81c9f134884fc",
-      "patch_head": "964323be02514921462bf9bc2cededf6bfb4ab35",
+      "tokio_patch_head": "964323be02514921462bf9bc2cededf6bfb4ab35",
+      "tls_patch_head": null,
+      "head": "964323be02514921462bf9bc2cededf6bfb4ab35",
       "manifests": [
         "services/identity-access/Cargo.toml",
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723556248,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "964323be02514921462bf9bc2cededf6bfb4ab35",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723556248"
+        },
+        {
+          "id": 39723556201,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "964323be02514921462bf9bc2cededf6bfb4ab35",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723556201"
+        },
+        {
+          "id": 39723434437,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "964323be02514921462bf9bc2cededf6bfb4ab35",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723434437"
+        },
+        {
+          "id": 39723434543,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "964323be02514921462bf9bc2cededf6bfb4ab35",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723434543"
+        }
+      ]
     },
     {
       "pr": 81,
       "branch": "codex/kc-006f-zusatzpruefung-adapter",
       "original_head": "7813bcb4522cc40589450ce6df35593e60adc613",
-      "patch_head": "288749d206d6c3622a7bec2eddd36e2171b7defc",
+      "tokio_patch_head": "288749d206d6c3622a7bec2eddd36e2171b7defc",
+      "tls_patch_head": null,
+      "head": "288749d206d6c3622a7bec2eddd36e2171b7defc",
       "manifests": [
         "services/identity-access/Cargo.toml",
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723565971,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "288749d206d6c3622a7bec2eddd36e2171b7defc",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723565971"
+        },
+        {
+          "id": 39723566034,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "288749d206d6c3622a7bec2eddd36e2171b7defc",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723566034"
+        },
+        {
+          "id": 39723436842,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "288749d206d6c3622a7bec2eddd36e2171b7defc",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723436842"
+        },
+        {
+          "id": 39723436827,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "288749d206d6c3622a7bec2eddd36e2171b7defc",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723436827"
+        }
+      ]
     },
     {
       "pr": 82,
       "branch": "codex/kc-006f-mitgliedschaftsspeicher",
       "original_head": "9ad5c23cce8be4c518869bd632fdc3b362c263b3",
-      "patch_head": "5d67c7264eca72f10d3f2a9f6cfa915c41a30573",
+      "tokio_patch_head": "5d67c7264eca72f10d3f2a9f6cfa915c41a30573",
+      "tls_patch_head": null,
+      "head": "5d67c7264eca72f10d3f2a9f6cfa915c41a30573",
       "manifests": [
         "services/identity-access/Cargo.toml",
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723551355,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "5d67c7264eca72f10d3f2a9f6cfa915c41a30573",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723551355"
+        },
+        {
+          "id": 39723551350,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "5d67c7264eca72f10d3f2a9f6cfa915c41a30573",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723551350"
+        },
+        {
+          "id": 39723436021,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "5d67c7264eca72f10d3f2a9f6cfa915c41a30573",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723436021"
+        },
+        {
+          "id": 39723436026,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "5d67c7264eca72f10d3f2a9f6cfa915c41a30573",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723436026"
+        }
+      ]
     },
     {
       "pr": 83,
       "branch": "codex/kc-006f-diensttoken-grundlage",
       "original_head": "00bad74a277ed9657cfb3573ae59fd69d20ad3e2",
-      "patch_head": "0ccc89073dd4666fed23606f8fffb6878b97e48a",
+      "tokio_patch_head": "0ccc89073dd4666fed23606f8fffb6878b97e48a",
+      "tls_patch_head": null,
+      "head": "0ccc89073dd4666fed23606f8fffb6878b97e48a",
       "manifests": [
         "services/identity-access/Cargo.toml",
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723617598,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "0ccc89073dd4666fed23606f8fffb6878b97e48a",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723617598"
+        },
+        {
+          "id": 39723617555,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "0ccc89073dd4666fed23606f8fffb6878b97e48a",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723617555"
+        },
+        {
+          "id": 39723437240,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "0ccc89073dd4666fed23606f8fffb6878b97e48a",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723437240"
+        },
+        {
+          "id": 39723437235,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "0ccc89073dd4666fed23606f8fffb6878b97e48a",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723437235"
+        }
+      ]
     },
     {
       "pr": 84,
       "branch": "codex/kc-006f-mfa-zuordnung",
       "original_head": "06e28bbac32b0744dea03c7a63ed65069aae043f",
-      "patch_head": "ce79d6de405a1a07a7022e226771a7585c541510",
+      "tokio_patch_head": "ce79d6de405a1a07a7022e226771a7585c541510",
+      "tls_patch_head": null,
+      "head": "ce79d6de405a1a07a7022e226771a7585c541510",
       "manifests": [
         "services/identity-access/Cargo.toml",
         "services/organization-config/Cargo.toml"
       ],
-      "local_checks": "passed",
-      "ci": "pending"
+      "base_merge": null,
+      "mergeable": true,
+      "local_checks": [
+        "expected_files_only",
+        "locked_offline_metadata",
+        "diff_check",
+        "gitleaks"
+      ],
+      "ci": "passed",
+      "runs": [
+        {
+          "id": 39723612917,
+          "event": "pull_request",
+          "workflow": ".github/workflows/security.yml",
+          "head": "ce79d6de405a1a07a7022e226771a7585c541510",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723612917"
+        },
+        {
+          "id": 39723612942,
+          "event": "pull_request",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "ce79d6de405a1a07a7022e226771a7585c541510",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723612942"
+        },
+        {
+          "id": 39723433652,
+          "event": "push",
+          "workflow": ".github/workflows/security.yml",
+          "head": "ce79d6de405a1a07a7022e226771a7585c541510",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723433652"
+        },
+        {
+          "id": 39723433672,
+          "event": "push",
+          "workflow": ".github/workflows/ci.yml",
+          "head": "ce79d6de405a1a07a7022e226771a7585c541510",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39723433672"
+        }
+      ]
     }
   ]
 }

@@ -20,10 +20,10 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 - dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72 und #73 offen. PR #73 am Abschlusskopf vollständig grün. Keine ungefragte Integration.
 - security_notes: MFA-Pflicht, Offline-Wiederherstellung, Benachrichtigungsaufträge, WebAuthn-Testprofil, beide MFA-Kombinationen und Cookie-/CSRF-Schutz sind bestätigt. Fristen sind pro Einrichtung einstellbar; 900/28.800/300 Sekunden sind bestätigte Voreinstellungen und Obergrenzen. Diese Fragen nicht erneut stellen. Bestehende positive Faktor-Ergebnisse sind weiterhin keine einmaligen Sitzungsabschlussnachweise. Produktiver Schlüsselbetrieb, Domain, Versuchslimits und Rollen-/Poolbindung bleiben gesondert.
 
-## P0-Abschluss
-
 Aktuelle bestätigte Testprofile: `http://localhost:3000` und zusätzlich das getrennte `https://localhost:3443` gemäß ADR-049.
 Die zusätzliche Profilfrage ist beantwortet. Nicht erneut fragen. Produktive Domain und Zertifikatsbetrieb bleiben offen.
+
+## P0-Abschluss
 
 - PRs #39 bis #44 integriert. KC-001, KC-002, KC-003, KC-036 und KC-037 abgeschlossen.
 - PR #49 integriert über eaca2cb56a0e54a732ec17986f7c3ccb854c3986. KC-038 ist geschlossen.

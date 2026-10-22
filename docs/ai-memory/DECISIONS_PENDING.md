@@ -212,3 +212,12 @@ Grundlage ist [RFC 8705, Abschnitt 2.1](https://www.rfc-editor.org/rfc/rfc8705#s
 Der vorhandene interne Fingerabdruckbestand allein ist noch kein vollständiger Nachweis des dort beschriebenen Verfahrens.
 Bis zur ausdrücklichen Antwort bleiben Namensadapter und abhängige Dienstanmeldung gesperrt.
 Formularprüfung, OpenAPI- und Darstellungsmodell werden unabhängig weiterbearbeitet.
+
+## KC-006F: Zertifikatsnamenszuordnung bestätigt
+
+Am 22.10.2026 bestätigt die Projektleitung ausdrücklich „DNS-Name plus aktiven Fingerabdruck bestätigen“.
+Je Dienst gilt genau ein ausdrücklich registrierter DNS-Name aus dem Zertifikat.
+Zusätzlich muss der genaue Zertifikatsfingerabdruck aktiv registriert sein.
+Keine Wildcards oder automatische Registrierung; produktive Namen bleiben offen.
+Diese Antwort ersetzt den vorherigen offenen Fragezustand. Nicht erneut fragen.
+ADR-046 und Dienstvertrag werden vor dem abhängigen Code aktualisiert.

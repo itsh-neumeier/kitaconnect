@@ -363,5 +363,6 @@ Der vollständige OAuth-Endpunktvertrag, aktive Registrierung und Fachrechte fol
 ## ADR-046 – OAuth-Protokollmodell
 
 [ADR-046](architecture/ADR-046_OAuth_Protokollvertrag.md) legt Formularprüfung und Tokendarstellung vor Code fest.
-Der Vertrag enthält eine OpenAPI-3.1-Beschreibung. Die registrierte Zertifikatsnamenszuordnung ist ausdrücklich angefragt.
-Bis zur Antwort bleiben abhängige Dienstanmeldung und Namensadapter gesperrt. Das Protokollmodell erteilt keine Berechtigung.
+Der Vertrag enthält eine OpenAPI-3.1-Beschreibung. Die Projektleitung bestätigt ausdrücklich genau einen registrierten DNS-Namen je Dienst und zusätzlich den aktiven genauen Zertifikatsfingerabdruck.
+Keine Wildcards oder automatische Registrierung. Produktive Namen bleiben offen. Diese Antwort wird vor abhängigem Code versioniert.
+Das Protokollmodell erteilt keine Berechtigung.

@@ -1,7 +1,7 @@
 # ADR-046: OAuth-Protokollmodell vor Dienstanmeldung
 
 - Datum: 22.10.2026
-- Status: Technische Konkretisierung von ADR-019/042/045 vor Code; Namenszuordnung noch angefragt
+- Status: Technische Konkretisierung von ADR-019/042/045 vor Code; Namenszuordnung ausdrücklich bestätigt
 - Umfang: KC-006F, Formular- und Darstellungsmodell ohne Laufzeitfreigabe
 
 ## Entscheidung
@@ -17,14 +17,15 @@ Ein nicht darstellbarer abgefragter Token führt erst nach berechtigter Introspe
 Die positive Tokenantwort wartet auf belastbare verbleibende Ablaufmetadaten des Ausgabeadapters.
 Die bestätigte OAuth-Fehlerformatausnahme bleibt auf Protokollendpunkte begrenzt.
 
-## Noch offene Sicherheitsentscheidung
+## Bestätigte Sicherheitsentscheidung
 
 RFC 8705 verlangt beim Verfahren mit Zertifizierungsstelle einen registrierten Zertifikatsnamen.
 Die vorhandene genaue Fingerabdruckbindung ersetzt diese Festlegung nicht.
-Die Projektleitung ist um die Bestätigung genau eines registrierten DNS-Namens je Dienst gebeten.
-Der aktive genaue Fingerabdruck bleibt im Vorschlag zusätzlich verpflichtend.
-Bis zur Antwort bleiben Namenszuordnung und abhängige Dienstanmeldung gesperrt.
-Das Protokollmodell kann unabhängig davon geprüft werden.
+Die Projektleitung bestätigt am 22.10.2026 ausdrücklich genau einen registrierten DNS-Namen je Dienst.
+Der aktive genaue Zertifikatsfingerabdruck bleibt zusätzlich verpflichtend.
+Wildcards und automatische Registrierung sind ausgeschlossen. Produktive Namen bleiben offen.
+Diese Antwort wird vor Namensadapter und abhängiger Dienstanmeldung versioniert.
+Das Protokollmodell bleibt ein getrennt prüfbarer Baustein.
 
 ## Begründung und Grenzen
 

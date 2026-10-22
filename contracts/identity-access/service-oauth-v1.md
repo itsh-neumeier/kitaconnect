@@ -2,7 +2,7 @@
 
 - Stand: 22.10.2026
 - Umfang: KC-006F / #67, Protokollmodell vor Routercode
-- Status: Formular-/Antwortmodell verbindlich; Zertifikatszuordnung angefragt, Laufzeit noch gesperrt
+- Status: Protokollmodell und Zertifikatszuordnung bestätigt; Laufzeit noch nicht implementiert
 
 ## Umfang und Quellen
 
@@ -18,7 +18,7 @@ Grundlagen: [RFC 6749, Abschnitte 3.2, 4.4 und 5](https://www.rfc-editor.org/rfc
 [OpenAPI 3.1.1](https://spec.openapis.org/oas/v3.1.1.html).
 Die bestätigte OAuth-Fehlerformatausnahme gilt. Fach-APIs behalten Problem Details.
 
-## Authentisierung und noch offene Entscheidung
+## Authentisierung und bestätigte Zuordnung
 
 Beide Endpunkte verlangen die tatsächliche gegenseitige Zertifikatsprüfung aus ADR-044/045.
 Der Dienst muss `client_id` mit der aktuellen Registrierung des tatsächlichen Endzertifikats verbinden.
@@ -28,11 +28,11 @@ Ein Formularmodell oder ein `PeerReference` aus behaupteten Metadaten beweist di
 RFC 8705 unterscheidet zwei Verfahren zur Clientauthentisierung.
 Das Verfahren mit Zertifizierungsstelle verlangt zusätzlich einen registrierten Namen aus dem Zertifikat.
 Der vorhandene Fingerabdruckbestand ist allein noch kein vollständiger Nachweis dieses Verfahrens.
-Der Projektleitung ist deshalb folgender Vorschlag zur Entscheidung vorgelegt:
+Die Projektleitung bestätigt am 22.10.2026 ausdrücklich folgende Zuordnung:
 Genau ein ausdrücklich registrierter DNS-Name je Dienst, ohne Wildcard oder automatische Registrierung.
 Zusätzlich bleibt der aktive genaue Zertifikatsfingerabdruck verpflichtend.
 Produktive Namen, Aussteller und Schlüsselbetrieb bleiben offen.
-Bis zur ausdrücklichen Antwort werden weder diese Zuordnung noch der abhängige Dienstanmelde-Endpunkt implementiert.
+Diese Entscheidung wird vor dem abhängigen Code versioniert. Sie ersetzt keine Implementierungs- oder Testnachweise.
 
 ## Formularprüfung
 
@@ -102,5 +102,5 @@ Die Implementierung verwendet ausschließlich bereits vorhandene Paketversionen:
 [percent-encoding 2.3.2](https://docs.rs/percent-encoding/2.3.2/percent_encoding/) und
 [base64 0.22.1](https://docs.rs/base64/0.22.1/base64/) erhalten direkte Abhängigkeitseinträge.
 Keine Migration, Datenbankrechte oder Laufzeitpolicy wird geändert.
-Der nächste Schritt benötigt die Antwort zur Zertifikatszuordnung und danach einen getrennten Registrierungs-/Routervertrag.
+Die Zertifikatszuordnung ist bestätigt. Der nächste Schritt benötigt den getrennten Registrierungs-/Routervertrag und dessen Nachweise.
 Das zusätzliche HTTPS-Browserprofil bleibt weiterhin offen und gesperrt.

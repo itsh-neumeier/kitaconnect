@@ -7,15 +7,15 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 ## Arbeitsstand
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
-- branch: codex/kc-006f-dienstanmeldung auf PR #88 / 267aef4.
-- pull_request: PR #89 auf codex/kc-006f-oauth-vertrag / PR #88.
-- head_commit: Protokollvertrag 7e072be und Bestätigung 10f8565 vor Protokollcode 267aef4. Dienstanmeldevertrag/ADR-047 vor Adaptercode in 24324ca; Codekopf c4dcfd6. Aktueller abschließender Kopf steht im PR.
-- objective: Bestätigte DNS-/Fingerabdruckbindung mit tatsächlichem mTLS und aktueller Identitätsregistrierung verbinden.
-- completed: PR #88 / 267aef4 besteht alle zehn aktuellen Prüfungen mit sieben Protokolltests und sechzehn SQLx-Gruppen vor/nach Neustart. DNS-Name plus aktiver genauer Fingerabdruck ist bestätigt; nicht erneut fragen. PR #89 / c4dcfd6 besteht native Push-CI mit tatsächlicher Dienstanmeldung und allen siebzehn SQLx-Gruppen vor/nach Neustart. Zusätzlicher negativer Common-Name-Nachweis und abschließender Checkpoint erhalten eigene vollständige CI.
-- remaining: Abschließenden Kopf von PR #89 samt allen Prüfungen bestätigen. Danach belastbare Ausgaberestlaufzeit und grobe interne Fehlerunterscheidung zwischen Ablehnung und Prüfausfall vor Routercode ergänzen; keine Diagnosedaten ausgeben. Tatsächliche Endpunkte, Introspektion, Organisation, Gateway und Browser bleiben offen. Namensentscheidung nicht erneut fragen.
-- migration_state: Keine Migration oder Datenbankrechte geändert. Vorhandene Paketversionen bleiben erhalten; nur direkte Workspace-/Testabhängigkeiten im Identitätsdienst ergänzt. Neue isolierte Testdatenbank kc_service_auth_test verwendet Migrationen 1 bis 9. Keine produktive Namenskonfiguration oder erlaubende RLS-Policy.
+- branch: codex/kc-006f-ausgabemetadaten auf PR #89 / 21f97bd.
+- pull_request: Eigener Folge-PR auf codex/kc-006f-dienstanmeldung wird vorbereitet.
+- head_commit: Vertrag/ADR-048 vor Code in 7e29e5e. Aktueller Codekopf folgt im PR. Vorherige Verträge/Bestätigungen 7e072be/10f8565/24324ca bleiben verbindlich.
+- objective: Tatsächliche Ablaufmetadaten der Ausgabe bereitstellen und Ablehnung von nicht verfügbarer Dienstprüfung trennen.
+- completed: PR #88 / 267aef4 ist vollständig grün. Dienstanmeldung aus #89 ist nativ mit siebzehn Datenbankgruppen vor/nach Neustart geprüft; aktuellen Abschlusskopf im PR bestätigen. Neue erweiterte Ausgabe bindet tatsächlichen Ablauf an bestätigten Commit. Aktuelle Restlaufzeitprüfung und grobe Fehlerklassen sind mit negativen Tests vorbereitet. Keine HTTP-Endpunkte daraus ableiten.
+- remaining: Neue Metadaten-/Fehlerklassentests sowie alle bisherigen siebzehn Gruppen vor/nach Neustart nativ prüfen. Danach tatsächlichen Axum-Router mit ausdrücklich konfigurierten Grenzen und getrennten Router-/TLS-/Datenbanknachweisen vorbereiten. Organisation, Gateway, Browser und ursprüngliche Gesamtabnahme bleiben offen.
+- migration_state: Keine Migration, Abhängigkeit, Paketversion oder Datenbankrechte geändert. Vorhandene synthetische Datenbankgruppen erweitert. Keine produktive Konfiguration oder erlaubende RLS-Policy.
 - known_failures: Windows-Linker/Docker fehlen lokal. Native Ausführung deshalb in Linux-CI; keine lokale PostgreSQL-Ausführung behaupten. Die ältere Sicherheits-Rückübernahme ist vollständig geprüft; historische Fehlversuche nicht als aktuellen Stand verwenden. #47/#48 behalten die Ablehnungsempfehlung.
-- test_results: Lokal Rustfmt, gesperrte Offline-Metadatenauflösung, 50 Node-Tests einschließlich sechs statischer OAuth-Vertragsprüfungen, Struktur-/Verweisprüfung für 50 Issues/64 Dokumente, Syntaxprüfung des Datenbankskripts, git diff --check und Gitleaks erfolgreich. PR #88 vollständig grün. Codekopf c4dcfd6 besteht Clippy, Rust-Tests/Build und siebzehn SQLx-Gruppen vor/nach Neustart in nativer Push-CI. Abschließender Common-Name-Nachweis erhält eigene CI. Statische Projektinvarianten sind kein vollständiger OpenAPI-Validator. Keine lokale PostgreSQL-Ausführung behaupten.
+- test_results: Lokal Rustfmt, gesperrte Offline-Metadatenauflösung, 50 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/65 Dokumente und git diff --check erfolgreich. Neue Metadaten-/Fehlerklassentests noch nicht nativ ausgeführt; Linux-CI folgt. Statische Vertragsinvarianten sind kein vollständiger OpenAPI-Validator. Keine lokale PostgreSQL-Ausführung behaupten.
 - test_commands: cargo fmt --all --check; cargo metadata --locked --offline --no-deps --format-version 1; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, siebzehn SQLx-Gruppen einschließlich tatsächlicher Dienstanmeldung vor/nach Neustart. Lokal 50 Node-Tests erfolgreich.
 - dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72 und #73 offen. PR #73 am Abschlusskopf vollständig grün. Keine ungefragte Integration.
 - security_notes: MFA-Pflicht, Offline-Wiederherstellung, Benachrichtigungsaufträge, WebAuthn-Testprofil, beide MFA-Kombinationen und Cookie-/CSRF-Schutz sind bestätigt. Fristen sind pro Einrichtung einstellbar; 900/28.800/300 Sekunden sind bestätigte Voreinstellungen und Obergrenzen. Diese Fragen nicht erneut stellen. Bestehende positive Faktor-Ergebnisse sind weiterhin keine einmaligen Sitzungsabschlussnachweise. Produktiver Schlüsselbetrieb, Domain, Versuchslimits und Rollen-/Poolbindung bleiben gesondert.
@@ -339,10 +339,10 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Nächste drei Aktionen
 
-Aktuelle Dienstanmeldung nach PR #88:
+Aktuelle Ausgabemetadaten nach PR #89:
 
-1. Aktuellen Kopf von PR #89 samt Common-Name-Negativfall und vollständiger CI prüfen. Siebzehn Datenbankgruppen müssen vor/nach Neustart bestehen. #88 ist bereits vollständig grün; #87 und Sicherheits-Rückübernahmen nicht wiederholen.
-2. Ausgaberestlaufzeit und grobe Fehlerklassen nach getrenntem Vertrag ergänzen. Danach tatsächliche Axum-Endpunkte mit ausdrücklich konfigurierten Grenzen anschließen. Namenszuordnung ist bestätigt; keine Fachrechte aus Diensttoken oder Mitgliedschaft ableiten. Organisation und Gateway danach ergänzen.
+1. Aktuellen Folge-PR mit Ausgabemetadaten und groben Fehlerklassen prüfen. Ablauf, Zertifikatskürzung, Datenbankausfall und endgültige Metadatensperre sowie alle siebzehn Datenbankgruppen müssen vor/nach Neustart bestehen. #88/#89 und ältere Grundlagen nicht erneut implementieren.
+2. Danach tatsächliche Axum-Endpunkte nach vorherigem Implementierungsvertrag mit ausdrücklich konfigurierten Grenzen und aktueller Registrierung anschließen. Zeitmomentaufnahme und geparste Kennung sind keine Freigabe. Namenszuordnung ist bestätigt; keine Fachrechte aus Diensttoken oder Mitgliedschaft ableiten. Organisation und Gateway danach ergänzen.
 3. Antwort zum zusätzlichen HTTPS-Testprofil übernehmen, sobald sie vorliegt. Ohne Antwort dieses Profil nicht implementieren. Unabhängige Organisations-/Gateway-Vorbereitung gemäß WORK_QUEUE fortsetzen.
 
 Der lokale Adapterbranch wurde auf 5a4d5aa übernommen. Der eigene Zwischenstash ist vollständig angewendet und entfernt.

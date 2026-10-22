@@ -1,5 +1,5 @@
 use kitaconnect_identity_access::{
-    service_auth::{RegisteredNames, authenticate},
+    service_auth::{RegisteredNames, ServiceAuthenticationError, authenticate},
     service_tokens::{AuthorityConfiguration, ServiceName as Name},
 };
 use kitaconnect_service_transport::{
@@ -177,10 +177,11 @@ async fn actual_peer_authentication_is_current() {
         peer.certificate(),
         gate.certificate().unwrap().fingerprint()
     );
-    assert!(
+    assert_eq!(
         authenticate(&mut c, &config, &registered, Name::Gateway, &gate)
             .await
-            .is_err()
+            .err(),
+        Some(ServiceAuthenticationError::Rejected)
     );
     let missing = RegisteredNames::new(vec![(Name::Gateway, dns("gateway.test"))]).unwrap();
     assert!(
@@ -318,7 +319,7 @@ async fn actual_peer_authentication_is_current() {
         .await
         .unwrap();
     assert!(terminated);
-    assert!(
+    assert_eq!(
         authenticate(
             &mut unavailable,
             &config,
@@ -327,7 +328,8 @@ async fn actual_peer_authentication_is_current() {
             &fresh
         )
         .await
-        .is_err()
+        .err(),
+        Some(ServiceAuthenticationError::Unavailable)
     );
     drop(replacement);
     assert!(

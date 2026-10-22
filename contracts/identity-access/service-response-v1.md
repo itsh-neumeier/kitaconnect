@@ -18,7 +18,8 @@ Die Zeit darf weder vor der Erzeugung noch vor der zuletzt beobachteten Ausgabez
 Eine verbleibende Laufzeit muss zwischen 1 und 300 Sekunden liegen und wird aus der tatsächlichen Ablaufzeit berechnet.
 Ein beobachteter Ablauf oder Zeitfehler sperrt die Ausgabe-Metadatenprüfung dieses Ergebnisses endgültig.
 Eine verspätete Prüfung kann deshalb keinen bereits abgelaufenen Token erneut zur Ausgabe freigeben.
-Ein Datenbankfehler liefert keine Restlaufzeit. Er erzeugt keine erfolgreiche Antwort.
+Ein Fehler der Datenbank-Zeitabfrage liefert keine Restlaufzeit und sperrt die Metadatenprüfung dieses Ergebnisses ebenfalls.
+Er erzeugt keine erfolgreiche Antwort.
 Eine berechnete Restlaufzeit ist eine Momentaufnahme; der spätere Handler muss sie unmittelbar vor der Antworterzeugung ermitteln.
 Er muss daneben aktuelle Verbindung, Registrierung und Freigabe prüfen. Der Zeitprüfschritt ersetzt diese Prüfungen nicht.
 

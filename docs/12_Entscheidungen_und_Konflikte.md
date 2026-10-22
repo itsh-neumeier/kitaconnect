@@ -372,3 +372,9 @@ Das Protokollmodell erteilt keine Berechtigung.
 [ADR-047](architecture/ADR-047_Aktuelle_Dienstanmeldung.md) konkretisiert die bestätigte DNS-/Fingerabdruckbindung vor Code.
 Eine ausdrückliche unveränderliche Namenskonfiguration wird mit tatsächlichem SAN und aktuellem Registrierungsbestand geprüft.
 Keine zusätzliche Verwaltungsfunktion, Migration oder erlaubende Laufzeitpolicy entsteht.
+
+## ADR-048 – Ausgaberestlaufzeit und grobe Fehlerklassen
+
+[ADR-048](architecture/ADR-048_Ausgaberestlaufzeit_und_Fehlerklassen.md) bindet Ablaufmetadaten an bestätigte Ausgabe und aktuelle Datenbankzeit.
+Grobe Fehlerklassen trennen abgewiesene Dienstanmeldung von nicht verfügbarer Prüfung. Keine Diagnosedaten werden ausgegeben.
+Der Vertrag wird vor abhängigem Code versioniert. Tatsächliche HTTP-Endpunkte bleiben gesondert.

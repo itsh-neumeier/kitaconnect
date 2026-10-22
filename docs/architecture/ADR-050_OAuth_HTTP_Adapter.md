@@ -17,6 +17,11 @@ Diese wird bei Abbruch physisch verworfen und kann nicht mit ungeklärtem Transa
 Ein produktiver Pool wurde in diesem Schritt wegen der noch offenen Rollen-/Poolbindung nicht gewählt.
 Die Mehrkosten gehören vor produktiver Nutzung in das bestätigte Lastprofil.
 
+Der tatsächliche Sperrtest zeigt, dass Socketfreigabe allein einen wartenden Datenbankprozess nicht zuverlässig sofort beendet.
+Die übergebenen Verbindungsoptionen erhalten deshalb zusätzlich Anweisungs-, Transaktions- und Leerlaufgrenzen aus derselben Anfragefrist.
+Der Adapter verwendet die vorhandene PostgreSQL-18-Grundlage. Er ändert weder Datenbankrollen noch globale Servervorgaben.
+Der Prozessnachweis wird nicht abgeschwächt. Diese Präzisierung steht vor der zugehörigen Korrektur.
+
 ## Fehler und Grenzen
 
 Der Adapter verwendet die bereits bestätigte OAuth-Fehlerformatausnahme.

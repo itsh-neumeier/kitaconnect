@@ -29,6 +29,13 @@ Produktive Rollen-/Poolbindung bleibt ein eigener Prüfschritt. Diese erste HTTP
 Eigene normale Fehlertransaktionen warten weiterhin Rollback gemäß ADR-040 ab.
 Bei Abbruch oder Zeitüberschreitung wird die ausschließlich dieser Anfrage gehörende physische Verbindung verworfen.
 Sie darf nicht mit einer nur vorgemerkten Rücknahme in einen Pool zurückkehren.
+Ein tatsächlicher Negativtest zeigt: Ein geschlossener Clientsocket beendet einen an einer Datenbanksperre wartenden Backendprozess nicht zuverlässig sofort.
+Der Adapter setzt deshalb zusätzlich `statement_timeout`, `transaction_timeout` und `idle_in_transaction_session_timeout` beim Verbindungsaufbau.
+Alle drei Grenzen stammen ausschließlich aus der ausdrücklich konfigurierten Anfragefrist.
+Die Millisekunden werden auf mindestens 1 Millisekunde aufgerundet und müssen in den positiven PostgreSQL-Bereich bis 2.147.483.647 passen.
+Nicht darstellbare Fristen werden als ungültige Konfiguration abgewiesen.
+Die Anwendung behält ihr gesamtes Anfragezeitlimit. Die serverseitigen Grenzen sichern die anschließende Bereinigung zusätzlich ab.
+Der getrennte Datenbankzeuge muss das Verschwinden des wartenden Prozesses weiterhin ohne Freigabe seiner Sperre nachweisen.
 Der zusätzliche Verbindungsaufwand ist vor produktiver Nutzung im Lastprofil zu bewerten.
 
 ## Anfrage und Antwort
@@ -90,4 +97,5 @@ Quellen: [Axum 0.8.9](https://docs.rs/axum/0.8.9/axum/),
 [Hyper-Util 0.1.21](https://docs.rs/hyper-util/0.1.21/hyper_util/),
 [Tower 0.5.3](https://docs.rs/tower/0.5.3/tower/),
 [RFC 6749, Abschnitt 5.2](https://www.rfc-editor.org/rfc/rfc6749#section-5.2).
+Serverseitige Grenzen: [PostgreSQL 18, Client Connection Defaults](https://www.postgresql.org/docs/18/runtime-config-client.html).
 Abhängigkeiten werden exakt gebunden und durch die bestehenden Sicherheitsprüfungen geprüft.

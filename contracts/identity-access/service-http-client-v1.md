@@ -55,6 +55,9 @@ Produktiver Zertifikatsbetrieb und produktive Rollen-/Poolbindung bleiben gesond
 Tatsächliche Loopback-/mTLS-/HTTP-Tests prüfen beide Pfade, Formularübertragung, begrenzte Antworten, Cache-/Inhaltsregeln,
 Weiterleitungsverweigerung, Zeitlimits, Budgetgrenze und Freigabe nach Abbruch.
 Vorhandene CA-/DNS-/Zertifikatszeitprüfungen bleiben erhalten.
+Die bestehende isolierte HTTP-Datenbankgruppe verbindet zusätzlich den neuen Client mit dem tatsächlichen OAuth-Server.
+Sie prüft eine vollständige Tokenausgabe und aktive Introspektion vor und nach Datenbankneustart.
+Ein abgeschnittener HTTP-Body muss im getrennten Transporttest als Fehler enden.
 Frische Testschlüssel und Zertifikate bleiben ausschließlich im Arbeitsspeicher. Dies ist kein Browserprofil.
 
 Neue direkte Einträge verwenden ausschließlich bereits gesperrte Paketversionen:

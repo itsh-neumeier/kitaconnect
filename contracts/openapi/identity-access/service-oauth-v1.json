@@ -112,6 +112,39 @@
               }
             }
           },
+          "401": {
+            "description": "Versuchte Headerauthentisierung wird abgewiesen; keine Alternative zu mTLS.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              },
+              "WWW-Authenticate": {
+                "required": true,
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Nur geprüfter HTTP-Schemaname und fester Realm; keine Credentialwerte."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            }
+          },
           "405": {
             "description": "Nur POST ist zulässig.",
             "headers": {
@@ -127,6 +160,13 @@
                 "schema": {
                   "type": "string",
                   "const": "no-cache"
+                }
+              },
+              "Allow": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "POST"
                 }
               }
             }
@@ -351,6 +391,13 @@
                 "schema": {
                   "type": "string",
                   "const": "no-cache"
+                }
+              },
+              "Allow": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "POST"
                 }
               }
             }

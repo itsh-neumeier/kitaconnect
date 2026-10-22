@@ -276,12 +276,24 @@ async fn dispatch(state: &BoundConnection, request: Request) -> Response {
         }
     }
 }
+enum Rejection {
+    Unavailable,
+    OAuth(StatusCode, OAuthError),
+}
+impl IntoResponse for Rejection {
+    fn into_response(self) -> Response {
+        match self {
+            Self::Unavailable => unavailable(),
+            Self::OAuth(status, code) => error(status, code),
+        }
+    }
+}
 async fn authenticate(
     state: &BoundConnection,
     c: &mut PgConnection,
     claimed: ServiceName,
     denied: StatusCode,
-) -> Result<service_tokens::PeerReference, Response> {
+) -> Result<service_tokens::PeerReference, Rejection> {
     service_auth::authenticate(
         c,
         &state.server.config,
@@ -291,8 +303,8 @@ async fn authenticate(
     )
     .await
     .map_err(|e| match e {
-        ServiceAuthenticationError::Rejected => error(denied, OAuthError::InvalidClient),
-        ServiceAuthenticationError::Unavailable => unavailable(),
+        ServiceAuthenticationError::Rejected => Rejection::OAuth(denied, OAuthError::InvalidClient),
+        ServiceAuthenticationError::Unavailable => Rejection::Unavailable,
     })
 }
 async fn grant(
@@ -300,13 +312,16 @@ async fn grant(
     client: ServiceName,
     target: ServiceName,
     scope: ServiceScope,
-) -> Result<(), Response> {
+) -> Result<(), Rejection> {
     let allowed: bool = sqlx::query_scalar("SELECT EXISTS(SELECT FROM identity_access.service_grants g JOIN identity_access.service_clients c ON c.name=g.client JOIN identity_access.service_clients t ON t.name=g.target WHERE g.client=$1 AND g.target=$2 AND g.scope=$3 AND g.active AND c.active AND t.active)")
-        .bind(client.text()).bind(target.text()).bind(scope.text()).fetch_one(c).await.map_err(|_| unavailable())?;
+        .bind(client.text()).bind(target.text()).bind(scope.text()).fetch_one(c).await.map_err(|_| Rejection::Unavailable)?;
     if allowed {
         Ok(())
     } else {
-        Err(error(StatusCode::BAD_REQUEST, OAuthError::InvalidScope))
+        Err(Rejection::OAuth(
+            StatusCode::BAD_REQUEST,
+            OAuthError::InvalidScope,
+        ))
     }
 }
 async fn issue(state: &BoundConnection, request: TokenRequest) -> Response {
@@ -316,10 +331,10 @@ async fn issue(state: &BoundConnection, request: TokenRequest) -> Response {
     let client = request.claimed_client();
     let peer = match authenticate(state, &mut c, client, StatusCode::BAD_REQUEST).await {
         Ok(peer) => peer,
-        Err(response) => return response,
+        Err(response) => return response.into_response(),
     };
     if let Err(response) = grant(&mut c, client, request.target(), request.scope()).await {
-        return response;
+        return response.into_response();
     }
     let Ok(mut issued) = service_tokens::issue_with_metadata(
         &mut c,
@@ -334,10 +349,10 @@ async fn issue(state: &BoundConnection, request: TokenRequest) -> Response {
         return unavailable();
     };
     if let Err(response) = authenticate(state, &mut c, client, StatusCode::BAD_REQUEST).await {
-        return response;
+        return response.into_response();
     }
     if let Err(response) = grant(&mut c, client, request.target(), request.scope()).await {
-        return response;
+        return response.into_response();
     }
     let Ok(remaining) = service_tokens::remaining_lifetime(&mut c, &mut issued).await else {
         return unavailable();
@@ -365,7 +380,7 @@ async fn inspect(state: &BoundConnection, request: IntrospectionRequest) -> Resp
     .await
     {
         Ok(peer) => peer,
-        Err(response) => return response,
+        Err(response) => return response.into_response(),
     };
     if peer.service() == ServiceName::Gateway {
         return error(StatusCode::UNAUTHORIZED, OAuthError::InvalidClient);
@@ -387,7 +402,7 @@ async fn inspect(state: &BoundConnection, request: IntrospectionRequest) -> Resp
     )
     .await
     {
-        return response;
+        return response.into_response();
     }
     if state.peer.certificate().is_err() {
         return unavailable();

@@ -26,3 +26,12 @@ rcgen wird nur als Testabhängigkeit verwendet und trifft keine produktive Ausst
 Die freie TCP-Portwahl im isolierten Test entscheidet nicht das offene Browserprofil.
 Eine gültige Zertifikatskette ersetzt weder aktuelle Registrierung noch Tokenintrospektion oder Benutzerrechte.
 Diese Nachweise und der Axum-HTTP-Vertrag folgen in getrennten Paketen.
+
+## Notwendige Abhängigkeitspflege nach erstem CI-Lauf
+
+Die Sicherheitsprüfung meldet am 22.10.2026 Tokio 1.54.0 als vom Paketregister zurückgezogen (`yanked`).
+Der Fehler betrifft die bereits vorhandene gemeinsame Laufzeitversion und nicht eine Ausnahme für die TLS-Bibliothek.
+Alle direkten Tokio-Abhängigkeiten werden deshalb vor erneuter Prüfung auf die exakte Patchversion 1.54.1 umgestellt.
+Die [offizielle Paketdokumentation](https://docs.rs/tokio/1.54.1/tokio/) weist diese Version aus.
+Die Warnung wird nicht unterdrückt. Vollständige Build-, Datenbank- und Sicherheitsprüfungen bleiben Pflicht.
+Die frühere Versionsentscheidung in ADR-025 bleibt als damaliger Stand nachvollziehbar.

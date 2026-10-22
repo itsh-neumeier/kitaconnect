@@ -416,7 +416,7 @@ async fn inspect(state: &BoundConnection, request: IntrospectionRequest) -> Resp
         let Ok(time) = time.parse::<u64>() else {
             return unavailable();
         };
-        if time < active.created_at() || time >= active.expires_at() {
+        if time < active.observed_at() || time >= active.expires_at() {
             return unavailable();
         }
     }

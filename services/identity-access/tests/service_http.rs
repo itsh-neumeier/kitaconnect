@@ -164,12 +164,16 @@ impl Reply {
 }
 impl Wire {
     async fn send(&mut self, method: &str, path: &str, headers: &str, body: &str) {
-        let head = format!(
+        let mut request = zeroize::Zeroizing::new(format!(
             "{method} {path} HTTP/1.1\r\nHost: identity.test\r\nContent-Length: {}\r\n{headers}\r\n",
             body.len()
-        );
-        self.0.get_mut().write_all(head.as_bytes()).await.unwrap();
-        self.0.get_mut().write_all(body.as_bytes()).await.unwrap();
+        ));
+        request.push_str(body);
+        self.0
+            .get_mut()
+            .write_all(request.as_bytes())
+            .await
+            .expect("write bounded synthetic HTTP request without logging credentials");
         self.0.get_mut().flush().await.unwrap();
     }
     async fn receive(&mut self) -> Reply {
@@ -359,8 +363,10 @@ async fn actual_http_is_bound_current_and_bounded() {
             400,
         ),
     ] {
-        g.send("POST", path, headers, body).await;
-        let reply = g.receive().await;
+        // Early rejections can close a connection with an unread request body.
+        let mut rejected = wire(http.clone(), &gateway, &ca).await;
+        rejected.send("POST", path, headers, body).await;
+        let reply = rejected.receive().await;
         assert_eq!(reply.status, status);
         if status == 401 {
             assert!(

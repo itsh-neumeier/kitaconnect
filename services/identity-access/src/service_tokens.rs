@@ -215,8 +215,12 @@ pub struct ActiveServiceToken {
     certificate: [u8; 32],
     created: u64,
     expires: u64,
+    observed: u64,
 }
 impl ActiveServiceToken {
+    pub(crate) fn observed_at(&self) -> u64 {
+        self.observed
+    }
     pub fn issuer(&self) -> &str {
         &self.issuer
     }
@@ -457,6 +461,7 @@ async fn introspect_in_transaction(
         certificate,
         created,
         expires,
+        observed: after_write,
     }))
 }
 /// Internal administrative revocation only. Authorization belongs to its trusted caller.

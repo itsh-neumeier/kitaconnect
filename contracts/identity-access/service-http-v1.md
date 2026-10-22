@@ -39,7 +39,10 @@ URL-Parameter und Browsercookies ergeben `invalid_request`. Es gibt keine Dienst
 Das Inhaltsformat ist genau einmal `application/x-www-form-urlencoded`, optional mit UTF-8-Charset.
 Andere Inhalte ergeben eine leere HTTP-415-Antwort. Überschrittene Bodygrenzen ergeben eine leere HTTP-413-Antwort.
 Unbekannte Pfade ergeben eine leere HTTP-404-Antwort.
-Alle Antworten tragen `Cache-Control: no-store` und `Pragma: no-cache`.
+Alle vom Router erzeugten Antworten tragen `Cache-Control: no-store` und `Pragma: no-cache`.
+Framingfehler, überschrittene Headergrenzen und Headerzeitlimits verarbeitet Hyper vor dem Router.
+Hyper darf dabei die Verbindung schließen oder eine feste Protokollantwort ohne Anwendungsdaten senden.
+Für solche Transportantworten wird kein zusätzlicher Routerheader behauptet.
 
 Ein Authorization-Header ist kein erlaubter Ersatz für mTLS.
 Ein syntaktisch gültiger HTTP-Authentisierungsschemaname ergibt HTTP 401 / `invalid_client` mit passender `WWW-Authenticate`-Angabe gemäß RFC 6749, Abschnitt 5.2.
@@ -68,6 +71,8 @@ Introspektion authentisiert den Aufrufer vor jeder Antwort, auch bei unlesbarem 
 Ein berechtigt abgefragter ungültiger oder fremder Token ergibt ausschließlich `{"active":false}`.
 Aktive Metadaten stammen aus der vorhandenen aktuellen Prüfung. Fehler dürfen nicht als negatives Prüfergebnis maskiert werden.
 Nach Warteoperationen prüft der Adapter erneut die tatsächliche Verbindung.
+Nach der abschließenden Registrierungsprüfung wird auch die Datenbankzeit erneut gelesen.
+Eine inzwischen abgelaufene aktive Momentaufnahme darf keine positive Antwort erzeugen.
 Es gibt weder positiven Cache noch rekursive Introspektion.
 Anfragen, Header, Roh-Tokens, Schlüssel und Datenbankdiagnosen werden nicht protokolliert.
 

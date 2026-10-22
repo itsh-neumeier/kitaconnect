@@ -1,0 +1,255 @@
+{
+  "updated_at": "2026-10-22",
+  "scope": "KC-006F / #67",
+  "version": "1.54.1",
+  "native_status": "pending",
+  "branches": [
+    {
+      "pr": 55,
+      "branch": "codex/kc-004b-sqlx-adapter",
+      "original_head": "a8db9ca587c9a03b469439d961812eacf95d9132",
+      "patch_head": "c06961dca3f90055d12cfa0fac8363db2ed1dd4c",
+      "manifests": [
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 59,
+      "branch": "codex/kc-005a-schema-provisionierung",
+      "original_head": "87cebbb6d9c6382bcfb1e382a731e9f6b4d4645c",
+      "patch_head": "6c98092a4b7f97fd93779020ebe40cdd21665602",
+      "manifests": [
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 60,
+      "branch": "codex/kc-005b-dienstrechte-rls",
+      "original_head": "3dcf78f87480245144e67a550051efa89f52e41e",
+      "patch_head": "d79b160251b5fad3cf75251a5301497fbf548c22",
+      "manifests": [
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 61,
+      "branch": "codex/kc-005c-pool-wartung",
+      "original_head": "4fa55b0ea37bd9e359dd7ccd82a5dc11ed2a0c81",
+      "patch_head": "03e7633a03ba4230db25f4c510018bc584773f60",
+      "manifests": [
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 68,
+      "branch": "codex/kc-006a-sitzungsmodell",
+      "original_head": "c7711e8a7eba7941bdf270e5a5429e1b3059e29e",
+      "patch_head": "4ff782a74b5cb1ed7c953387cbac2d7899e00167",
+      "manifests": [
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 69,
+      "branch": "codex/kc-006b-sitzungsspeicher",
+      "original_head": "e0e1214fd88e65ebc34c2db81286990388b59571",
+      "patch_head": "80d10c3e1e62186d8a9320cb4f38d4f5ace35578",
+      "manifests": [
+        "services/identity-access/Cargo.toml",
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 70,
+      "branch": "codex/kc-006c-passwortpruefung",
+      "original_head": "e003eb055f4137ee66184152ce660e96d838be44",
+      "patch_head": "6bca7ce4ba1bb190765f417a4cbb1703e89f11b5",
+      "manifests": [
+        "services/identity-access/Cargo.toml",
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 71,
+      "branch": "codex/kc-006d-webauthn-vertrag",
+      "original_head": "74c5e1731be0db55f1ef8698d7119f8fcd5cce7c",
+      "patch_head": "6f63b170ffce57967dd705701f7039431bc52ec1",
+      "manifests": [
+        "services/identity-access/Cargo.toml",
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 72,
+      "branch": "codex/kc-006e-mfa-vertrag",
+      "original_head": "cb3d8f62d1fde50dcb67b96468534cf8876fbe1a",
+      "patch_head": "2bf99c8b8c24e263b2b817145256b7597cba26ae",
+      "manifests": [
+        "services/identity-access/Cargo.toml",
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 73,
+      "branch": "codex/kc-006f-anmeldevertrag",
+      "original_head": "f5f0586d3802d37effc996bfee63478c51fffaa8",
+      "patch_head": "1313b314907c4e6125e9e4c5ef2a08ac8c94ef93",
+      "manifests": [
+        "services/identity-access/Cargo.toml",
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 74,
+      "branch": "codex/kc-006f-anmeldeabschluss",
+      "original_head": "58ea681667a0e788bdd5c26ab78e099d12f6e9cc",
+      "patch_head": "6eaec90c57fa7bbbc012d78d7ee6bb4e84ccfd85",
+      "manifests": [
+        "services/identity-access/Cargo.toml",
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 75,
+      "branch": "codex/p1-pr-durchsicht",
+      "original_head": "82c3a3aa0480f316669f85a8e8d8ae35d2ca6a3c",
+      "patch_head": "9195028cb4e529e5545bda2ee21b0b19de6b8a09",
+      "manifests": [
+        "services/identity-access/Cargo.toml",
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 76,
+      "branch": "codex/kc-006f-sitzungspruefung",
+      "original_head": "846d19920cc9d721424206ca7b2f3b203cd8799e",
+      "patch_head": "2f13d6d29419419313f23a28b748a3d8c1aa0cb8",
+      "manifests": [
+        "services/identity-access/Cargo.toml",
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 77,
+      "branch": "codex/kc-006f-sitzungsrotation",
+      "original_head": "5927631b00f39b14b98e4f320a740fcf6f81618c",
+      "patch_head": "bbf1e5c40436aed693d0d25e4f3f5419d18ea2b9",
+      "manifests": [
+        "services/identity-access/Cargo.toml",
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 78,
+      "branch": "codex/kc-006f-transaktionsabschluss",
+      "original_head": "ad150c952fd8bb3a01fc72ca89205d6d1bc11290",
+      "patch_head": "d2302cc6221c5246e8273e686bbd2521c529a16a",
+      "manifests": [
+        "services/identity-access/Cargo.toml",
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 79,
+      "branch": "codex/kc-006f-faktortransaktionen",
+      "original_head": "088d24f58eb6bcbc008c350df1b62631c39c9a6f",
+      "patch_head": "0429f455fd79c134301aa7d9bfc5635dc673bf57",
+      "manifests": [
+        "services/identity-access/Cargo.toml",
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 80,
+      "branch": "codex/kc-006f-zusatzauthentisierung",
+      "original_head": "5a4d5aacf21ed101c4ec4d0220a81c9f134884fc",
+      "patch_head": "964323be02514921462bf9bc2cededf6bfb4ab35",
+      "manifests": [
+        "services/identity-access/Cargo.toml",
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 81,
+      "branch": "codex/kc-006f-zusatzpruefung-adapter",
+      "original_head": "7813bcb4522cc40589450ce6df35593e60adc613",
+      "patch_head": "288749d206d6c3622a7bec2eddd36e2171b7defc",
+      "manifests": [
+        "services/identity-access/Cargo.toml",
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 82,
+      "branch": "codex/kc-006f-mitgliedschaftsspeicher",
+      "original_head": "9ad5c23cce8be4c518869bd632fdc3b362c263b3",
+      "patch_head": "5d67c7264eca72f10d3f2a9f6cfa915c41a30573",
+      "manifests": [
+        "services/identity-access/Cargo.toml",
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 83,
+      "branch": "codex/kc-006f-diensttoken-grundlage",
+      "original_head": "00bad74a277ed9657cfb3573ae59fd69d20ad3e2",
+      "patch_head": "0ccc89073dd4666fed23606f8fffb6878b97e48a",
+      "manifests": [
+        "services/identity-access/Cargo.toml",
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    },
+    {
+      "pr": 84,
+      "branch": "codex/kc-006f-mfa-zuordnung",
+      "original_head": "06e28bbac32b0744dea03c7a63ed65069aae043f",
+      "patch_head": "ce79d6de405a1a07a7022e226771a7585c541510",
+      "manifests": [
+        "services/identity-access/Cargo.toml",
+        "services/organization-config/Cargo.toml"
+      ],
+      "local_checks": "passed",
+      "ci": "pending"
+    }
+  ]
+}

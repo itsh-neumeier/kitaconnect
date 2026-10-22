@@ -195,3 +195,10 @@ Veröffentlichte Portfolios und einfache Kontaktdaten behalten ihre gesonderten 
 Die Grundpflicht für Verwaltungsrechte und besonders sensible Daten bleibt bestehen.
 Die Umsetzung wird vor Code in einem eigenen Rechte-/MFA-Vertrag konkretisiert.
 Das zusätzliche HTTPS-Testprofil bleibt weiterhin ausdrücklich offen.
+
+## OAuth-Fehlerformate: begrenzte Ausnahme bestätigt
+
+Am 22.10.2026 bestätigt die Projektleitung ausdrücklich die vorgeschlagene OAuth-Ausnahme.
+Nur OAuth-Protokollendpunkte verwenden ihre standardisierten protokollspezifischen Fehlerformate.
+Fach-APIs behalten Problem-Details nach RFC 9457. Die Klarstellung wird in Dokument 04 und im Entscheidungsregister vor Code dokumentiert.
+Keine neue Fachberechtigung und keine Freigabe des offenen HTTPS-Browserprofils ableiten. Nicht erneut fragen.

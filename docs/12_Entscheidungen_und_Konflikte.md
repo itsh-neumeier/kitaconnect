@@ -343,3 +343,13 @@ Aktuelle MFA erteilt keine Objekt-/Feldrechte. Die Gesamtabnahme von KC-008 blei
 [ADR-044](architecture/ADR-044_Gemeinsame_mTLS_Grundlage.md) konkretisiert die gemeinsame tatsächliche Zertifikatsprüfung vor Code.
 Die Metadaten stammen aus dem Handshake. Beide Endzertifikate werden auch auf offenen Verbindungen zeitlich geprüft.
 Registrierung, Introspektion, Fachrechte und das noch offene Browserprofil bleiben getrennte Nachweise.
+
+## Bestätigte Klarstellung: Fehlerformate der OAuth-Protokollendpunkte
+
+Am 22.10.2026 bestätigt die Projektleitung ausdrücklich „Begrenzte OAuth-Ausnahme bestätigen“.
+Die allgemeine Problem-Details-Regel aus Spezifikation v5.9 / Dokument 04 erhält ausschließlich für OAuth-Protokollendpunkte eine Ausnahme.
+Diese Endpunkte verwenden ihre protokollspezifischen standardisierten Fehlerformate.
+Die Fach-APIs behalten Problem-Details nach RFC 9457. Keine fachliche Zugriffsregel wird geändert.
+Grundlage: [RFC 6749, Abschnitt 5.2](https://www.rfc-editor.org/rfc/rfc6749#section-5.2) verlangt das OAuth-JSON-Fehlerformat.
+[RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) beschreibt Problem-Details mit eigenem Medientyp.
+Die Klarstellung wird vor abhängigem HTTP-Code dokumentiert. Andere Antworten und das offene Browserprofil bleiben getrennt.

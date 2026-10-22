@@ -60,7 +60,9 @@ impl Limits {
                 self.connection_time,
             ]
             .iter()
-            .any(Duration::is_zero)
+            .any(|duration| {
+                duration.is_zero() || std::time::Instant::now().checked_add(*duration).is_none()
+            })
         {
             return Err(HttpError);
         }
@@ -92,6 +94,14 @@ impl OAuthServer {
         if !(1..=300).contains(&token_seconds) {
             return Err(HttpError);
         }
+        // A socket drop alone does not reliably interrupt a backend waiting on a lock.
+        // Set these at startup, before BEGIN or any application query can block.
+        let milliseconds = database_timeout(limits.request_time)?;
+        let database = database.options([
+            ("statement_timeout", milliseconds.as_str()),
+            ("transaction_timeout", milliseconds.as_str()),
+            ("idle_in_transaction_session_timeout", milliseconds.as_str()),
+        ]);
         Ok(Self {
             tls,
             config,
@@ -133,6 +143,28 @@ impl OAuthServer {
         })
         .await
         .map_err(|_| HttpError)?
+    }
+}
+
+fn database_timeout(duration: Duration) -> Result<String, HttpError> {
+    let milliseconds =
+        duration.as_millis() + u128::from(!duration.subsec_nanos().is_multiple_of(1_000_000));
+    if !(1..=i32::MAX as u128).contains(&milliseconds) {
+        return Err(HttpError);
+    }
+    Ok(milliseconds.to_string())
+}
+
+#[cfg(test)]
+mod configuration_tests {
+    use super::*;
+    #[test]
+    fn database_deadlines_cannot_disable_cleanup_or_overflow_postgres() {
+        assert!(database_timeout(Duration::ZERO).is_err());
+        assert!(database_timeout(Duration::MAX).is_err());
+        assert!(database_timeout(Duration::from_millis(i32::MAX as u64 + 1)).is_err());
+        assert_eq!(database_timeout(Duration::from_nanos(1)).unwrap(), "1");
+        assert_eq!(database_timeout(Duration::from_micros(1001)).unwrap(), "2");
     }
 }
 

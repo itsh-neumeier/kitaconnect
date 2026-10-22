@@ -8,11 +8,11 @@ publish.workspace = true
 [dependencies]
 rustls = { version = "=0.23.46", default-features = false, features = ["ring", "std", "tls12"] }
 tokio-rustls = { version = "=0.26.6", default-features = false, features = ["ring", "tls12"] }
-tokio = { version = "=1.54.0", default-features = false, features = ["net", "io-util", "time"] }
+tokio = { version = "=1.54.1", default-features = false, features = ["net", "io-util", "time"] }
 sha2 = { version = "=0.11.1", default-features = false }
 x509-parser = { version = "=0.16.0", default-features = false }
 
 [dev-dependencies]
 rcgen = { version = "=0.14.10", default-features = false, features = ["ring", "crypto"] }
 time = "=0.3.55"
-tokio = { version = "=1.54.0", default-features = false, features = ["macros", "rt", "sync"] }
+tokio = { version = "=1.54.1", default-features = false, features = ["macros", "rt", "sync"] }

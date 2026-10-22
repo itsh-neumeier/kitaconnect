@@ -18,6 +18,8 @@ Eine produktive RP-ID und ein erlaubter Ursprung sind noch nicht festgelegt.
 Die Projektleitung hat „Alle drei Vorschläge bestätigen“ geantwortet.
 Der Adapter dieses Arbeitspakets verwendet ausschließlich RP-ID `localhost` und Ursprung `http://localhost:3000` im isolierten Test.
 Ein solches Profil darf keine produktive Ausweichkonfiguration sein.
+Am 22.10.2026 bestätigt die Projektleitung ein zusätzliches, getrenntes [HTTPS-Testprofil](browser-https-test-v1.md).
+Das bestehende Profil dieses Adapters wird dadurch nicht automatisch erweitert.
 Weitere Ports, Subdomains, eingebettete Zugangsdaten und unvollständige Ursprungsangaben werden nicht automatisch zugelassen.
 Client-Header dürfen die serverseitig konfigurierte RP-ID oder den Ursprung nicht ersetzen.
 

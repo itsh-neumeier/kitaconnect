@@ -378,3 +378,10 @@ Keine zusätzliche Verwaltungsfunktion, Migration oder erlaubende Laufzeitpolicy
 [ADR-048](architecture/ADR-048_Ausgaberestlaufzeit_und_Fehlerklassen.md) bindet Ablaufmetadaten an bestätigte Ausgabe und aktuelle Datenbankzeit.
 Grobe Fehlerklassen trennen abgewiesene Dienstanmeldung von nicht verfügbarer Prüfung. Keine Diagnosedaten werden ausgegeben.
 Der Vertrag wird vor abhängigem Code versioniert. Tatsächliche HTTP-Endpunkte bleiben gesondert.
+
+## ADR-049 – Zusätzliches HTTPS-Browserprofil bestätigt
+
+Am 22.10.2026 bestätigt die Projektleitung ausdrücklich das isolierte Profil `https://localhost:3443` mit zur Laufzeit erzeugten Testzertifikaten.
+[ADR-049](architecture/ADR-049_Isoliertes_HTTPS_Browserprofil.md) und der Testprofilvertrag sichern die Entscheidung vor Code.
+Das bisherige HTTP-WebAuthn-Profil bleibt getrennt erhalten. Produktive Domain und Zertifikatsbetrieb bleiben offen.
+Diese Frage nicht erneut stellen. Ein Browser- oder Gateway-Nachweis ist damit noch nicht erbracht.

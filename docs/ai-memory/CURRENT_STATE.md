@@ -8,15 +8,15 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
 - branch: codex/kc-006f-oauth-http auf PR #90 / 69f50d0.
-- pull_request: Neuer abhängiger Entwurf auf #90; Nummer nach Erstellung im PR nachführen.
-- head_commit: Vertrag/OpenAPI/ADR-050 vor Code in 1c47cbf. Aktuellen Codekopf im PR prüfen.
+- pull_request: [PR #91](https://github.com/itsh-neumeier/kitaconnect/pull/91) auf codex/kc-006f-ausgabemetadaten / PR #90. Persönliche/sprachliche Durchsicht gesammelt; kein Merge-Auftrag.
+- head_commit: Vertrag/OpenAPI/ADR-050 vor Code in 1c47cbf. Bereinigungsvertrag 35fd4e1 vor Korrektur e696bbb866894569bf5c70cb1686f491434a094c. Dies ist der geprüfte Codekopf; aktueller Nachweiskopf steht im PR.
 - objective: Tatsächliche OAuth-Endpunkte auf genau ihrer mTLS-Verbindung mit aktuellen Datenbankprüfungen und ausdrücklich konfigurierten Grenzen.
-- completed: PR #90 / 69f50d0 besteht alle zehn aktuellen Prüfungen, einschließlich siebzehn SQLx-Gruppen vor/nach Neustart. Nicht erneut implementieren. Neuer begrenzter HTTP-Adapter und achtzehnte isolierte Datenbankgruppe sind vorbereitet. Native Ausführung steht noch aus.
-- remaining: Native CI und Sicherheitsprüfung des neuen Adapters auswerten und Fehler beheben. Organisationsadapter, Gateway, Browsernachweise und ursprüngliche Gesamtabnahme bleiben offen.
+- completed: Tatsächlicher begrenzter OAuth-HTTP-Adapter einschließlich aktueller Registrierung, Freigabe, Ausgabe und Introspektion. Codekopf e696bbb besteht alle zehn aktuellen Prüfungen einschließlich nativer Push-CI mit Clippy, Workspace-Tests/Build und allen achtzehn SQLx-Gruppen vor/nach Neustart. Der echte Sperrtest bestätigt serverseitige Bereinigung ohne Freigabe der Testsperre. #88 bis #90 und diesen Adapter nicht erneut implementieren.
+- remaining: Begrenzten tatsächlichen HTTP-Client und aktuellen Organisationsvertrag vorbereiten. Danach Organisationsadapter, Gateway, getrennte Browsernachweise und ursprüngliche Gesamtabnahme. Produktive Rollen-/Poolbindung, Domain, Schlüsselbetrieb und Versuchslimits bleiben gesondert.
 - migration_state: Keine Migration oder Datenbankrechte geändert. Neue isolierte Testdatenbank verwendet bestehende Migrationen 1 bis 9. Keine erlaubende Laufzeitpolicy.
-- dependencies: Neue genaue Bindungen für Axum 0.8.9, Hyper 1.12.0, Hyper-Util 0.1.21 und Mime 0.3.17. Lockfile ergänzt nur siebzehn neue Pakete; bestehende Paketversionen bleiben erhalten. MIT beziehungsweise MIT/Apache-2.0 gemäß Paketmanifesten; Sicherheitsprüfung folgt in CI.
-- known_failures: Windows-Linker und Docker fehlen lokal. Native Tests deshalb in Linux-CI. Keine lokale PostgreSQL-Ausführung behaupten.
-- test_results: Lokal Rustfmt, gesperrte Offline-Auflösung, 50 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/67 Dokumente, JavaScript-Syntax und git diff --check erfolgreich. Native HTTP-/Datenbanktests und neue Abhängigkeiten noch nicht bestätigt.
+- dependencies: Neue genaue Bindungen für Axum 0.8.9, Hyper 1.12.0, Hyper-Util 0.1.21 und Mime 0.3.17. Lockfile ergänzt nur siebzehn neue Pakete; bestehende Paketversionen bleiben erhalten. MIT beziehungsweise MIT/Apache-2.0 gemäß Paketmanifesten; Sicherheitsprüfung des Codekopfs erfolgreich.
+- known_failures: Windows-Linker und Docker fehlen lokal. Native Ausführung deshalb in Linux-CI. Frühere Clippy- und Testverbindungsfehler sind korrigiert. Der tatsächlich nachgewiesene PostgreSQL-Abbruchfehler ist nach vorherigem Vertrag in e696bbb behoben; keine Warnung oder Prozessprüfung abgeschwächt.
+- test_results: Lokal Rustfmt, gesperrte Offline-Auflösung, 50 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/67 Dokumente, JavaScript-Syntax, git diff --check und Gitleaks erfolgreich. Native Code-CI 39830079947 / Job 120003585056 bestätigt Clippy, Tests/Build, Zeitgrenzenprüfung und achtzehn SQLx-Gruppen vor/nach Neustart. Sicherheitslauf 39830079924 erfolgreich. Der abschließende Nachweiskopf erhält eigene CI; dessen verbindlichen Status im PR prüfen. Statische Vertragsprüfung ist kein vollständiger OpenAPI-Validator.
 - test_commands: cargo fmt --all --check; cargo metadata --locked --offline --format-version 1; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI führt Clippy, Workspace-Tests/Build und achtzehn SQLx-Gruppen vor/nach Neustart aus.
 - security_notes: Nur tatsächlicher ConnectionPeer aus derselben Verbindung. Keine Headeridentität, Cookie-Anmeldung, Rollenwechsel oder produktive Vorgaben. Jede Anfrage besitzt eine eigene physische Datenbankverbindung; Abbruch verwirft sie. Synthetische Administration ist keine produktive Laufzeitfreigabe. DNS-/Fingerabdruckbindung, MFA, OAuth-Ausnahme und zusätzliches HTTPS-Browserprofil sind bestätigt. Nicht erneut fragen.
 
@@ -352,6 +352,14 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Nächste drei Aktionen
 
-1. Neue HTTP-CI einschließlich Clippy, Sicherheitsprüfung und achtzehn Datenbankgruppen vor/nach Neustart auswerten. Fehler beheben; keine ungeprüfte Bereitschaft behaupten.
-2. Tatsächliche Anfragegrenzen, Widerruf auf derselben Verbindung und Verwerfen nach Datenbankwartezeit bestätigen. Checkpoint, Issue #67/#6 und abhängigen PR aktualisieren. Keine Integration ohne gesonderten Auftrag.
-3. Danach aktuellen Organisations-/Gateway-Vertrag und getrennte Browsernachweise nach ADR-049 vorbereiten. Bereits bestätigte Fragen nicht wiederholen; Gesamtissues offen halten.
+1. Aktuellen Kopf und CI von PR #91 prüfen. Codekopf e696bbb ist mit allen achtzehn Datenbankgruppen vor/nach Neustart bestätigt. Den HTTP-Adapter, die Rückübernahmen und die bestätigten Entscheidungen nicht erneut bearbeiten.
+2. Dienstvertrag für einen begrenzten tatsächlichen HTTP-Client und die aktuelle Organisationsabfrage erstellen. Organisation prüft Tokenzustand über Introspektion und vergleicht die tatsächliche Zertifikatsbindung. Keine Identitätstabellen im Organisationsdienst lesen; keine positive Antwort zwischenspeichern. Unbekannte notwendige Rechte-/MFA-Daten bleiben gesperrt.
+3. Anschließend Organisations-/Gateway-Integration und getrennte Browsernachweise nach ADR-049 ergänzen. Das zusätzliche HTTPS-Profil ist bestätigt. Persönliche/sprachliche Durchsicht gesammelt; kein Merge ohne Auftrag und keine Gesamtissues schließen.
+
+## OAuth-HTTP-Abschluss und GitHub-Fortsetzung
+
+- [Native Code-CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39830079947) und [Sicherheitsprüfung](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39830079924) bestätigen e696bbb.
+- Neue echte HTTP-Fälle: aktive/inaktive Introspektion, Zertifikatsbindung, Fremdempfänger, aktueller Freigabe-/Dienst-/Zertifikatsentzug auf derselben Verbindung, Methoden, Inhaltsformat, Header, Cookie-/URL-Ablehnung, Body-/Anfrage-/Verbindungsgrenzen, RLS und Ausfall. Zusätzliche Grenzwertprüfung läuft getrennt als Bibliothekstest.
+- Ein bloßer Socketabbruch hat den unabhängigen Prozesszeugen nicht bestanden. PostgreSQL-Anweisungs-, Transaktions- und Transaktionsleerlaufgrenzen aus der konfigurierten Anfragefrist beheben diesen Fehler. Der Zeuge prüft weiterhin das Verschwinden des wartenden Prozesses bei gehaltener Testsperre.
+- Keine neue Migration, produktive Rolle, erlaubende Policy oder produktive Konfiguration. Neue HTTP-Abhängigkeiten ergänzen siebzehn Lockfile-Pakete ohne Änderung bestehender Versionen.
+- Die vollständige Ersetzung der langen Issue-Beschreibungen wurde automatisch wegen möglicher Inhaltsverluste abgelehnt. Fortschritt deshalb ausschließlich in eigenen Statuskommentaren ergänzen: #67 Kommentar 6347771911 und #6 Kommentar 6347773115. Bestehende Kriterien und fremde Änderungen bewahren. Diese sichere Ergänzung ist erfolgreich; es ist keine zusätzliche Freigabe offen.

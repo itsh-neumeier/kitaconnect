@@ -69,7 +69,7 @@ Das führt keine neue Dienst- oder Fachberechtigung ein.
 
 Vor Ausgabe wird die aktuelle Freigabe für genau Aufrufer, Ziel und Scope gelesen.
 Fehlende Freigabe ergibt `invalid_scope`; Lesefehler ergibt HTTP 503.
-Diese Vorprüfung ersetzt nicht die vorhandene autoritative Prüfung und guarded Speicherung bei der Ausgabe.
+Diese Vorprüfung ersetzt nicht die vorhandene verbindliche Prüfung und geschützte Speicherung bei der Ausgabe.
 Nach Ausgabe werden notwendige Registrierung und Freigabe erneut geprüft.
 Die Antwort verwendet ausschließlich die bestätigten Metadaten und aktuelle Restlaufzeit aus ADR-048.
 Ein Fehler nach Ausgabe gibt keinen rohen Token zurück. Ein eventuell bestätigter ungenutzter Hash ist keine Zugriffserlaubnis.

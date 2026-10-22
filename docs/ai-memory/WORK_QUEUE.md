@@ -7,7 +7,7 @@ Diese Liste ist eine Momentaufnahme und kein Abschlussnachweis. GitHub bleibt ve
 
 ## Aktueller Schritt
 
-Aktiv: codex/kc-006f-oauth-http auf PR #90 / 69f50d0. #90 ist vollständig grün. Vertrag/OpenAPI/ADR-050 sind in 1c47cbf vor Code gesichert. Tatsächlicher begrenzter OAuth-Adapter und achtzehnte isolierte Testgruppe sind vorbereitet. Native Tests und Sicherheitsprüfung folgen; noch keine erfolgreiche HTTP-Ausführung behaupten. Produktive Rollen-/Poolbindung und Browsernachweise bleiben getrennt.
+Aktiv: PR #91 / codex/kc-006f-oauth-http auf #90. Codekopf e696bbb besteht native Push-CI und Sicherheitsprüfung. Alle achtzehn SQLx-Gruppen einschließlich tatsächlichem HTTP und unabhängigem Abbruchzeugen bestehen vor/nach Neustart. Vertrag/ADR-050 1c47cbf und Bereinigungspräzisierung 35fd4e1 stehen vor dem jeweiligen Code. Aktuellen Nachweiskopf im PR prüfen. Danach begrenzten tatsächlichen HTTP-Client und Organisationsvertrag vorbereiten; diesen Server nicht erneut implementieren.
 
 KC-006F / #67: PR #76 bestätigt aktuelle Sitzungsprüfung und lokale Abmeldung mit zehn grünen Prüfungen.
 PR #77 / 5927631 bestätigt Rotation und deren Fehlerkorrektur mit zehn aktuellen grünen Prüfungen.

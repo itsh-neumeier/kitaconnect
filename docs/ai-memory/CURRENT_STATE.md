@@ -8,14 +8,14 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
 - branch: codex/kc-006f-ausgabemetadaten auf PR #89 / 21f97bd.
-- pull_request: Eigener Folge-PR auf codex/kc-006f-dienstanmeldung wird vorbereitet.
-- head_commit: Vertrag/ADR-048 vor Code in 7e29e5e. Aktueller Codekopf folgt im PR. Vorherige Verträge/Bestätigungen 7e072be/10f8565/24324ca bleiben verbindlich.
+- pull_request: PR #90 auf codex/kc-006f-dienstanmeldung / PR #89.
+- head_commit: Vertrag/ADR-048 vor Code in 7e29e5e, Codekopf 8df211e. Aktueller abschließender Kopf steht im PR. Vorherige Verträge/Bestätigungen 7e072be/10f8565/24324ca bleiben verbindlich.
 - objective: Tatsächliche Ablaufmetadaten der Ausgabe bereitstellen und Ablehnung von nicht verfügbarer Dienstprüfung trennen.
-- completed: PR #88 / 267aef4 ist vollständig grün. Dienstanmeldung aus #89 ist nativ mit siebzehn Datenbankgruppen vor/nach Neustart geprüft; aktuellen Abschlusskopf im PR bestätigen. Neue erweiterte Ausgabe bindet tatsächlichen Ablauf an bestätigten Commit. Aktuelle Restlaufzeitprüfung und grobe Fehlerklassen sind mit negativen Tests vorbereitet. Keine HTTP-Endpunkte daraus ableiten.
-- remaining: Neue Metadaten-/Fehlerklassentests sowie alle bisherigen siebzehn Gruppen vor/nach Neustart nativ prüfen. Danach tatsächlichen Axum-Router mit ausdrücklich konfigurierten Grenzen und getrennten Router-/TLS-/Datenbanknachweisen vorbereiten. Organisation, Gateway, Browser und ursprüngliche Gesamtabnahme bleiben offen.
+- completed: PRs #88 / 267aef4 und #89 / 21f97bd sind jeweils vollständig grün. Auch Codekopf 8df211e aus #90 besteht alle zehn aktuellen Prüfungen. Zwei deterministische Zeitfehlerprüfungen und alle siebzehn SQLx-Gruppen vor/nach Neustart einschließlich Restlaufzeit, verzögerter Ausgabe, endgültiger Sperre und grober Fehlerklassen sind bestätigt. Abschließender reiner Nachweiskopf erhält eigene CI; aktuelle Abschlussnachweise im PR prüfen.
+- remaining: Abschließenden Nachweiskopf von PR #90 bestätigen. Danach tatsächlichen Axum-Router mit ausdrücklich konfigurierten Grenzen und getrennten Router-/TLS-/Datenbanknachweisen vorbereiten. Aktuelle Freigabe und Fehlerzuordnung der Ausgabe müssen dabei gesondert berücksichtigt werden. Organisation, Gateway, Browser und ursprüngliche Gesamtabnahme bleiben offen.
 - migration_state: Keine Migration, Abhängigkeit, Paketversion oder Datenbankrechte geändert. Vorhandene synthetische Datenbankgruppen erweitert. Keine produktive Konfiguration oder erlaubende RLS-Policy.
 - known_failures: Windows-Linker/Docker fehlen lokal. Native Ausführung deshalb in Linux-CI; keine lokale PostgreSQL-Ausführung behaupten. Die ältere Sicherheits-Rückübernahme ist vollständig geprüft; historische Fehlversuche nicht als aktuellen Stand verwenden. #47/#48 behalten die Ablehnungsempfehlung.
-- test_results: Lokal Rustfmt, gesperrte Offline-Metadatenauflösung, 50 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/65 Dokumente und git diff --check erfolgreich. Neue Metadaten-/Fehlerklassentests noch nicht nativ ausgeführt; Linux-CI folgt. Statische Vertragsinvarianten sind kein vollständiger OpenAPI-Validator. Keine lokale PostgreSQL-Ausführung behaupten.
+- test_results: Lokal Rustfmt, gesperrte Offline-Metadatenauflösung, 50 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/65 Dokumente, git diff --check und Gitleaks erfolgreich. Codekopf 8df211e besteht Clippy, Rust-Tests/Build, zwei neue deterministische Zeitprüfungen und alle siebzehn SQLx-Gruppen vor/nach Neustart sowie Web-, Struktur- und Sicherheitsprüfungen. Statische Vertragsinvarianten sind kein vollständiger OpenAPI-Validator. Keine lokale PostgreSQL-Ausführung behaupten.
 - test_commands: cargo fmt --all --check; cargo metadata --locked --offline --no-deps --format-version 1; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, siebzehn SQLx-Gruppen einschließlich tatsächlicher Dienstanmeldung vor/nach Neustart. Lokal 50 Node-Tests erfolgreich.
 - dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72 und #73 offen. PR #73 am Abschlusskopf vollständig grün. Keine ungefragte Integration.
 - security_notes: MFA-Pflicht, Offline-Wiederherstellung, Benachrichtigungsaufträge, WebAuthn-Testprofil, beide MFA-Kombinationen und Cookie-/CSRF-Schutz sind bestätigt. Fristen sind pro Einrichtung einstellbar; 900/28.800/300 Sekunden sind bestätigte Voreinstellungen und Obergrenzen. Diese Fragen nicht erneut stellen. Bestehende positive Faktor-Ergebnisse sind weiterhin keine einmaligen Sitzungsabschlussnachweise. Produktiver Schlüsselbetrieb, Domain, Versuchslimits und Rollen-/Poolbindung bleiben gesondert.
@@ -337,11 +337,21 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 - `expires_in` darf nicht aus der angeforderten Laufzeit kopiert werden. Der Ausgabeadapter muss bestätigte Ablaufmetadaten und aktuelle Restlaufzeit bereitstellen. Danach tatsächliche HTTP-/Introspektionsanbindung ergänzen.
 - Persönliche/sprachliche Durchsicht erfolgt gesammelt. Kein Merge-Auftrag und keine ursprünglichen Gesamtissues geschlossen. Das zusätzliche HTTPS-Browserprofil ist erneut zur Entscheidung vorgelegt; bis zur ausdrücklichen Antwort gesperrt.
 
+## Bestätigte Abschlüsse und Ausgabemetadaten am 22.10.2026
+
+- PR #89 / 21f97bd besteht alle zehn aktuellen Prüfungen: [native Abschluss-CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39782158754), [Sicherheitsprüfung](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39782158772). Job 119836179318 bestätigt alle siebzehn SQLx-Gruppen vor/nach Neustart einschließlich des Common-Name-Negativfalls. Diesen Adapter nicht erneut implementieren.
+- PR #90 folgt nach Vertrag/ADR-048 in 7e29e5e. Codekopf 8df211e ergänzt den ausschließlich aus bestätigter Ausgabe erzeugbaren Ergebnistyp, aktuelle Restlaufzeit und endgültige Metadatensperre nach Zeitfehler oder fehlgeschlagener Zeitabfrage.
+- Die bisherige interne Ausgabe bleibt erhalten. Sie delegiert an die erweiterte Ausgabe. Keine neue Migration, Paketversion oder Datenbankberechtigung entsteht.
+- `Rejected` und `Unavailable` ermöglichen spätere HTTP-Fehlerzuordnung ohne Diagnosedaten. Der Zeitprüfschritt ersetzt keine aktuelle Registrierung, Freigabe oder Verbindungsprüfung.
+- Zusätzliche Tests prüfen tatsächliche Restlaufzeit, Zertifikatskürzung, verzögerte Antwort, dauerhafte Sperre und Datenbankausfall. Zwei deterministische Zeitprüfungen werden getrennt ausgewiesen; kein realer Systemuhrsprung wird behauptet.
+- Codekopf 8df211e besteht alle zehn aktuellen Prüfungen: [native Code-CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39783505257), [Sicherheitsprüfung](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39783505330). Job 119840517954 bestätigt die zwei neuen Zeitfehlerprüfungen und alle siebzehn SQLx-Gruppen vor/nach Neustart einschließlich Diensttoken-Ausgabe und tatsächlicher Dienstanmeldung.
+- Der abschließende reine Nachweiskopf erhält eigene CI. Dessen aktuellen Abschluss im PR prüfen. Keine neue Fachentscheidung oder Gesamtfreigabe daraus ableiten.
+
 ## Nächste drei Aktionen
 
 Aktuelle Ausgabemetadaten nach PR #89:
 
-1. Aktuellen Folge-PR mit Ausgabemetadaten und groben Fehlerklassen prüfen. Ablauf, Zertifikatskürzung, Datenbankausfall und endgültige Metadatensperre sowie alle siebzehn Datenbankgruppen müssen vor/nach Neustart bestehen. #88/#89 und ältere Grundlagen nicht erneut implementieren.
+1. Aktuellen Abschlusskopf von PR #90 prüfen. Codekopf 8df211e ist bereits vollständig grün; aktuelle Nachweise und siebzehn Datenbankgruppen vor/nach Neustart im PR bestätigen. #88/#89 und ältere Grundlagen nicht erneut implementieren.
 2. Danach tatsächliche Axum-Endpunkte nach vorherigem Implementierungsvertrag mit ausdrücklich konfigurierten Grenzen und aktueller Registrierung anschließen. Zeitmomentaufnahme und geparste Kennung sind keine Freigabe. Namenszuordnung ist bestätigt; keine Fachrechte aus Diensttoken oder Mitgliedschaft ableiten. Organisation und Gateway danach ergänzen.
 3. Antwort zum zusätzlichen HTTPS-Testprofil übernehmen, sobald sie vorliegt. Ohne Antwort dieses Profil nicht implementieren. Unabhängige Organisations-/Gateway-Vorbereitung gemäß WORK_QUEUE fortsetzen.
 

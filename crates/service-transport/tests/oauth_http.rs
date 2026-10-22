@@ -133,6 +133,7 @@ struct ResponseSpec {
     body: Vec<u8>,
     header_delay: Duration,
     body_delay: Duration,
+    truncate: bool,
 }
 impl ResponseSpec {
     fn json() -> Self {
@@ -144,6 +145,7 @@ impl ResponseSpec {
             body: b"{\"active\":false}".to_vec(),
             header_delay: Duration::ZERO,
             body_delay: Duration::ZERO,
+            truncate: false,
         }
     }
 }
@@ -160,6 +162,12 @@ async fn respond(server: Server, socket: TcpStream, path: &'static str, spec: Re
     );
     if reader.get_mut().write_all(header.as_bytes()).await.is_ok() {
         sleep(spec.body_delay).await;
+        if spec.truncate {
+            let _ = reader.get_mut().write_all(&spec.body[..1]).await;
+            drop(reader);
+            assert!(gate.certificate().is_err());
+            return;
+        }
         let _ = reader.get_mut().write_all(&spec.body).await;
     }
     // Observe closure without extending the client's transport lifetime or leaving a task.
@@ -219,7 +227,7 @@ async fn actual_client_posts_both_paths_and_keeps_secrets_out_of_debug() {
 async fn actual_client_refuses_bad_headers_redirects_and_oversized_data() {
     let f = Fixture::new();
     let client = f.client(limits());
-    for kind in 0..9 {
+    for kind in 0..10 {
         let mut spec = ResponseSpec::json();
         match kind {
             0 => spec.headers = spec.headers.replace("no-store", "public"),
@@ -233,6 +241,7 @@ async fn actual_client_refuses_bad_headers_redirects_and_oversized_data() {
                 .headers
                 .push_str(&format!("X-Large: {}\r\n", "x".repeat(9000))),
             8 => spec.headers = spec.headers.replace("Pragma: no-cache\r\n", ""),
+            9 => spec.truncate = true,
             _ => unreachable!(),
         }
         assert!(

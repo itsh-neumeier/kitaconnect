@@ -59,7 +59,9 @@ Frische Testschlüssel und Zertifikate bleiben ausschließlich im Arbeitsspeiche
 
 Neue direkte Einträge verwenden ausschließlich bereits gesperrte Paketversionen:
 Hyper 1.12.0, Hyper-Util 0.1.21, http-body-util 0.1.5, Mime 0.3.17 und Zeroize 1.9.1.
-Es entsteht keine neue Paketversion, Migration, Datenbankrolle oder erlaubende Policy.
+Das aktivierte Hyper-Clientmerkmal ergänzt die transitiven Pakete want 0.3.2 und try-lock 0.2.5.
+Beide Pakete sind MIT-lizenziert und werden im Lockfile gesperrt sowie durch die bestehende Sicherheitsprüfung geprüft.
+Bestehende Paketversionen bleiben erhalten. Es entsteht keine Migration, Datenbankrolle oder erlaubende Policy.
 
 Quellen: [Hyper-Client](https://docs.rs/hyper/1.12.0/hyper/client/conn/http1/),
 [begrenzter HTTP-Body](https://docs.rs/http-body-util/0.1.5/http_body_util/struct.Limited.html).

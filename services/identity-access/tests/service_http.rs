@@ -48,7 +48,7 @@ fn limits() -> Limits {
         headers: 16,
         header_bytes: 8192,
         handshake_time: Duration::from_secs(2),
-        header_time: Duration::from_millis(500),
+        header_time: Duration::from_secs(10),
         request_time: Duration::from_secs(2),
         connection_time: Duration::from_secs(45),
     }
@@ -479,7 +479,12 @@ async fn actual_http_is_bound_current_and_bounded() {
         .await
         .unwrap();
     let (accepted, _) = listener.accept().await.unwrap();
-    assert!(one.serve(accepted).await.is_err());
+    assert!(
+        timeout(Duration::from_millis(100), one.serve(accepted))
+            .await
+            .expect("budget rejects before handshake wait")
+            .is_err()
+    );
     let mut byte = [0];
     assert_eq!(
         timeout(Duration::from_secs(1), extra.read(&mut byte))
@@ -568,7 +573,10 @@ async fn actual_http_is_bound_current_and_bounded() {
     assert!(reply.status == 503 && reply.body.is_empty());
     drop(failed);
     // Header timeout closes the actual TLS connection rather than allocating a body or DB.
-    let mut slow = wire(http.clone(), &organization, &ca).await;
+    let mut slow_limits = limits();
+    slow_limits.header_time = Duration::from_millis(500);
+    let slow_server = server(&identity, &ca, "postgres", slow_limits);
+    let mut slow = wire(slow_server, &organization, &ca).await;
     slow.0
         .get_mut()
         .write_all(b"POST /oauth/token HTTP/1.1\r\nHost:")

@@ -10,7 +10,7 @@ use sha2::{Digest, Sha256};
 use std::{
     fmt, io,
     pin::Pin,
-    sync::Arc,
+    sync::{Arc, Mutex},
     task::{Context, Poll},
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
@@ -198,10 +198,57 @@ impl Client {
 
 pub struct VerifiedConnection {
     stream: TlsStream<TcpStream>,
+    peer: ConnectionPeer,
+}
+
+/// Connection-derived gate for handlers of this connection only.
+/// Every protected action must check it again; metadata is not authorization.
+#[derive(Clone)]
+pub struct ConnectionPeer {
+    shared: Arc<PeerState>,
+}
+struct PeerState {
     peer: PeerCertificate,
     own: Arc<PeerCertificate>,
+    observation: Mutex<Observation>,
+}
+struct Observation {
     last_observed: u64,
     failed: bool,
+}
+impl Observation {
+    fn observe(&mut self, time: Result<u64, TransportError>) -> Result<u64, TransportError> {
+        match time {
+            Ok(time) if !self.failed && time >= self.last_observed => {
+                self.last_observed = time;
+                Ok(time)
+            }
+            _ => {
+                self.failed = true;
+                Err(TransportError)
+            }
+        }
+    }
+}
+impl ConnectionPeer {
+    /// Rechecks BOTH leaf certificates. All clones share terminal failure and closure.
+    /// No registration, token or operation permission is implied by the returned snapshot.
+    pub fn certificate(&self) -> Result<&PeerCertificate, TransportError> {
+        let mut state = self.shared.observation.lock().map_err(|_| TransportError)?;
+        // Read time only after acquiring the lock: concurrent checks must not reorder it.
+        let time = state.observe(now())?;
+        if !self.shared.peer.valid(time) || !self.shared.own.valid(time) {
+            state.failed = true;
+            return Err(TransportError);
+        }
+        Ok(&self.shared.peer)
+    }
+    fn close(&self) {
+        if let Ok(mut state) = self.shared.observation.lock() {
+            state.failed = true;
+        }
+        // A poisoned mutex already causes certificate() to deny every check.
+    }
 }
 impl VerifiedConnection {
     fn new(
@@ -219,36 +266,35 @@ impl VerifiedConnection {
                 .ok_or(TransportError)?,
         )?;
         let time = now()?;
-        let mut result = Self {
+        let result = Self {
             stream,
-            peer,
-            own,
-            last_observed: time,
-            failed: false,
+            peer: ConnectionPeer {
+                shared: Arc::new(PeerState {
+                    peer,
+                    own,
+                    observation: Mutex::new(Observation {
+                        last_observed: time,
+                        failed: false,
+                    }),
+                }),
+            },
         };
-        result.peer_certificate()?;
+        result.peer.certificate()?;
         Ok(result)
+    }
+    /// Bind this gate only to handlers served by this stream, never to request-supplied data.
+    pub fn request_peer(&self) -> ConnectionPeer {
+        self.peer.clone()
     }
     /// Rechecks BOTH leaf certificates with current time. Failure permanently poisons this gate.
     /// Fresh registration and token/operation authorization must follow separately.
     pub fn peer_certificate(&mut self) -> Result<&PeerCertificate, TransportError> {
-        let time = match now() {
-            Ok(t) => t,
-            Err(e) => {
-                self.failed = true;
-                return Err(e);
-            }
-        };
-        if self.failed
-            || time < self.last_observed
-            || !self.peer.valid(time)
-            || !self.own.valid(time)
-        {
-            self.failed = true;
-            return Err(TransportError);
-        }
-        self.last_observed = time;
-        Ok(&self.peer)
+        self.peer.certificate()
+    }
+}
+impl Drop for VerifiedConnection {
+    fn drop(&mut self) {
+        self.peer.close();
     }
 }
 impl AsyncRead for VerifiedConnection {
@@ -257,7 +303,17 @@ impl AsyncRead for VerifiedConnection {
         cx: &mut Context<'_>,
         buf: &mut ReadBuf<'_>,
     ) -> Poll<io::Result<()>> {
-        Pin::new(&mut self.stream).poll_read(cx, buf)
+        let before = buf.filled().len();
+        let had_capacity = buf.remaining() > 0;
+        let result = Pin::new(&mut self.stream).poll_read(cx, buf);
+        if matches!(&result, Poll::Ready(Err(_)))
+            || (matches!(&result, Poll::Ready(Ok(())))
+                && had_capacity
+                && buf.filled().len() == before)
+        {
+            self.peer.close();
+        }
+        result
     }
 }
 impl AsyncWrite for VerifiedConnection {
@@ -266,12 +322,54 @@ impl AsyncWrite for VerifiedConnection {
         cx: &mut Context<'_>,
         buf: &[u8],
     ) -> Poll<io::Result<usize>> {
-        Pin::new(&mut self.stream).poll_write(cx, buf)
+        let result = Pin::new(&mut self.stream).poll_write(cx, buf);
+        if matches!(&result, Poll::Ready(Err(_)))
+            || (!buf.is_empty() && matches!(&result, Poll::Ready(Ok(0))))
+        {
+            self.peer.close();
+        }
+        result
     }
     fn poll_flush(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
-        Pin::new(&mut self.stream).poll_flush(cx)
+        let result = Pin::new(&mut self.stream).poll_flush(cx);
+        if matches!(&result, Poll::Ready(Err(_))) {
+            self.peer.close();
+        }
+        result
     }
     fn poll_shutdown(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<io::Result<()>> {
-        Pin::new(&mut self.stream).poll_shutdown(cx)
+        let result = Pin::new(&mut self.stream).poll_shutdown(cx);
+        if result.is_ready() {
+            self.peer.close();
+        }
+        result
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // Deterministic state checks; these do not claim to change the actual system clock.
+    #[test]
+    fn observation_rejects_regression_and_never_recovers() {
+        let mut state = Observation {
+            last_observed: 100,
+            failed: false,
+        };
+        assert_eq!(state.observe(Ok(100)).unwrap(), 100);
+        assert_eq!(state.observe(Ok(101)).unwrap(), 101);
+        assert!(state.observe(Ok(100)).is_err());
+        assert!(state.observe(Ok(102)).is_err());
+    }
+
+    #[test]
+    fn observation_rejects_unavailable_time_and_never_recovers() {
+        let mut state = Observation {
+            last_observed: 100,
+            failed: false,
+        };
+        assert!(state.observe(Err(TransportError)).is_err());
+        assert!(state.observe(Ok(102)).is_err());
     }
 }

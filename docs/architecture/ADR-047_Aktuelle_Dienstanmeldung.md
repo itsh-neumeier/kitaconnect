@@ -6,6 +6,7 @@
 
 ## Entscheidung
 
+DNS steht für Domain Name System. SAN bezeichnet einen alternativen Namen im Zertifikat (Subject Alternative Name).
 Der [Dienstanmeldevertrag](../../contracts/identity-access/service-authentication-v1.md) verbindet tatsächliches mTLS und aktuellen Registrierungsbestand.
 Die ausdrücklich bestätigte Namenszuordnung ist zunächst eine unveränderliche, von außen übergebene Konfiguration.
 Aktiver Dienst, exakter Fingerabdruck, Zeiten und Aussteller bleiben im bestehenden Identitätsbestand.

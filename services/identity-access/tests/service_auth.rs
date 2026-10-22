@@ -81,6 +81,11 @@ async fn pair(
     // All keys and certificates stay in RAM; no PEM/DER files or logging.
     let make = |server: bool, name: &str| {
         let mut p = CertificateParams::new(vec![name.to_owned()]).unwrap();
+        if !server {
+            // A matching Common Name must never rescue a different SAN.
+            p.distinguished_name
+                .push(rcgen::DnType::CommonName, "identity.test");
+        }
         p.not_before = OffsetDateTime::now_utc() - time::Duration::seconds(60);
         p.not_after = OffsetDateTime::now_utc() + time::Duration::hours(1);
         p.key_usages = vec![KeyUsagePurpose::DigitalSignature];
@@ -251,6 +256,7 @@ async fn actual_peer_authentication_is_current() {
     let (wrong_stream, _wrong_client) = pair(&ca, "other.test").await;
     let wrong_gate = wrong_stream.request_peer();
     register(&mut c, &wrong_gate, 0).await;
+    // Exact active fingerprint and matching Common Name, but wrong actual SAN.
     assert!(
         authenticate(
             &mut c,

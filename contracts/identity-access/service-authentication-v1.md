@@ -6,6 +6,8 @@
 
 ## Konfiguration und tatsächliche Herkunft
 
+DNS steht für Domain Name System. ASCII bezeichnet hier den 7-Bit-Zeichensatz für technische Namen.
+Ein SAN ist ein alternativer Name im Zertifikat (Subject Alternative Name).
 Eine ausdrücklich übergebene, unveränderliche Namenskonfiguration registriert genau einen erwarteten DNS-Namen je enthaltenem Dienst.
 Fehlende Zuordnungen verweigern die Anmeldung. Doppelte Dienste oder mehrfach verwendete Namen verweigern Konfiguration.
 Es gibt keine automatische Registrierung, Domainvorgabe oder Dateischreibfunktion.

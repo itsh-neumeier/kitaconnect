@@ -67,4 +67,5 @@ Sie wird nicht als tatsächlicher Systemuhrsprung ausgegeben.
 
 Keine neue Migration, Datenbankberechtigung, Abhängigkeit oder fachliche Zugriffsregel entsteht.
 HTTP-Router-, Registrierungs-, Introspektions-, Organisations- und Browsernachweise bleiben offen.
-Das noch unbestätigte zusätzliche HTTPS-Browserprofil bleibt gesperrt.
+Das zusätzliche HTTPS-Browserprofil ist inzwischen ausdrücklich bestätigt und folgt dem getrennten [Testprofilvertrag](identity-access/browser-https-test-v1.md).
+Dieser Baustein implementiert keinen Browsernachweis.

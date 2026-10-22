@@ -193,3 +193,13 @@ Er verweigert die sensiblen Bereiche nach Ablauf der MFA-Frist und erlaubt weite
 Nach tatsächlicher erneuter Passwort-/TOTP-Prüfung muss die aktuelle MFA-Anforderung erfüllt sein.
 Unbekannte Einstufung und der widerrufene alte Sitzungsnachweis bleiben gesperrt.
 Diese Fälle laufen vor und nach Neustart. Objekt-/Feldrechte und vollständiges RBAC bleiben gesonderte Nachweise.
+
+## KC-006F: Tatsächliche mTLS-Grundlage
+
+Die Workspace-Tests führen `crates/service-transport/tests/mtls.rs` ohne Datenbank und ohne gespeicherte Zertifikate aus.
+Frische flüchtige Zertifikate und Schlüssel bleiben im Arbeitsspeicher. TCP-Listener binden ausschließlich freie Ports auf `127.0.0.1`.
+Positive Tests prüfen beide tatsächlichen Endzertifikatsableitungen, verschlüsselten Datenaustausch und Zertifikatswechsel.
+Negative Tests prüfen fehlende Clientzertifikate, fremde Vertrauensanker, falschen Servernamen, fehlende Protokollaushandlung, Zeitgrenzen und Handshake-Zeitlimit.
+Eine offen gehaltene Verbindung muss nach Ablauf des Clientzertifikats auf beiden Seiten die aktuelle Metadatenprüfung verweigern.
+Dies ist ein echter TLS-Nachweis, aber noch kein aktueller Registrierungs-, Token-, Organisations-, HTTP- oder Browsernachweis.
+Das gesondert angefragte HTTPS-Browserprofil wird dadurch nicht implementiert.

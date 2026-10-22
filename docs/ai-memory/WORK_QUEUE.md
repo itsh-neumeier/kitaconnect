@@ -14,10 +14,11 @@ PR #80 / 5a4d5aa bestätigt die Speichergrundlage nach Vertrag/ADR-039 mit zehn 
 PR #81 / 7813bcb bestätigt die tatsächlichen Bibliotheksprüfungen und den atomaren Zusatzabschluss mit zehn grünen Prüfungen.
 PR #82 / 9ad5c23 bestätigt aktuellen Mitgliedschafts-Lesebestand mit zehn grünen Prüfungen vor/nach Neustart.
 PR #83 / 00bad74 bestätigt internen Diensttokenbestand und Datenbanknachweise nach ADR-019/042 mit zehn grünen Prüfungen.
-PR #84 / 25cd21c ergänzt die ausdrücklich bestätigte MFA-Zuordnung nach vorherigem Vertrag/ADR-043 in b7b9b65. Vollständiger nativer Push-Lauf einschließlich beider Neustartphasen erfolgreich; aktueller Dokumentationskopf erhält eigene CI.
+PR #84 / 06e28bb bestätigt die MFA-Zuordnung mit allen zehn aktuellen Prüfungen einschließlich beider Neustartphasen.
+Aktiver Folgebranch codex/kc-006f-mtls-grundlage ergänzt nach Vertrag/ADR-044 in 8ca9754 ausschließlich gemeinsame tatsächliche mTLS-Prüfung. Native CI steht noch aus.
 Die Aktion stammt vom zuständigen Dienst; unbekannte Einstufung verweigert Zugriff. Mitgliedschaft und MFA allein gewähren keine Fachrechte.
 Die früheren SQL-Tests mit synthetischen Faktor-Markierungen bleiben als Speicherprüfungen getrennt ausgewiesen.
-Danach folgt der echte Organisations-/Gateway-Vertrag. MFA-Einstufung und zusätzliche Faktorprüfung sind mit PRs #81/#84 bereits technisch geprüft.
+Danach folgen HTTP-/Introspektionsvertrag und der echte Organisations-/Gateway-Vertrag. MFA-Einstufung und zusätzliche Faktorprüfung sind mit PRs #81/#84 bereits technisch geprüft.
 Die 17 ursprünglichen PRs sind technisch durchgesehen. Korrektur-PR #75 ist vollständig grün.
 Die gesammelte persönliche und sprachliche Durchsicht ist noch nicht erfolgt. Daraus keinen Merge-Auftrag oder erfülltes Review ableiten.
 #47/#48 behalten die begründete Ablehnungsempfehlung. Die automatisierte Arbeit an anderen freigegebenen Schritten läuft weiter.

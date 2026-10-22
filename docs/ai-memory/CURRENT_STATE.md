@@ -1,20 +1,20 @@
 # Projektstatus und Fortsetzung
 
-Aktualisiert: 21.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
+Aktualisiert: 22.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
 Ausdrückliche Antwort der Projektleitung: „P0 abnehmen, und P1 freigeben“.
 P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nicht erneut abfragen.
 
 ## Arbeitsstand
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
-- branch: codex/kc-006f-mfa-zuordnung auf PR #83 / 00bad74.
-- pull_request: PR #84 auf codex/kc-006f-diensttoken-grundlage / PR #83.
-- head_commit: Diensttokenvertrag/ADR-042 in ed861ec vor Code; geprüfter Diensttokenkopf 00bad74. MFA-Entscheidung in a86b202, konkreter Vertrag/ADR-043 in b7b9b65 vor Implementierung 25cd21c versioniert. Der folgende reine Dokumentationskopf steht im PR und erhält eigene CI.
-- objective: Offenen Backlog nach ausdrücklichem Folgeauftrag automatisch in kleinen abhängigen Paketen weiterbearbeiten. Aktuell bestätigte aktionsgebundene MFA-Zuordnung mit vorhandener aktueller Sitzungsprüfung verbinden.
+- branch: codex/kc-006f-mtls-grundlage auf PR #84 / 06e28bb.
+- pull_request: Eigener mTLS-Folge-PR auf codex/kc-006f-mfa-zuordnung; aktuellen Kopf und Nummer in GitHub prüfen.
+- head_commit: Transportvertrag und ADR-044 in 8ca9754 vor Code versioniert. Der Implementierungskopf steht im PR.
+- objective: KC-006F mit gemeinsamer tatsächlicher mTLS-Prüfung fortsetzen. Kein HTTP-Router, Organisationsadapter oder Browserprofil in diesem begrenzten Paket.
 - completed: PRs #77 bis #82 bestehen jeweils alle zehn aktuellen Prüfungen. Mitgliedschaftstest 9ad5c23 besteht ausdrücklich vor/nach Neustart. Die konkrete MFA-Zuordnung ist bestätigt und dokumentiert: zusätzliche aktuelle MFA für Rollen-/Rechteverwaltung, Sicherheitseinstellungen, Gesundheitsdaten, Sorgerechtsbeschränkungen, Personalakten und interne Entwicklungsakten. Unbekannte Einstufung verweigert Zugriff; normale Anmeldung genügt nicht. Portfolios und einfache Kontaktdaten behalten gesonderte Objekt-/Feldrechte.
-- remaining: Aktuellen Dokumentationskopf von PR #84 prüfen; die neuen Tests sind am Implementierungskopf bereits vor/nach Neustart erfolgreich. Danach echten Organisations-/Dienstvertrag fortsetzen. Das zusätzliche HTTPS-Testprofil ist weiterhin offen. Gateway und Browser-/TLS-/mTLS-Nachweise fehlen. Alle 44 offenen Issues bleiben nach WORK_QUEUE geordnet; keine KC-006F-Gesamtabnahme ableiten.
-- migration_state: Neue Identitätsmigration 0009_service_tokens.sql ergänzt Registrierung, Zertifikatsreferenzen, begrenzte Dienstfreigaben und Tokenbestand. FORCE RLS bleibt geschlossen. Alte Migrationen bleiben unverändert. Neue getrennte Datenbank kc_service_token_test; ältere Gruppen behalten ihren Versionsstand. url 2.5.8 wird als bereits vorhandene transitive Version direkt verwendet; keine neue Paketversion.
-- known_failures: SQLx-Testhilfsfunktion im ersten Diensttokenlauf hatte eine zu kurze Textlebensdauer; in 00bad74 korrigiert. Vollständige native Prüfungen von Diensttoken- und MFA-Implementierung erfolgreich. Der folgende Dokumentationskopf erhält eigene CI. Windows-Linker/Docker fehlen lokal; #47/#48 behalten die Ablehnungsempfehlung.
+- remaining: Neue native Transport-CI bestätigen und Fehler beheben. Danach HTTP-/Introspektionsvertrag und echten Organisationsadapter ergänzen. Das zusätzliche HTTPS-Browserprofil bleibt bis zur ausdrücklichen Antwort offen. Alle 44 offenen Issues bleiben nach WORK_QUEUE geordnet; keine KC-006F-Gesamtabnahme ableiten.
+- migration_state: Keine Migration oder Datenbankrechte geändert. Neue technische Bibliothek crates/service-transport; Rustls 0.23.46/Ring und X.509-Parser 0.16.0 aus bestehendem Graphen. Tokio-Rustls 0.26.6 sowie ausschließlich als Testabhängigkeit rcgen 0.14.10 ergänzt; Lockfile ergänzt neun Paketversionen ohne Aktualisierung bisheriger Versionen.
+- known_failures: PR #84 / 06e28bb besteht alle zehn Prüfungen; nicht erneut implementieren. Neue Transporttests warten auf native CI. Windows-Linker/Docker fehlen lokal; #47/#48 behalten die Ablehnungsempfehlung.
 - test_commands: cargo fmt --all --check; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, sechzehn SQLx-Gruppen einschließlich Mitgliedschaften, Diensttokens und zusätzlicher Faktorprüfung sowie synthetische SQL-Speicherprüfungen vor/nach Neustart. Lokal 44 Node-Tests und Strukturprüfung erfolgreich; keine lokale PostgreSQL-Ausführung behaupten.
 - dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72 und #73 offen. PR #73 am Abschlusskopf vollständig grün. Keine ungefragte Integration.
 - security_notes: MFA-Pflicht, Offline-Wiederherstellung, Benachrichtigungsaufträge, WebAuthn-Testprofil, beide MFA-Kombinationen und Cookie-/CSRF-Schutz sind bestätigt. Fristen sind pro Einrichtung einstellbar; 900/28.800/300 Sekunden sind bestätigte Voreinstellungen und Obergrenzen. Diese Fragen nicht erneut stellen. Bestehende positive Faktor-Ergebnisse sind weiterhin keine einmaligen Sitzungsabschlussnachweise. Produktiver Schlüsselbetrieb, Domain, Versuchslimits und Rollen-/Poolbindung bleiben gesondert.
@@ -306,10 +306,10 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Nächste drei Aktionen
 
-Aktuelle MFA-Zuordnung nach PR #83:
+Aktuelle tatsächliche mTLS-Grundlage nach PR #84:
 
-1. Aktuellen Dokumentationskopf von PR #84 und dessen CI prüfen. Diensttokens und neue MFA-Zuordnung sind am Codekopf bereits vor/nach Neustart erfolgreich. #78 bis #83 sind grün; nicht erneut implementieren.
-2. Danach den echten Organisations-/Dienstvertrag vorbereiten. Tatsächlich geprüfte TLS-Zertifikate müssen die Referenzen ersetzen; jede geschützte Aktion braucht aktuelle Introspektion und gültige Zertifikatsbindung, auch auf wiederverwendeten Verbindungen. Bestätigte MFA-Zuordnung nicht erneut fragen. Mitgliedschaft und MFA allein gewähren keine Fachrechte.
+1. Transport-Folge-PR nativ prüfen. Tatsächliche gegenseitige Zertifikatsprüfung, Fremdanker, falscher Name, fehlendes Clientzertifikat, Zeitgrenzen, Zertifikatswechsel und offene Verbindung nach Ablauf müssen bestehen. #78 bis #84 sind grün; nicht erneut implementieren.
+2. Danach HTTP-/Introspektionsvertrag und echten Organisationsadapter vorbereiten. Die tatsächliche Zertifikatsableitung muss mit aktueller Registrierung und Tokenbindung verbunden werden. Die Transportbibliothek allein erteilt keine Dienst- oder Fachrechte. Bestätigte MFA-Zuordnung nicht erneut fragen.
 3. Antwort zum zusätzlichen HTTPS-Testprofil übernehmen, sobald sie vorliegt. Ohne Antwort dieses Profil nicht implementieren. Unabhängige Organisations-/Gateway-Vorbereitung gemäß WORK_QUEUE fortsetzen.
 
 Der lokale Adapterbranch wurde auf 5a4d5aa übernommen. Der eigene Zwischenstash ist vollständig angewendet und entfernt.

@@ -404,6 +404,22 @@ async fn inspect(state: &BoundConnection, request: IntrospectionRequest) -> Resp
     {
         return response.into_response();
     }
+    if let Some(active) = &active {
+        let time = sqlx::query_scalar::<_, String>(
+            "SELECT floor(extract(epoch FROM clock_timestamp()))::text",
+        )
+        .fetch_one(&mut c)
+        .await;
+        let Ok(time) = time else {
+            return unavailable();
+        };
+        let Ok(time) = time.parse::<u64>() else {
+            return unavailable();
+        };
+        if time < active.created_at() || time >= active.expires_at() {
+            return unavailable();
+        }
+    }
     if state.peer.certificate().is_err() {
         return unavailable();
     }

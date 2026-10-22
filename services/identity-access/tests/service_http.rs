@@ -266,10 +266,10 @@ async fn actual_http_is_bound_current_and_bounded() {
     ] {
         register(&mut admin, name, leaf).await;
     }
-    let server = server(&identity, &ca, "postgres", limits());
-    let mut g = wire(server.clone(), &gateway, &ca).await;
-    let mut i = wire(server.clone(), &identity, &ca).await;
-    let mut o = wire(server.clone(), &organization, &ca).await;
+    let http = server(&identity, &ca, "postgres", limits());
+    let mut g = wire(http.clone(), &gateway, &ca).await;
+    let mut i = wire(http.clone(), &identity, &ca).await;
+    let mut o = wire(http.clone(), &organization, &ca).await;
     let response = g.post("/oauth/token", TOKEN).await;
     assert_eq!(response.status, 200);
     let value = response.json();
@@ -370,7 +370,7 @@ async fn actual_http_is_bound_current_and_bounded() {
             );
         }
     }
-    let mut large = wire(server.clone(), &gateway, &ca).await;
+    let mut large = wire(http.clone(), &gateway, &ca).await;
     large
         .send("POST", "/oauth/token", FORM, &"x".repeat(513))
         .await;
@@ -399,7 +399,7 @@ async fn actual_http_is_bound_current_and_bounded() {
     assert_eq!(g.post("/oauth/token", TOKEN).await.status, 200);
     // Trusted CA + right SAN without exact registered fingerprint is insufficient.
     let unregistered = leaf(&ca, "gateway.test");
-    let mut unknown = wire(server.clone(), &unregistered, &ca).await;
+    let mut unknown = wire(http.clone(), &unregistered, &ca).await;
     unknown
         .post("/oauth/token", TOKEN)
         .await
@@ -461,6 +461,63 @@ async fn actual_http_is_bound_current_and_bounded() {
     .expect("cancelled physical connection and transaction are gone");
     blocker.rollback().await.unwrap();
     assert_eq!(g.post("/oauth/token", TOKEN).await.status, 200);
+
+    // The request deadline includes a stalled body, before any database connection exists.
+    let mut stalled = wire(http.clone(), &organization, &ca).await;
+    stalled.0.get_mut().write_all(b"POST /oauth/token HTTP/1.1\r\nHost: identity.test\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 100\r\n\r\nclient_id=").await.unwrap();
+    let reply = stalled.receive().await;
+    assert!(reply.status == 503 && reply.body.is_empty());
+    drop(stalled);
+
+    // A separate one-connection budget rejects a second socket before TLS starts.
+    let mut one_limits = limits();
+    one_limits.connections = 1;
+    let one = server(&identity, &ca, "postgres", one_limits);
+    let held = wire(one.clone(), &organization, &ca).await;
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let mut extra = TcpStream::connect(listener.local_addr().unwrap())
+        .await
+        .unwrap();
+    let (accepted, _) = listener.accept().await.unwrap();
+    assert!(one.serve(accepted).await.is_err());
+    let mut byte = [0];
+    assert_eq!(
+        timeout(Duration::from_secs(1), extra.read(&mut byte))
+            .await
+            .unwrap()
+            .unwrap(),
+        0
+    );
+    drop(held);
+
+    // The entire connection expires even when a client sends no request at all.
+    let mut short_limits = limits();
+    short_limits.connection_time = Duration::from_millis(250);
+    let short = server(&identity, &ca, "postgres", short_limits);
+    let mut idle = wire(short, &organization, &ca).await;
+    let result = timeout(Duration::from_secs(1), idle.0.read(&mut byte))
+        .await
+        .expect("whole connection is bounded");
+    assert!(matches!(result, Ok(0) | Err(_)));
+
+    // Header count is enforced before the router and database; no client data is echoed.
+    let mut header_limit = wire(http.clone(), &organization, &ca).await;
+    let head = format!(
+        "POST /oauth/token HTTP/1.1\r\nHost: identity.test\r\n{}\r\n",
+        "X-Test: bounded\r\n".repeat(17)
+    );
+    header_limit
+        .0
+        .get_mut()
+        .write_all(head.as_bytes())
+        .await
+        .unwrap();
+    let mut raw = Vec::new();
+    let _ = timeout(Duration::from_secs(1), header_limit.0.read_to_end(&mut raw))
+        .await
+        .expect("header count closes connection");
+    assert!(raw.is_empty() || raw.starts_with(b"HTTP/1.1 431"));
+
     // Current certificate revocation takes effect on the same established HTTP connection.
     sqlx::query(
         "UPDATE identity_access.service_certificates SET revoked=true WHERE fingerprint=$1",
@@ -511,7 +568,7 @@ async fn actual_http_is_bound_current_and_bounded() {
     assert!(reply.status == 503 && reply.body.is_empty());
     drop(failed);
     // Header timeout closes the actual TLS connection rather than allocating a body or DB.
-    let mut slow = wire(server.clone(), &organization, &ca).await;
+    let mut slow = wire(http.clone(), &organization, &ca).await;
     slow.0
         .get_mut()
         .write_all(b"POST /oauth/token HTTP/1.1\r\nHost:")

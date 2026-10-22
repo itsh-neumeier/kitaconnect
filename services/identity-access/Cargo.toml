@@ -11,7 +11,7 @@ getrandom = "=0.4.3"
 sha2 = { version = "=0.11.1", default-features = false }
 zeroize = { version = "=1.9.1", default-features = false, features = ["alloc"] }
 sqlx = { version = "=0.9.0", default-features = false, features = ["postgres", "runtime-tokio", "tls-rustls-ring"] }
-tokio = { version = "=1.54.0", default-features = false, features = ["rt", "sync"] }
+tokio = { version = "=1.54.1", default-features = false, features = ["rt", "sync"] }
 
 [dev-dependencies]
-tokio = { version = "=1.54.0", default-features = false, features = ["macros", "rt", "time"] }
+tokio = { version = "=1.54.1", default-features = false, features = ["macros", "rt", "time"] }

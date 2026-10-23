@@ -397,3 +397,9 @@ Die bestehende OAuth-Ausnahme und Zweckmatrix bleiben verbindlich. Keine Fachber
 [ADR-051](architecture/ADR-051_Begrenzter_OAuth_HTTP_Client.md) beschreibt den tatsächlichen begrenzten Transport zu den vorhandenen OAuth-Endpunkten vor Code.
 Eine Antwort ist keine Token- oder Fachfreigabe. Der Client erhält keine Datenbankabhängigkeit und startet keinen losgelösten Auftrag.
 Produktiver Zertifikatsbetrieb, Registrierung und nachfolgende Organisationsrechte bleiben getrennte Nachweise.
+
+## ADR-052 – Gemeinsame OAuth-Antwortprüfung
+
+[ADR-052](architecture/ADR-052_OAuth_Antwortpruefung.md) trennt die Prüfung empfangener OAuth-Nachrichten von Transport und Datenbank.
+Bekannte Felder müssen eindeutig sein. Aktive Metadaten werden an ausdrückliche Erwartungen und frische Zeit gebunden.
+Eine Protokollprüfung ersetzt keine aktuelle Registrierung oder Fachberechtigung. Vertrag steht vor Code.

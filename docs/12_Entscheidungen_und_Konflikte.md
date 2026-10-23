@@ -403,3 +403,9 @@ Produktiver Zertifikatsbetrieb, Registrierung und nachfolgende Organisationsrech
 [ADR-052](architecture/ADR-052_OAuth_Antwortpruefung.md) trennt die Prüfung empfangener OAuth-Nachrichten von Transport und Datenbank.
 Bekannte Felder müssen eindeutig sein. Aktive Metadaten werden an ausdrückliche Erwartungen und frische Zeit gebunden.
 Eine Protokollprüfung ersetzt keine aktuelle Registrierung oder Fachberechtigung. Vertrag steht vor Code.
+
+## ADR-053 – Authentisierte Mitgliedschaftsabfrage
+
+[ADR-053](architecture/ADR-053_Authentisierte_Mitgliedschaftsabfrage.md) verbindet aktuelle Introspektion und eigenen Mitgliedschaftsbestand vor Code.
+Tatsächlicher Aufrufer, genaue Tokenbindung und frische Organisationszeit sind verpflichtend.
+Ein Datenstand erteilt keine Fachberechtigung. Produktive Zertifikatsverteilung und vollständiger Anmeldeadapter bleiben gesondert.

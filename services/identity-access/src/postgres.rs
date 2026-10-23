@@ -97,7 +97,7 @@ pub async fn create_session(
     Ok(token)
 }
 
-fn decode(row: &sqlx::postgres::PgRow) -> Result<SessionRecord, StorageError> {
+pub(crate) fn decode(row: &sqlx::postgres::PgRow) -> Result<SessionRecord, StorageError> {
     fn number<T: std::str::FromStr>(
         row: &sqlx::postgres::PgRow,
         column: &str,

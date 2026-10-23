@@ -86,13 +86,13 @@ impl LoginLimits {
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct OrganizationContext {
-    identity: IdentityId,
-    facility: LoginFacilityId,
-    version: u64,
-    idle: u64,
-    absolute: u64,
-    step_up: u64,
-    mfa_required: bool,
+    pub(crate) identity: IdentityId,
+    pub(crate) facility: LoginFacilityId,
+    pub(crate) version: u64,
+    pub(crate) idle: u64,
+    pub(crate) absolute: u64,
+    pub(crate) step_up: u64,
+    pub(crate) mfa_required: bool,
 }
 impl OrganizationContext {
     /// Trusted adapter must establish current membership before constructing a context.
@@ -124,7 +124,11 @@ impl OrganizationContext {
             mfa_required,
         })
     }
-    fn bound(self, identity: IdentityId, facility: LoginFacilityId) -> Result<Self, LoginError> {
+    pub(crate) fn bound(
+        self,
+        identity: IdentityId,
+        facility: LoginFacilityId,
+    ) -> Result<Self, LoginError> {
         if self.identity != identity || self.facility != facility {
             Err(LoginError)
         } else {

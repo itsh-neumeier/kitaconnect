@@ -286,3 +286,9 @@ Die Fristen sind pro Einrichtung einstellbar. In einer Folgeantwort bestätigt d
 Der lokale Sitzungsabschluss bindet Identität, Einrichtung, tatsächlichen Faktorbestand und ursprüngliche sowie aktuelle Fristen.
 Ein gemeinsamer Sperrvertrag serialisiert Faktoränderungen und Abschluss. Organisation bleibt eine getrennte geprüfte Dienstgrenze.
 Der Vertrag wird vor Code versioniert. Gateway, Cookies und vollständige Browser-/mTLS-Nachweise folgen weiter in KC-006F.
+
+## ADR-037 – Aktuelle Sitzungsprüfung
+
+[ADR-037](architecture/ADR-037_Aktuelle_Sitzungspruefung.md) konkretisiert aktuelle Prüfung und lokale Abmeldung.
+Ein eigener Beobachtungsbestand erhält einmal verschärfte Grenzen dauerhaft. Die aktuelle Organisationsantwort bleibt verpflichtend.
+Der Prüfvertrag wird vor Code versioniert. Rotation, erneute Faktorprüfung und Gateway folgen getrennt.

@@ -183,3 +183,12 @@ Ein gemeinsamer Sperrvertrag und eine Bestandsableitung verhindern Erfolg aus zw
 Neue Migration 0005 erhält die RLS-Sperre; alte Migrationen bleiben unverändert. Die eigene Datenbank kc_login_test prüft Grenzen, Fehler, Konkurrenz und Neustart.
 Die Organisationsantwort wird über eine interne Adaptergrenze angefordert. Nur Tests verwenden zunächst ein ausdrücklich synthetisches Testdoppel.
 Gateway, aktuelle geschützte Aktionen, Rotation/Abmeldung und Browser-/TLS-/mTLS-Nachweise bleiben weiter offen. Der aktuelle CI-Stand wird in PR #74 nachgeführt.
+
+## KC-006F: Aktuelle Sitzungsprüfung und lokale Abmeldung
+
+Der [Prüfvertrag](../contracts/identity-access/session-check-v1.md) und [ADR-037](architecture/ADR-037_Aktuelle_Sitzungspruefung.md) sind in 35f3ed3 vor Code versioniert.
+Ein eigener Beobachtungsbestand bewahrt verschärfte Sitzungsfristen dauerhaft und trennt sie von aktuellen Policy-Rohwerten.
+Jede geschützte Prüfung verlangt eine aktuelle Organisationsantwort sowie lokale Sitzungs-, Einrichtungs-, MFA- und Wiederherstellungsprüfung.
+Beobachteter Ablauf bleibt endgültig. Lokale Abmeldung konkurriert über dieselbe Identitätssperre und bleibt bei Organisationsausfall möglich.
+Neue Migration 0006 bleibt durch FORCE RLS geschlossen. Die eigene Testdatenbank kc_session_check_test prüft Fehler, Konkurrenz und Neustart.
+Rotation, zweckgebundene erneute Faktorprüfung und der echte Organisations-/Gateway-Vertrag folgen weiter. Die Gesamtabnahme bleibt offen.

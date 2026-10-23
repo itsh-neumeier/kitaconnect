@@ -7,15 +7,15 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 ## Arbeitsstand
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
-- branch: codex/p1-pr-durchsicht auf PR #74 / 58ea681667a0e788bdd5c26ab78e099d12f6e9cc.
-- pull_request: [PR #75](https://github.com/itsh-neumeier/kitaconnect/pull/75) auf codex/kc-006f-anmeldeabschluss; keine Integration.
-- head_commit: Organisationsvertrag 734e01d vor Korrektur b9071bf; Sitzungsvertrag 8816a18 vor Korrektur 6a1ccff. Der abschließende Dokumentationscommit erhält eigene CI; aktueller Kopf steht in PR #75.
-- objective: Alle 17 zum Auftragsbeginn offenen PRs technisch durchsehen, Empfehlungen und Integrationsfolge vorbereiten; persönliche Durchsicht erst gesammelt danach.
-- completed: PR #74 am Abschlusskopf 58ea681 vollständig grün, einschließlich Login-Tests vor/nach Neustart. Änderungen, Verträge, Abhängigkeiten, Migrationen, Reviews und CI aller offenen PRs erfasst. Alle 17 PRs haben eine konkrete Empfehlung. Organisations-, Identitäts- und Sitzungsanlage prüfen nun unterdrückte INSERT-Anweisungen; echte Fehlertests ergänzt. #45/#46 nach Main-Aktualisierung vollständig grün.
-- remaining: CI des abschließenden Dokumentationskopfes in PR #75 prüfen; die nativen Korrekturtests von 6a1ccff sind erfolgreich. Alle 17 ursprünglichen PR-Beschreibungen enthalten die konkrete Empfehlung. #45 (1712c7a) und #46 (8ccef99) sind auf aktuelle Main-Basis gebracht und jeweils vollständig grün. #47/#48 bleiben mit begründeter Ablehnungsempfehlung offen. Die technische Bearbeitung ist für die gesammelte persönliche Durchsicht vorbereitet. Kein Merge ohne gesonderten Auftrag. Danach #67 mit aktuellem Sitzungsprüfvertrag, Rotation und Abmeldung fortsetzen.
-- migration_state: Durchsichtsbranch verändert keine Migration und keine Abhängigkeit. Er verwendet die bestehenden getrennten Testdatenbanken. Die im Vorgänger #74 ergänzte Identitätsmigration 0005 bleibt unverändert; produktive Runtime bleibt durch FORCE RLS gesperrt.
-- known_failures: #47 scheitert in SvelteKit load_tsconfig an readFile; nicht integrieren. #48 passt nicht zur festgelegten Node-24-Laufzeit. Keine offene Fehlermeldung aus den Korrekturtests. Windows-Linker und Docker fehlen lokal; ausführbare Rust-/PostgreSQL-Nachweise stammen aus Linux-CI.
-- test_commands: cargo fmt --all --check; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, expliziter SQLx-Test login/login_completion_is_atomic_and_current vor und nach Neustart sowie alle bisherigen getrennten Datenbanktests.
+- branch: codex/kc-006f-sitzungspruefung auf PR #75 / 82c3a3aa0480f316669f85a8e8d8ae35d2ca6a3c.
+- pull_request: Eigener Folge-PR für aktuelle Sitzungsprüfung auf codex/p1-pr-durchsicht; aktuellen Kopf und Nummer in GitHub prüfen.
+- head_commit: Prüfvertrag und ADR-037 in 35f3ed3 vor Implementierung versioniert. Dieser Implementierungscheckpoint erhält eigene CI; endgültiger Kopf steht im PR.
+- objective: Offenen Backlog nach ausdrücklichem Folgeauftrag automatisch in kleinen abhängigen Paketen weiterbearbeiten. Aktueller Schritt: KC-006F, aktuelle Sitzungsprüfung und lokale Abmeldung.
+- completed: PR #75 am Kopf 82c3a3a mit allen zehn Prüfungen grün. Alle 17 ursprünglichen PRs besitzen technische Empfehlungen. Aktueller Schritt ergänzt dauerhaft kürzbare Sitzungsgrenzen, aktuelle Organisationsabfrage, MFA-/Zusatzfristprüfung, Wiederherstellungssperre und lokale Abmeldung. Neue native Fehlertests und separate Testdatenbank ergänzt.
+- remaining: Native CI dieses Schritts prüfen und Fehler beheben. Danach Rotation und zweckgebundene erneute Faktorprüfung vor Code festlegen. Echter Organisationsadapter, Gateway sowie Browser-/TLS-/mTLS-Nachweise fehlen weiter. Die [Arbeitsfolge](WORK_QUEUE.md) erfasst alle 44 offenen Issues und ihre Voraussetzungen. Keine unvollständigen Issues schließen. Persönliche/sprachliche Durchsicht und gesonderter Merge-Auftrag sind weiterhin nicht dokumentiert.
+- migration_state: Neue Identitätsmigration 0006 ergänzt session_policy_observations mit Schutztrigger und FORCE RLS. Migrationen 0001 bis 0005 bleiben unverändert. Keine neue Abhängigkeit. Neue separate Testdatenbank kc_session_check_test; bisherige Testdatenbanken behalten ihre frühen Versionsstände.
+- known_failures: Neue native Sitzungsprüftests sind noch durch CI zu bestätigen. Lokal fehlen Windows-Linker und Docker; diese bekannten Fehler nicht erneut ausführen. #47 bleibt wegen SvelteKit-/TypeScript-7-Fehler, #48 wegen Node-26-Typen bei Node 24 von der Integration ausgeschlossen.
+- test_commands: cargo fmt --all --check; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, neuer expliziter SQLx-Test session_check/session_checks_preserve_current_policy_and_logout vor und nach Neustart sowie alle bisherigen Datenbanktests.
 - dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72 und #73 offen. PR #73 am Abschlusskopf vollständig grün. Keine ungefragte Integration.
 - security_notes: MFA-Pflicht, Offline-Wiederherstellung, Benachrichtigungsaufträge, WebAuthn-Testprofil, beide MFA-Kombinationen und Cookie-/CSRF-Schutz sind bestätigt. Fristen sind pro Einrichtung einstellbar; 900/28.800/300 Sekunden sind bestätigte Voreinstellungen und Obergrenzen. Diese Fragen nicht erneut stellen. Bestehende positive Faktor-Ergebnisse sind weiterhin keine einmaligen Sitzungsabschlussnachweise. Produktiver Schlüsselbetrieb, Domain, Versuchslimits und Rollen-/Poolbindung bleiben gesondert.
 
@@ -291,6 +291,10 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 - Die aktuelle CI muss die ergänzten Ablauftests bestätigen. Abschlussnachweise und Kopf werden in PR #74 und Issue #67 nachgeführt. KC-006F bleibt bis zur übrigen Integration offen.
 
 ## Nächste drei Aktionen
+
+Der Folgeauftrag umfasst den gesamten offenen Backlog. Aktuell zuerst den Folge-PR für Sitzungsprüfung und seine CI prüfen.
+Danach Rotation und zweckgebundene erneute Faktorprüfung vor Code festlegen. Die [Arbeitsfolge](WORK_QUEUE.md) ist die Fortsetzungsgrundlage.
+Die folgenden früheren Durchsichtsaktionen sind mit PR #75 technisch erledigt; keine erledigten Adapterkorrekturen erneut implementieren.
 
 1. Aktuellen Kopf und CI von Durchsichts-/Korrektur-PR #75 prüfen. Die nativen Korrekturtests von 6a1ccff sind bereits vor/nach Neustart erfolgreich; sie nicht erneut implementieren. Die Empfehlungen aller 17 ursprünglichen PRs sind dokumentiert. Keine Integration vor persönlicher Durchsicht und gesondertem Auftrag.
 2. Erst danach gesammelte persönliche/sprachliche Durchsicht vorbereiten. Der [Durchsichtsbericht](../25_P1_PR_Durchsicht.md) enthält die Integrationsfolge und die Ablehnungsempfehlungen für #47/#48. Ohne gesonderten Merge-Auftrag nichts integrieren. P0 und der P1-Auftrag sind bereits bestätigt.

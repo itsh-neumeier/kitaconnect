@@ -13,7 +13,7 @@
       "post": {
         "operationId": "readCurrentMembership",
         "summary": "Aktuellen sichtbaren Mitgliedschafts- und Fristendatenstand lesen",
-        "description": "Keine Query-Parameter, Cookies, Proxy-Anmeldemittel oder weitergeleiteten Zertifikatsbehauptungen. Keine positiven Zwischenspeicher. Keine Dienstübergreifende Atomarität. Ein bestätigter Entzug wirkt bei der nächsten vollständigen Prüfung.",
+        "description": "Keine Query-Parameter, Cookies, Proxy-Anmeldemittel oder weitergeleiteten Zertifikatsbehauptungen. Keine positiven Zwischenspeicher. Keine dienstübergreifende Atomarität. Ein bestätigter Entzug wirkt bei der nächsten vollständigen Prüfung.",
         "requestBody": {
           "required": true,
           "content": {
@@ -52,7 +52,7 @@
           },
           "405": {
             "description": "Nur POST zulässig.",
-            "headers": {"Allow": {"schema": {"const": "POST"}}},
+            "headers": {"Allow": {"schema": {"const": "POST"}}, "Cache-Control": {"$ref": "#/components/headers/NoStore"}, "Pragma": {"$ref": "#/components/headers/NoCache"}},
             "content": {"application/problem+json": {"schema": {"$ref": "#/components/schemas/Problem"}}}
           },
           "413": {"$ref": "#/components/responses/Problem"},

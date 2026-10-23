@@ -1,5 +1,6 @@
 //! Actual organization HTTP -> identity HTTP -> separate organization DB, synthetic only.
 use super::*;
+use base64::Engine as _;
 use kitaconnect_organization_config::service_http::{
     HttpError as OrgHttpError, Limits as OrgLimits, MembershipServer,
 };

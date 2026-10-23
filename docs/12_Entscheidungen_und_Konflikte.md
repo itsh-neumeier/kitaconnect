@@ -234,3 +234,9 @@ Testmigrationen bleiben von produktiver Provisionierung getrennt. Die produktive
 Die sechs Teilpakete erhalten alle ursprünglichen Anmelde- und Widerrufsanforderungen.
 Konkrete Sitzungswerte, MFA-Zuordnung und Wiederherstellung bleiben bis zur ausdrücklichen Antwort offen.
 Das Modell erhält keine eingebauten Vorgabewerte und erteilt keine Anmeldung oder Berechtigung.
+
+## ADR-030 – Sitzungsbestand und Widerruf
+
+[ADR-030](architecture/ADR-030_Sitzungsspeicher.md) konkretisiert den internen Sitzungsbestand in KC-006B.
+Zufällige Nachweise bleiben getrennt von Datensatzkennungen. Die Datenbank speichert nur deren Ableitung.
+Aktuelle Prüfung und Widerruf konkurrieren über dieselbe Zeile. Die produktive Anwendungsrolle bleibt durch RLS gesperrt.

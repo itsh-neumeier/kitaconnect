@@ -8,6 +8,7 @@ import { tmpdir } from 'node:os';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sqlRoot = join(root, 'services/organization-config/database');
+const identityRoot = join(root, 'services/identity-access/database');
 const image = 'postgres:18.6-bookworm@sha256:afc7e2d441324c0388fa80c3d24f733b4194a4eb7f47dd8ee2b08eb1a24a647c';
 let container;
 let socketDirectory;
@@ -36,8 +37,8 @@ function sql(text, { database = 'kc_org_test', transaction = false, expectedStat
   }
 }
 
-function file(path) {
-  return readFileSync(join(sqlRoot, path), 'utf8');
+function file(path, directory = sqlRoot) {
+  return readFileSync(join(directory, path), 'utf8');
 }
 
 function migrate(database, suffix = '', expectedState) {
@@ -58,9 +59,9 @@ async function waitUntilReady() {
   throw new Error('PostgreSQL did not become ready');
 }
 
-function testAdapter(phase, target = 'postgres', test = 'storage_adapter_controls_references') {
+function testAdapter(phase, target = 'postgres', test = 'storage_adapter_controls_references', packageName = 'kitaconnect-organization-config') {
   const result = spawnSync('cargo', [
-    'test', '--locked', '--package', 'kitaconnect-organization-config', '--test', target,
+    'test', '--locked', '--package', packageName, '--test', target,
     '--', '--ignored', '--exact', test, '--nocapture',
   ], {
     cwd: root, encoding: 'utf8', timeout: 180_000, maxBuffer: 8 * 1024 * 1024,
@@ -69,7 +70,7 @@ function testAdapter(phase, target = 'postgres', test = 'storage_adapter_control
   if (result.error) throw result.error;
   requireSuccess(result, `Rust adapter test (${phase})`);
   if (!/test result: ok\. 1 passed;/.test(result.stdout)) throw new Error('Rust adapter test was not executed');
-  console.log(`PASS: Rust/SQLx ${target} (${phase} restart)`);
+  console.log(`PASS: Rust/SQLx ${packageName}/${target} (${phase} restart)`);
 }
 
 try {
@@ -145,6 +146,25 @@ try {
   testAdapter('before', 'pool', 'reused_pool_clears_context_and_observes_revocation');
   testAdapter('before', 'maintenance', 'concurrent_maintenance_preserves_registry_and_wave_versions');
 
+  sql(file('provision/001_roles.sql', identityRoot), { transaction: true });
+  sql('CREATE DATABASE kc_identity_failed_migration;');
+  sql(file('provision/002_schema.sql', identityRoot), { database: 'kc_identity_failed_migration', transaction: true });
+  const identityMigration = `SET SESSION AUTHORIZATION kc_identity_migrator;\n${file('migrations/0001_session_records.sql', identityRoot)}`;
+  sql(`${identityMigration}\nSELECT 1 / 0;`, { database: 'kc_identity_failed_migration', transaction: true, expectedState: '22012' });
+  sql(`DO $$ BEGIN
+    ASSERT NOT EXISTS (SELECT FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'identity_access');
+    ASSERT NOT EXISTS (SELECT FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = 'identity_access');
+    ASSERT NOT EXISTS (SELECT FROM pg_catalog.pg_type t JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace WHERE n.nspname = 'identity_access');
+    ASSERT NOT pg_catalog.has_schema_privilege('kc_identity_runtime', 'identity_access', 'USAGE');
+  END $$;`, { database: 'kc_identity_failed_migration' });
+  sql(identityMigration, { database: 'kc_identity_failed_migration', transaction: true });
+  sql('CREATE DATABASE kc_identity_test;');
+  sql(file('provision/002_schema.sql', identityRoot), { database: 'kc_identity_test', transaction: true });
+  sql(identityMigration, { database: 'kc_identity_test', transaction: true });
+  sql(identityMigration, { database: 'kc_identity_test', transaction: true, expectedState: '42710' });
+  sql('CREATE ROLE kc_identity_test_runtime LOGIN INHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_identity_runtime TO kc_identity_test_runtime WITH ADMIN FALSE, INHERIT TRUE, SET FALSE;');
+  testAdapter('before', 'postgres', 'current_sessions_are_atomic_and_fail_closed', 'kitaconnect-identity-access');
+
   requireSuccess(docker(['restart', container]), 'Restart same test database');
   await waitUntilReady();
   sql(file('tests/persisted.sql'));
@@ -154,6 +174,7 @@ try {
   testAdapter('after', 'isolation', 'service_objects_enforce_roles_and_rls');
   testAdapter('after', 'pool', 'reused_pool_clears_context_and_observes_revocation');
   testAdapter('after', 'maintenance', 'concurrent_maintenance_preserves_registry_and_wave_versions');
+  testAdapter('after', 'postgres', 'current_sessions_are_atomic_and_fail_closed', 'kitaconnect-identity-access');
   console.log('PASS: two carriers and an independent facility, version and role boundaries survive server restart');
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {

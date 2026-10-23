@@ -1,8 +1,11 @@
-//! Internal session-record lifecycle only: no authentication, credentials, tokens or authorization.
+//! Internal session lifecycle and storage only: no login endpoint or authorization.
 //! Record identifiers and local state must never replace a current server-side identity check.
 
 use std::fmt;
 use std::num::NonZeroU128;
+
+pub mod postgres;
+pub mod token;
 
 /// Internal identity key. Not a credential, token, organization key or proof of authentication.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

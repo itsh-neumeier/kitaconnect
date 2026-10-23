@@ -4,6 +4,9 @@ use kitaconnect_identity_access::{
     service_http::{Limits, OAuthServer},
     service_tokens::{AuthorityConfiguration, ServiceName},
 };
+use kitaconnect_service_transport::oauth_http::{
+    ClientLimits, OAuthEndpoint, OAuthHttpClient, OAuthReply,
+};
 use kitaconnect_service_transport::{Client, RegisteredDnsName, Server, VerifiedConnection};
 use rcgen::{
     BasicConstraints, CertificateParams, CertifiedIssuer, ExtendedKeyUsagePurpose, IsCa, KeyPair,
@@ -148,6 +151,49 @@ async fn wire(server: Arc<OAuthServer>, leaf: &Leaf, ca: &CertifiedIssuer<'_, Ke
     .unwrap();
     Wire(BufReader::new(stream), task)
 }
+
+async fn library_request(
+    server: Arc<OAuthServer>,
+    leaf: &Leaf,
+    ca: &CertifiedIssuer<'_, KeyPair>,
+    endpoint: OAuthEndpoint,
+    form: &[u8],
+) -> OAuthReply {
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let socket = TcpStream::connect(listener.local_addr().unwrap())
+        .await
+        .unwrap();
+    let (accepted, _) = listener.accept().await.unwrap();
+    let task = tokio::spawn(server.serve(accepted));
+    let client = OAuthHttpClient::new(
+        Client::new(
+            leaf.chain.clone(),
+            leaf.key.clone_key(),
+            vec![ca.der().clone()],
+        )
+        .unwrap(),
+        RegisteredDnsName::new("identity.test").unwrap(),
+        ClientLimits {
+            parallel: 1,
+            form_bytes: 512,
+            response_bytes: 2048,
+            headers: 16,
+            header_bytes: 8192,
+            handshake_time: Duration::from_secs(2),
+            header_time: Duration::from_secs(2),
+            body_time: Duration::from_secs(2),
+            total_time: Duration::from_secs(3),
+        },
+    )
+    .unwrap();
+    let reply = client.request(socket, endpoint, form).await.unwrap();
+    // The client owns and drops this connection; TLS EOF can be reported as a transport error.
+    let _ = timeout(Duration::from_secs(2), task)
+        .await
+        .expect("actual server connection released")
+        .unwrap();
+    reply
+}
 struct Reply {
     status: u16,
     headers: String,
@@ -274,6 +320,37 @@ async fn actual_http_is_bound_current_and_bounded() {
     let mut g = wire(http.clone(), &gateway, &ca).await;
     let mut i = wire(http.clone(), &identity, &ca).await;
     let mut o = wire(http.clone(), &organization, &ca).await;
+    // Join the actual library client, actual Axum server and PostgreSQL registration/token state.
+    let library_token = library_request(
+        http.clone(),
+        &gateway,
+        &ca,
+        OAuthEndpoint::Token,
+        TOKEN.as_bytes(),
+    )
+    .await;
+    assert_eq!(library_token.status(), 200);
+    assert_eq!(library_token.server_certificate(), identity.digest);
+    let library_value: Value = serde_json::from_slice(library_token.body()).unwrap();
+    let encoded = library_value["access_token"].as_str().unwrap();
+    let library_form =
+        zeroize::Zeroizing::new(format!("client_id=identity-access&token={encoded}"));
+    let library_active = library_request(
+        http.clone(),
+        &identity,
+        &ca,
+        OAuthEndpoint::Introspect,
+        library_form.as_bytes(),
+    )
+    .await;
+    assert_eq!(library_active.status(), 200);
+    let library_value: Value = serde_json::from_slice(library_active.body()).unwrap();
+    assert!(
+        library_value["active"] == true
+            && library_value["client_id"] == "gateway"
+            && library_value["aud"] == "identity-access"
+            && library_value["iss"] == config().issuer()
+    );
     let response = g.post("/oauth/token", TOKEN).await;
     assert_eq!(response.status, 200);
     let value = response.json();
@@ -296,6 +373,10 @@ async fn actual_http_is_bound_current_and_bounded() {
     );
     assert!(result["iss"] == config().issuer());
     use base64::Engine as _;
+    assert!(
+        library_value["cnf"]["x5t#S256"]
+            == base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(gateway.digest)
+    );
     assert!(
         result["cnf"]["x5t#S256"]
             == base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(gateway.digest)

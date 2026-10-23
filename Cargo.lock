@@ -1106,9 +1106,15 @@ dependencies = [
 name = "kitaconnect-organization-config"
 version = "0.0.0"
 dependencies = [
+ "axum",
  "base64 0.22.1",
+ "hyper",
+ "hyper-util",
  "kitaconnect-service-oauth",
  "kitaconnect-service-transport",
+ "mime",
+ "serde",
+ "serde_json",
  "sqlx",
  "tokio",
  "url",

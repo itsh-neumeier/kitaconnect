@@ -184,6 +184,25 @@ Ein unterdrücktes Zustandsupdate darf keinen positiven Prüftreffer liefern.
 Eigene Fehlertransaktionen müssen vor Rückgabe enden; der Zeuge prüft die offen gehaltene Verbindung.
 Laufzeit und Eigentümer bleiben durch FORCE RLS gesperrt. Rohe Tokens bleiben im Arbeitsspeicher.
 
+## KC-006F: Interner Organisationsrouter
+
+Die später ergänzte [interne Mitgliedschaftsroute](../contracts/organization-config/membership-http-v1.md)
+erhält in der bestehenden tatsächlichen HTTP-/Datenbankgruppe getrennte Routerfälle.
+Sie verwenden echte mTLS-Verbindungen, aktuelle OAuth-Introspektion und eine getrennte Organisationsdatenbank.
+Die Fälle prüfen Mitgliedschafts- und Dienstentzug auf derselben Verbindung, fremde Einrichtung,
+falsche Zertifikate, geschlossene RLS, Ausfall, Formatfehler, Bodygrenze und gemeinsame Budgets.
+Eine tatsächliche 100-Continue-Antwort bezeugt das gehaltene Anfragebudget vor dem konkurrierenden Versuch.
+Fristende muss Ressourcen freigeben und einen anschließenden positiven Aufruf ermöglichen.
+Vier getrennte Rust-Prüfgruppen prüfen Kennungen, Token, Medientyp und ausdrückliche Konfigurationsgrenzen.
+Drei Node-Vertragsprüfungen schützen die gemeinsame mTLS-/Tokenpflicht, Cache-Regeln und Fehlerformate.
+Diese statischen Prüfungen ersetzen keinen vollständigen OpenAPI-Validator und keine Dienstidentitätsprüfung.
+Der aktuelle Ausführungsnachweis steht in PR #95; die Gesamtabnahme bleibt offen.
+
+Codekopf 0b8de61 besteht [native CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/40001499722).
+Job 120578459573 bestätigt vier neue Rust-Prüfgruppen und jeweils achtzehn SQLx-Gruppen vor/nach Neustart.
+Die tatsächliche HTTP-Gruppe besteht um 18:15:06 UTC und 18:19:35 UTC am 23.10.2026.
+Die früheren Testbeanstandungen sind korrigiert. Der abschließende Kopf erhält eigene Prüfungen.
+
 ## KC-006F: Bestätigte MFA-Zuordnung
 
 Der [Aktionsvertrag](../contracts/identity-access/operation-assurance-v1.md) benennt die sechs bestätigten sensiblen Bereiche.

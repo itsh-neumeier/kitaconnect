@@ -419,3 +419,9 @@ Diese Entscheidung steht vor der Lockfile-Änderung. Keine Warnung wird unterdr�
 Betroffene ältere eigene PRs benötigen vor Integration ebenfalls die Korrektur und aktuelle grüne Prüfungen.
 Frühere erfolgreiche Prüfungen belegen keinen Abschluss nach der neuen Veröffentlichung.
 Quelle: [RustSec RUSTSEC-2026-0385](https://rustsec.org/advisories/RUSTSEC-2026-0385.html).
+
+## ADR-054 – Interner Organisationsrouter
+
+[ADR-054](architecture/ADR-054_Interner_Organisationsrouter.md) beschreibt die einzelne interne Mitgliedschaftsabfrage vor Code.
+Tatsächliche Verbindungsbindung und aktuelle Introspektion bleiben verpflichtend.
+Die HTTP-Antwort erteilt keine Benutzer- oder MFA-Rechte. Produktiver Betrieb und vollständiger Anmeldeadapter bleiben gesondert.

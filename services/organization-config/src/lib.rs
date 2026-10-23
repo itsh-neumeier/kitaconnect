@@ -1,5 +1,5 @@
 //! Internal organization model, persistence and current service-authenticated membership data.
-//! No public router or user/MFA/object authorization is provided by this library.
+//! The bounded internal router provides no public listener or user/MFA/object authorization.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::num::NonZeroU128;
@@ -8,6 +8,7 @@ pub mod authenticated_membership;
 pub mod membership;
 pub mod postgres;
 pub mod provisioning;
+pub mod service_http;
 pub mod session_policy;
 
 /// Internal carrier identifier; no public transport format or generation algorithm implied.

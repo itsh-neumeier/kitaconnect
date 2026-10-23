@@ -279,3 +279,10 @@ Keine abhängige Laufzeitfunktion, Migration oder produktive Freigabe wird darau
 Am 21.10.2026 bestätigt die Projektleitung beide MFA-Varianten und den Cookie-/CSRF-Vorschlag.
 Die Fristen sind pro Einrichtung einstellbar. In einer Folgeantwort bestätigt die Projektleitung die vorgeschlagenen Voreinstellungen und Obergrenzen.
 [ADR-035](architecture/ADR-035_Sitzungsfristen_je_Einrichtung.md) und der Einstellungsspeichervertrag werden vor Code versioniert.
+
+## ADR-036 – Einmaliger Anmeldeabschluss
+
+[ADR-036](architecture/ADR-036_Einmaliger_Anmeldeabschluss.md) konkretisiert die atomare Übergabe aus bestehenden Faktorprüfungen.
+Der lokale Sitzungsabschluss bindet Identität, Einrichtung, tatsächlichen Faktorbestand und ursprüngliche sowie aktuelle Fristen.
+Ein gemeinsamer Sperrvertrag serialisiert Faktoränderungen und Abschluss. Organisation bleibt eine getrennte geprüfte Dienstgrenze.
+Der Vertrag wird vor Code versioniert. Gateway, Cookies und vollständige Browser-/mTLS-Nachweise folgen weiter in KC-006F.

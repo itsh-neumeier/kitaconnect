@@ -104,9 +104,17 @@ try {
     sql(`SET SESSION AUTHORIZATION kc_identity_migrator;\n${file('migrations/' + name, identityRoot)}`, { database: 'kc_service_http_test', transaction: true });
   }
   sql('CREATE ROLE kc_service_http_runtime LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_identity_runtime TO kc_service_http_runtime WITH INHERIT TRUE, SET FALSE;', { database: 'kc_service_http_test', transaction: true });
+  // Separate organizational database: the reader never receives identity database options.
+  sql(file('provision/001_roles.sql'), { transaction: true });
+  sql(file('provision/003_facility_roles.sql'), { transaction: true });
+  sql('CREATE DATABASE kc_authenticated_membership_test;');
+  sql(file('provision/002_schema.sql'), { database: 'kc_authenticated_membership_test', transaction: true });
+  for (const name of ['0001_organization_references.sql', '0002_facility_schema_registry.sql', '0003_facility_session_policies.sql', '0004_memberships.sql']) {
+    sql(`SET SESSION AUTHORIZATION kc_org_migrator;\n${file('migrations/' + name)}`, { database: 'kc_authenticated_membership_test', transaction: true });
+  }
+  sql('CREATE ROLE kc_authenticated_membership_runtime LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_org_runtime TO kc_authenticated_membership_runtime WITH INHERIT TRUE, SET FALSE;', { database: 'kc_authenticated_membership_test', transaction: true });
   testAdapter('before', 'service_http', 'actual_http_is_bound_current_and_bounded', 'kitaconnect-identity-access');
 
-  sql(file('provision/001_roles.sql'), { transaction: true });
   sql(file('provision/002_schema.sql'), { transaction: true });
 
   sql('CREATE DATABASE kc_org_failed_migration;');
@@ -142,7 +150,6 @@ try {
   sql('CREATE ROLE kc_org_adapter_runtime LOGIN INHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_org_runtime TO kc_org_adapter_runtime WITH INHERIT TRUE, SET FALSE, ADMIN FALSE;');
   testAdapter('before');
 
-  sql(file('provision/003_facility_roles.sql'), { transaction: true });
   sql('CREATE DATABASE kc_facility_schema_test;');
   sql(file('provision/002_schema.sql'), { database: 'kc_facility_schema_test', transaction: true });
   sql(file('provision/004_facility_database.sql'), { database: 'kc_facility_schema_test', transaction: true });

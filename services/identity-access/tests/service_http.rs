@@ -33,6 +33,8 @@ use tokio::{
 
 const FORM: &str = "Content-Type: application/x-www-form-urlencoded\r\n";
 const TOKEN: &str = "client_id=gateway&grant_type=client_credentials&scope=session%3Acheck";
+#[path = "support/authenticated_membership.rs"]
+mod authenticated_membership;
 fn options(user: &str) -> PgConnectOptions {
     PgConnectOptions::new()
         .socket(std::env::var("KC_ORG_TEST_SOCKET").unwrap())
@@ -320,6 +322,7 @@ async fn actual_http_is_bound_current_and_bounded() {
         register(&mut admin, name, leaf).await;
     }
     let http = server(&identity, &ca, "postgres", limits());
+    authenticated_membership::check(&http, &identity, &organization, &gateway, &ca, after).await;
     let mut g = wire(http.clone(), &gateway, &ca).await;
     let mut i = wire(http.clone(), &identity, &ca).await;
     let mut o = wire(http.clone(), &organization, &ca).await;

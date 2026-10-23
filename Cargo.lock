@@ -1083,6 +1083,7 @@ dependencies = [
  "getrandom 0.4.3",
  "hyper",
  "hyper-util",
+ "kitaconnect-organization-config",
  "kitaconnect-service-oauth",
  "kitaconnect-service-transport",
  "mime",
@@ -1105,8 +1106,13 @@ dependencies = [
 name = "kitaconnect-organization-config"
 version = "0.0.0"
 dependencies = [
+ "base64 0.22.1",
+ "kitaconnect-service-oauth",
+ "kitaconnect-service-transport",
  "sqlx",
  "tokio",
+ "url",
+ "zeroize",
 ]
 
 [[package]]

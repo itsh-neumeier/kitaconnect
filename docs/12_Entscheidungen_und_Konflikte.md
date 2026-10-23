@@ -337,3 +337,9 @@ Diese Entscheidung gewährt keine neue Rolle oder Fachberechtigung. Der konkrete
 [ADR-043](architecture/ADR-043_Aktionsgebundene_MFA_Zuordnung.md) konkretisiert die bestätigte Zuordnung vor abhängigem Code.
 Die tatsächliche Aktion bestimmt die aktuelle Authentisierungsanforderung. Unbekannte Einstufungen verweigern Zugriff.
 Aktuelle MFA erteilt keine Objekt-/Feldrechte. Die Gesamtabnahme von KC-008 bleibt gesondert.
+
+## ADR-044 – Gemeinsame mTLS-Grundlage
+
+[ADR-044](architecture/ADR-044_Gemeinsame_mTLS_Grundlage.md) konkretisiert die gemeinsame tatsächliche Zertifikatsprüfung vor Code.
+Die Metadaten stammen aus dem Handshake. Beide Endzertifikate werden auch auf offenen Verbindungen zeitlich geprüft.
+Registrierung, Introspektion, Fachrechte und das noch offene Browserprofil bleiben getrennte Nachweise.

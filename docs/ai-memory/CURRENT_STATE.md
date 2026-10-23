@@ -7,15 +7,15 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 ## Arbeitsstand
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
-- branch: codex/kc-006f-tokio-rueckuebernahme auf PR #85 / 644925a.
-- pull_request: PR #86 auf codex/kc-006f-mtls-grundlage / PR #85.
-- head_commit: 21 getrennte Tokio-Patches und sieben zusätzliche TLS-Patches veröffentlicht. Aktuelle Köpfe, ursprüngliche Stände und Laufnachweise stehen in TOKIO_BACKPORT_STATE.json. Zwei normale Basis-Merges bewahren identische Dateibäume. Aktueller Nachweiskopf steht im PR.
-- objective: Notwendige Sicherheits-Patches in allen betroffenen älteren eigenen PRs übernehmen und jeden aktuellen Kopf erneut prüfen. Keine Implementierung ursprünglicher Fachpakete wiederholen.
-- completed: Alle 21 betroffenen älteren PRs bestehen an ihren aktuellen Patch-/Mergeköpfen jeweils alle zehn Prüfungen von Push und PR. PR #85 / 644925a bestätigt tatsächliches mTLS und alle bisherigen Datenbankgruppen vor/nach Neustart. Bestätigte MFA-Zuordnung und OAuth-Ausnahme nicht erneut fragen; keine Fachrechte daraus ableiten.
-- remaining: Abschließenden reinen Nachweiskopf von PR #86 und dessen CI prüfen; die 21 rückübernommenen Patchköpfe sind bereits vollständig grün. Danach HTTP-/Introspektionsvertrag und echten Organisationsadapter ergänzen. Die begrenzte OAuth-Fehlerformatausnahme ist am 22.10.2026 ausdrücklich bestätigt und vor Code dokumentiert. Das zusätzliche HTTPS-Browserprofil bleibt weiterhin offen.
-- migration_state: Keine Migration oder Datenbankrechte geändert. Neue technische Bibliothek crates/service-transport; Rustls 0.23.46/Ring und X.509-Parser 0.16.0 aus bestehendem Graphen. Tokio-Rustls 0.26.6 sowie ausschließlich als Testabhängigkeit rcgen 0.14.10 ergänzt; Lockfile ergänzt neun Paketversionen. Einzige Aktualisierung einer bisherigen Version: Tokio 1.54.0 auf 1.54.1 wegen Registerrückzug.
-- known_failures: Tokio-Registerrückzug und die beiden RustSec-Paketbefunde sind in allen betroffenen älteren Köpfen korrigiert und aktuell geprüft. Manifest-Konflikte bei #61/#71 sind mit normalen Basis-Merges gelöst; identische Dateibäume nachgewiesen. Historische fehlgeschlagene/abgebrochene Läufe nicht als aktuellen Stand verwenden. Abschließender Nachweiskopf erhält eigene CI. Windows-Linker/Docker fehlen lokal; #47/#48 behalten die Ablehnungsempfehlung.
-- test_results: Lokal Rustfmt, gesperrte Offline-Metadatenauflösung, 44 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/60 Dokumente, git diff --check und Gitleaks erfolgreich. Nativ am Codekopf Clippy, Rust-Tests und Build erfolgreich. Den vollständigen aktuellen Datenbank-/CI-Abschluss und die direkten Lognachweise im PR nachführen; keine lokale PostgreSQL-Ausführung behaupten.
+- branch: codex/kc-006f-http-verbindungsbindung auf PR #86 / cb715a3.
+- pull_request: PR #87 auf codex/kc-006f-tokio-rueckuebernahme / PR #86.
+- head_commit: Vertrag und ADR-045 vor Code in 1624964. Codekopf ff9ac5e; aktueller Nachweiskopf und dessen CI stehen im PR.
+- objective: Tatsächliche mTLS-Verbindung für spätere HTTP-Handler aktuell prüfbar erhalten, während der Server den Datenstrom verwaltet.
+- completed: PR #86 / cb715a3 ist erneut vollständig grün und konfliktfrei bestätigt. Alle 21 Sicherheits-Rückübernahmen bleiben erledigt. Vertrag/ADR-045 und verbindungsgebundener Prüfzugang sind implementiert. Codekopf ff9ac5e besteht native PR-CI einschließlich sechs tatsächlicher mTLS-Tests, zwei deterministischer Zeitfehlerprüfungen und sechzehn SQLx-Gruppen vor/nach Neustart. Vollständige aktuelle Abschlussnachweise stehen im PR.
+- remaining: Abschließenden Nachweiskopf von PR #87 prüfen. Danach vollständigen OAuth-Endpunktvertrag einschließlich OpenAPI, Registrierung, Formular-/Fehlerzuordnung und Grenzen vor Routercode versionieren. Introspektion und echten Organisationsadapter anschließen. Bestätigte MFA-Zuordnung und OAuth-Ausnahme nicht erneut fragen. Zusätzliches HTTPS-Browserprofil bleibt offen.
+- migration_state: Keine Migration, Datenbankrechte, Abhängigkeiten oder Lockfile geändert. Nur vorhandene technische Bibliothek crates/service-transport erweitert.
+- known_failures: Windows-Linker/Docker fehlen lokal. Native Ausführung deshalb in Linux-CI; keine lokale PostgreSQL-Ausführung behaupten. Die ältere Sicherheits-Rückübernahme ist vollständig geprüft; historische Fehlversuche nicht als aktuellen Stand verwenden. #47/#48 behalten die Ablehnungsempfehlung.
+- test_results: Lokal Rustfmt, gesperrte Offline-Metadatenauflösung, 44 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/62 Dokumente, git diff --check und Gitleaks erfolgreich. Codekopf ff9ac5e besteht Clippy, Rust-Tests/Build, Web-/Strukturprüfung und Sicherheitsprüfung. Sechs tatsächliche mTLS-Tests, zwei deterministische Zeitfehlerprüfungen und alle sechzehn SQLx-Gruppen vor/nach Neustart sind im nativen PR-Log bestätigt. Abschließender Dokumentationskopf erhält eigene CI; aktuelle Nachweise im PR prüfen.
 - test_commands: cargo fmt --all --check; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, sechzehn SQLx-Gruppen einschließlich Mitgliedschaften, Diensttokens und zusätzlicher Faktorprüfung sowie synthetische SQL-Speicherprüfungen vor/nach Neustart. Lokal 44 Node-Tests und Strukturprüfung erfolgreich; keine lokale PostgreSQL-Ausführung behaupten.
 - dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72 und #73 offen. PR #73 am Abschlusskopf vollständig grün. Keine ungefragte Integration.
 - security_notes: MFA-Pflicht, Offline-Wiederherstellung, Benachrichtigungsaufträge, WebAuthn-Testprofil, beide MFA-Kombinationen und Cookie-/CSRF-Schutz sind bestätigt. Fristen sind pro Einrichtung einstellbar; 900/28.800/300 Sekunden sind bestätigte Voreinstellungen und Obergrenzen. Diese Fragen nicht erneut stellen. Bestehende positive Faktor-Ergebnisse sind weiterhin keine einmaligen Sitzungsabschlussnachweise. Produktiver Schlüsselbetrieb, Domain, Versuchslimits und Rollen-/Poolbindung bleiben gesondert.
@@ -315,12 +315,22 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 - Codekopf 5cac046 besteht Clippy, Workspace-Tests und Build: [CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39721083816), [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39721088747). Der folgende reine Dokumentationskopf erhält eigene vollständige CI; aktuelle Abschlussnachweise im PR prüfen.
 - Danach muss der HTTP-/Introspektionsvertrag die tatsächliche Ableitung an aktuelle Registrierung und Tokenbindung anschließen. Metadatenantwort und Datenstrom allein erteilen keine Aktionserlaubnis.
 
+## HTTP-Verbindungsbindung am 22.10.2026
+
+- PR #87 auf #86 enthält Vertrag/ADR-045 aus 1624964 und Implementierung ff9ac5e.
+- Der tatsächliche Datenstrom erzeugt einen klonbaren `ConnectionPeer`. Handler und Datenstrom teilen Zeitbeobachtung und endgültige Sperre. Beide Endzertifikate bleiben aktuell zu prüfen.
+- Parallele Prüfzugänge in acht tatsächlichen Threads bestehen. Getrennte Verbindungen mit demselben Zertifikat bleiben unabhängig. Freigabe, erfolgreicher Shutdown, beobachtetes Eingabeende und TLS-Fehler sperren die Prüfzugänge.
+- Ablauf wird auf tatsächlichen offenen TLS-Verbindungen geprüft. Rückläufige oder nicht lesbare Zeit wird getrennt deterministisch geprüft; kein tatsächlicher Systemuhrsprung behauptet.
+- [Native Code-CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39733572216) und [Sicherheitsprüfung](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39733571999) sind erfolgreich. Job 119673963333 bestätigt sechs mTLS-Tests und zwei Zeitfehlerprüfungen sowie sechzehn SQLx-Gruppen vor/nach Neustart.
+- Keine Migration, Rechte oder Abhängigkeiten geändert. Noch kein Router, aktueller Registrierungsadapter, Introspektionsendpunkt oder Browsernachweis. Keine Fachberechtigung aus Metadaten ableiten.
+- Der abschließende reine Dokumentationskopf erhält eigene CI. Vollständigen aktuellen Abschluss im PR prüfen. Persönliche/sprachliche Durchsicht und Merge-Auftrag bleiben gesondert.
+
 ## Nächste drei Aktionen
 
-Aktuelle Sicherheits-Rückübernahme nach PR #85:
+Aktuelle HTTP-Verbindungsbindung nach PR #86:
 
-1. Abschließenden Kopf von PR #86 und dessen CI prüfen. TOKIO_BACKPORT_STATE.json weist die 21 aktuellen vollständig grünen Patchköpfe nach. Keine erledigte Rückübernahme erneut ausführen.
-2. Danach HTTP-/Introspektionsvertrag und echten Organisationsadapter vorbereiten. Bestätigte OAuth-Ausnahme ist vor Code in Dokument 04 und Entscheidungsregister festgehalten. Tatsächliche Zertifikatsableitung mit aktueller Registrierung und Tokenbindung verbinden; keine Fachrechte daraus ableiten.
+1. Aktuellen Kopf von PR #87 und dessen CI prüfen. Verbindungstests, deterministische Zeitfehler und Datenbank-Neustartnachweise getrennt bestätigen. PR #86 und die 21 Sicherheits-Rückübernahmen sind erledigt; nichts davon erneut implementieren.
+2. Danach vollständigen OAuth-Endpunktvertrag mit OpenAPI, aktueller Registrierung, Formular-/Fehlerzuordnung und Anfragegrenzen vor Routercode versionieren. Verbindungsgebundenen Prüfzugang an Aussteller und Introspektion anschließen. Echten Organisationsadapter danach ergänzen; keine Fachrechte aus Diensttoken oder Mitgliedschaft ableiten.
 3. Antwort zum zusätzlichen HTTPS-Testprofil übernehmen, sobald sie vorliegt. Ohne Antwort dieses Profil nicht implementieren. Unabhängige Organisations-/Gateway-Vorbereitung gemäß WORK_QUEUE fortsetzen.
 
 Der lokale Adapterbranch wurde auf 5a4d5aa übernommen. Der eigene Zwischenstash ist vollständig angewendet und entfernt.
@@ -328,10 +338,8 @@ Keine alte Stash-Wiederherstellung oder Wiederholung des Rebase nötig. Aktuelle
 
 Der Folgeauftrag umfasst den gesamten offenen Backlog. PR #77 ist erfolgreich geprüft; nicht erneut implementieren.
 Die [Arbeitsfolge](WORK_QUEUE.md) ist die Fortsetzungsgrundlage.
-Die folgenden früheren Durchsichtsaktionen sind mit PR #75 technisch erledigt; keine erledigten Adapterkorrekturen erneut implementieren.
-
-1. Aktuellen Kopf und CI von Durchsichts-/Korrektur-PR #75 prüfen. Die nativen Korrekturtests von 6a1ccff sind bereits vor/nach Neustart erfolgreich; sie nicht erneut implementieren. Die Empfehlungen aller 17 ursprünglichen PRs sind dokumentiert. Keine Integration vor persönlicher Durchsicht und gesondertem Auftrag.
-2. Erst danach gesammelte persönliche/sprachliche Durchsicht vorbereiten. Der [Durchsichtsbericht](../25_P1_PR_Durchsicht.md) enthält die Integrationsfolge und die Ablehnungsempfehlungen für #47/#48. Ohne gesonderten Merge-Auftrag nichts integrieren. P0 und der P1-Auftrag sind bereits bestätigt.
-3. Nach der PR-Bearbeitung #67 fortsetzen: Auf eigenem Folgebranch Vertrag für aktuelle Sitzungs-/Zusatzprüfung, Rotation und Abmeldung vor Code festlegen. Organisationsadapter, Gateway und Browser-/TLS-/mTLS-Nachweise bleiben gesondert. Alle bestätigten Interviewantworten bleiben verbindlich.
+Die frühere technische Durchsicht und Adapterkorrekturen aus PR #75 sind erledigt.
+Der [Durchsichtsbericht](../25_P1_PR_Durchsicht.md) enthält die ursprüngliche Integrationsfolge und Ablehnungsempfehlungen für #47/#48.
+Die persönliche/sprachliche Durchsicht erfolgt gesammelt nach technischer Bearbeitung. Ohne gesonderten Merge-Auftrag nichts integrieren.
 
 Vor Fortsetzung AGENTS, CLAUDE, ADR-014/015/019/029/030/031/032/033/034/035/036, KC-006-Plan, Browser-Anmeldevertrag, Anmeldeabschlussvertrag und aktuellen GitHub-Stand lesen.

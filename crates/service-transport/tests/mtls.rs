@@ -209,8 +209,16 @@ async fn open_connection_rechecks_own_and_peer_expiry() {
     let (mut received, mut sent) = pair(&server(&s, &ca), &client(&c, &ca)).await;
     assert!(received.peer_certificate().is_ok());
     assert!(sent.peer_certificate().is_ok());
+    let server_handler = received.request_peer();
+    let server_sibling = server_handler.clone();
+    let client_handler = sent.request_peer();
+    assert!(server_handler.certificate().is_ok());
+    assert!(client_handler.certificate().is_ok());
     tokio::time::sleep(Duration::from_secs(4)).await;
     // Same open connections: server sees peer expiry, client sees its own expiry.
+    assert!(server_handler.certificate().is_err());
+    assert!(server_sibling.certificate().is_err());
+    assert!(client_handler.certificate().is_err());
     assert!(received.peer_certificate().is_err());
     assert!(sent.peer_certificate().is_err());
     assert!(received.peer_certificate().is_err());
@@ -233,4 +241,94 @@ async fn handshake_limit_drops_unresponsive_connection() {
     );
     let (_silent, socket) = sockets().await;
     assert!(server.accept(socket, Duration::ZERO).await.is_err());
+}
+
+#[tokio::test]
+async fn handler_gates_bind_to_their_live_connection_and_share_closure() {
+    let ca = ca();
+    let s = leaf(&ca, true, -60, 3600);
+    let c = leaf(&ca, false, -60, 3600);
+    let server = server(&s, &ca);
+    let client = client(&c, &ca);
+    let (mut first, _first_client) = pair(&server, &client).await;
+    // Same certificate, different live connection: closure must not leak between them.
+    let (mut second, _second_client) = pair(&server, &client).await;
+    let first_gate = first.request_peer();
+    let sibling = first_gate.clone();
+    let second_gate = second.request_peer();
+    assert_eq!(
+        first_gate.certificate().unwrap().fingerprint(),
+        first.peer_certificate().unwrap().fingerprint()
+    );
+    assert_eq!(
+        second_gate.certificate().unwrap().fingerprint(),
+        c.fingerprint()
+    );
+    // Owned gates work in independently scheduled handlers without borrowing the stream.
+    let tasks: Vec<_> = (0..8)
+        .map(|_| {
+            let gate = first_gate.clone();
+            std::thread::spawn(move || {
+                for _ in 0..16 {
+                    assert!(gate.certificate().is_ok());
+                    std::thread::yield_now();
+                }
+                gate
+            })
+        })
+        .collect();
+    let mut completed = Vec::new();
+    for task in tasks {
+        completed.push(task.join().unwrap());
+    }
+    drop(first);
+    assert!(first_gate.certificate().is_err());
+    assert!(sibling.certificate().is_err());
+    for gate in completed {
+        assert!(gate.certificate().is_err());
+    }
+    assert!(second_gate.certificate().is_ok());
+    assert!(second.peer_certificate().is_ok());
+    drop(second);
+    assert!(second_gate.certificate().is_err());
+}
+
+#[tokio::test]
+async fn handler_gates_deny_after_shutdown_eof_and_transport_error() {
+    let ca = ca();
+    let s = leaf(&ca, true, -60, 3600);
+    let c = leaf(&ca, false, -60, 3600);
+    let server = server(&s, &ca);
+    let client = client(&c, &ca);
+    let (mut received, mut sent) = pair(&server, &client).await;
+    let received_gate = received.request_peer();
+    let sent_gate = sent.request_peer();
+    sent.shutdown().await.unwrap();
+    assert!(sent_gate.certificate().is_err());
+    assert!(sent.peer_certificate().is_err());
+    let mut buffer = [0; 1];
+    assert_eq!(
+        tokio::time::timeout(Duration::from_secs(2), received.read(&mut buffer))
+            .await
+            .unwrap()
+            .unwrap(),
+        0
+    );
+    assert!(received_gate.certificate().is_err());
+    assert!(received.peer_certificate().is_err());
+
+    let (mut received, sent) = pair(&server, &client).await;
+    let gate = received.request_peer();
+    let sibling = gate.clone();
+    // Abrupt TCP close without TLS close_notify must be observed as a TLS read error.
+    drop(sent);
+    assert!(
+        tokio::time::timeout(Duration::from_secs(2), received.read(&mut buffer))
+            .await
+            .unwrap()
+            .is_err()
+    );
+    assert!(gate.certificate().is_err());
+    assert!(sibling.certificate().is_err());
+    assert!(received.peer_certificate().is_err());
 }

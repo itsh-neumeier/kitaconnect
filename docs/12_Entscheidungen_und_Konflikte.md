@@ -353,3 +353,9 @@ Die Fach-APIs behalten Problem-Details nach RFC 9457. Keine fachliche Zugriffsre
 Grundlage: [RFC 6749, Abschnitt 5.2](https://www.rfc-editor.org/rfc/rfc6749#section-5.2) verlangt das OAuth-JSON-Fehlerformat.
 [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) beschreibt Problem-Details mit eigenem Medientyp.
 Die Klarstellung wird vor abhängigem HTTP-Code dokumentiert. Andere Antworten und das offene Browserprofil bleiben getrennt.
+
+## ADR-045 – HTTP-Verbindungsbindung
+
+[ADR-045](architecture/ADR-045_HTTP_Verbindungsbindung.md) dokumentiert den geteilten Prüfzugang vor Code.
+Handler und Datenstrom erhalten denselben Zeit- und Sperrzustand der tatsächlichen mTLS-Verbindung.
+Der vollständige OAuth-Endpunktvertrag, aktive Registrierung und Fachrechte folgen getrennt.

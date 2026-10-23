@@ -48,6 +48,9 @@ Beobachteter Ablauf oder rückläufige Zeit sperrt die Metadatenprüfung dieser 
 Eine alte positive Zertifikatsmomentaufnahme ist kein wiederverwendbarer Berechtigungsschein.
 Der technische Datenstrom allein erteilt kein Recht auf eine Aktion.
 
+Der [Vertrag zur HTTP-Verbindungsbindung](http-transport-binding-v1.md) ergänzt den geteilten Prüfzugang für spätere Handler.
+Er erhält dieselbe Zeitprüfung und sperrt nach beobachtetem Verbindungsende sämtliche Kopien.
+
 ## Nachweise und offene Folgearbeit
 
 Tests verwenden wirkliche TCP-Verbindungen ausschließlich auf `127.0.0.1` und vom Betriebssystem zugewiesene freie Ports.

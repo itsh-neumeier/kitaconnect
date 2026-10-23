@@ -16,9 +16,10 @@ PR #82 / 9ad5c23 bestätigt aktuellen Mitgliedschafts-Lesebestand mit zehn grün
 PR #83 / 00bad74 bestätigt internen Diensttokenbestand und Datenbanknachweise nach ADR-019/042 mit zehn grünen Prüfungen.
 PR #84 / 06e28bb bestätigt die MFA-Zuordnung mit allen zehn aktuellen Prüfungen einschließlich beider Neustartphasen.
 PR #85 / 644925a bestätigt die tatsächliche mTLS-Grundlage mit zehn grünen Prüfungen.
-Aktiver Folgebranch codex/kc-006f-tokio-rueckuebernahme dokumentiert die notwendige Sicherheits-Rückübernahme in 21 ältere eigene PRs.
+PR #86 dokumentiert die notwendige Sicherheits-Rückübernahme in 21 ältere eigene PRs.
 Alle 21 Tokio-Patches und sieben zusätzliche TLS-Sicherheits-Patches sind veröffentlicht und bestehen jeweils alle zehn aktuellen Prüfungen. Zwei normale Basis-Merges bewahren identische Dateibäume und beheben Manifest-Konflikte. Aktuelle Köpfe und vollständige Laufnachweise stehen in TOKIO_BACKPORT_STATE.json.
-Der abschließende reine Nachweiskopf von PR #86 erhält eigene CI; die erledigten Rückübernahmen nicht wiederholen.
+Der Nachweiskopf von PR #86 / cb715a3 ist erneut vollständig grün und konfliktfrei bestätigt. Erledigte Rückübernahmen nicht wiederholen.
+PR #87 auf Folgebranch codex/kc-006f-http-verbindungsbindung ergänzt nach Vertrag/ADR-045 in 1624964 den aktuellen Prüfzugang für spätere Handler derselben mTLS-Verbindung. Codekopf ff9ac5e besteht native PR-CI mit sechs tatsächlichen mTLS-Tests, zwei getrennten Zeitfehlerprüfungen und allen sechzehn SQLx-Gruppen vor/nach Neustart. Der abschließende Dokumentationskopf erhält eigene CI. Es gibt noch keinen HTTP-Router; vollständiger Endpunktvertrag mit OpenAPI, Registrierung, Formular-/Fehlerzuordnung und Grenzen folgt vor Routercode.
 Die begrenzte OAuth-Fehlerformatausnahme ist ausdrücklich bestätigt und vor HTTP-Code dokumentiert. Nicht erneut fragen.
 Die Aktion stammt vom zuständigen Dienst; unbekannte Einstufung verweigert Zugriff. Mitgliedschaft und MFA allein gewähren keine Fachrechte.
 Die früheren SQL-Tests mit synthetischen Faktor-Markierungen bleiben als Speicherprüfungen getrennt ausgewiesen.

@@ -7,14 +7,14 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 ## Arbeitsstand
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
-- branch: codex/kc-006f-mtls-grundlage auf PR #84 / 06e28bb.
-- pull_request: PR #85 auf codex/kc-006f-mfa-zuordnung / PR #84.
-- head_commit: Transportvertrag/ADR-044 in 8ca9754 vor Implementierung 06be3c0. Notwendiger Tokio-Patch vor Änderung in 1637b8f dokumentiert und in 5cac046 umgesetzt. Der folgende Dokumentationskopf steht im PR; dessen aktuelle CI ist dort verbindlich.
-- objective: KC-006F mit gemeinsamer tatsächlicher mTLS-Prüfung fortsetzen. Kein HTTP-Router, Organisationsadapter oder Browserprofil in diesem begrenzten Paket.
-- completed: PRs #77 bis #84 bestehen an ihren dokumentierten Abschlussköpfen alle zehn Prüfungen. Mitgliedschaften und MFA-Zuordnung sind vor/nach Neustart geprüft. PR #85 / 5cac046 besteht Clippy, Workspace-Rust-Tests einschließlich vier tatsächlicher mTLS-Tests, Build und Sicherheitsprüfungen. Bestätigte MFA-Zuordnung nicht erneut fragen; keine Fachrechte daraus ableiten.
-- remaining: Neue native Transport-CI bestätigen und Fehler beheben. Danach HTTP-/Introspektionsvertrag und echten Organisationsadapter ergänzen. Das zusätzliche HTTPS-Browserprofil bleibt bis zur ausdrücklichen Antwort offen. Alle 44 offenen Issues bleiben nach WORK_QUEUE geordnet; keine KC-006F-Gesamtabnahme ableiten.
+- branch: codex/kc-006f-tokio-rueckuebernahme auf PR #85 / 644925a.
+- pull_request: PR #86 auf codex/kc-006f-mtls-grundlage / PR #85.
+- head_commit: 21 getrennte Tokio-Patches und sieben zusätzliche TLS-Patches veröffentlicht. Aktuelle Köpfe, ursprüngliche Stände und Laufnachweise stehen in TOKIO_BACKPORT_STATE.json. Zwei normale Basis-Merges bewahren identische Dateibäume. Aktueller Nachweiskopf steht im PR.
+- objective: Notwendige Sicherheits-Patches in allen betroffenen älteren eigenen PRs übernehmen und jeden aktuellen Kopf erneut prüfen. Keine Implementierung ursprünglicher Fachpakete wiederholen.
+- completed: Alle 21 betroffenen älteren PRs bestehen an ihren aktuellen Patch-/Mergeköpfen jeweils alle zehn Prüfungen von Push und PR. PR #85 / 644925a bestätigt tatsächliches mTLS und alle bisherigen Datenbankgruppen vor/nach Neustart. Bestätigte MFA-Zuordnung und OAuth-Ausnahme nicht erneut fragen; keine Fachrechte daraus ableiten.
+- remaining: Abschließenden reinen Nachweiskopf von PR #86 und dessen CI prüfen; die 21 rückübernommenen Patchköpfe sind bereits vollständig grün. Danach HTTP-/Introspektionsvertrag und echten Organisationsadapter ergänzen. Die begrenzte OAuth-Fehlerformatausnahme ist am 22.10.2026 ausdrücklich bestätigt und vor Code dokumentiert. Das zusätzliche HTTPS-Browserprofil bleibt weiterhin offen.
 - migration_state: Keine Migration oder Datenbankrechte geändert. Neue technische Bibliothek crates/service-transport; Rustls 0.23.46/Ring und X.509-Parser 0.16.0 aus bestehendem Graphen. Tokio-Rustls 0.26.6 sowie ausschließlich als Testabhängigkeit rcgen 0.14.10 ergänzt; Lockfile ergänzt neun Paketversionen. Einzige Aktualisierung einer bisherigen Version: Tokio 1.54.0 auf 1.54.1 wegen Registerrückzug.
-- known_failures: Erster Transportlauf meldet Tokio 1.54.0 als zurückgezogen. In 5cac046 gezielt auf 1.54.1 korrigiert; Sicherheitsprüfungen wieder grün. Keine Warnung unterdrückt. Der folgende Dokumentationskopf erhält eigene vollständige CI; Ergebnis im PR prüfen. Windows-Linker/Docker fehlen lokal; #47/#48 behalten die Ablehnungsempfehlung.
+- known_failures: Tokio-Registerrückzug und die beiden RustSec-Paketbefunde sind in allen betroffenen älteren Köpfen korrigiert und aktuell geprüft. Manifest-Konflikte bei #61/#71 sind mit normalen Basis-Merges gelöst; identische Dateibäume nachgewiesen. Historische fehlgeschlagene/abgebrochene Läufe nicht als aktuellen Stand verwenden. Abschließender Nachweiskopf erhält eigene CI. Windows-Linker/Docker fehlen lokal; #47/#48 behalten die Ablehnungsempfehlung.
 - test_results: Lokal Rustfmt, gesperrte Offline-Metadatenauflösung, 44 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/60 Dokumente, git diff --check und Gitleaks erfolgreich. Nativ am Codekopf Clippy, Rust-Tests und Build erfolgreich. Den vollständigen aktuellen Datenbank-/CI-Abschluss und die direkten Lognachweise im PR nachführen; keine lokale PostgreSQL-Ausführung behaupten.
 - test_commands: cargo fmt --all --check; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, sechzehn SQLx-Gruppen einschließlich Mitgliedschaften, Diensttokens und zusätzlicher Faktorprüfung sowie synthetische SQL-Speicherprüfungen vor/nach Neustart. Lokal 44 Node-Tests und Strukturprüfung erfolgreich; keine lokale PostgreSQL-Ausführung behaupten.
 - dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72 und #73 offen. PR #73 am Abschlusskopf vollständig grün. Keine ungefragte Integration.
@@ -317,10 +317,10 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Nächste drei Aktionen
 
-Aktuelle tatsächliche mTLS-Grundlage nach PR #84:
+Aktuelle Sicherheits-Rückübernahme nach PR #85:
 
-1. Transport-Folge-PR nativ prüfen. Tatsächliche gegenseitige Zertifikatsprüfung, Fremdanker, falscher Name, fehlendes Clientzertifikat, Zeitgrenzen, Zertifikatswechsel und offene Verbindung nach Ablauf müssen bestehen. #78 bis #84 sind grün; nicht erneut implementieren.
-2. Danach HTTP-/Introspektionsvertrag und echten Organisationsadapter vorbereiten. Die tatsächliche Zertifikatsableitung muss mit aktueller Registrierung und Tokenbindung verbunden werden. Die Transportbibliothek allein erteilt keine Dienst- oder Fachrechte. Bestätigte MFA-Zuordnung nicht erneut fragen.
+1. Abschließenden Kopf von PR #86 und dessen CI prüfen. TOKIO_BACKPORT_STATE.json weist die 21 aktuellen vollständig grünen Patchköpfe nach. Keine erledigte Rückübernahme erneut ausführen.
+2. Danach HTTP-/Introspektionsvertrag und echten Organisationsadapter vorbereiten. Bestätigte OAuth-Ausnahme ist vor Code in Dokument 04 und Entscheidungsregister festgehalten. Tatsächliche Zertifikatsableitung mit aktueller Registrierung und Tokenbindung verbinden; keine Fachrechte daraus ableiten.
 3. Antwort zum zusätzlichen HTTPS-Testprofil übernehmen, sobald sie vorliegt. Ohne Antwort dieses Profil nicht implementieren. Unabhängige Organisations-/Gateway-Vorbereitung gemäß WORK_QUEUE fortsetzen.
 
 Der lokale Adapterbranch wurde auf 5a4d5aa übernommen. Der eigene Zwischenstash ist vollständig angewendet und entfernt.

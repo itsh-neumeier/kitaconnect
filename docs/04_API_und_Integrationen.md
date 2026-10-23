@@ -9,6 +9,9 @@
 Die Programmierschnittstelle (API) verwendet REST, OpenAPI 3.1, JSON und UTF-8.
 API-Versionen folgen einer semantischen Versionierung.
 Fehler werden einheitlich als Problem-Details nach RFC 9457 ausgegeben.
+Die Projektleitung hat am 22.10.2026 eine eng begrenzte Ausnahme bestätigt:
+OAuth-Protokollendpunkte verwenden ihre standardisierten Fehlerformate nach dem jeweiligen OAuth-Protokoll.
+Alle Fach-APIs behalten Problem-Details. Die Ausnahme ändert keine Authentisierungs- oder Fachberechtigung.
 Ergebnislisten werden mit einem Fortsetzungszeiger seitenweise abgerufen.
 Filter und Sortierung verwenden eine ausdrückliche Liste zulässiger Werte.
 Anfragen sind mengenbegrenzt. Schreibaktionen sind idempotent und erzeugen bei Wiederholung keine doppelte fachliche Wirkung.

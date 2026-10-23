@@ -15,7 +15,11 @@ PR #81 / 7813bcb bestätigt die tatsächlichen Bibliotheksprüfungen und den ato
 PR #82 / 9ad5c23 bestätigt aktuellen Mitgliedschafts-Lesebestand mit zehn grünen Prüfungen vor/nach Neustart.
 PR #83 / 00bad74 bestätigt internen Diensttokenbestand und Datenbanknachweise nach ADR-019/042 mit zehn grünen Prüfungen.
 PR #84 / 06e28bb bestätigt die MFA-Zuordnung mit allen zehn aktuellen Prüfungen einschließlich beider Neustartphasen.
-Aktiver Folgebranch codex/kc-006f-mtls-grundlage ergänzt nach Vertrag/ADR-044 in 8ca9754 ausschließlich gemeinsame tatsächliche mTLS-Prüfung. Native CI steht noch aus.
+PR #85 / 644925a bestätigt die tatsächliche mTLS-Grundlage mit zehn grünen Prüfungen.
+Aktiver Folgebranch codex/kc-006f-tokio-rueckuebernahme dokumentiert die notwendige Sicherheits-Rückübernahme in 21 ältere eigene PRs.
+Alle 21 Tokio-Patches und sieben zusätzliche TLS-Sicherheits-Patches sind veröffentlicht und bestehen jeweils alle zehn aktuellen Prüfungen. Zwei normale Basis-Merges bewahren identische Dateibäume und beheben Manifest-Konflikte. Aktuelle Köpfe und vollständige Laufnachweise stehen in TOKIO_BACKPORT_STATE.json.
+Der abschließende reine Nachweiskopf von PR #86 erhält eigene CI; die erledigten Rückübernahmen nicht wiederholen.
+Die begrenzte OAuth-Fehlerformatausnahme ist ausdrücklich bestätigt und vor HTTP-Code dokumentiert. Nicht erneut fragen.
 Die Aktion stammt vom zuständigen Dienst; unbekannte Einstufung verweigert Zugriff. Mitgliedschaft und MFA allein gewähren keine Fachrechte.
 Die früheren SQL-Tests mit synthetischen Faktor-Markierungen bleiben als Speicherprüfungen getrennt ausgewiesen.
 Danach folgen HTTP-/Introspektionsvertrag und der echte Organisations-/Gateway-Vertrag. MFA-Einstufung und zusätzliche Faktorprüfung sind mit PRs #81/#84 bereits technisch geprüft.

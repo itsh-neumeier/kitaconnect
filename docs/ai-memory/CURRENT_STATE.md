@@ -7,14 +7,14 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 ## Arbeitsstand
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
-- branch: codex/kc-006f-mitgliedschaftsspeicher auf PR #81 / 7813bcb.
-- pull_request: Eigener interner Mitgliedschafts-Folge-PR auf codex/kc-006f-zusatzpruefung-adapter; Nummer und aktuellen Kopf in GitHub prüfen.
-- head_commit: Mitgliedschafts-Lesevertrag und ADR-041 in 1566ba3 vor Code versioniert. Aktueller Implementierungskopf steht im PR.
-- objective: Offenen Backlog nach ausdrücklichem Folgeauftrag automatisch in kleinen abhängigen Paketen weiterbearbeiten. Aktuell den internen aktuellen Mitgliedschafts-Lesebestand im Organisationsdienst prüfen.
-- completed: PRs #77 bis #81 bestehen jeweils alle zehn aktuellen Prüfungen. Zusatzprüfstand 7813bcb bestätigt beide tatsächlichen MFA-Wege, Faktorwechsel und Ablauf während einer wirklichen Beleg-Schreibsperre vor/nach Neustart. Der nächste Teil ergänzt nur Mitgliedschaftsbestand und aktuelle gemeinsame Abfrage mit Einrichtungseinstellungen. Öffentliche Rechtevergabe und vollständiger OrganizationAuthority-Adapter sind nicht enthalten.
-- remaining: Neue native Mitgliedschafts-CI bestätigen und Fehler beheben. Danach geprüften Organisations-/Dienstvertrag fortsetzen. Die konkrete MFA-Zuordnung für KC-008 ist ausdrücklich angefragt und unbestätigt; keine Einstufung ohne Antwort übernehmen. Auch das zusätzliche HTTPS-Testprofil ist weiterhin offen. Gateway und Browser-/TLS-/mTLS-Nachweise fehlen. Alle 44 offenen Issues bleiben nach WORK_QUEUE geordnet; keine KC-006F-Gesamtabnahme ableiten.
-- migration_state: Neue Organisationsmigration 0004_memberships.sql ergänzt Identitätsreferenz, Einrichtung, Version und aktiven Zustand. Keine Fremddatenbank-FKs. Laufzeit erhält nur SELECT und geschlossene FORCE RLS. Alte Organisations- und Identitätsmigrationen bleiben unverändert. Neue getrennte Datenbank kc_membership_test; ältere Gruppen behalten ihren Versionsstand. Keine neue Abhängigkeit.
-- known_failures: Frühere Rotations-, Transaktions- und Erwartungsfehler sind nativ korrigiert. Der neue Mitgliedschaftsteil wartet auf eigene native CI. Windows-Linker/Docker fehlen lokal; #47/#48 behalten die Ablehnungsempfehlung.
+- branch: codex/kc-006f-diensttoken-grundlage auf PR #82 / 9ad5c23.
+- pull_request: Eigener Diensttoken-Folge-PR auf codex/kc-006f-mitgliedschaftsspeicher; Nummer und aktuellen Kopf in GitHub prüfen.
+- head_commit: Diensttokenvertrag und ADR-042 in ed861ec vor Code versioniert. MFA-Zuordnung in a86b202 bestätigt dokumentiert. Aktueller Implementierungskopf steht im PR.
+- objective: Offenen Backlog nach ausdrücklichem Folgeauftrag automatisch in kleinen abhängigen Paketen weiterbearbeiten. Aktuell internen Diensttokenbestand und aktuelle Zustandsprüfung nach ADR-019 vorbereiten.
+- completed: PRs #77 bis #82 bestehen jeweils alle zehn aktuellen Prüfungen. Mitgliedschaftstest 9ad5c23 besteht ausdrücklich vor/nach Neustart. Die konkrete MFA-Zuordnung ist bestätigt und dokumentiert: zusätzliche aktuelle MFA für Rollen-/Rechteverwaltung, Sicherheitseinstellungen, Gesundheitsdaten, Sorgerechtsbeschränkungen, Personalakten und interne Entwicklungsakten. Unbekannte Einstufung verweigert Zugriff; normale Anmeldung genügt nicht. Portfolios und einfache Kontaktdaten behalten gesonderte Objekt-/Feldrechte.
+- remaining: Neue native Diensttoken-CI bestätigen und Fehler beheben. Danach geprüften Organisations-/Dienstvertrag und die bestätigte MFA-Zuordnung umsetzen; keine Fachrechte daraus ableiten. Das zusätzliche HTTPS-Testprofil ist weiterhin offen. Gateway und Browser-/TLS-/mTLS-Nachweise fehlen. Alle 44 offenen Issues bleiben nach WORK_QUEUE geordnet; keine KC-006F-Gesamtabnahme ableiten.
+- migration_state: Neue Identitätsmigration 0009_service_tokens.sql ergänzt Registrierung, Zertifikatsreferenzen, begrenzte Dienstfreigaben und Tokenbestand. FORCE RLS bleibt geschlossen. Alte Migrationen bleiben unverändert. Neue getrennte Datenbank kc_service_token_test; ältere Gruppen behalten ihren Versionsstand. url 2.5.8 wird als bereits vorhandene transitive Version direkt verwendet; keine neue Paketversion.
+- known_failures: Frühere Rotations-, Transaktions- und Erwartungsfehler sind nativ korrigiert. Der neue Diensttokenteil wartet auf eigene native CI. Windows-Linker/Docker fehlen lokal; #47/#48 behalten die Ablehnungsempfehlung.
 - test_commands: cargo fmt --all --check; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, fünfzehn SQLx-Gruppen einschließlich membership/memberships_are_current_and_read_only und synthetische SQL-Speicherprüfungen vor/nach Neustart. Lokal 44 Node-Tests und Strukturprüfung erfolgreich; keine lokale PostgreSQL-Ausführung behaupten.
 - dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72 und #73 offen. PR #73 am Abschlusskopf vollständig grün. Keine ungefragte Integration.
 - security_notes: MFA-Pflicht, Offline-Wiederherstellung, Benachrichtigungsaufträge, WebAuthn-Testprofil, beide MFA-Kombinationen und Cookie-/CSRF-Schutz sind bestätigt. Fristen sind pro Einrichtung einstellbar; 900/28.800/300 Sekunden sind bestätigte Voreinstellungen und Obergrenzen. Diese Fragen nicht erneut stellen. Bestehende positive Faktor-Ergebnisse sind weiterhin keine einmaligen Sitzungsabschlussnachweise. Produktiver Schlüsselbetrieb, Domain, Versuchslimits und Rollen-/Poolbindung bleiben gesondert.
@@ -292,10 +292,10 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Nächste drei Aktionen
 
-Aktueller Mitgliedschaftsteil nach PR #81:
+Aktueller Diensttokenteil nach PR #82:
 
-1. Mitgliedschafts-Folge-PR und seine CI prüfen. Aktuelle Zuordnung, fehlende Einstellungen, Widerruf auf offener Verbindung, echte Parallelität, Nur-Lese-Rechte, RLS und Neustart müssen bestehen. #78 bis #81 sind grün; nicht erneut implementieren.
-2. Danach den echten Organisations-/Dienstvertrag vorbereiten. Mitgliedschaft allein bestimmt keine MFA und gewährt keine Fachrechte. Antwort zur konkreten MFA-Zuordnung übernehmen, sobald sie vorliegt. Ohne Antwort keine abhängige Rechtezuordnung implementieren.
+1. Diensttoken-Folge-PR und seine CI prüfen. Ziel-/Zweckbindung, aktueller Entzug, Ablauf nach wirklicher Sperrwartezeit, Fehlerrücknahme, RLS und Neustart müssen bestehen. #78 bis #82 sind grün; nicht erneut implementieren.
+2. Danach den echten Organisations-/Dienstvertrag vorbereiten. Bestätigte MFA-Zuordnung wurde in a86b202 dokumentiert; nicht erneut fragen. Vor abhängigem Code einen konkreten Vertrag versionieren. Mitgliedschaft allein gewährt keine Fachrechte.
 3. Antwort zum zusätzlichen HTTPS-Testprofil übernehmen, sobald sie vorliegt. Ohne Antwort dieses Profil nicht implementieren. Unabhängige Organisations-/Gateway-Vorbereitung gemäß WORK_QUEUE fortsetzen.
 
 Der lokale Adapterbranch wurde auf 5a4d5aa übernommen. Der eigene Zwischenstash ist vollständig angewendet und entfernt.

@@ -8,6 +8,7 @@ pub mod login;
 pub mod mfa;
 pub mod password;
 pub mod postgres;
+pub mod service_tokens;
 pub mod session_check;
 pub mod session_rotation;
 pub mod token;

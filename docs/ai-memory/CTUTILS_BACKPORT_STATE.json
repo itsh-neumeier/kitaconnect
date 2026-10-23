@@ -1,0 +1,1278 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-10-23T10:44:31.361Z",
+  "scope": "KC-006F / #67; ctutils security backport",
+  "advisory": "RUSTSEC-2026-0385",
+  "version": "0.4.4",
+  "decision_commit": "698ddf8",
+  "native_status": "passed",
+  "unaffected_prs": [
+    53,
+    54
+  ],
+  "branches": [
+    {
+      "pr": 55,
+      "branch": "codex/kc-004b-sqlx-adapter",
+      "original_head": "4d1cd4280cb51888887b381e705fbff0d0e907e6",
+      "patched_head": "1faffaf3915d3cb924a7be35f44529940111589d",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939136595,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939136595"
+        },
+        {
+          "id": 39939136558,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939136558"
+        },
+        {
+          "id": 39938892853,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938892853"
+        },
+        {
+          "id": 39938892830,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938892830"
+        }
+      ]
+    },
+    {
+      "pr": 59,
+      "branch": "codex/kc-005a-schema-provisionierung",
+      "original_head": "4cdb38018a1d01fbc51f25f1d9b2fe34ab7de2db",
+      "patched_head": "9e1aaf7fc9efaf9e659ae748e16e4965f538efba",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939102921,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939102921"
+        },
+        {
+          "id": 39939102588,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939102588"
+        },
+        {
+          "id": 39938889619,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938889619"
+        },
+        {
+          "id": 39938889601,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938889601"
+        }
+      ]
+    },
+    {
+      "pr": 60,
+      "branch": "codex/kc-005b-dienstrechte-rls",
+      "original_head": "39345e813984944972303efc402a4ac0a25ffcfa",
+      "patched_head": "f3a801b4cebcce64c3024b947fcb8c9414165163",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939083798,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939083798"
+        },
+        {
+          "id": 39939083776,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939083776"
+        },
+        {
+          "id": 39938886167,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938886167"
+        },
+        {
+          "id": 39938886149,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938886149"
+        }
+      ]
+    },
+    {
+      "pr": 61,
+      "branch": "codex/kc-005c-pool-wartung",
+      "original_head": "b3221df30b44a16bbed539e659f876f96918888c",
+      "patched_head": "ffc99bd1bb0f99cf9e1c8e562cac310df1941605",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939043333,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939043333"
+        },
+        {
+          "id": 39939043321,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939043321"
+        },
+        {
+          "id": 39938884740,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938884740"
+        },
+        {
+          "id": 39938884723,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938884723"
+        }
+      ]
+    },
+    {
+      "pr": 68,
+      "branch": "codex/kc-006a-sitzungsmodell",
+      "original_head": "f63fd5e3e1095402f9a0681a42e049c869acbd6e",
+      "patched_head": "ad94ac1e131aaa72766763da2e6a45f3f9f84eff",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939097582,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939097582"
+        },
+        {
+          "id": 39939097413,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939097413"
+        },
+        {
+          "id": 39938887721,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938887721"
+        },
+        {
+          "id": 39938887720,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938887720"
+        }
+      ]
+    },
+    {
+      "pr": 69,
+      "branch": "codex/kc-006b-sitzungsspeicher",
+      "original_head": "ad945d86199f4fee83c3a1363bb13037bab09fd8",
+      "patched_head": "723f2dfbd7b018e7177f581b96314387578bb0b5",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939131376,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939131376"
+        },
+        {
+          "id": 39939131364,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939131364"
+        },
+        {
+          "id": 39938890225,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938890225"
+        },
+        {
+          "id": 39938890203,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938890203"
+        }
+      ]
+    },
+    {
+      "pr": 70,
+      "branch": "codex/kc-006c-passwortpruefung",
+      "original_head": "cd0cd916cbe093d459002feb897561f57dd32113",
+      "patched_head": "180d2babd8ff38e76becbde0f014e4a5a5258d56",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939063164,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939063164"
+        },
+        {
+          "id": 39939063135,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939063135"
+        },
+        {
+          "id": 39938893081,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938893081"
+        },
+        {
+          "id": 39938893019,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938893019"
+        }
+      ]
+    },
+    {
+      "pr": 71,
+      "branch": "codex/kc-006d-webauthn-vertrag",
+      "original_head": "5154c4e14e1a78819d879d68069685707a6195fc",
+      "patched_head": "99eeb4c58227922d7798d401c8410d586a9da090",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939043567,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939043567"
+        },
+        {
+          "id": 39939043548,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939043548"
+        },
+        {
+          "id": 39938889064,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938889064"
+        },
+        {
+          "id": 39938889021,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938889021"
+        }
+      ]
+    },
+    {
+      "pr": 72,
+      "branch": "codex/kc-006e-mfa-vertrag",
+      "original_head": "2bf99c8b8c24e263b2b817145256b7597cba26ae",
+      "patched_head": "5bb4c09fab779d6bd73a74ae572f34cd417cc529",
+      "patch_commit": "2152d7d1525b26a4206b650fbc279a5edcdb3466",
+      "merged_base": "99eeb4c58227922d7798d401c8410d586a9da090",
+      "preserved_tree": "297042bcc90ee4298743fe315aab8aaee7c2a7d9",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939384441,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939384441"
+        },
+        {
+          "id": 39939384409,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939384409"
+        },
+        {
+          "id": 39939379319,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939379319"
+        },
+        {
+          "id": 39939379301,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939379301"
+        }
+      ]
+    },
+    {
+      "pr": 73,
+      "branch": "codex/kc-006f-anmeldevertrag",
+      "original_head": "1313b314907c4e6125e9e4c5ef2a08ac8c94ef93",
+      "patched_head": "f884c722de545d7de66f519b6af7377a35b5a0f5",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939086936,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939086936"
+        },
+        {
+          "id": 39939086887,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939086887"
+        },
+        {
+          "id": 39938885591,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938885591"
+        },
+        {
+          "id": 39938885515,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938885515"
+        }
+      ]
+    },
+    {
+      "pr": 74,
+      "branch": "codex/kc-006f-anmeldeabschluss",
+      "original_head": "6eaec90c57fa7bbbc012d78d7ee6bb4e84ccfd85",
+      "patched_head": "0706f6420ebc645ba90ff3ed916686954613dfad",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939113967,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939113967"
+        },
+        {
+          "id": 39939113950,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939113950"
+        },
+        {
+          "id": 39938893905,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938893905"
+        },
+        {
+          "id": 39938893884,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938893884"
+        }
+      ]
+    },
+    {
+      "pr": 75,
+      "branch": "codex/p1-pr-durchsicht",
+      "original_head": "9195028cb4e529e5545bda2ee21b0b19de6b8a09",
+      "patched_head": "0cd6f67bfd65e1f5ca34e6dcf389d44b2a299fa3",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939100968,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939100968"
+        },
+        {
+          "id": 39939100930,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939100930"
+        },
+        {
+          "id": 39938893186,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938893186"
+        },
+        {
+          "id": 39938893184,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938893184"
+        }
+      ]
+    },
+    {
+      "pr": 76,
+      "branch": "codex/kc-006f-sitzungspruefung",
+      "original_head": "2f13d6d29419419313f23a28b748a3d8c1aa0cb8",
+      "patched_head": "27c7a893fc886f6ed8c2b04f6d3defadc42dd592",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939121255,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939121255"
+        },
+        {
+          "id": 39939121238,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939121238"
+        },
+        {
+          "id": 39938892344,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938892344"
+        },
+        {
+          "id": 39938892265,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938892265"
+        }
+      ]
+    },
+    {
+      "pr": 77,
+      "branch": "codex/kc-006f-sitzungsrotation",
+      "original_head": "bbf1e5c40436aed693d0d25e4f3f5419d18ea2b9",
+      "patched_head": "4c8045c67b810c7b8400da7af455c9b53bc5807b",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939107471,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939107471"
+        },
+        {
+          "id": 39939107416,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939107416"
+        },
+        {
+          "id": 39938890195,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938890195"
+        },
+        {
+          "id": 39938890166,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938890166"
+        }
+      ]
+    },
+    {
+      "pr": 78,
+      "branch": "codex/kc-006f-transaktionsabschluss",
+      "original_head": "d2302cc6221c5246e8273e686bbd2521c529a16a",
+      "patched_head": "ff55ac8cae24126aaaad9975a39e930b643a7cb6",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939065004,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939065004"
+        },
+        {
+          "id": 39939064736,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939064736"
+        },
+        {
+          "id": 39938885278,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938885278"
+        },
+        {
+          "id": 39938885231,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938885231"
+        }
+      ]
+    },
+    {
+      "pr": 79,
+      "branch": "codex/kc-006f-faktortransaktionen",
+      "original_head": "0429f455fd79c134301aa7d9bfc5635dc673bf57",
+      "patched_head": "e2d171a8a139c532ebfa2634c6248c0178205417",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939086282,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939086282"
+        },
+        {
+          "id": 39939086047,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939086047"
+        },
+        {
+          "id": 39938886221,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938886221"
+        },
+        {
+          "id": 39938886184,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938886184"
+        }
+      ]
+    },
+    {
+      "pr": 80,
+      "branch": "codex/kc-006f-zusatzauthentisierung",
+      "original_head": "964323be02514921462bf9bc2cededf6bfb4ab35",
+      "patched_head": "c5cb63d1121ace634a3a9d4c1937f0763d201d94",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939105199,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939105199"
+        },
+        {
+          "id": 39939105055,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939105055"
+        },
+        {
+          "id": 39938887251,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938887251"
+        },
+        {
+          "id": 39938886794,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938886794"
+        }
+      ]
+    },
+    {
+      "pr": 81,
+      "branch": "codex/kc-006f-zusatzpruefung-adapter",
+      "original_head": "288749d206d6c3622a7bec2eddd36e2171b7defc",
+      "patched_head": "7360074e256f000259896aebe512179178ec090c",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939101123,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939101123"
+        },
+        {
+          "id": 39939100979,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939100979"
+        },
+        {
+          "id": 39938889748,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938889748"
+        },
+        {
+          "id": 39938889353,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938889353"
+        }
+      ]
+    },
+    {
+      "pr": 82,
+      "branch": "codex/kc-006f-mitgliedschaftsspeicher",
+      "original_head": "5d67c7264eca72f10d3f2a9f6cfa915c41a30573",
+      "patched_head": "b7a5d390651067fd3791d2d103e71e35b3f4440e",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939062382,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939062382"
+        },
+        {
+          "id": 39939062348,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939062348"
+        },
+        {
+          "id": 39938887611,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938887611"
+        },
+        {
+          "id": 39938887552,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938887552"
+        }
+      ]
+    },
+    {
+      "pr": 83,
+      "branch": "codex/kc-006f-diensttoken-grundlage",
+      "original_head": "0ccc89073dd4666fed23606f8fffb6878b97e48a",
+      "patched_head": "2fc26bf94ef9ff317b65aeef50719d829a9ddc7b",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939114820,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939114820"
+        },
+        {
+          "id": 39939114795,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939114795"
+        },
+        {
+          "id": 39938892280,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938892280"
+        },
+        {
+          "id": 39938892210,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938892210"
+        }
+      ]
+    },
+    {
+      "pr": 84,
+      "branch": "codex/kc-006f-mfa-zuordnung",
+      "original_head": "ce79d6de405a1a07a7022e226771a7585c541510",
+      "patched_head": "a43bd5f3f77bfe1c2317ab816b9949e5aa318b61",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939076299,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939076299"
+        },
+        {
+          "id": 39939076293,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939076293"
+        },
+        {
+          "id": 39938888924,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938888924"
+        },
+        {
+          "id": 39938888693,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938888693"
+        }
+      ]
+    },
+    {
+      "pr": 85,
+      "branch": "codex/kc-006f-mtls-grundlage",
+      "original_head": "644925ae966921ab7e7bfd081fa1b764f74692bf",
+      "patched_head": "b57d1d2896eef9895c13e1fb65f4b992dbcd2fc2",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939140538,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939140538"
+        },
+        {
+          "id": 39939140517,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939140517"
+        },
+        {
+          "id": 39938888012,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938888012"
+        },
+        {
+          "id": 39938887839,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938887839"
+        }
+      ]
+    },
+    {
+      "pr": 86,
+      "branch": "codex/kc-006f-tokio-rueckuebernahme",
+      "original_head": "cb715a307849a0c3a220164ff849d5802d71a225",
+      "patched_head": "3b507bc662aa58b937e5beaa5115112ee4068411",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939046499,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939046499"
+        },
+        {
+          "id": 39939046497,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939046497"
+        },
+        {
+          "id": 39938890818,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938890818"
+        },
+        {
+          "id": 39938890800,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938890800"
+        }
+      ]
+    },
+    {
+      "pr": 87,
+      "branch": "codex/kc-006f-http-verbindungsbindung",
+      "original_head": "516ecdfa7165ef56b31e8c32e4f1416abca5abfb",
+      "patched_head": "6714199b798322b218f663dc58ea86527f69ec73",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939051872,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939051872"
+        },
+        {
+          "id": 39939051606,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939051606"
+        },
+        {
+          "id": 39938890160,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938890160"
+        },
+        {
+          "id": 39938890120,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938890120"
+        }
+      ]
+    },
+    {
+      "pr": 88,
+      "branch": "codex/kc-006f-oauth-vertrag",
+      "original_head": "267aef4326ed685b346942fbbc26c1870a31e858",
+      "patched_head": "bbb5a96bd143899031e22a332549bdf78c820b0c",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939107000,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939107000"
+        },
+        {
+          "id": 39939106970,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939106970"
+        },
+        {
+          "id": 39938887010,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938887010"
+        },
+        {
+          "id": 39938886999,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938886999"
+        }
+      ]
+    },
+    {
+      "pr": 89,
+      "branch": "codex/kc-006f-dienstanmeldung",
+      "original_head": "21f97bd05ca72d978f6197a826fac7b933eceb81",
+      "patched_head": "31e3554ace05ce8741f95cac10983ad82240bfe3",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939131766,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939131766"
+        },
+        {
+          "id": 39939131704,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939131704"
+        },
+        {
+          "id": 39938893335,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938893335"
+        },
+        {
+          "id": 39938893158,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938893158"
+        }
+      ]
+    },
+    {
+      "pr": 90,
+      "branch": "codex/kc-006f-ausgabemetadaten",
+      "original_head": "69f50d004173b9a4f909366851212a1454faa1f7",
+      "patched_head": "69fab98defa18b83cb9421a85e2ceda4446abd51",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939088537,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939088537"
+        },
+        {
+          "id": 39939088503,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939088503"
+        },
+        {
+          "id": 39938890036,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938890036"
+        },
+        {
+          "id": 39938890006,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938890006"
+        }
+      ]
+    },
+    {
+      "pr": 91,
+      "branch": "codex/kc-006f-oauth-http",
+      "original_head": "6967eba7c53147f2e13fa9ad0d6e2485fdc6fbde",
+      "patched_head": "a6f6931e25d2bfc4f6928057e8b8baaec0277c40",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939075334,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939075334"
+        },
+        {
+          "id": 39939075191,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939075191"
+        },
+        {
+          "id": 39938888684,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938888684"
+        },
+        {
+          "id": 39938888551,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938888551"
+        }
+      ]
+    },
+    {
+      "pr": 92,
+      "branch": "codex/kc-006f-http-client",
+      "original_head": "434f7feee2ebbfbac9fadb6ec8776a9522dcfb72",
+      "patched_head": "b76b6cc74e455d84956d9a5f29c558e922316916",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939100199,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939100199"
+        },
+        {
+          "id": 39939100157,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939100157"
+        },
+        {
+          "id": 39938887841,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938887841"
+        },
+        {
+          "id": 39938887764,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938887764"
+        }
+      ]
+    },
+    {
+      "pr": 93,
+      "branch": "codex/kc-006f-oauth-antwortpruefung",
+      "original_head": "43cb0f032c9209a59a5a67be6ec2405fc37df55e",
+      "patched_head": "3381fe6fcf2350e20bedc7a9ca70a501a1c731da",
+      "status": "passed",
+      "required_check_count": 10,
+      "runs": [
+        {
+          "id": 39939047608,
+          "name": "P0 CI",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939047608"
+        },
+        {
+          "id": 39939047554,
+          "name": "P0 Security",
+          "event": "pull_request",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39939047554"
+        },
+        {
+          "id": 39938891031,
+          "name": "P0 CI",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938891031"
+        },
+        {
+          "id": 39938891028,
+          "name": "P0 Security",
+          "event": "push",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39938891028"
+        }
+      ]
+    }
+  ]
+}

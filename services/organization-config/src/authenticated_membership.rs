@@ -233,10 +233,11 @@ impl MembershipReader {
     }
 }
 async fn clock(database: &mut PgConnection) -> Result<u64, ReadError> {
-    let now: i64 =
-        sqlx::query_scalar("SELECT floor(extract(epoch FROM clock_timestamp()))::bigint")
-            .fetch_one(database)
-            .await?;
+    let now: i64 = sqlx::query_scalar(
+        "SELECT pg_catalog.floor(extract(epoch FROM pg_catalog.clock_timestamp()))::bigint",
+    )
+    .fetch_one(database)
+    .await?;
     u64::try_from(now).map_err(|_| ReadError::Unavailable)
 }
 

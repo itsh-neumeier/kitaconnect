@@ -5,6 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::num::NonZeroU128;
 
 pub mod postgres;
+pub mod provisioning;
 
 /// Internal carrier identifier; no public transport format or generation algorithm implied.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]

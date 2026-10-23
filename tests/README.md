@@ -113,3 +113,13 @@ führt ihn mit `--ignored --exact` aus und prüft, dass genau ein Test tatsächl
 Ein zusätzlicher Rust-Unit-Test weist ungültige gespeicherte Kennungen ohne Ersatzwert zurück.
 Der Adaptertest prüft außerdem die unveränderte Darstellung der größten u128-Kennung,
 typisierte Referenzfehler und die Rücknahme einer vom Aufrufer geführten Transaktion.
+
+## KC-005A: Leere Einrichtungsschemas
+
+Der vorhandene PostgreSQL-Läufer prüft Migration 0002 und die Rust-Wartungs-API in einer gesonderten Testdatenbank.
+Ein fehlgeschlagener Migrationslauf muss Registry, Rechte und Policies vollständig zurücknehmen.
+Der ausdrücklich ausgeführte Rust-Test prüft unbekannte Einrichtungen, Doppelanlage, vorhandene Schemata,
+unsichere Runtime-Rollen, manipulierte Registrierung und Schemaeigentümer sowie Rücknahme nach Schemaanlage.
+Nach echtem Server-Neustart müssen die geprüften Registrierungen und leeren Schemata unverändert vorhanden sein.
+Die Test-Wartungsidentität ist ausschließlich im wegwerfbaren Testcontainer vorhanden.
+Dies belegt noch keine Fachtabellen-, RLS- oder Poolisolation aus KC-005B/C.

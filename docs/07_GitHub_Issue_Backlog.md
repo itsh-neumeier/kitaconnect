@@ -19,8 +19,16 @@ Vor Fachimplementierung MÜSSEN breite Module weiter zerlegt werden.
 Ihre Sicherheitsgrenzen benötigen konkrete positive und negative Tests.
 
 Das aktuelle Arbeitspaket und seine Fortsetzung stehen im [Projektstatus](ai-memory/CURRENT_STATE.md).
-KC-002 hat Dienstgrenzen und Datenhoheit im noch offenen PR #40 dokumentiert.
-Die Review- und Integrationsnachweise bleiben erforderlich. P1 bleibt bis zur P0-Abnahme gesperrt.
+KC-002 hat Dienstgrenzen und Datenhoheit in PR #40 dokumentiert; dieser PR ist integriert.
+P0 ist abgenommen. P1 ist ausdrücklich beauftragt. Review- und Integrationsnachweise bleiben erforderlich.
+
+## Teilpakete und Gesamtabnahme
+
+Die Präzisierung vom 20.10.2026 ergänzt KC-004A/B/C und KC-005A/B/C mit ihren GitHub-Zuordnungen.
+`depends_on` benennt konkrete technische Voraussetzungen. `work_packages` benennt alle Teilpakete einer Gesamtabnahme.
+Die Prüfung durchläuft beide Beziehungen und weist fehlende, doppelte, fremde oder phasenfremde Teilpakete sowie Zyklen ab.
+KC-005 und KC-006 benötigen KC-004A/B. Der Abschluss von KC-004C wird dafür nicht vorweggenommen.
+KC-004 und KC-005 bleiben bis zu sämtlichen ursprünglichen Kriterien offen.
 
 ## Dokumentationssprache
 

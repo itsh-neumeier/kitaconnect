@@ -71,14 +71,20 @@
       "Eine unberechtigte Zuordnung zu einem fremden Träger wird abgewiesen."
     ],
     "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
-    "status": "planned"
+    "status": "planned",
+    "work_packages": [
+      "KC-004A",
+      "KC-004B",
+      "KC-004C"
+    ]
   },
   {
     "id": "KC-005",
     "phase": "P1",
     "title": "Schema-Provisioning und RLS erzwingen",
     "depends_on": [
-      "KC-004"
+      "KC-004A",
+      "KC-004B"
     ],
     "specification": [
       "docs/03_Datenmodell_und_Berechtigungen.md",
@@ -89,14 +95,20 @@
       "Nicht registrierte Schemanamen und Dienstrollen mit BYPASSRLS werden abgewiesen."
     ],
     "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
-    "status": "planned"
+    "status": "planned",
+    "work_packages": [
+      "KC-005A",
+      "KC-005B",
+      "KC-005C"
+    ]
   },
   {
     "id": "KC-006",
     "phase": "P1",
     "title": "Identity: Passwort, Passkeys, TOTP und Recovery",
     "depends_on": [
-      "KC-004"
+      "KC-004A",
+      "KC-004B"
     ],
     "specification": [
       "docs/03_Datenmodell_und_Berechtigungen.md",
@@ -699,6 +711,115 @@
       "Main verlangt Review, aktuelle Pflichtprüfungen structure/rust/web/secrets/dependencies und Schutz der Regeln; die tatsächliche Konfiguration ist per GitHub-API nachgewiesen."
     ],
     "security_scope": "Keine automatische Veröffentlichung oder administrativer Review-Bypass; CODEOWNERS erfordert bestätigte Zuständigkeit.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-004A",
+    "phase": "P1",
+    "title": "Organisationsgrundmodell",
+    "depends_on": [
+      "KC-001",
+      "KC-002",
+      "KC-003",
+      "KC-037",
+      "KC-038"
+    ],
+    "specification": [
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Zwei Träger und eine unabhängige Einrichtung sind getrennt modelliert; ungültige Referenzen werden abgewiesen."
+    ],
+    "security_scope": "Nur synthetische Daten. Dienst-, Schema- und Benutzerrechte getrennt prüfen; keine implizite Rechtefreigabe oder produktiven Zugangsdaten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-004B",
+    "phase": "P1",
+    "title": "Organisationspersistenz und SQLx",
+    "depends_on": [
+      "KC-004A"
+    ],
+    "specification": [
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Migration, begrenzte Datenbankrollen und SQLx-Speicherung sind vor und nach Server-Neustart geprüft."
+    ],
+    "security_scope": "Nur synthetische Daten. Dienst-, Schema- und Benutzerrechte getrennt prüfen; keine implizite Rechtefreigabe oder produktiven Zugangsdaten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-004C",
+    "phase": "P1",
+    "title": "Aktuelle Rechte für Organisationszugriffe",
+    "depends_on": [
+      "KC-004B",
+      "KC-006",
+      "KC-008"
+    ],
+    "specification": [
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Unberechtigte fremde Trägerzuordnung wird vor Speicherung abgewiesen; Entzug und Ausfall verweigern Zugriff."
+    ],
+    "security_scope": "Nur synthetische Daten. Dienst-, Schema- und Benutzerrechte getrennt prüfen; keine implizite Rechtefreigabe oder produktiven Zugangsdaten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-005A",
+    "phase": "P1",
+    "title": "Einrichtungsschemas atomar registrieren",
+    "depends_on": [
+      "KC-004B"
+    ],
+    "specification": [
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Nur registrierte Einrichtungen erhalten kanonisch benannte leere Schemata; unsichere Runtime-Rollen und vorhandene Schemata werden abgewiesen.",
+      "Schema und Registry entstehen gemeinsam oder werden vollständig zurückgenommen."
+    ],
+    "security_scope": "Nur synthetische Daten. Dienst-, Schema- und Benutzerrechte getrennt prüfen; keine implizite Rechtefreigabe oder produktiven Zugangsdaten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-005B",
+    "phase": "P1",
+    "title": "Dienstobjekte und erzwungene RLS",
+    "depends_on": [
+      "KC-005A"
+    ],
+    "specification": [
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Diensttabellen, Eigentümerrollen und erzwungene RLS werden mit negativen Rollen-/Namensverdeckungstests geprüft."
+    ],
+    "security_scope": "Nur synthetische Daten. Dienst-, Schema- und Benutzerrechte getrennt prüfen; keine implizite Rechtefreigabe oder produktiven Zugangsdaten.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-005C",
+    "phase": "P1",
+    "title": "Poolwechsel und Migrationsabläufe",
+    "depends_on": [
+      "KC-005B"
+    ],
+    "specification": [
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md"
+    ],
+    "acceptance": [
+      "Poolwechsel nach Erfolg, Fehler und Abbruch hinterlässt keinen fremden Kontext; konkurrierende Migrationen bleiben eindeutig."
+    ],
+    "security_scope": "Nur synthetische Daten. Dienst-, Schema- und Benutzerrechte getrennt prüfen; keine implizite Rechtefreigabe oder produktiven Zugangsdaten.",
     "status": "planned"
   }
 ]

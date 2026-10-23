@@ -40,3 +40,14 @@ Acht Rust-Integrationstests prüfen das Modell. Ein negativer Dokumentationstest
 Die Bibliothek hat keine externen Abhängigkeiten. Alle Kennungen in Tests sind synthetisch.
 Windows kann lokal ohne C++-Linker Typprüfung und Clippy ausführen. Ausführbare Tests und Build müssen in der Linux-CI erfolgreich sein.
 KC-004 insgesamt wird erst nach Persistenz- und Rechteprüfungen aus #51 und #52 abgeschlossen.
+
+## Präzisierte Voraussetzungen für KC-005 und KC-006
+
+Stand 20.10.2026: KC-005 und KC-006 benötigen das Modell und die Persistenz aus KC-004A/B.
+Die spätere Organisationsrechteprüfung KC-004C benötigt KC-008 und damit ihrerseits KC-005.
+Eine Abhängigkeit beider Grundlagenthemen vom abgeschlossenen Gesamtissue KC-004 würde deshalb einen Kreis erzeugen.
+Der verfeinerte Backlog nennt die konkreten Teilpakete und prüft auch die Voraussetzungen der Gesamtabnahme.
+KC-004 bleibt bis zu sämtlichen ursprünglichen Kriterien offen. Dies ist keine vorgezogene Gesamtabnahme.
+
+KC-005 wird in #56 (leere Schemata und Registry), #57 (Dienstobjekte und RLS) und #58 (Pool-/Migrationsabläufe) zerlegt.
+Der [Wartungsvertrag](../contracts/organization-config/schema-provisioning-v1.md) grenzt den ersten Schritt ab.

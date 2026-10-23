@@ -1,21 +1,21 @@
 # Projektstatus und Fortsetzung
 
-Aktualisiert: 19.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
+Aktualisiert: 20.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
 Ausdrückliche Antwort der Projektleitung: „P0 abnehmen, und P1 freigeben“.
 P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nicht erneut abfragen.
 
 ## Arbeitsstand
 
-- issue_id: [KC-004B / #51](https://github.com/itsh-neumeier/kitaconnect/issues/51), Rust-/SQLx-Anbindung.
-- branch: codex/kc-004b-sqlx-adapter auf PR #54 / 16cd295.
-- pull_request: [PR #55](https://github.com/itsh-neumeier/kitaconnect/pull/55), Basis codex/kc-004b-postgres-persistenz.
-- head_commit: geprüfter Adapterstand fc1f7756aaa26752b9319cdf893bbda47fcd67d4; Vertrag und ADR-025 zuvor in d3dbb96 versioniert. Dieser Abschlusscheckpoint folgt gesondert; aktuellen Kopf mit git rev-parse HEAD prüfen.
-- objective: SQLx-Adapter mit echten PostgreSQL-Tests; keine neue Berechtigungsregel oder Laufzeitfreigabe.
-- completed: Adapter für Anlage und Lesen, gebundene Parameter und exakte u128-Kennungen, typisierte Fehler, callergeführte Transaktionen; Testläufer um Rust-Prüfung vor/nach Neustart erweitert.
-- remaining: Abschlusscheckpoint prüfen und PR #55 zur Durchsicht bereitstellen. #51 bleibt bis Integration offen.
-- migration_state: Migration 0001 und produktionsbezogene NOLOGIN-Provisionierung unverändert. Nur im isolierten Testcontainer entsteht eine kurzlebige Loginrolle ohne Passwort.
-- known_failures: Keine offenen CI-Fehler. Lokales cargo check scheitert weiter am fehlenden Windows-C++-Linker; Docker/psql fehlen ebenfalls. Historischer CI-Fehler bei der Socket-Bereinigung ist durch Wiederherstellung von Host-UID/GID und Modus behoben und erneut erfolgreich geprüft.
-- dependencies: PR #53 und #54 bleiben offen und grün. Neuer Folge-PR gegen codex/kc-004b-postgres-persistenz. Keine ungefragte Integration; nach Basis-Merges retargeten und neu prüfen.
+- issue_id: [KC-005A / #56](https://github.com/itsh-neumeier/kitaconnect/issues/56), Teil von KC-005 / #5.
+- branch: codex/kc-005a-schema-provisionierung auf PR #55 / a8db9ca.
+- pull_request: [PR #59](https://github.com/itsh-neumeier/kitaconnect/pull/59), Basis codex/kc-004b-sqlx-adapter.
+- head_commit: geprüfter Stand 518415ee4e267252e29de6b34b08632d72f17705; Wartungsvertrag und ADR-026 zuvor in 0011c36 versioniert. Dieser Abschlusscheckpoint folgt gesondert; aktuellen Kopf mit git rev-parse HEAD prüfen.
+- objective: Leere Einrichtungsschemas mit Registry atomar provisionieren und prüfen; keine Laufzeitfreigabe.
+- completed: Neue NOLOGIN-Wartungs-/Schemaeigentümerrollen, Migration 0002, atomare Rust-Wartungs-API und echte PostgreSQL-Tests erfolgreich. Backlog bildet Grundmodelle und Gesamtabnahmen ohne verdeckten Zyklus ab.
+- remaining: Abschlusscheckpoint in CI prüfen; PR #59 zur Durchsicht bereitstellen. #56 bleibt bis Integration offen.
+- migration_state: Neue gesonderte Rollen-/Datenbank-Provisionierung und Migration 0002 nach 0001. Keine produktive Datenbank oder Loginidentität angelegt.
+- known_failures: Keine bekannten fehlgeschlagenen Pflichtprüfungen. Windows-C++-Linker und Docker/psql fehlen; ausführbare Nachweise stammen aus Linux-CI.
+- dependencies: #53, #54, #55 offen und grün. Keine ungefragte Integration; Folge-PR gegen codex/kc-004b-sqlx-adapter. Nach Basisintegration retargeten und erneut prüfen.
 
 ## P0-Abschluss
 
@@ -66,23 +66,29 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
   Der folgende Checkpoint-Commit erhält eigene Prüfungen.
 - Gitleaks auf vorgemerkter Implementierung ohne Befund. Checkpoint ebenfalls vor Commit prüfen. Ergebnis im PR nachführen.
 
-## Prüfung und nächste drei Aktionen für #51
+## KC-005-Reihenfolge und Prüfstand
 
-- Vorgänger PR #54, 16cd295: alle fünf Pflichtprüfungen erfolgreich, einschließlich echter PostgreSQL-Migrations-/Rechte-/Neustarttests.
-- Neu: SQLx 0.9.0 und Tokio 1.54.0 anhand offizieller Paketmetadaten geprüft; Versionen exakt festgelegt, Cargo.lock aktualisiert.
-- Aktueller lokaler RustSec-Abgleich mit aktualisierter Datenbank und Paketindex erfolgreich: 155 Lockfile-Pakete, keine blockierenden Befunde.
-  Advisory-DB: 999ec89d5d3f10f20be14750ec8c2d8b44e0ac9b.
-- Lokal erfolgreich: Rustfmt, 40 Node-Tests, JavaScript-Syntax, Struktur-/Verweisprüfung, Actionlint und git diff --check.
-- Adapterstand fc1f775: alle fünf Pflichtprüfungen erfolgreich, einschließlich Clippy, Build, Rust-Tests, echter SQLx-Prüfung vor/nach Neustart und vollständiger Socket-Bereinigung.
-  [CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39303790312),
-  [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39303790275).
-  Lokales cargo check scheitert am fehlenden Windows-C++-Linker und gilt nicht als bestanden.
-- Der echte PostgreSQL-Test läuft weiterhin im Pflichtstatus rust. Ein temporärer Unix-Socket ermöglicht die Rust-Verbindung ohne Container-Netzwerk oder Host-Port.
-- Runtime-RLS bleibt ohne erlaubende Policy. Aktuelle Benutzerrechteprüfung und Dienstfreigabe bleiben #52 vorbehalten.
-- Gitleaks auf vorgemerkter Implementierung und Korrekturen ohne Befund. Abschlusscheckpoint erneut prüfen; dessen eigene CI im PR nachführen.
+- KC-005A / #56: leere Schemata und Registry atomar anlegen; Runtime-Konfiguration und physischen Zustand prüfen.
+- KC-005B / #57: freigegebene Dienstobjekte, getrennte Rechte und erzwungene RLS je Einrichtung prüfen.
+- KC-005C / #58: Poolwechsel nach Erfolg/Fehler/Abbruch sowie konkurrierende Migrationsabläufe nachweisen.
+- KC-004A/B sind konkrete Voraussetzungen von KC-005 und KC-006; KC-004C bleibt von KC-008 abhängig.
+  Die gesamte KC-004-Abnahme bleibt offen. Keine fachliche Bedingung wurde gestrichen.
+- Backlog-Prüfung berücksichtigt Teilpakete als Voraussetzungen der Gesamtabnahme und erkennt dadurch verdeckte Zyklen.
+- Lokal bisher erfolgreich: 44 Node-Tests, Struktur-/Verweisprüfung für 44 Issues und 38 Dokumente, JavaScript-Syntax und git diff --check.
+- Implementierung c3369d6: erster vollständiger CI-Lauf mit fünf erfolgreichen Pflichtprüfungen, einschließlich echter PostgreSQL-Provisionierungs-, Rollen-, Rollback- und Neustarttests.
+  [CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368424819),
+  [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368424845).
+- Stand 518415e: alle fünf Pflichtprüfungen des neuesten PR-Laufs erfolgreich. Ergänzte Rollenattribute, zurückgenommene Rechtevergaben und der negative Rust-Dokumentationstest zum freien Client-Schemanamen sind erfolgreich.
+  [CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368712802),
+  [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368712808).
+- Rustfmt und Gitleaks waren für Implementierung und Ergänzungen erfolgreich. Der folgende reine Dokumentationscommit erhält eigene CI; Nachweise im PR nachführen.
+- Neue Migration verändert keine vorhandene Datei 0001. Registry-/Kennungslese-Policies erlauben ausschließlich der Wartungsrolle Metadatenzugriff.
+- Bestehende Runtime-Rolle erhält keine Registry- oder Einrichtungsschema-Rechte. Keine Fachobjekte, Personalbereiche oder Wahldatenbanken angelegt.
 
-1. Abschlusscheckpoint von PR #55 in CI prüfen und PR zur Durchsicht bereitstellen. Integrationsfolge bleibt #53, #54, #55; nach Basisintegration retargeten und erneut prüfen.
-2. #51 mit Adapter- und Datenbanknachweisen aktualisieren. Erst nach Integration und vollständigen Kriterien abschließen.
-3. KC-005 als nächstes kleines Paket vorbereiten. Dabei Planungsabhängigkeiten präzisieren: Das Grundmodell #50 ist Voraussetzung; das Gesamtissue #4 darf keinen Zyklus mit #52 und dessen Identitäts-/Policy-Voraussetzungen erzeugen. Keine Fachrechte erfinden.
+## Nächste drei Aktionen
 
-Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/023/024/025, Adaptervertrag und aktuellen GitHub-Stand lesen.
+1. Abschlusscheckpoint von PR #59 in Linux-CI prüfen und PR zur Durchsicht bereitstellen. Integrationsfolge #53, #54, #55, #59; nach Basis-Merges retargeten und neu prüfen. Keine ungefragte Integration.
+2. Erfolgreiche Rollen-, Registry-, Rollback- und Neustartnachweise in Issue, PR und Checkpoint sichern.
+3. KC-005B mit expliziter Dienst-/Objektliste und begründetem RLS-Kontext vorbereiten. Keine selbst gesetzte Kontextvariable allein als Identitätsnachweis zulassen.
+
+Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/025/026, Wartungsvertrag und aktuellen GitHub-Stand lesen.

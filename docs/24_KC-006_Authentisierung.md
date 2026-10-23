@@ -214,3 +214,10 @@ Der Router besitzt ausdrücklich konfigurierte Grenzen und öffnet keinen Listen
 Die vorhandene tatsächliche HTTP-/Datenbankgruppe erhält eigene Routerfälle vor/nach Neustart.
 Der aktuelle CI-Nachweis wird im PR und Checkpoint geführt. Keine neue Migration oder erlaubende Policy entsteht.
 Der Datenstand enthält keine MFA-Entscheidung. Vollständiger Anmeldeadapter, Gateway, Browser und Gesamtabnahme bleiben offen.
+
+Codekopf 0b8de61 besteht [native CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/40001499722)
+und [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/40001499710).
+Job 120578459573 bestätigt alle achtzehn SQLx-Gruppen vor/nach Neustart einschließlich tatsächlichem Organisationsrouter.
+Die vier neuen Rust-Prüfgruppen und 53 Node-Tests bestehen ebenfalls.
+Ein falscher Token-Zertifikatsbezug ergibt gemäß bestehendem Antwortparser Prüfausfall 503 und keinen Datenzugriff.
+Der folgende Nachweiskopf erhält eigene CI. Dessen verbindlichen Status im PR prüfen.

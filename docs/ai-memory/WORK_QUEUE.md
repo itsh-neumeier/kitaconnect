@@ -7,6 +7,8 @@ Diese Liste ist eine Momentaufnahme und kein Abschlussnachweis. GitHub bleibt ve
 
 ## Aktueller Schritt
 
+Aktiv: PR #91 / codex/kc-006f-oauth-http auf #90. Codekopf e696bbb besteht native Push-CI und Sicherheitsprüfung. Alle achtzehn SQLx-Gruppen einschließlich tatsächlichem HTTP und unabhängigem Abbruchzeugen bestehen vor/nach Neustart. Vertrag/ADR-050 1c47cbf und Bereinigungspräzisierung 35fd4e1 stehen vor dem jeweiligen Code. Aktuellen Nachweiskopf im PR prüfen. Danach begrenzten tatsächlichen HTTP-Client und Organisationsvertrag vorbereiten; diesen Server nicht erneut implementieren.
+
 KC-006F / #67: PR #76 bestätigt aktuelle Sitzungsprüfung und lokale Abmeldung mit zehn grünen Prüfungen.
 PR #77 / 5927631 bestätigt Rotation und deren Fehlerkorrektur mit zehn aktuellen grünen Prüfungen.
 PR #78 / ad150c9 und #79 / 088d24f korrigieren die eigenen Fehlertransaktionen in allen geprüften Adaptern; jeweils zehn aktuelle Prüfungen grün.

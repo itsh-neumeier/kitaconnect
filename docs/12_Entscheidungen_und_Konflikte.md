@@ -385,3 +385,9 @@ Am 22.10.2026 bestätigt die Projektleitung ausdrücklich das isolierte Profil `
 [ADR-049](architecture/ADR-049_Isoliertes_HTTPS_Browserprofil.md) und der Testprofilvertrag sichern die Entscheidung vor Code.
 Das bisherige HTTP-WebAuthn-Profil bleibt getrennt erhalten. Produktive Domain und Zertifikatsbetrieb bleiben offen.
 Diese Frage nicht erneut stellen. Ein Browser- oder Gateway-Nachweis ist damit noch nicht erbracht.
+
+## ADR-050 – Tatsächlicher OAuth-HTTP-Adapter
+
+[ADR-050](architecture/ADR-050_OAuth_HTTP_Adapter.md) bindet Router, tatsächliche mTLS-Verbindung und aktuelle Datenbankprüfungen vor Code zusammen.
+Grenzen sind ausdrücklich konfiguriert. Anfrageverbindungen werden bei Abbruch verworfen; produktive Rollen-/Poolbindung bleibt gesondert.
+Die bestehende OAuth-Ausnahme und Zweckmatrix bleiben verbindlich. Keine Fachberechtigung wird ergänzt.

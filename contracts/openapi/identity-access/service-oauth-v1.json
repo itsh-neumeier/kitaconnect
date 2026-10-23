@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "description": "Vertrag vor Routercode. Formularmodell und Darstellungen sind getrennt von tatsächlicher Clientauthentisierung. Keine Laufzeitfreigabe."
   },
-  "x-implementation-status": "Protokollmodell; Registrierungsadapter und HTTP-Laufzeit folgen getrennt.",
+  "x-implementation-status": "Protokollmodell, aktuelle Registrierung und begrenzter tatsächlicher HTTP-Adapter; keine produktive Startkonfiguration oder Fachberechtigung.",
   "x-security-decision": "Bestätigt: genau ein registrierter DNS-Name je Dienst und zusätzlich aktiver genauer Zertifikatsfingerabdruck. Keine Wildcards oder automatische Registrierung. Produktive Namen bleiben offen.",
   "x-request-limits": "Positive Body-, Parameter-, Zeit- und Parallelitätsgrenzen ausdrücklich konfigurieren; keine produktiven Vorgaben.",
   "security": [
@@ -112,6 +112,39 @@
               }
             }
           },
+          "401": {
+            "description": "Versuchte Headerauthentisierung wird abgewiesen; keine Alternative zu mTLS.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              },
+              "WWW-Authenticate": {
+                "required": true,
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Nur geprüfter HTTP-Schemaname und fester Realm; keine Credentialwerte."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            }
+          },
           "405": {
             "description": "Nur POST ist zulässig.",
             "headers": {
@@ -127,6 +160,13 @@
                 "schema": {
                   "type": "string",
                   "const": "no-cache"
+                }
+              },
+              "Allow": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "POST"
                 }
               }
             }
@@ -351,6 +391,13 @@
                 "schema": {
                   "type": "string",
                   "const": "no-cache"
+                }
+              },
+              "Allow": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "POST"
                 }
               }
             }

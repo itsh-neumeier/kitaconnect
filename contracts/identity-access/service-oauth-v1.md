@@ -2,7 +2,7 @@
 
 - Stand: 22.10.2026
 - Umfang: KC-006F / #67, Protokollmodell vor Routercode
-- Status: Protokollmodell und Zertifikatszuordnung bestätigt; Laufzeit noch nicht implementiert
+- Status: Protokollmodell und Zertifikatszuordnung bestätigt; der getrennte begrenzte HTTP-Adapter folgt dem Vertrag service-http-v1 und PR #91.
 
 ## Umfang und Quellen
 
@@ -37,7 +37,7 @@ Diese Entscheidung wird vor dem abhängigen Code versioniert. Sie ersetzt keine 
 ## Formularprüfung
 
 Anfragen verwenden ausschließlich `application/x-www-form-urlencoded` und UTF-8.
-Ein zukünftiger Router prüft Methode, Inhaltsformat, TLS-Herkunft und Anfragelimits vor der Verarbeitung.
+Der getrennte HTTP-Adapter prüft Methode, Inhaltsformat, TLS-Herkunft und Anfragelimits vor der Verarbeitung.
 Body- und Parametergrenzen werden ausdrücklich positiv konfiguriert. Es gibt keine produktiven Vorgabewerte.
 Der Protokollparser prüft die Bodylänge vor Allokation sowie die Parameterzahl vor dem Dekodieren.
 Ungültige Prozentkodierung oder ungültiges UTF-8 verweigert die Anfrage.
@@ -102,6 +102,6 @@ Die Implementierung verwendet ausschließlich bereits vorhandene Paketversionen:
 [percent-encoding 2.3.2](https://docs.rs/percent-encoding/2.3.2/percent_encoding/) und
 [base64 0.22.1](https://docs.rs/base64/0.22.1/base64/) erhalten direkte Abhängigkeitseinträge.
 Keine Migration, Datenbankrechte oder Laufzeitpolicy wird geändert.
-Die Zertifikatszuordnung ist bestätigt. Der nächste Schritt benötigt den getrennten Registrierungs-/Routervertrag und dessen Nachweise.
+Die Zertifikatszuordnung ist bestätigt. Die getrennten Registrierungs- und HTTP-Adapter sind in PRs #89 und #91 beschrieben und geprüft. Dieser Protokollbaustein bleibt von deren Laufzeit getrennt.
 Das zusätzliche HTTPS-Browserprofil ist inzwischen ausdrücklich bestätigt und folgt dem getrennten [Testprofilvertrag](browser-https-test-v1.md).
 Dieser Protokollbaustein implementiert keinen Browsernachweis.

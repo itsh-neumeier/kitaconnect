@@ -91,6 +91,21 @@ try {
   requireSuccess(docker(['start', container]), 'Start test database');
   await waitUntilReady();
   sql("DO $$ BEGIN ASSERT current_setting('server_version') LIKE '18.6%'; END $$;");
+
+  // Run the new HTTP boundary first so failures do not wait for unrelated hashing tests.
+  sql(file('provision/001_roles.sql', identityRoot), { transaction: true });
+  sql('CREATE DATABASE kc_service_http_test;');
+  sql(file('provision/002_schema.sql', identityRoot), { database: 'kc_service_http_test', transaction: true });
+  for (const name of [
+    '0001_session_records.sql', '0002_password_checks.sql', '0003_webauthn.sql',
+    '0004_mfa_recovery.sql', '0005_login_flows.sql', '0006_session_policy_observations.sql',
+    '0007_session_rotation.sql', '0008_step_up_storage.sql', '0009_service_tokens.sql',
+  ]) {
+    sql(`SET SESSION AUTHORIZATION kc_identity_migrator;\n${file('migrations/' + name, identityRoot)}`, { database: 'kc_service_http_test', transaction: true });
+  }
+  sql('CREATE ROLE kc_service_http_runtime LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_identity_runtime TO kc_service_http_runtime WITH INHERIT TRUE, SET FALSE;', { database: 'kc_service_http_test', transaction: true });
+  testAdapter('before', 'service_http', 'actual_http_is_bound_current_and_bounded', 'kitaconnect-identity-access');
+
   sql(file('provision/001_roles.sql'), { transaction: true });
   sql(file('provision/002_schema.sql'), { transaction: true });
 
@@ -150,7 +165,6 @@ try {
   testAdapter('before', 'pool', 'reused_pool_clears_context_and_observes_revocation');
   testAdapter('before', 'maintenance', 'concurrent_maintenance_preserves_registry_and_wave_versions');
 
-  sql(file('provision/001_roles.sql', identityRoot), { transaction: true });
   sql('CREATE DATABASE kc_identity_failed_migration;');
   sql(file('provision/002_schema.sql', identityRoot), { database: 'kc_identity_failed_migration', transaction: true });
   const identityMigration = `SET SESSION AUTHORIZATION kc_identity_migrator;\n${file('migrations/0001_session_records.sql', identityRoot)}`;
@@ -368,6 +382,7 @@ try {
   sql('CREATE ROLE kc_service_auth_runtime LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_identity_runtime TO kc_service_auth_runtime WITH INHERIT TRUE, SET FALSE;', { database: 'kc_service_auth_test', transaction: true });
   testAdapter('before', 'service_auth', 'actual_peer_authentication_is_current', 'kitaconnect-identity-access');
 
+
   requireSuccess(docker(['restart', container]), 'Restart same test database');
   await waitUntilReady();
   sql(file('tests/persisted.sql'));
@@ -392,6 +407,7 @@ try {
   testAdapter('after', 'membership', 'memberships_are_current_and_read_only');
   testAdapter('after', 'service_tokens', 'service_tokens_are_current_and_bound', 'kitaconnect-identity-access');
   testAdapter('after', 'service_auth', 'actual_peer_authentication_is_current', 'kitaconnect-identity-access');
+  testAdapter('after', 'service_http', 'actual_http_is_bound_current_and_bounded', 'kitaconnect-identity-access');
   console.log('PASS: two carriers and an independent facility, version and role boundaries survive server restart');
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {

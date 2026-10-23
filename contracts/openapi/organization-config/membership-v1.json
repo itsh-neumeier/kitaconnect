@@ -1,0 +1,104 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "KitaConnect – interne Mitgliedschaftsabfrage",
+    "version": "1.0.0",
+    "description": "Vertrag vor Routercode. Nur aktuelle Dienstprüfung und Datenstand; keine Benutzer- oder MFA-Freigabe."
+  },
+  "x-request-limits": "Body, Header, Parallelität und Fristen ausdrücklich positiv konfigurieren; keine produktiven Vorgaben.",
+  "x-security-binding": "Genauer tatsächlicher DNS-SAN und aktiver Fingerabdruck von identity-access; frische Introspektion mit Ziel organization-config und Umfang membership:read bei jeder Anfrage.",
+  "security": [{"serviceMTLS": [], "serviceToken": []}],
+  "paths": {
+    "/internal/v1/membership/read": {
+      "post": {
+        "operationId": "readCurrentMembership",
+        "summary": "Aktuellen sichtbaren Mitgliedschafts- und Fristendatenstand lesen",
+        "description": "Keine Query-Parameter, Cookies, Proxy-Anmeldemittel oder weitergeleiteten Zertifikatsbehauptungen. Keine positiven Zwischenspeicher. Keine Dienstübergreifende Atomarität. Ein bestätigter Entzug wirkt bei der nächsten vollständigen Prüfung.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["identity_ref", "facility_id"],
+                "properties": {
+                  "identity_ref": {"$ref": "#/components/schemas/Identifier"},
+                  "facility_id": {"$ref": "#/components/schemas/Identifier"}
+                },
+                "description": "Genau ein Objekt ohne doppelte Felder, auch nicht mit gleichwertigen JSON-Escapes."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Aktueller Datenstand; fehlender, verborgener oder inaktiver Bestand ergibt membership null. Keine Benutzerfreigabe.",
+            "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}, "Pragma": {"$ref": "#/components/headers/NoCache"}},
+            "content": {"application/json": {"schema": {
+              "type": "object", "additionalProperties": false, "required": ["membership"],
+              "properties": {"membership": {"oneOf": [{"type": "null"}, {"$ref": "#/components/schemas/Membership"}]}}
+            }}}
+          },
+          "400": {"$ref": "#/components/responses/Problem"},
+          "401": {
+            "description": "Fehlender oder aktuell abgewiesener Dienstnachweis. Keine Diagnosedaten.",
+            "headers": {
+              "WWW-Authenticate": {"schema": {"type": "string", "enum": ["Bearer realm=\"service\"", "Bearer realm=\"service\", error=\"invalid_token\""]}},
+              "Cache-Control": {"$ref": "#/components/headers/NoStore"},
+              "Pragma": {"$ref": "#/components/headers/NoCache"}
+            },
+            "content": {"application/problem+json": {"schema": {"$ref": "#/components/schemas/Problem"}}}
+          },
+          "405": {
+            "description": "Nur POST zulässig.",
+            "headers": {"Allow": {"schema": {"const": "POST"}}},
+            "content": {"application/problem+json": {"schema": {"$ref": "#/components/schemas/Problem"}}}
+          },
+          "413": {"$ref": "#/components/responses/Problem"},
+          "415": {"$ref": "#/components/responses/Problem"},
+          "429": {"$ref": "#/components/responses/Problem"},
+          "503": {"$ref": "#/components/responses/Problem"}
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "serviceMTLS": {"type": "mutualTLS", "description": "Tatsächliche offene Verbindung; Headerbehauptungen genügen nicht."},
+      "serviceToken": {"type": "http", "scheme": "bearer", "bearerFormat": "canonical-base64url-32-bytes", "description": "Genau ein Header. 43 Zeichen ohne Padding. Exakte Zertifikatsbindung bleibt verpflichtend."}
+    },
+    "headers": {
+      "NoStore": {"schema": {"const": "no-store"}},
+      "NoCache": {"schema": {"const": "no-cache"}}
+    },
+    "responses": {
+      "Problem": {
+        "description": "Fester Problem-Details-Body. Fehler schließen die Verbindung. Keine Anfragedaten oder internen Diagnosen. Vorgelagerte HTTP-/TLS-Fehler können ohne Routerbody schließen.",
+        "headers": {"Cache-Control": {"$ref": "#/components/headers/NoStore"}, "Pragma": {"$ref": "#/components/headers/NoCache"}},
+        "content": {"application/problem+json": {"schema": {"$ref": "#/components/schemas/Problem"}}}
+      }
+    },
+    "schemas": {
+      "Identifier": {"type": "string", "minLength": 1, "maxLength": 39, "pattern": "^[1-9][0-9]*$", "description": "Zusätzlich numerisch höchstens 340282366920938463463374607431768211455 (u128)."},
+      "Version": {"type": "string", "minLength": 1, "maxLength": 20, "pattern": "^[1-9][0-9]*$", "description": "Zusätzlich numerisch höchstens 18446744073709551615 (u64)."},
+      "Membership": {
+        "type": "object", "additionalProperties": false,
+        "required": ["identity_ref", "facility_id", "membership_version", "policy_version", "idle_seconds", "absolute_seconds", "step_up_seconds"],
+        "properties": {
+          "identity_ref": {"$ref": "#/components/schemas/Identifier"},
+          "facility_id": {"$ref": "#/components/schemas/Identifier"},
+          "membership_version": {"$ref": "#/components/schemas/Version"},
+          "policy_version": {"$ref": "#/components/schemas/Version"},
+          "idle_seconds": {"type": "integer", "minimum": 1, "maximum": 900},
+          "absolute_seconds": {"type": "integer", "minimum": 1, "maximum": 28800},
+          "step_up_seconds": {"type": "integer", "minimum": 1, "maximum": 300}
+        }
+      },
+      "Problem": {
+        "type": "object", "additionalProperties": false, "required": ["type", "title", "status"],
+        "properties": {"type": {"const": "about:blank"}, "title": {"type": "string"}, "status": {"type": "integer", "enum": [400, 401, 404, 405, 413, 415, 429, 503]}}
+      }
+    }
+  }
+}

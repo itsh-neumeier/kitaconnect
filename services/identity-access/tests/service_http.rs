@@ -4,6 +4,9 @@ use kitaconnect_identity_access::{
     service_http::{Limits, OAuthServer},
     service_tokens::{AuthorityConfiguration, ServiceName},
 };
+use kitaconnect_service_oauth::{
+    ExpectedActive, IntrospectionResponse, ResponseLimits, TokenResponse,
+};
 use kitaconnect_service_transport::oauth_http::{
     ClientLimits, OAuthEndpoint, OAuthHttpClient, OAuthReply,
 };
@@ -331,8 +334,15 @@ async fn actual_http_is_bound_current_and_bounded() {
     .await;
     assert_eq!(library_token.status(), 200);
     assert_eq!(library_token.server_certificate(), identity.digest);
-    let library_value: Value = serde_json::from_slice(library_token.body()).unwrap();
-    let encoded = library_value["access_token"].as_str().unwrap();
+    let parsed_token = TokenResponse::parse(
+        library_token.status(),
+        library_token.body(),
+        "session:check",
+        ResponseLimits::new(2048).unwrap(),
+    )
+    .unwrap();
+    assert!((1..=120).contains(&parsed_token.expires_in()));
+    let encoded = parsed_token.expose_token();
     let library_form =
         zeroize::Zeroizing::new(format!("client_id=identity-access&token={encoded}"));
     let library_active = library_request(
@@ -344,6 +354,29 @@ async fn actual_http_is_bound_current_and_bounded() {
     )
     .await;
     assert_eq!(library_active.status(), 200);
+    let fresh: i64 =
+        sqlx::query_scalar("SELECT floor(extract(epoch FROM clock_timestamp()))::bigint")
+            .fetch_one(&mut admin)
+            .await
+            .unwrap();
+    let expected = ExpectedActive {
+        issuer: "https://identity.test/",
+        client: "gateway",
+        target: "identity-access",
+        scope: "session:check",
+        certificate: gateway.digest,
+        now: u64::try_from(fresh).unwrap(),
+    };
+    assert!(matches!(
+        IntrospectionResponse::parse(
+            library_active.status(),
+            library_active.body(),
+            expected,
+            ResponseLimits::new(2048).unwrap()
+        )
+        .unwrap(),
+        IntrospectionResponse::Active(_)
+    ));
     let library_value: Value = serde_json::from_slice(library_active.body()).unwrap();
     assert!(
         library_value["active"] == true

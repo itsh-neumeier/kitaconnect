@@ -1083,6 +1083,7 @@ dependencies = [
  "getrandom 0.4.3",
  "hyper",
  "hyper-util",
+ "kitaconnect-service-oauth",
  "kitaconnect-service-transport",
  "mime",
  "percent-encoding",
@@ -1106,6 +1107,16 @@ version = "0.0.0"
 dependencies = [
  "sqlx",
  "tokio",
+]
+
+[[package]]
+name = "kitaconnect-service-oauth"
+version = "0.0.0"
+dependencies = [
+ "base64 0.22.1",
+ "serde",
+ "serde_json",
+ "zeroize",
 ]
 
 [[package]]

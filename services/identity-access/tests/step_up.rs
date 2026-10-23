@@ -5,6 +5,7 @@ use kitaconnect_identity_access::{
         OrganizationAuthority, OrganizationContext,
     },
     mfa::{Enrollment, EphemeralMfaKey, MfaLimits, MfaService, TotpCode},
+    operation_assurance::{self, OperationClass},
     password::{AttemptKey, AttemptLimits, Password, PasswordChecker},
     session_check::{self, Requirement},
     session_rotation,
@@ -284,6 +285,30 @@ async fn additional_proof_is_bound_and_rotated() {
         .await
         .unwrap();
     tokio::time::sleep(Duration::from_secs(6)).await;
+    for operation in [
+        OperationClass::HealthData,
+        OperationClass::CustodyRestrictions,
+        OperationClass::PersonnelFile,
+        OperationClass::InternalDevelopmentRecord,
+        OperationClass::RoleAdministration,
+        OperationClass::SecuritySettings,
+    ] {
+        assert!(
+            operation_assurance::check(&mut c, &old, fid(1), operation, &mut a_org)
+                .await
+                .is_err()
+        );
+    }
+    for operation in [
+        OperationClass::BasicContactData,
+        OperationClass::PublishedPortfolio,
+    ] {
+        assert!(
+            operation_assurance::check(&mut c, &old, fid(1), operation, &mut a_org)
+                .await
+                .is_ok()
+        );
+    }
     assert!(
         session_check::check(
             &mut c,
@@ -319,6 +344,37 @@ async fn additional_proof_is_bound_and_rotated() {
     let fresh = login::finish_step_up(&mut c, &old, &flow, sid(base + 1000), fid(1), &mut a_org)
         .await
         .unwrap();
+    for operation in [
+        OperationClass::HealthData,
+        OperationClass::CustodyRestrictions,
+        OperationClass::PersonnelFile,
+        OperationClass::InternalDevelopmentRecord,
+        OperationClass::RoleAdministration,
+        OperationClass::SecuritySettings,
+    ] {
+        assert!(
+            operation_assurance::check(&mut c, &fresh, fid(1), operation, &mut a_org)
+                .await
+                .unwrap()
+                .multi_factor()
+        );
+    }
+    assert!(
+        operation_assurance::check(&mut c, &fresh, fid(1), OperationClass::Unknown, &mut a_org)
+            .await
+            .is_err()
+    );
+    assert!(
+        operation_assurance::check(
+            &mut c,
+            &old,
+            fid(1),
+            OperationClass::BasicContactData,
+            &mut a_org
+        )
+        .await
+        .is_err()
+    );
     assert!(
         session_check::check(
             &mut c,

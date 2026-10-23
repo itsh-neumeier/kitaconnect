@@ -68,6 +68,10 @@ Die begrenzte OAuth-Fehlerformatausnahme gilt hier nicht.
 | 429 | Ausgeschöpftes gemeinsames Anfragebudget |
 | 503 | Ausgefallene Prüfung oder abgelaufene Anfragefrist |
 
+Protokoll- und Antwortbindungsfehler des bestehenden Introspektionsparsers gelten als Prüfausfall (503).
+Dies umfasst einen nicht passenden Token-Zertifikatsbezug bei sonst lesbarer Introspektionsantwort.
+Direkt abgewiesene Dienstprüfung bleibt 401. Beide Ergebnisse verweigern den Datenzugriff.
+
 401 enthält `WWW-Authenticate: Bearer realm="service"`.
 Bei abgewiesenem vorhandenen Token wird ausschließlich `error="invalid_token"` ergänzt.
 Routerantworten enthalten `Cache-Control: no-store` und `Pragma: no-cache`.

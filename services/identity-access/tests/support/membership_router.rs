@@ -129,6 +129,7 @@ async fn org_wire(server: Arc<MembershipServer>, caller: &Leaf, f: &Fixture<'_, 
 fn body(site: FacilityId) -> String {
     format!(r#"{{"identity_ref":"1","facility_id":"{}"}}"#, site.value())
 }
+#[track_caller]
 fn problem(reply: &Reply, status: u16) {
     assert_eq!(reply.status, status);
     assert!(
@@ -319,13 +320,15 @@ pub(super) async fn check(
             .unwrap()
             .unwrap();
     }
-    for caller in [gateway, &leaf(f.ca, "identity.test")] {
+    // Foreign SAN is rejected locally. A same-SAN replacement reaches introspection,
+    // whose different token/certificate binding is an unavailable protocol check.
+    for (caller, expected) in [(gateway, 401), (&leaf(f.ca, "identity.test"), 503)] {
         let mut wire = org_wire(server.clone(), caller, f).await;
         problem(
             &wire
                 .request("POST", PATH, &running.headers, &body(site))
                 .await,
-            401,
+            expected,
         );
         let _ = timeout(Duration::from_secs(1), &mut wire.task)
             .await

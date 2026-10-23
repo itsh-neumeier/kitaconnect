@@ -4,6 +4,7 @@
 use std::fmt;
 use std::num::NonZeroU128;
 
+pub mod mfa;
 pub mod password;
 pub mod postgres;
 pub mod token;

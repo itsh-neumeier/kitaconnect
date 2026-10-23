@@ -19,7 +19,7 @@ ADR-019 gilt für Dienstidentitäten und aktuelle Rechteprüfung weiter.
 | KC-006B | [#63](https://github.com/itsh-neumeier/kitaconnect/issues/63) | Geschützter Sitzungsbestand, aktuelle Abfrage und atomarer Widerruf | KC-006A |
 | KC-006C | [#64](https://github.com/itsh-neumeier/kitaconnect/issues/64) | Argon2id-Passwortprüfung und Anfragemengenbegrenzung | KC-006B |
 | KC-006D | [#65](https://github.com/itsh-neumeier/kitaconnect/issues/65) | WebAuthn-Registrierung und Anmeldung mit Negativfällen | KC-006B |
-| KC-006E | [#66](https://github.com/itsh-neumeier/kitaconnect/issues/66) | TOTP und atomar einmalige Wiederherstellung | KC-006B; bestätigte MFA-/Wiederherstellungsregeln |
+| KC-006E | [#66](https://github.com/itsh-neumeier/kitaconnect/issues/66) | TOTP und atomar einmalige Wiederherstellung | KC-006B, KC-006C und KC-006D; bestätigte MFA-/Wiederherstellungsregeln |
 | KC-006F | [#67](https://github.com/itsh-neumeier/kitaconnect/issues/67) | Dienstverträge, Gateway-Anbindung und Gesamtnachweise | KC-006C/D/E |
 
 Nur KC-006A ist in diesem Arbeitsschritt aktiv. Jedes folgende Paket erhält einen begrenzten Vertrag vor Implementierung.
@@ -128,3 +128,21 @@ Neue RustSec-Hinweise für bestehende TLS-Pakete wurden durch rustls-webpki 0.10
 ADR-032 hält den tatsächlichen Projekt-Lockfile-Nachweis und die verbleibende Lizenzprüfung fest.
 Der folgende Checkpoint ergänzt Negativtests und erhält eigene CI; den aktuellen Kopf weist PR #71 aus.
 KC-006D bleibt bis Integration offen. Nächstes Teilpaket ist KC-006E / #66 mit weiterhin offenen MFA-/Wiederherstellungsregeln.
+
+## Vorbereitung von KC-006E
+
+Kopf 74c5e1731be0db55f1ef8698d7119f8fcd5cce7c von PR #71 besteht alle Pflichtprüfungen einschließlich ergänzter Negativtests.
+Für KC-006E liegen ein [Vertragsentwurf](../contracts/identity-access/mfa-recovery-v1.md) und [ADR-033](architecture/ADR-033_TOTP_und_Wiederherstellung.md) vor.
+Geprüfte Bibliothekskandidaten sind totp-rs 6.0.0 und aes-gcm 0.11.1.
+Ein getrennter lokaler Prüfgraph besteht die aktuelle RustSec-Prüfung; dies ist kein Projekt-Lockfile- oder Buildnachweis.
+
+Am 21.10.2026 bestätigt die Projektleitung alle vorgelegten MFA-, Wiederherstellungs- und Benachrichtigungsregeln.
+Vertrag und ADR-033 wurden in cffb194 vor Implementierung aktualisiert. Diese Fragen nicht erneut stellen.
+Der Adapter verwendet die gemeinsame Versuchsreservierung aus KC-006C und entwertet laufende Passkey-Vorgänge über KC-006D.
+Diese technischen Abhängigkeiten verlangen kein vorhandenes Passwort oder Passkey als fachliche Voraussetzung für TOTP.
+Migration 0004 ergänzt verschlüsselte TOTP-Faktoren, abgeleitete Offline-Codes, Wiederherstellungszustand und atomare Ereignisaufträge.
+Stand ed44bb0 besteht den ersten vollständigen Linux-CI-Lauf einschließlich MFA-Datenbanktests vor und nach Neustart.
+[CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580138747),
+[Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580138793).
+Der folgende Dokumentationscheckpoint erhält eigene Prüfungen; aktuellen Kopf und Bereitschaft weist PR #72 aus.
+Der produktive Schlüsselbetrieb bleibt offen. KC-006E bleibt bis Integration offen; nächstes Teilpaket ist KC-006F / #67.

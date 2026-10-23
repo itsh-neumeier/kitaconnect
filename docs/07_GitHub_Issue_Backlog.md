@@ -35,3 +35,9 @@ KC-004 und KC-005 bleiben bis zu sämtlichen ursprünglichen Kriterien offen.
 Es gelten die [deutsche Dokumentationsrichtlinie](13_Dokumentationsrichtlinie_DE_ASD_STE100.md)
 und das [Fachwortverzeichnis](14_Fachwortverzeichnis_DE.md).
 Dies ist eine deutsche Adaption der Sprachprinzipien und keine formelle ASD-STE100-Konformität.
+
+## KC-006: Authentisierung in Teilpaketen
+
+Die [KC-006-Planung](24_KC-006_Authentisierung.md) ergänzt KC-006A bis KC-006F mit GitHub-Issues #62 bis #67.
+Das erste Paket enthält nur ein internes Modell. Passwort, Passkeys, TOTP, Wiederherstellung und aktuelle Widerrufsprüfung bleiben vollständige Abnahmekriterien.
+Die bestehende Teilpaketprüfung erfasst auch diese Abhängigkeiten und die Gesamtabnahme.

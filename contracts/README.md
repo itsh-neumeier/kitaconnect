@@ -22,3 +22,6 @@ Seine Loginrollen und erlaubenden Policies gelten ausschließlich im Testcontain
 
 Der [Pool- und Wartungstestvertrag](organization-config/pool-maintenance-test-v1.md) ergänzt Wiederverwendung nach Fehlern und Abbruch sowie konkurrierende Wartung.
 Er definiert Testhilfen und keine produktive Pool- oder Migrationssteuerung.
+
+Der [Identitäts- und Sitzungsmodellvertrag](identity-access/session-model-v1.md) beginnt KC-006A im Dienst `identity-access`.
+Das interne Modell stellt keine Sitzungsnachweise aus und erteilt keine Anmeldung oder Berechtigung.

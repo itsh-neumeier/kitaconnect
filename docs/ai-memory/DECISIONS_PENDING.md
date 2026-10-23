@@ -69,3 +69,16 @@ KC-005B prüft technische Dienstrechte; KC-006/KC-008 integrieren den Benutzerko
 
 Der Projektleitung wurde vorgeschlagen: eigene Datenbankidentität und eigener Verbindungspool je Dienst und Einrichtung.
 Die Rückfrage wurde im Projektchat gestellt. Eine Antwort steht aus. Ohne Antwort gilt keine Freigabe dieser Produktionsarchitektur.
+
+## KC-006: Angefragte Sicherheitsregeln
+
+Stand: 20.10.2026. Drei Rückfragen wurden im Projektchat gestellt. Bisher liegt keine ausdrückliche Antwort vor.
+
+| Thema | Angefragter Vorschlag | Stand und Sperre |
+|---|---|---|
+| MFA-Zuordnung | Pflicht für Konten mit Verwaltungsrechten oder Zugriff auf besonders sensible Daten; sonst zunächst optional. Sensible Aktionen benötigen zusätzliche Prüfung. | Offen. Konkrete Zuordnung später über Berechtigungen; keine abhängige Anmeldefreigabe ohne Antwort. |
+| Browser-Sitzungen | 15 Minuten Inaktivität, 8 Stunden absolute Laufzeit, zusätzliche Prüfung höchstens 5 Minuten gültig; Träger dürfen verkürzen. | Offen. Projektvorschlag, keine gesetzliche Vorgabe oder bestätigte Mindestregel. Keine eingebauten Vorgabewerte. |
+| Wiederherstellung | Einmalige offline aufbewahrte Codes; keine MFA-Rücksetzung allein durch E-Mail. Bestehende Sitzungen nach Wiederherstellung widerrufen und nötige Faktoren neu einrichten. Fälle ohne Nachweis bleiben bis zum geprüften Ersatzverfahren gesperrt. | Offen. KC-006E darf abhängige Abläufe erst nach ausdrücklicher Entscheidung umsetzen. |
+
+KC-006A / #62 kann unabhängig davon nur Kennungstypen und lokale Zeit-/Zustandsregeln mit expliziten Eingaben implementieren.
+Die [KC-006-Planung](../24_KC-006_Authentisierung.md) beschreibt Teilpakete und Abnahmegrenzen.

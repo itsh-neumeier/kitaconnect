@@ -366,3 +366,9 @@ Der vollständige OAuth-Endpunktvertrag, aktive Registrierung und Fachrechte fol
 Der Vertrag enthält eine OpenAPI-3.1-Beschreibung. Die Projektleitung bestätigt ausdrücklich genau einen registrierten DNS-Namen je Dienst und zusätzlich den aktiven genauen Zertifikatsfingerabdruck.
 Keine Wildcards oder automatische Registrierung. Produktive Namen bleiben offen. Diese Antwort wird vor abhängigem Code versioniert.
 Das Protokollmodell erteilt keine Berechtigung.
+
+## ADR-047 – Aktuelle Dienstanmeldung
+
+[ADR-047](architecture/ADR-047_Aktuelle_Dienstanmeldung.md) konkretisiert die bestätigte DNS-/Fingerabdruckbindung vor Code.
+Eine ausdrückliche unveränderliche Namenskonfiguration wird mit tatsächlichem SAN und aktuellem Registrierungsbestand geprüft.
+Keine zusätzliche Verwaltungsfunktion, Migration oder erlaubende Laufzeitpolicy entsteht.

@@ -19,7 +19,10 @@ use tokio::{
     net::TcpStream,
 };
 use tokio_rustls::{TlsAcceptor, TlsConnector, TlsStream};
-use x509_parser::prelude::{FromDer, X509Certificate};
+use x509_parser::{
+    extensions::GeneralName,
+    prelude::{FromDer, X509Certificate},
+};
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct TransportError;
@@ -48,6 +51,35 @@ pub struct PeerCertificate {
     fingerprint: [u8; 32],
     not_before: u64,
     not_after: u64,
+    dns_names: Vec<String>,
+}
+
+/// One explicitly registered DNS identity, not a certificate or permission.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RegisteredDnsName(String);
+impl RegisteredDnsName {
+    pub fn new(name: &str) -> Result<Self, TransportError> {
+        if name.is_empty()
+            || name.len() > 253
+            || !name.is_ascii()
+            || name.parse::<std::net::IpAddr>().is_ok()
+            || name.split('.').any(|label| {
+                label.is_empty()
+                    || label.len() > 63
+                    || label.starts_with('-')
+                    || label.ends_with('-')
+                    || !label
+                        .bytes()
+                        .all(|b| b.is_ascii_alphanumeric() || b == b'-')
+            })
+        {
+            return Err(TransportError);
+        }
+        Ok(Self(name.to_ascii_lowercase()))
+    }
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
 }
 impl PeerCertificate {
     pub fn fingerprint(&self) -> [u8; 32] {
@@ -58,6 +90,11 @@ impl PeerCertificate {
     }
     pub fn not_after(&self) -> u64 {
         self.not_after
+    }
+    pub fn matches_dns_name(&self, expected: &RegisteredDnsName) -> bool {
+        self.dns_names
+            .iter()
+            .any(|name| name.eq_ignore_ascii_case(expected.as_str()))
     }
     fn parse(der: &CertificateDer<'_>) -> Result<Self, TransportError> {
         let (remainder, cert) =
@@ -76,6 +113,24 @@ impl PeerCertificate {
             fingerprint: Sha256::digest(der.as_ref()).into(),
             not_before,
             not_after,
+            dns_names: cert
+                .subject_alternative_name()
+                .map_err(|_| TransportError)?
+                .map(|extension| {
+                    extension
+                        .value
+                        .general_names
+                        .iter()
+                        .filter_map(|name| {
+                            if let GeneralName::DNSName(name) = name {
+                                Some((*name).to_owned())
+                            } else {
+                                None
+                            }
+                        })
+                        .collect()
+                })
+                .unwrap_or_default(),
         })
     }
     fn valid(&self, time: u64) -> bool {

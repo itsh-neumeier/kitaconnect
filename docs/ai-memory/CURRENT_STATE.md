@@ -7,16 +7,16 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 ## Arbeitsstand
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
-- branch: codex/kc-006f-oauth-vertrag auf PR #87 / 516ecdf.
-- pull_request: Eigener Folge-PR auf codex/kc-006f-http-verbindungsbindung wird vorbereitet.
-- head_commit: Vertrag/OpenAPI/ADR-046 in 7e072be; ausdrückliche DNS-/Fingerabdruckbestätigung vor Code in 10f8565. Aktueller Codekopf folgt im PR.
-- objective: OAuth-Formularprüfung und kanonische Token-/Introspektionsdarstellung vor tatsächlichen Endpunkten prüfen.
-- completed: PR #87 / 516ecdf ist erneut vollständig grün und konfliktfrei bestätigt. Alle 21 Sicherheits-Rückübernahmen bleiben erledigt. Protokollvertrag und OpenAPI 3.1.1 sind versioniert. Formularmodell, kanonische Tokendarstellung und Metadatenserializer sind vorbereitet. DNS-Name plus aktiver genauer Zertifikatsfingerabdruck ist ausdrücklich bestätigt; nicht erneut fragen.
-- remaining: Nativen Protokoll-Codekopf und erweiterte Diensttoken-Datenbankgruppe prüfen. Danach bestätigte DNS-Namensregistrierung, Prüfung des tatsächlichen Zertifikats und aktuellen Adapter in kleinem Folgepaket anschließen. Router mit ausdrücklich konfigurierten Grenzen, belastbare Restlaufzeit der Ausgabe, Introspektion und Organisation bleiben offen. Zusätzliches HTTPS-Browserprofil bleibt offen.
-- migration_state: Keine Migration oder Datenbankrechte geändert. Zwei direkte Abhängigkeitseinträge für vorhandene Versionen base64 0.22.1 / percent-encoding 2.3.2. Lockfile ergänzt nur diese Kanten beim Identitätsdienst; keine Paketversion geändert.
+- branch: codex/kc-006f-dienstanmeldung auf PR #88 / 267aef4.
+- pull_request: PR #89 auf codex/kc-006f-oauth-vertrag / PR #88.
+- head_commit: Protokollvertrag 7e072be und Bestätigung 10f8565 vor Protokollcode 267aef4. Dienstanmeldevertrag/ADR-047 vor Adaptercode in 24324ca; Codekopf c4dcfd6. Aktueller abschließender Kopf steht im PR.
+- objective: Bestätigte DNS-/Fingerabdruckbindung mit tatsächlichem mTLS und aktueller Identitätsregistrierung verbinden.
+- completed: PR #88 / 267aef4 besteht alle zehn aktuellen Prüfungen mit sieben Protokolltests und sechzehn SQLx-Gruppen vor/nach Neustart. DNS-Name plus aktiver genauer Fingerabdruck ist bestätigt; nicht erneut fragen. PR #89 / c4dcfd6 besteht native Push-CI mit tatsächlicher Dienstanmeldung und allen siebzehn SQLx-Gruppen vor/nach Neustart. Zusätzlicher negativer Common-Name-Nachweis und abschließender Checkpoint erhalten eigene vollständige CI.
+- remaining: Abschließenden Kopf von PR #89 samt allen Prüfungen bestätigen. Danach belastbare Ausgaberestlaufzeit und grobe interne Fehlerunterscheidung zwischen Ablehnung und Prüfausfall vor Routercode ergänzen; keine Diagnosedaten ausgeben. Tatsächliche Endpunkte, Introspektion, Organisation, Gateway und Browser bleiben offen. Namensentscheidung nicht erneut fragen.
+- migration_state: Keine Migration oder Datenbankrechte geändert. Vorhandene Paketversionen bleiben erhalten; nur direkte Workspace-/Testabhängigkeiten im Identitätsdienst ergänzt. Neue isolierte Testdatenbank kc_service_auth_test verwendet Migrationen 1 bis 9. Keine produktive Namenskonfiguration oder erlaubende RLS-Policy.
 - known_failures: Windows-Linker/Docker fehlen lokal. Native Ausführung deshalb in Linux-CI; keine lokale PostgreSQL-Ausführung behaupten. Die ältere Sicherheits-Rückübernahme ist vollständig geprüft; historische Fehlversuche nicht als aktuellen Stand verwenden. #47/#48 behalten die Ablehnungsempfehlung.
-- test_results: Lokal Rustfmt, gesperrte Offline-Metadatenauflösung, 50 Node-Tests einschließlich sechs statischer OAuth-Vertragsprüfungen, Struktur-/Verweisprüfung für 50 Issues/63 Dokumente und git diff --check erfolgreich. Statische Projektinvarianten sind kein vollständiger OpenAPI-Validator. Neue native Rust-/Datenbanktests noch nicht ausgeführt; Linux-CI folgt. Keine lokale PostgreSQL-Ausführung behaupten.
-- test_commands: cargo fmt --all --check; cargo metadata --locked --offline --no-deps --format-version 1; node --test scripts/*.test.mjs; node scripts/check-project.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, sechzehn SQLx-Gruppen einschließlich erweiterter aktiver OAuth-Darstellung im Diensttokentest vor/nach Neustart. Lokal 50 Node-Tests erfolgreich.
+- test_results: Lokal Rustfmt, gesperrte Offline-Metadatenauflösung, 50 Node-Tests einschließlich sechs statischer OAuth-Vertragsprüfungen, Struktur-/Verweisprüfung für 50 Issues/64 Dokumente, Syntaxprüfung des Datenbankskripts, git diff --check und Gitleaks erfolgreich. PR #88 vollständig grün. Codekopf c4dcfd6 besteht Clippy, Rust-Tests/Build und siebzehn SQLx-Gruppen vor/nach Neustart in nativer Push-CI. Abschließender Common-Name-Nachweis erhält eigene CI. Statische Projektinvarianten sind kein vollständiger OpenAPI-Validator. Keine lokale PostgreSQL-Ausführung behaupten.
+- test_commands: cargo fmt --all --check; cargo metadata --locked --offline --no-deps --format-version 1; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, siebzehn SQLx-Gruppen einschließlich tatsächlicher Dienstanmeldung vor/nach Neustart. Lokal 50 Node-Tests erfolgreich.
 - dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72 und #73 offen. PR #73 am Abschlusskopf vollständig grün. Keine ungefragte Integration.
 - security_notes: MFA-Pflicht, Offline-Wiederherstellung, Benachrichtigungsaufträge, WebAuthn-Testprofil, beide MFA-Kombinationen und Cookie-/CSRF-Schutz sind bestätigt. Fristen sind pro Einrichtung einstellbar; 900/28.800/300 Sekunden sind bestätigte Voreinstellungen und Obergrenzen. Diese Fragen nicht erneut stellen. Bestehende positive Faktor-Ergebnisse sind weiterhin keine einmaligen Sitzungsabschlussnachweise. Produktiver Schlüsselbetrieb, Domain, Versuchslimits und Rollen-/Poolbindung bleiben gesondert.
 
@@ -325,12 +325,24 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 - Keine Migration, Rechte oder Abhängigkeiten geändert. Noch kein Router, aktueller Registrierungsadapter, Introspektionsendpunkt oder Browsernachweis. Keine Fachberechtigung aus Metadaten ableiten.
 - Der abschließende reine Dokumentationskopf erhält eigene CI. Vollständigen aktuellen Abschluss im PR prüfen. Persönliche/sprachliche Durchsicht und Merge-Auftrag bleiben gesondert.
 
+## OAuth-Protokoll und aktuelle Dienstanmeldung am 22.10.2026
+
+- PR #88 / 267aef4 bestätigt Formular-/Darstellungsmodell nach Vertrag/OpenAPI/ADR-046. Bestätigung 10f8565 bindet je Dienst genau einen registrierten DNS-Namen plus aktiven genauen Fingerabdruck; keine Wildcards oder automatische Registrierung. Nicht erneut fragen.
+- Alle zehn aktuellen Prüfungen von #88 sind grün: [native CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39779653124), [Sicherheitsprüfung](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39779653091). Job 119827324279 bestätigt sieben Protokolltests und alle sechzehn bisherigen SQLx-Gruppen vor/nach Neustart.
+- PR #89 auf #88 ergänzt nach Vertrag/ADR-047 in 24324ca tatsächliche SAN-Prüfung und aktuellen lesenden Registrierungsadapter. Konfiguration ist unveränderlich und ausdrücklich übergeben; aktiver Zustand wird weiter bei jeder Prüfung aus der Datenbank gelesen.
+- Codekopf c4dcfd6 besteht [native Push-CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39780870961). Job 119831481622 bestätigt alle siebzehn SQLx-Gruppen vor/nach Neustart, einschließlich tatsächlicher TLS-/Registrierungsgruppe. Deren Fälle umfassen aktuellen Widerruf auf offener Verbindung, Zertifikatswechsel, falsche Namen/Fingerabdrücke/Zeiten/Aussteller, Fehlerzeugen, geschlossene Laufzeitrolle, Verbindungsende und Datenbankausfall.
+- Der abschließende Kopf ergänzt den ausdrücklichen Negativfall eines passenden Common Name bei falschem SAN. Er erhält eigene vollständige CI; aktuelle Abschlussnachweise im PR prüfen.
+- Keine Migration, Paketversion, produktive Namensvorgabe oder erlaubende Laufzeitpolicy geändert. Frische Testzertifikate bleiben im Arbeitsspeicher; eigene synthetische Datenbanken und Loopback-Verbindungen sind keine produktive Laufzeitfreigabe.
+- HTTP-Adapter müssen vor Umsetzung grobe Fehlerklassen für Ablehnung/Prüfausfall erhalten. Die bisherigen internen Fehler sind absichtlich allgemein. Notwendige Ausfälle dürfen später nicht als angebliches `active=false` oder als erfolgreiche Anmeldung dargestellt werden.
+- `expires_in` darf nicht aus der angeforderten Laufzeit kopiert werden. Der Ausgabeadapter muss bestätigte Ablaufmetadaten und aktuelle Restlaufzeit bereitstellen. Danach tatsächliche HTTP-/Introspektionsanbindung ergänzen.
+- Persönliche/sprachliche Durchsicht erfolgt gesammelt. Kein Merge-Auftrag und keine ursprünglichen Gesamtissues geschlossen. Das zusätzliche HTTPS-Browserprofil ist erneut zur Entscheidung vorgelegt; bis zur ausdrücklichen Antwort gesperrt.
+
 ## Nächste drei Aktionen
 
-Aktueller OAuth-Protokollbaustein nach PR #87:
+Aktuelle Dienstanmeldung nach PR #88:
 
-1. Aktuellen Folge-PR und native CI des Protokollmodells prüfen. Sieben Parser-/Darstellungstests und aktive Antwort im Diensttokentest vor/nach Neustart getrennt bestätigen. PR #87 und Sicherheits-Rückübernahmen sind erledigt; nicht wiederholen.
-2. Bestätigte DNS-Namenszuordnung und aktiven genauen Fingerabdruck nach getrenntem Vertrag an die tatsächliche mTLS-Verbindung binden. Keine Wildcards oder automatische Registrierung. Danach aktuelle Registrierung, Ausgaberestlaufzeit und tatsächliche Endpunkte ergänzen. Keine Fachrechte aus Diensttoken oder Mitgliedschaft ableiten.
+1. Aktuellen Kopf von PR #89 samt Common-Name-Negativfall und vollständiger CI prüfen. Siebzehn Datenbankgruppen müssen vor/nach Neustart bestehen. #88 ist bereits vollständig grün; #87 und Sicherheits-Rückübernahmen nicht wiederholen.
+2. Ausgaberestlaufzeit und grobe Fehlerklassen nach getrenntem Vertrag ergänzen. Danach tatsächliche Axum-Endpunkte mit ausdrücklich konfigurierten Grenzen anschließen. Namenszuordnung ist bestätigt; keine Fachrechte aus Diensttoken oder Mitgliedschaft ableiten. Organisation und Gateway danach ergänzen.
 3. Antwort zum zusätzlichen HTTPS-Testprofil übernehmen, sobald sie vorliegt. Ohne Antwort dieses Profil nicht implementieren. Unabhängige Organisations-/Gateway-Vorbereitung gemäß WORK_QUEUE fortsetzen.
 
 Der lokale Adapterbranch wurde auf 5a4d5aa übernommen. Der eigene Zwischenstash ist vollständig angewendet und entfernt.

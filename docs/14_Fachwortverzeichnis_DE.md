@@ -64,6 +64,9 @@
 | SAML / OIDC | Security Assertion Markup Language beziehungsweise OpenID Connect |
 | MFA / TOTP | Mehrfaktor-Authentisierung beziehungsweise zeitbasierte Einmalpasswörter |
 | TLS / mTLS | Geschützte Transportverbindung beziehungsweise TLS mit beidseitiger Zertifikatsprüfung |
+| DNS | Domain Name System; Namenssystem für Netzwerkziele |
+| SAN | Subject Alternative Name; alternativer Name im Zertifikat, etwa ein DNS-Name |
+| ASCII | American Standard Code for Information Interchange; hier der 7-Bit-Zeichensatz für technische Namen |
 | EXIF / GPS | Bildmetadaten beziehungsweise Positionsangaben des Global Positioning System |
 | SMTP / SPF / DKIM / DMARC | Mailversand beziehungsweise Verfahren für Absender- und Domainprüfung |
 | ICS / HMAC / VAPID | Kalenderformat, schlüsselgebundener Nachrichtencode beziehungsweise Identifikation des Web-Push-Anwendungsservers |

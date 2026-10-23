@@ -12,3 +12,5 @@ Siehe [P0-Plan](../docs/15_P0_Initialisierung.md).
 
 Der [interne Organisationsmodellvertrag v1](organization-config/model-v1.md) ist das erste P1-Arbeitspaket.
 Er beschreibt die Rust-Bibliothek und ist kein HTTP-Vertrag. Öffentliche Endpunkte folgen erst mit geprüften Rechten.
+Der [Speichervertrag](organization-config/storage-v1.md) und der [Adaptervertrag](organization-config/adapter-v1.md)
+ergänzen die Datenbankstruktur und die interne SQLx-Anbindung. Sie erteilen keine Benutzerrechte.

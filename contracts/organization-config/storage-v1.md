@@ -50,8 +50,9 @@ Diese Testidentität ist kein Anwendungsdienst und kein Entwurf einer produktive
 Die Tests starten den Server mit demselben Datenbestand neu und prüfen den unveränderten Bestand.
 Sie prüfen außerdem einen abgebrochenen Schreibvorgang und eine abgebrochene Erstmigration.
 
-Dieser Schritt enthält SQL-Speicherung und Datenbanktests. Die Rust-/SQLx-Anbindung folgt gesondert.
-Vor ihrer Aufnahme müssen Versionen und Sicherheitsmeldungen erneut geprüft werden.
+Der erste Schritt enthält SQL-Speicherung und Datenbanktests.
+Der folgende [Adaptervertrag](adapter-v1.md) ergänzt die Rust-/SQLx-Anbindung.
+Versionen und Sicherheitsmeldungen werden bei ihrer Aufnahme erneut geprüft.
 Es gibt keinen HTTP-Endpunkt, keine automatische Startmigration und keine Freigabe personenbezogener Echtdaten.
 KC-004C ergänzt die aktuelle Benutzerrechteprüfung vor jeder öffentlichen Dienstoperation.
 Die vollständigen KC-005-Isolationstests für Einrichtungsschemas werden hier nicht als erledigt ausgewiesen.

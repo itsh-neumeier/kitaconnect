@@ -6,16 +6,16 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 
 ## Arbeitsstand
 
-- issue_id: [KC-004B / #51](https://github.com/itsh-neumeier/kitaconnect/issues/51), SQL-Persistenz und echte Datenbanktests.
-- branch: codex/kc-004b-postgres-persistenz; baut auf PR #53 / 5d42ef8 auf.
-- pull_request: [PR #54](https://github.com/itsh-neumeier/kitaconnect/pull/54), Basis codex/kc-004a-organisationsmodell.
-- head_commit: Implementierung 5deba61d2411841c0e446d8610eae1604cbd28b6; Speichervertrag und ADR-024 zuvor in a209a25 versioniert. Dieser Checkpoint folgt gesondert; aktuellen Kopf mit git rev-parse HEAD prüfen.
-- objective: Rollen, transaktionssichere Erstmigration und synthetische PostgreSQL-Tests; keine vorgezogene Benutzerrechtefreigabe.
-- completed: SQL-Speichervertrag, ADR-024, getrennte NOLOGIN-Rollen, restriktives Schema, ID-Domäne und Referenztabellen; Testläufer für echten Server-Neustart, Rechte und Rollback.
-- remaining: Abschließenden Checkpoint in CI prüfen und PR zur Durchsicht bereitstellen. Rust-/SQLx-Anbindung bleibt als Folgeschritt von #51 offen.
-- migration_state: Versionierte Erstmigration und gesonderte Provisionierung hinzugefügt. Noch keine produktive Datenbank oder Laufzeitidentität angelegt.
-- known_failures: Keine bekannten fehlgeschlagenen Pflichtprüfungen. Lokal fehlen Docker und psql sowie der Windows-C++-Linker; echte PostgreSQL-Tests und Rust-Build sind in Linux-CI erfolgreich.
-- dependencies: PR #53 offen und vollständig grün. Folge-PR gegen dessen Branch öffnen; keinen ungefragten Merge ausführen. Nach Integration Basis auf main umstellen und erneut prüfen.
+- issue_id: [KC-004B / #51](https://github.com/itsh-neumeier/kitaconnect/issues/51), Rust-/SQLx-Anbindung.
+- branch: codex/kc-004b-sqlx-adapter auf PR #54 / 16cd295.
+- pull_request: [PR #55](https://github.com/itsh-neumeier/kitaconnect/pull/55), Basis codex/kc-004b-postgres-persistenz.
+- head_commit: geprüfter Adapterstand fc1f7756aaa26752b9319cdf893bbda47fcd67d4; Vertrag und ADR-025 zuvor in d3dbb96 versioniert. Dieser Abschlusscheckpoint folgt gesondert; aktuellen Kopf mit git rev-parse HEAD prüfen.
+- objective: SQLx-Adapter mit echten PostgreSQL-Tests; keine neue Berechtigungsregel oder Laufzeitfreigabe.
+- completed: Adapter für Anlage und Lesen, gebundene Parameter und exakte u128-Kennungen, typisierte Fehler, callergeführte Transaktionen; Testläufer um Rust-Prüfung vor/nach Neustart erweitert.
+- remaining: Abschlusscheckpoint prüfen und PR #55 zur Durchsicht bereitstellen. #51 bleibt bis Integration offen.
+- migration_state: Migration 0001 und produktionsbezogene NOLOGIN-Provisionierung unverändert. Nur im isolierten Testcontainer entsteht eine kurzlebige Loginrolle ohne Passwort.
+- known_failures: Keine offenen CI-Fehler. Lokales cargo check scheitert weiter am fehlenden Windows-C++-Linker; Docker/psql fehlen ebenfalls. Historischer CI-Fehler bei der Socket-Bereinigung ist durch Wiederherstellung von Host-UID/GID und Modus behoben und erneut erfolgreich geprüft.
+- dependencies: PR #53 und #54 bleiben offen und grün. Neuer Folge-PR gegen codex/kc-004b-postgres-persistenz. Keine ungefragte Integration; nach Basis-Merges retargeten und neu prüfen.
 
 ## P0-Abschluss
 
@@ -68,19 +68,21 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Prüfung und nächste drei Aktionen für #51
 
-- Lokal: JavaScript-Syntax, Struktur-/Verweisprüfung, Actionlint und git diff --check erfolgreich.
-- PostgreSQL-Testimage 18.6-bookworm mit Digest afc7e2d441324c0388fa80c3d24f733b4194a4eb7f47dd8ee2b08eb1a24a647c aus offizieller Registry geprüft.
-- Testcontainer ohne Netzwerk und Host-Port; lokale Testanmeldung nur im kurzlebigen Testcontainer.
-- Pflichtprüfung rust umfasst jetzt auch Datenbanktests. Alle bisherigen Pflichtstatus bleiben unverändert geschützt.
-- Runtime besitzt keine erlaubende RLS-Policy. Aktuelle Benutzerrechteprüfung bleibt #52 vorbehalten.
-- Implementierung 5deba61: alle fünf Pflichtprüfungen erfolgreich. Echter PostgreSQL-Test einschließlich Rollback, Laufzeit-/Eigentümergrenzen und Server-Neustart im Pflichtstatus rust erfolgreich.
-  Nachweise: [CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39289182939),
-  [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39289183446).
-- 40 Node-Tests, JavaScript-Syntaxprüfung, Regelsatzvalidatoren und Gitleaks ebenfalls erfolgreich.
-- Der folgende Checkpoint-Commit erhält eigene CI. Ergebnis im PR nachführen.
+- Vorgänger PR #54, 16cd295: alle fünf Pflichtprüfungen erfolgreich, einschließlich echter PostgreSQL-Migrations-/Rechte-/Neustarttests.
+- Neu: SQLx 0.9.0 und Tokio 1.54.0 anhand offizieller Paketmetadaten geprüft; Versionen exakt festgelegt, Cargo.lock aktualisiert.
+- Aktueller lokaler RustSec-Abgleich mit aktualisierter Datenbank und Paketindex erfolgreich: 155 Lockfile-Pakete, keine blockierenden Befunde.
+  Advisory-DB: 999ec89d5d3f10f20be14750ec8c2d8b44e0ac9b.
+- Lokal erfolgreich: Rustfmt, 40 Node-Tests, JavaScript-Syntax, Struktur-/Verweisprüfung, Actionlint und git diff --check.
+- Adapterstand fc1f775: alle fünf Pflichtprüfungen erfolgreich, einschließlich Clippy, Build, Rust-Tests, echter SQLx-Prüfung vor/nach Neustart und vollständiger Socket-Bereinigung.
+  [CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39303790312),
+  [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39303790275).
+  Lokales cargo check scheitert am fehlenden Windows-C++-Linker und gilt nicht als bestanden.
+- Der echte PostgreSQL-Test läuft weiterhin im Pflichtstatus rust. Ein temporärer Unix-Socket ermöglicht die Rust-Verbindung ohne Container-Netzwerk oder Host-Port.
+- Runtime-RLS bleibt ohne erlaubende Policy. Aktuelle Benutzerrechteprüfung und Dienstfreigabe bleiben #52 vorbehalten.
+- Gitleaks auf vorgemerkter Implementierung und Korrekturen ohne Befund. Abschlusscheckpoint erneut prüfen; dessen eigene CI im PR nachführen.
 
-1. Abschlussstand von PR #54 prüfen und zur Durchsicht bereitstellen. PR #53 bleibt offene Basis; nach deren Integration auf main umstellen und neu prüfen.
-2. Rechte-/Migrationsnachweise dokumentieren. #51 bis zur Rust-Anbindung und vollständigen Abnahme offen lassen.
-3. SQLx-Version und Sicherheitsmeldungen für Rust-Persistenz prüfen; danach kleine Adapter- und Datenbanktests ergänzen.
+1. Abschlusscheckpoint von PR #55 in CI prüfen und PR zur Durchsicht bereitstellen. Integrationsfolge bleibt #53, #54, #55; nach Basisintegration retargeten und erneut prüfen.
+2. #51 mit Adapter- und Datenbanknachweisen aktualisieren. Erst nach Integration und vollständigen Kriterien abschließen.
+3. KC-005 als nächstes kleines Paket vorbereiten. Dabei Planungsabhängigkeiten präzisieren: Das Grundmodell #50 ist Voraussetzung; das Gesamtissue #4 darf keinen Zyklus mit #52 und dessen Identitäts-/Policy-Voraussetzungen erzeugen. Keine Fachrechte erfinden.
 
-Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/023/024, Speichervertrag und aktuellen GitHub-Stand lesen.
+Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/023/024/025, Adaptervertrag und aktuellen GitHub-Stand lesen.

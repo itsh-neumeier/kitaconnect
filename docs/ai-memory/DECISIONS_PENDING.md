@@ -165,3 +165,10 @@ Die anschließende Frage zu Voreinstellungen und Obergrenzen beantwortet sie aus
 Diese vier Antworten ersetzen die zuvor dokumentierten offenen Fragezustände. Nicht erneut fragen.
 Vertrag, ADR-034 und [ADR-035](../architecture/ADR-035_Sitzungsfristen_je_Einrichtung.md) werden vor Code versioniert.
 Produktive Domain, Versuchslimits, konkrete Verwaltungsrechte und Rollen-/Schlüsselbindung bleiben gesondert.
+
+## KC-006F: Zusätzliches HTTPS-Testprofil angefragt
+
+Am 21.10.2026 wurde für kommende isolierte Gateway-/Browserprüfungen zusätzlich https://localhost:3443 vorgeschlagen.
+Das bestehende HTTP-WebAuthn-Testprofil soll getrennt erhalten bleiben. Testzertifikate würden ausschließlich zur Laufzeit erzeugt und nicht versioniert.
+Die produktive Domain bleibt ausdrücklich offen. Eine Antwort steht aus; das zusätzliche Profil darf vorher nicht implementiert werden.
+Interne Sitzungs-, Rotations- und Vertragsarbeiten bleiben davon unabhängig.

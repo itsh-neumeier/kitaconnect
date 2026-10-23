@@ -7,8 +7,8 @@ Diese Liste ist eine Momentaufnahme und kein Abschlussnachweis. GitHub bleibt ve
 
 ## Aktueller Schritt
 
-KC-006F / #67: aktuelle Sitzungsprüfung und lokale Abmeldung auf codex/kc-006f-sitzungspruefung.
-Danach folgen Rotation, zweckgebundene erneute Faktorprüfung und der echte Organisations-/Gateway-Vertrag.
+KC-006F / #67: PR #76 bestätigt aktuelle Sitzungsprüfung und lokale Abmeldung mit zehn grünen Prüfungen.
+Aktuell folgt Rotation auf codex/kc-006f-sitzungsrotation. Danach folgen zweckgebundene erneute Faktorprüfung und der echte Organisations-/Gateway-Vertrag.
 Die 17 ursprünglichen PRs sind technisch durchgesehen. Korrektur-PR #75 ist vollständig grün.
 Die gesammelte persönliche und sprachliche Durchsicht ist noch nicht erfolgt. Daraus keinen Merge-Auftrag oder erfülltes Review ableiten.
 #47/#48 behalten die begründete Ablehnungsempfehlung. Die automatisierte Arbeit an anderen freigegebenen Schritten läuft weiter.

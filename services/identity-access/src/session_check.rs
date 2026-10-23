@@ -62,7 +62,7 @@ fn autocommit(c: &PgConnection) -> Result<(), CheckError> {
         Ok(())
     }
 }
-async fn now(c: &mut PgConnection) -> Result<u64, CheckError> {
+pub(crate) async fn now(c: &mut PgConnection) -> Result<u64, CheckError> {
     sqlx::query_scalar::<_, String>("SELECT floor(EXTRACT(epoch FROM clock_timestamp()))::text")
         .fetch_one(c)
         .await?
@@ -92,7 +92,7 @@ async fn record(c: &mut PgConnection, token: &SessionToken) -> Result<SessionRec
         .bind(token.fingerprint().as_slice()).fetch_one(c).await?;
     postgres::decode(&r).map_err(|_| CheckError)
 }
-async fn save_record(c: &mut PgConnection, r: &SessionRecord) -> Result<(), CheckError> {
+pub(crate) async fn save_record(c: &mut PgConnection, r: &SessionRecord) -> Result<(), CheckError> {
     let state = match r.state {
         SessionState::Active => "active",
         SessionState::Expired => "expired",
@@ -157,7 +157,7 @@ async fn binding(c: &mut PgConnection, r: &SessionRecord) -> Result<Binding, Che
     })
 }
 #[derive(PartialEq, Eq)]
-struct Observation {
+pub(crate) struct Observation {
     version: u64,
     raw: [u64; 3],
     caps: [u64; 3],
@@ -236,7 +236,7 @@ fn combine(
         required: b.required || current.mfa_required || totp || old.is_some_and(|o| o.required),
     })
 }
-async fn save_observation(
+pub(crate) async fn save_observation(
     c: &mut PgConnection,
     id: SessionRecordId,
     o: &Observation,
@@ -294,28 +294,90 @@ async fn current(
 ) -> Result<CurrentSession, CheckError> {
     autocommit(c)?;
     let mut tx = c.begin_with("BEGIN ISOLATION LEVEL READ COMMITTED").await?;
-    let identity = identity(&mut tx, token).await?.ok_or(CheckError)?;
-    login::lock_identity(&mut tx, identity)
+    let checked =
+        match checked_in_transaction(&mut tx, token, facility, requirement, authority).await {
+            Ok(value) => value,
+            Err(error) => {
+                tx.rollback().await?;
+                return Err(error);
+            }
+        };
+    let Some(mut checked) = checked else {
+        tx.commit().await?;
+        return Err(CheckError);
+    };
+    if activity {
+        if checked
+            .record
+            .record_activity(checked.record.last_observed_at)
+            .is_err()
+        {
+            tx.rollback().await?;
+            return Err(CheckError);
+        }
+        if let Err(error) = save_record(&mut tx, &checked.record).await {
+            tx.rollback().await?;
+            return Err(error);
+        }
+    }
+    tx.commit().await?;
+    Ok(checked.context)
+}
+pub(crate) struct CheckedSession {
+    pub(crate) record: SessionRecord,
+    pub(crate) observed: Observation,
+    context: CurrentSession,
+}
+impl CheckedSession {
+    pub(crate) fn observe_time(&mut self, time: u64) -> Result<bool, CheckError> {
+        self.record.observe(time).map_err(|_| CheckError)?;
+        let absolute = self
+            .record
+            .created_at
+            .checked_add(self.observed.caps[1])
+            .ok_or(CheckError)?;
+        let idle = self
+            .record
+            .last_activity_at
+            .checked_add(self.observed.caps[0])
+            .ok_or(CheckError)?;
+        if time >= absolute.min(idle) {
+            self.record.state = SessionState::Expired;
+        }
+        Ok(self.record.state == SessionState::Active)
+    }
+}
+pub(crate) async fn checked_in_transaction(
+    c: &mut PgConnection,
+    token: &SessionToken,
+    facility: LoginFacilityId,
+    requirement: Requirement,
+    authority: &mut impl OrganizationAuthority,
+) -> Result<Option<CheckedSession>, CheckError> {
+    if !c.is_in_transaction() {
+        return Err(CheckError);
+    }
+    let identity = identity(&mut *c, token).await?.ok_or(CheckError)?;
+    login::lock_identity(&mut *c, identity)
         .await
         .map_err(|_| CheckError)?;
-    let mut record = record(&mut tx, token).await?;
+    let mut record = record(&mut *c, token).await?;
     if record.identity != identity || record.state != SessionState::Active {
         return Err(CheckError);
     }
     if record
-        .observe(now(&mut tx).await?)
+        .observe(now(&mut *c).await?)
         .map_err(|_| CheckError)?
         != SessionState::Active
     {
-        save_record(&mut tx, &record).await?;
-        tx.commit().await?;
-        return Err(CheckError);
+        save_record(&mut *c, &record).await?;
+        return Ok(None);
     }
-    let b = binding(&mut tx, &record).await?;
+    let b = binding(&mut *c, &record).await?;
     if b.facility != facility {
         return Err(CheckError);
     }
-    let old = observation(&mut tx, record.id).await?;
+    let old = observation(&mut *c, record.id).await?;
     if let Some(old) = &old {
         let initial = [
             record.limits.idle_seconds,
@@ -335,18 +397,17 @@ async fn current(
             .ok_or(CheckError)?;
         if record.last_observed_at >= absolute.min(idle) {
             record.state = SessionState::Expired;
-            save_record(&mut tx, &record).await?;
-            tx.commit().await?;
-            return Err(CheckError);
+            save_record(&mut *c, &record).await?;
+            return Ok(None);
         }
     }
     let recovery:Option<bool>=sqlx::query_scalar("SELECT recovery_required FROM identity_access.mfa_accounts WHERE identity_id=$1::text::numeric")
-        .bind(identity.value().to_string()).fetch_optional(&mut *tx).await?;
+        .bind(identity.value().to_string()).fetch_optional(&mut *c).await?;
     if recovery == Some(true) {
         return Err(CheckError);
     }
     let totp:bool=sqlx::query_scalar("SELECT EXISTS(SELECT FROM identity_access.totp_factors WHERE identity_id=$1::text::numeric AND state='active')")
-        .bind(identity.value().to_string()).fetch_one(&mut *tx).await?;
+        .bind(identity.value().to_string()).fetch_one(&mut *c).await?;
     let current = authority
         .current(identity, facility)
         .await
@@ -354,7 +415,7 @@ async fn current(
         .bound(identity, facility)
         .map_err(|_| CheckError)?;
     let observed = combine(&record, &b, old.as_ref(), &current, totp)?;
-    let time = now(&mut tx).await?;
+    let time = now(&mut *c).await?;
     record.observe(time).map_err(|_| CheckError)?;
     let absolute = record
         .created_at
@@ -367,7 +428,7 @@ async fn current(
     if time >= absolute.min(idle) {
         record.state = SessionState::Expired;
     }
-    save_observation(&mut tx, record.id, &observed, old.is_some()).await?;
+    save_observation(&mut *c, record.id, &observed, old.is_some()).await?;
     let mfa_required = observed.required || !matches!(requirement, Requirement::Standard);
     let recent = !matches!(requirement, Requirement::RecentMultiFactor)
         || time
@@ -375,36 +436,55 @@ async fn current(
                 .checked_add(observed.caps[2])
                 .ok_or(CheckError)?;
     let allowed = record.state == SessionState::Active && (!mfa_required || b.mfa) && recent;
-    if allowed && activity {
-        record.record_activity(time).map_err(|_| CheckError)?;
-    }
-    save_record(&mut tx, &record).await?;
+    save_record(&mut *c, &record).await?;
     let result = CurrentSession {
         session: record.id,
         identity,
         facility,
         mfa: b.mfa,
     };
-    tx.commit().await?;
-    if allowed { Ok(result) } else { Err(CheckError) }
+    Ok(if allowed {
+        Some(CheckedSession {
+            record,
+            observed,
+            context: result,
+        })
+    } else {
+        None
+    })
 }
 /// Local idempotent logout. Browser Origin/CSRF validation must precede this trusted call.
 pub async fn logout(c: &mut PgConnection, token: &SessionToken) -> Result<(), CheckError> {
     autocommit(c)?;
     let mut tx = c.begin_with("BEGIN ISOLATION LEVEL READ COMMITTED").await?;
-    let Some(identity) = identity(&mut tx, token).await? else {
-        tx.commit().await?;
+    match logout_in_transaction(&mut tx, token).await {
+        Ok(()) => tx.commit().await.map_err(CheckError::from),
+        Err(error) => {
+            tx.rollback().await?;
+            Err(error)
+        }
+    }
+}
+async fn logout_in_transaction(
+    tx: &mut PgConnection,
+    token: &SessionToken,
+) -> Result<(), CheckError> {
+    let Some(identity) = identity(&mut *tx, token).await? else {
         return Ok(());
     };
-    login::lock_identity(&mut tx, identity)
+    login::lock_identity(&mut *tx, identity)
         .await
         .map_err(|_| CheckError)?;
-    let mut record = record(&mut tx, token).await?;
+    let record = record(&mut *tx, token).await?;
     if record.identity != identity {
         return Err(CheckError);
     }
-    record.revoke();
-    save_record(&mut tx, &record).await?;
-    tx.commit().await?;
+    let ids: Vec<String> = sqlx::query_scalar("SELECT s.id::text FROM identity_access.sessions s LEFT JOIN identity_access.session_login_bindings b ON b.session_id=s.id WHERE s.identity_id=$1::text::numeric AND (s.id=$2::text::numeric OR b.flow_fingerprint=(SELECT flow_fingerprint FROM identity_access.session_login_bindings WHERE session_id=$2::text::numeric)) ORDER BY s.id FOR UPDATE OF s")
+        .bind(identity.value().to_string()).bind(record.id.value().to_string()).fetch_all(&mut *tx).await?;
+    let written=sqlx::query("UPDATE identity_access.sessions SET state='revoked' WHERE identity_id=$1::text::numeric AND id::text=ANY($2)")
+        .bind(identity.value().to_string()).bind(&ids).execute(&mut *tx).await?;
+    if ids.is_empty() || written.rows_affected() != ids.len() as u64 {
+        return Err(CheckError);
+    }
     Ok(())
 }

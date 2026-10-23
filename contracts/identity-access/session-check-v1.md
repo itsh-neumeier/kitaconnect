@@ -52,12 +52,14 @@ Sie ist ausschließlich für aktuell berechtigte Aktivität vorgesehen; der Aufr
 Beliebige Browserabfragen dürfen die Aktivitätsoperation nicht auswählen.
 Erfolg gibt erst nach Commit eine begrenzte Momentaufnahme aus; sie ist kein wiederverwendbarer Berechtigungsnachweis.
 
-Abmeldung benötigt den geheimen Sitzungsnachweis und widerruft ausschließlich dessen lokale Sitzung.
+Abmeldung benötigt den geheimen Sitzungsnachweis und widerruft dessen lokale Anmeldung einschließlich vorhandener Rotationsnachfolger.
+Andere Anmeldungen derselben Identität bleiben unverändert; der Rotationsvertrag konkretisiert die Nachfolgerbindung.
 Sie bleibt bei Organisationsausfall und Wiederherstellung möglich. Ein unbekannter Nachweis wird idempotent behandelt.
 Sie konkurriert über dieselbe Identitäts- und Sitzungssperre. Unterdrückter Widerruf führt zum Fehler.
 Das spätere Gateway muss vor Abmeldung CSRF und Origin prüfen sowie das Cookie passend entfernen.
 
 Alle mehrteiligen Operationen verlangen Autocommit als Aufrufzustand und verwenden eigene READ-COMMITTED-Transaktionen.
+Bei einer Fehlerrückgabe müssen sie den Rollback abwarten. Das Verwerfen einer Transaktionshülle allein reicht bei einer weiterhin offenen Verbindung nicht.
 Neue Tabellen erhalten FORCE RLS ohne erlaubende Runtime-Policy.
 Alte Migrationen, Rollenentscheidungen und externe Abhängigkeiten bleiben unverändert.
 

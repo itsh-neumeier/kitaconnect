@@ -292,3 +292,9 @@ Der Vertrag wird vor Code versioniert. Gateway, Cookies und vollständige Browse
 [ADR-037](architecture/ADR-037_Aktuelle_Sitzungspruefung.md) konkretisiert aktuelle Prüfung und lokale Abmeldung.
 Ein eigener Beobachtungsbestand erhält einmal verschärfte Grenzen dauerhaft. Die aktuelle Organisationsantwort bleibt verpflichtend.
 Der Prüfvertrag wird vor Code versioniert. Rotation, erneute Faktorprüfung und Gateway folgen getrennt.
+
+## ADR-038 – Atomare Sitzungsrotation
+
+[ADR-038](architecture/ADR-038_Atomare_Sitzungsrotation.md) beschreibt den atomaren Nachweiswechsel innerhalb derselben Anmeldung.
+Fristen und Authentisierungszeit bleiben erhalten. Abmeldung widerruft auch deren Rotationsnachfolger.
+Der Rotationsvertrag wird vor Code versioniert. Browser- und Dienstidentitätsnachweise bleiben gesondert.

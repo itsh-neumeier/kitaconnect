@@ -165,6 +165,21 @@ try {
   sql('CREATE ROLE kc_identity_test_runtime LOGIN INHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_identity_runtime TO kc_identity_test_runtime WITH ADMIN FALSE, INHERIT TRUE, SET FALSE;');
   testAdapter('before', 'postgres', 'current_sessions_are_atomic_and_fail_closed', 'kitaconnect-identity-access');
 
+  sql('CREATE DATABASE kc_password_test;');
+  sql(file('provision/002_schema.sql', identityRoot), { database: 'kc_password_test', transaction: true });
+  sql(identityMigration, { database: 'kc_password_test', transaction: true });
+  const passwordMigration = `SET SESSION AUTHORIZATION kc_identity_migrator;\n${file('migrations/0002_password_checks.sql', identityRoot)}`;
+  sql(`${passwordMigration}\nSELECT 1 / 0;`, { database: 'kc_password_test', transaction: true, expectedState: '22012' });
+  sql(`DO $$ BEGIN
+    ASSERT pg_catalog.to_regclass('identity_access.password_credentials') IS NULL;
+    ASSERT pg_catalog.to_regclass('identity_access.password_budget') IS NULL;
+    ASSERT pg_catalog.to_regclass('identity_access.password_attempts') IS NULL;
+    ASSERT (SELECT pg_catalog.array_agg(version) = ARRAY[1] FROM identity_access.schema_versions);
+  END $$;`, { database: 'kc_password_test' });
+  sql(passwordMigration, { database: 'kc_password_test', transaction: true });
+  sql(passwordMigration, { database: 'kc_password_test', transaction: true, expectedState: '42P07' });
+  testAdapter('before', 'password', 'passwords_and_durable_attempts_fail_closed', 'kitaconnect-identity-access');
+
   requireSuccess(docker(['restart', container]), 'Restart same test database');
   await waitUntilReady();
   sql(file('tests/persisted.sql'));
@@ -175,6 +190,7 @@ try {
   testAdapter('after', 'pool', 'reused_pool_clears_context_and_observes_revocation');
   testAdapter('after', 'maintenance', 'concurrent_maintenance_preserves_registry_and_wave_versions');
   testAdapter('after', 'postgres', 'current_sessions_are_atomic_and_fail_closed', 'kitaconnect-identity-access');
+  testAdapter('after', 'password', 'passwords_and_durable_attempts_fail_closed', 'kitaconnect-identity-access');
   console.log('PASS: two carriers and an independent facility, version and role boundaries survive server restart');
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {

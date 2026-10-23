@@ -69,3 +69,28 @@ Aktuelle Zustandsprüfung und Widerruf sind im internen Speicheradapter vor und 
 Die Anwendung bleibt durch RLS gesperrt. Positive Tests verwenden ausschließlich die Test-Betriebsidentität.
 Dies ist keine Anmeldung, aktuelle Mitgliedschaftsprüfung oder Benutzerberechtigung. Die offenen Interviewentscheidungen bleiben offen.
 KC-006B bleibt bis Integration offen. Nächstes Teilpaket ist KC-006C / #64.
+
+## Passwortfaktor aus KC-006C
+
+[PR #70](https://github.com/itsh-neumeier/kitaconnect/pull/70) ergänzt den [Passwortvertrag](../contracts/identity-access/password-check-v1.md) und [ADR-031](architecture/ADR-031_Passwortpruefung.md).
+Vertrag und ADR wurden in 3f964e6 vor der Implementierung versioniert.
+Der Dienst verwendet RustCrypto argon2 0.6.0 mit einer festen Parameterliste.
+Eine neue Migration 0002 ergänzt Passwortbestand und dauerhafte Versuchszähler; Migration 0001 bleibt unverändert.
+Der vorhandene Datenbanktest für KC-006B läuft weiterhin gegen dessen eigenen Bestand mit Version 1.
+Der neue Passworttest verwendet einen getrennten synthetischen Bestand mit Versionen 1 und 2.
+
+Die Prüfung reserviert einen Versuch vor der Hasharbeit. Das gilt auch für unbekannte Konten und negative Fälle.
+Grenzen werden ausdrücklich übergeben. Ein Erfolg setzt keine Zähler zurück und erzeugt keine Sitzung.
+Die Hasharbeit ist pro Prozess begrenzt. Eine ältere freigegebene Parameterwahl wird erst nach richtiger Passwortprüfung aktualisiert.
+Eine konkurrierende Änderung des Bestands verhindert ein positives Ergebnis aus dem vorherigen Stand.
+Die interne Passwortpflege widerruft vorhandene Sitzungen derselben Identität atomar.
+Dies ist kein produktiver Registrierungs- oder Wiederherstellungsablauf.
+
+Produktive Grenzwerte, vertrauenswürdige Bildung der Prüfschlüssel und Messungen auf der Referenzhardware bleiben vor einer Laufzeitfreigabe erforderlich.
+Die produktive Datenbankbindung und die bisherigen Interviewfragen bleiben offen.
+KC-006C bleibt bis Integration offen. Als nächstes unabhängiges Teilpaket folgt KC-006D / #65 mit einem WebAuthn-Vertrag.
+
+Prüfstand cd39fe8: alle fünf Pflichtprüfungen für Push und PR erfolgreich.
+[Clippy, Rust-Tests, Build und echte Datenbanktests einschließlich Neustart](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431069566),
+[Secret- und Abhängigkeitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431069880).
+Der folgende Abschlusscheckpoint erhält eigene Prüfungen; den aktuellen Kopf weist PR #70 aus.

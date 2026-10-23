@@ -82,3 +82,12 @@ Stand: 20.10.2026. Drei Rückfragen wurden im Projektchat gestellt. Bisher liegt
 
 KC-006A / #62 kann unabhängig davon nur Kennungstypen und lokale Zeit-/Zustandsregeln mit expliziten Eingaben implementieren.
 Die [KC-006-Planung](../24_KC-006_Authentisierung.md) beschreibt Teilpakete und Abnahmegrenzen.
+
+## Laufzeitgrenzen nach KC-006C
+
+[ADR-031](../architecture/ADR-031_Passwortpruefung.md) enthält keine produktiven Versuchslimits.
+Vor KC-006F sind Zeitfenster, Versuche je Prüfschlüssel, Gesamtversuche und maximale aktive Prüfschlüssel festzulegen.
+Die Gateway-Anbindung muss außerdem die vertrauenswürdige Bildung dieser Schlüssel festlegen.
+Diese Punkte wurden noch nicht als Interviewentscheidung bestätigt. Synthetische Testwerte sind keine Vorgabewerte.
+Vor produktiver Nutzung muss das Argon2id-Profil auf der bestätigten Referenzhardware gemessen werden.
+Keine Antwort zu diesen Punkten aus der allgemeinen Aufforderung zur Weiterarbeit ableiten.

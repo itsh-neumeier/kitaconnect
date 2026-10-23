@@ -123,3 +123,15 @@ unsichere Runtime-Rollen, manipulierte Registrierung und Schemaeigentümer sowie
 Nach echtem Server-Neustart müssen die geprüften Registrierungen und leeren Schemata unverändert vorhanden sein.
 Die Test-Wartungsidentität ist ausschließlich im wegwerfbaren Testcontainer vorhanden.
 Dies belegt noch keine Fachtabellen-, RLS- oder Poolisolation aus KC-005B/C.
+
+## KC-005B: Dienstrechte und erzwungene RLS
+
+Der [Testvertrag](../contracts/organization-config/service-isolation-test-v1.md) benennt das einzige SQL-Artefakt und seine Objektliste.
+Der zusätzliche Rust-/SQLx-Test läuft ausdrücklich vor und nach dem PostgreSQL-Neustart im Pflichtstatus `rust`.
+Zwei Dienste erhalten synthetische Proben in zwei registrierten Schemata. Die echten Test-Loginrollen haben getrennte Rechte.
+Die Prüfung weist eigene Schreibzugriffe, fremde Dienst-/Einrichtungszugriffe, erzwungene RLS auch für Eigentümer,
+unzulässige Rollen-/Eigentümerwechsel, CREATE/TRUNCATE und frei gesetzte Kontextwerte nach.
+Ein absichtlich vorbereitetes Schattenschema zeigt die Wirkung des search_path. Qualifizierte Zugriffe müssen unverändert die eigene Probe verwenden.
+Ein Zugang ohne Dienstzuordnung hat Schema-USAGE, jedoch weder Tabellenrechte noch Funktionsrechte; PUBLIC-Rechte dürfen ihn nicht freischalten.
+Ein eingespielter Transaktionsfehler muss auch neu angelegte Rollen, Objekte und Datenbankrechte zurücknehmen.
+Die produktive Provisionierung und bestehende Runtime bleiben unverändert. Benutzerrechte und produktive Identitätsbindung sind damit nicht abgenommen.

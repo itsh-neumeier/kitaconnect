@@ -59,3 +59,13 @@ Die Versionsmatrix behauptet keine getestete Installation oder rechtliche Freiga
 Offen bleiben Rechteinhaber, juristische Prüfung und die unabhängigen Fachpersonen.
 Die Zurückstellung ist ausdrücklich gewünscht. Sie hebt die Sperren aus dem Register nicht auf.
 Vor Implementierung des Wahlprotokolls ist die unabhängige Prüfung weiterhin zwingend.
+
+## Produktive RLS-Bindung nach KC-005B
+
+Stand: 20.10.2026. [ADR-027](../architecture/ADR-027_Dienstisolation_Testaufbau.md) verwendet eigene Loginrollen ausschließlich im Testcontainer.
+Vor einer produktiven erlaubenden Policy sind Identitätsnachweis, aktuelle Widerrufsprüfung und Bindung an den Verbindungspool ausdrücklich festzulegen.
+Eine frei gesetzte Einrichtungsvariable reicht dafür nicht. Bis zur Entscheidung bleiben produktive Laufzeitfreigaben gesperrt.
+KC-005B prüft technische Dienstrechte; KC-006/KC-008 integrieren den Benutzerkontext. Diese offene Entscheidung blockiert keine synthetischen Negativtests.
+
+Der Projektleitung wurde vorgeschlagen: eigene Datenbankidentität und eigener Verbindungspool je Dienst und Einrichtung.
+Die Rückfrage wurde im Projektchat gestellt. Eine Antwort steht aus. Ohne Antwort gilt keine Freigabe dieser Produktionsarchitektur.

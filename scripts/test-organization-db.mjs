@@ -290,6 +290,31 @@ try {
   sql('CREATE ROLE kc_session_rotation_runtime LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_identity_runtime TO kc_session_rotation_runtime WITH INHERIT TRUE, SET FALSE;', { database: 'kc_session_rotation_test', transaction: true });
   testAdapter('before', 'session_rotation', 'rotation_preserves_login_and_logout_lineage', 'kitaconnect-identity-access');
 
+  sql('CREATE DATABASE kc_step_up_storage_test;');
+  sql(file('provision/002_schema.sql', identityRoot), { database: 'kc_step_up_storage_test', transaction: true });
+  for (const migration of [identityMigration, passwordMigration, webauthnMigration, mfaMigration, loginMigration, observationMigration, rotationMigration]) {
+    sql(migration, { database: 'kc_step_up_storage_test', transaction: true });
+  }
+  const stepUpMigration = `SET SESSION AUTHORIZATION kc_identity_migrator;\n${file('migrations/0008_step_up_storage.sql', identityRoot)}`;
+  sql(`${stepUpMigration}\nSELECT 1 / 0;`, { database: 'kc_step_up_storage_test', transaction: true, expectedState: '22012' });
+  sql(`DO $$ BEGIN
+    ASSERT pg_catalog.to_regclass('identity_access.step_up_targets') IS NULL;
+    ASSERT pg_catalog.to_regclass('identity_access.step_up_receipts') IS NULL;
+    ASSERT pg_catalog.to_regprocedure('identity_access.guard_step_up_target()') IS NULL;
+    ASSERT pg_catalog.to_regprocedure('identity_access.guard_step_up_receipt()') IS NULL;
+    ASSERT pg_catalog.to_regprocedure('identity_access.reject_step_up_mutation()') IS NULL;
+    ASSERT (SELECT count(*)=2 FROM pg_catalog.pg_constraint c JOIN pg_catalog.pg_attribute a
+      ON a.attrelid=c.conrelid AND a.attname='route'
+      WHERE c.conrelid='identity_access.login_flows'::regclass AND c.contype='c' AND a.attnum=ANY(c.conkey));
+    ASSERT NOT EXISTS(SELECT FROM pg_catalog.pg_constraint WHERE conrelid='identity_access.login_flows'::regclass
+      AND pg_catalog.pg_get_constraintdef(oid) LIKE '%reauth_%');
+    ASSERT (SELECT pg_catalog.array_agg(version ORDER BY version)=ARRAY[1,2,3,4,5,6,7] FROM identity_access.schema_versions);
+  END $$;`, { database: 'kc_step_up_storage_test' });
+  sql(stepUpMigration, { database: 'kc_step_up_storage_test', transaction: true });
+  sql(stepUpMigration, { database: 'kc_step_up_storage_test', transaction: true, expectedState: 'P0001' });
+  sql(file('tests/step_up_storage.sql', identityRoot), { database: 'kc_step_up_storage_test', transaction: true });
+  console.log('PASS: synthetic step-up storage constraints and closed RLS (before restart)');
+
   requireSuccess(docker(['restart', container]), 'Restart same test database');
   await waitUntilReady();
   sql(file('tests/persisted.sql'));
@@ -307,6 +332,9 @@ try {
   testAdapter('after', 'login', 'login_completion_is_atomic_and_current', 'kitaconnect-identity-access');
   testAdapter('after', 'session_check', 'session_checks_preserve_current_policy_and_logout', 'kitaconnect-identity-access');
   testAdapter('after', 'session_rotation', 'rotation_preserves_login_and_logout_lineage', 'kitaconnect-identity-access');
+  sql(file('tests/step_up_persisted.sql', identityRoot), { database: 'kc_step_up_storage_test', transaction: true });
+  sql(file('tests/step_up_storage.sql', identityRoot), { database: 'kc_step_up_storage_test', transaction: true });
+  console.log('PASS: synthetic step-up storage constraints and closed RLS (after restart)');
   console.log('PASS: two carriers and an independent facility, version and role boundaries survive server restart');
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {

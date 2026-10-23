@@ -299,6 +299,12 @@ Der Prüfvertrag wird vor Code versioniert. Rotation, erneute Faktorprüfung und
 Fristen und Authentisierungszeit bleiben erhalten. Abmeldung widerruft auch deren Rotationsnachfolger.
 Der Rotationsvertrag wird vor Code versioniert. Browser- und Dienstidentitätsnachweise bleiben gesondert.
 
+## ADR-039 – Zusätzliche Authentisierung
+
+[ADR-039](architecture/ADR-039_Zweckgebundene_Zusatzauthentisierung.md) trennt zusätzliche Faktorprüfung und normale Anmeldung.
+Der neue Zweck bindet die genaue Ziel-Sitzung. Abschluss und Nachweiswechsel sollen atomar sein; absolute Frist und Herkunft bleiben erhalten.
+Der Vertrag wird vor Code versioniert. Es entsteht keine neue MFA-Variante oder fachliche Berechtigung.
+
 ## ADR-040 – Abschluss eigener Transaktionen
 
 [ADR-040](architecture/ADR-040_Abschluss_eigener_Transaktionen.md) hält die Korrektur nach dem Rotationsnachweis fest.

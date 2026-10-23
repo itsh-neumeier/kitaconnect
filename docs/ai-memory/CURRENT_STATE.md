@@ -7,15 +7,15 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 ## Arbeitsstand
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
-- branch: codex/kc-006f-faktortransaktionen auf PR #78 / ad150c9.
-- pull_request: Eigener Folge-PR auf codex/kc-006f-transaktionsabschluss; Nummer und aktuellen Kopf in GitHub prüfen.
-- head_commit: Abschlussvertrag/ADR-040 in 456fa51; Folgevertrag in f61b594 vor Faktorcode versioniert. Aktueller Implementierungskopf steht im PR.
-- objective: Offenen Backlog nach ausdrücklichem Folgeauftrag automatisch in kleinen abhängigen Paketen weiterbearbeiten. Aktuell eigene Fehlertransaktionen in TOTP, WebAuthn und Anmeldeabschluss beenden.
-- completed: PR #77 / 5927631 besteht alle zehn aktuellen Prüfungen. Rotation, Fehler, Konkurrenz und Abmeldung sind vor/nach Neustart erfolgreich geprüft. PRs #73 bis #77 sind zur gesammelten Durchsicht bereit. Der Folgecode wartet Rollback in drei älteren Adaptern ab. Neue getrennte Datenbankzeugen prüfen offen gehaltene Fehlerverbindungen.
-- remaining: Native CI von PR #78 und Faktor-Folgecode bestätigen. Die Faktoradapter sind korrigiert und erhalten getrennte Zeugen für Enrollment, fehlenden Faktor, fehlerhaften Ersatz, Wiederherstellung, Widerruf, WebAuthn-Verbrauch/Signaturen/Quoten und Anmeldeabschluss. Zweckgebundene Zusatzauthentisierung ist nur lokal in 3358864 auf codex/kc-006f-zusatzauthentisierung vorbereitet; vor Weiterarbeit auf aktuellen Folgekopf rebasen. Die zusätzliche HTTPS-Test-Origin ist angefragt und noch unbestätigt. Organisationsadapter, Gateway und Browser-/TLS-/mTLS-Nachweise bleiben offen. Alle 44 offenen Issues bleiben nach WORK_QUEUE geordnet.
-- migration_state: Keine neue Migration oder Abhängigkeit in diesem Korrekturschritt. Identitätsmigrationen 0001 bis 0007 und vorhandene getrennte Testdatenbanken bleiben unverändert.
-- known_failures: Das Rotationszeitlimit aus 53610f4/cdd8b02 ist mit 5927631 behoben und nativ nachgewiesen. Die weiteren Adapterkorrekturen warten auf native CI; keinen Erfolg vorwegnehmen. Windows-Linker/Docker fehlen lokal; #47/#48 behalten die Ablehnungsempfehlung.
-- test_commands: cargo fmt --all --check; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, neuer expliziter SQLx-Test session_rotation/rotation_preserves_login_and_logout_lineage vor/nach Neustart sowie alle bisherigen zwölf getrennten Datenbank-Testgruppen.
+- branch: codex/kc-006f-zusatzauthentisierung auf PR #79 / 088d24f.
+- pull_request: Eigener Speicher-Folge-PR auf codex/kc-006f-faktortransaktionen; Nummer und aktuellen Kopf in GitHub prüfen.
+- head_commit: Zusatzprüfvertrag/ADR-039 aus lokalem 3358864 wurde als ebf2b35 auf #79 übernommen; Speicherteilvertrag 554e9c7 vor Migration versioniert. Aktueller Implementierungskopf steht im PR.
+- objective: Offenen Backlog nach ausdrücklichem Folgeauftrag automatisch in kleinen abhängigen Paketen weiterbearbeiten. Aktuell nur Speichergrundlage für zweckgebundene Zusatzauthentisierung anlegen.
+- completed: PR #77 / 5927631, #78 / ad150c9 und #79 / 088d24f bestehen jeweils alle zehn aktuellen Prüfungen. Die Adapterkorrekturen sind mit getrennten Zeugen, erhaltenem Verbrauch und Ablauf vor/nach Neustart bestätigt. PRs #73 bis #79 sind zur gesammelten Durchsicht bereit. Der neue Speicherteil ergänzt unveränderliche Zielbindung/Beleg, neue Zwecke und geschlossene RLS; dessen native CI steht noch aus.
+- remaining: Native Speicher-CI bestätigen. Danach Rust-Adapter für Beginn, tatsächliche Faktorübergabe, aktuelle Zielbindung, atomaren Zusatzabschluss mit Rotation und aktuelle Belegverwendung implementieren. Der normale Rust-Adapter weist neue Zwecke bisher ausdrücklich als unbekannte Route ab. Die SQL-Tests enthalten nur synthetische Faktor-Markierungen und belegen keine erneute Authentisierung. Die zusätzliche HTTPS-Test-Origin ist angefragt und noch unbestätigt. Organisationsadapter, Gateway und Browser-/TLS-/mTLS-Nachweise bleiben offen. Alle 44 offenen Issues bleiben nach WORK_QUEUE geordnet.
+- migration_state: Neue Migration 0008_step_up_storage.sql ergänzt zwei Zwecke, step_up_targets und step_up_receipts mit geschlossener FORCE RLS und unveränderlichen Einträgen. Identitätsmigrationen 0001 bis 0007 bleiben unverändert. Neue isolierte Datenbank kc_step_up_storage_test; ältere Tests behalten ihren Versionsstand. Keine neue Abhängigkeit.
+- known_failures: Das Rotationszeitlimit und die älteren offenen Fehlertransaktionen sind nativ korrigiert. Speicherstand 3a469e8 scheitert nur an der erwarteten Runtime-Fehlerklasse: Der BEFORE-Trigger verweigert bereits mit 23514 vor der RLS-Prüfung 42501. Der Test akzeptiert jetzt beide verweigernden Klassen. Neue native Bestätigung steht aus. Windows-Linker/Docker fehlen lokal; #47/#48 behalten die Ablehnungsempfehlung.
+- test_commands: cargo fmt --all --check; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, alle dreizehn bisherigen SQLx-Datenbankgruppen und neue synthetische SQL-Speicherprüfungen vor/nach Neustart. Lokal 44 Node-Tests und Strukturprüfung erfolgreich; keine lokale PostgreSQL-Ausführung behaupten.
 - dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72 und #73 offen. PR #73 am Abschlusskopf vollständig grün. Keine ungefragte Integration.
 - security_notes: MFA-Pflicht, Offline-Wiederherstellung, Benachrichtigungsaufträge, WebAuthn-Testprofil, beide MFA-Kombinationen und Cookie-/CSRF-Schutz sind bestätigt. Fristen sind pro Einrichtung einstellbar; 900/28.800/300 Sekunden sind bestätigte Voreinstellungen und Obergrenzen. Diese Fragen nicht erneut stellen. Bestehende positive Faktor-Ergebnisse sind weiterhin keine einmaligen Sitzungsabschlussnachweise. Produktiver Schlüsselbetrieb, Domain, Versuchslimits und Rollen-/Poolbindung bleiben gesondert.
 
@@ -292,11 +292,16 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Nächste drei Aktionen
 
-Aktueller Korrekturschritt nach PR #77:
+Aktueller Speicherteil nach PR #79:
 
-1. PR #78 und Faktor-Folge-PR samt CI prüfen. Getrennte Zeugen müssen Fehlerverbindungen ohne Folgeabfrage im Zustand idle ohne Transaktion bestätigen. Bestätigte Versuchszähler, Herausforderungverbrauch und dauerhafte Ablaufzustände müssen erhalten bleiben.
-2. Nach Bestätigung der Adapterkorrekturen den lokalen Zusatzprüfvertrag 3358864 auf den neuesten Kopf übernehmen und implementieren. Ursprüngliche absolute Fristen und strengste Grenzen erhalten. Keine erneute Anmeldung mit neuer Gesamtlaufzeit als Ersatz verwenden.
+1. Speicher-Folge-PR und seine CI prüfen. Migration, Rücknahme der Routenbedingungen, synthetische Ziele/Belege, Einmaligkeit, geschlossene RLS und Neustart müssen bestehen. #78/#79 sind grün; nicht erneut implementieren.
+2. Danach einen eigenen Folgebranch für den Rust-Zusatzprüfadapter erstellen. Der Vertrag ist bereits übernommen. Tatsächliche Bibliotheksprüfungen, aktuelle Zielbindung je Faktor, atomaren Abschluss mit Rotation und Belegverwendung nachweisen. Ursprüngliche absolute Fristen und strengste Grenzen erhalten.
 3. Antwort zum zusätzlichen HTTPS-Testprofil übernehmen, sobald sie vorliegt. Ohne Antwort dieses Profil nicht implementieren. Unabhängige Organisations-/Gateway-Vorbereitung gemäß WORK_QUEUE fortsetzen.
+
+Lokale Adaptervorbereitung: codex/kc-006f-zusatzpruefung-adapter enthält nur den Folge-Vertragscommit e902f69.
+Unvollständige Sitzungsvorbereitung liegt im eigenen Git-Stash kc-006f-zusatzadapter-session-preparation.
+Vor Wiederaufnahme den unveröffentlichten Adapterbranch auf den korrigierten Speicherbranch rebasen und den Stash wieder anwenden.
+Noch kein Adapter-PR und keine native Typprüfung dieses Zwischenstands. Insbesondere das neue Wiederverwenden der Bindungsverbindung benötigt einen ausdrücklichen Reborrow.
 
 Der Folgeauftrag umfasst den gesamten offenen Backlog. PR #77 ist erfolgreich geprüft; nicht erneut implementieren.
 Die [Arbeitsfolge](WORK_QUEUE.md) ist die Fortsetzungsgrundlage.

@@ -66,3 +66,7 @@ Anweisungsfristen werden zusätzlich durch einen unabhängigen Zeugen bei gehalt
 Grenzen und Budgetfreigabe erhalten gezielte Tests.
 Neue direkte Abhängigkeiten verwenden ausschließlich vorhandene gesperrte Paketversionen.
 Es entsteht keine Migration, erlaubende Policy oder produktive Konfiguration.
+
+Die Sicherheitsprüfung vom 23.10.2026 meldet im vorhandenen ctutils 0.4.3 RUSTSEC-2026-0385.
+Die gesondert vor Code dokumentierte Sicherheitskorrektur aktualisiert ausschließlich dieses transitive Paket auf 0.4.4.
+Dies ändert keine fachliche Anforderung. Ältere betroffene PRs benötigen dieselbe Korrektur vor Integration.

@@ -1,5 +1,5 @@
-//! Internal organization model. This library provides no authorization or persistence.
-//! It must not be exposed as a service before current identity and policy checks exist.
+//! Internal organization model, persistence and current service-authenticated membership data.
+//! No public router or user/MFA/object authorization is provided by this library.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::num::NonZeroU128;

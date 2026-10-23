@@ -8,6 +8,7 @@ use kitaconnect_organization_config::{
     session_policy::{self, SessionPolicyLimits},
 };
 use kitaconnect_service_transport::ConnectionPeer;
+use sqlx::Executor;
 use std::net::SocketAddr;
 
 struct Fixture<'a, 'issuer> {

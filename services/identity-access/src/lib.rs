@@ -9,6 +9,7 @@ pub mod mfa;
 pub mod operation_assurance;
 pub mod password;
 pub mod postgres;
+pub mod service_oauth;
 pub mod service_tokens;
 pub mod session_check;
 pub mod session_rotation;

@@ -7,16 +7,16 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 ## Arbeitsstand
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
-- branch: codex/kc-006f-http-verbindungsbindung auf PR #86 / cb715a3.
-- pull_request: PR #87 auf codex/kc-006f-tokio-rueckuebernahme / PR #86.
-- head_commit: Vertrag und ADR-045 vor Code in 1624964. Codekopf ff9ac5e; aktueller Nachweiskopf und dessen CI stehen im PR.
-- objective: Tatsächliche mTLS-Verbindung für spätere HTTP-Handler aktuell prüfbar erhalten, während der Server den Datenstrom verwaltet.
-- completed: PR #86 / cb715a3 ist erneut vollständig grün und konfliktfrei bestätigt. Alle 21 Sicherheits-Rückübernahmen bleiben erledigt. Vertrag/ADR-045 und verbindungsgebundener Prüfzugang sind implementiert. Codekopf ff9ac5e besteht native PR-CI einschließlich sechs tatsächlicher mTLS-Tests, zwei deterministischer Zeitfehlerprüfungen und sechzehn SQLx-Gruppen vor/nach Neustart. Vollständige aktuelle Abschlussnachweise stehen im PR.
-- remaining: Abschließenden Nachweiskopf von PR #87 prüfen. Danach vollständigen OAuth-Endpunktvertrag einschließlich OpenAPI, Registrierung, Formular-/Fehlerzuordnung und Grenzen vor Routercode versionieren. Introspektion und echten Organisationsadapter anschließen. Bestätigte MFA-Zuordnung und OAuth-Ausnahme nicht erneut fragen. Zusätzliches HTTPS-Browserprofil bleibt offen.
-- migration_state: Keine Migration, Datenbankrechte, Abhängigkeiten oder Lockfile geändert. Nur vorhandene technische Bibliothek crates/service-transport erweitert.
+- branch: codex/kc-006f-oauth-vertrag auf PR #87 / 516ecdf.
+- pull_request: Eigener Folge-PR auf codex/kc-006f-http-verbindungsbindung wird vorbereitet.
+- head_commit: Vertrag/OpenAPI/ADR-046 in 7e072be; ausdrückliche DNS-/Fingerabdruckbestätigung vor Code in 10f8565. Aktueller Codekopf folgt im PR.
+- objective: OAuth-Formularprüfung und kanonische Token-/Introspektionsdarstellung vor tatsächlichen Endpunkten prüfen.
+- completed: PR #87 / 516ecdf ist erneut vollständig grün und konfliktfrei bestätigt. Alle 21 Sicherheits-Rückübernahmen bleiben erledigt. Protokollvertrag und OpenAPI 3.1.1 sind versioniert. Formularmodell, kanonische Tokendarstellung und Metadatenserializer sind vorbereitet. DNS-Name plus aktiver genauer Zertifikatsfingerabdruck ist ausdrücklich bestätigt; nicht erneut fragen.
+- remaining: Nativen Protokoll-Codekopf und erweiterte Diensttoken-Datenbankgruppe prüfen. Danach bestätigte DNS-Namensregistrierung, Prüfung des tatsächlichen Zertifikats und aktuellen Adapter in kleinem Folgepaket anschließen. Router mit ausdrücklich konfigurierten Grenzen, belastbare Restlaufzeit der Ausgabe, Introspektion und Organisation bleiben offen. Zusätzliches HTTPS-Browserprofil bleibt offen.
+- migration_state: Keine Migration oder Datenbankrechte geändert. Zwei direkte Abhängigkeitseinträge für vorhandene Versionen base64 0.22.1 / percent-encoding 2.3.2. Lockfile ergänzt nur diese Kanten beim Identitätsdienst; keine Paketversion geändert.
 - known_failures: Windows-Linker/Docker fehlen lokal. Native Ausführung deshalb in Linux-CI; keine lokale PostgreSQL-Ausführung behaupten. Die ältere Sicherheits-Rückübernahme ist vollständig geprüft; historische Fehlversuche nicht als aktuellen Stand verwenden. #47/#48 behalten die Ablehnungsempfehlung.
-- test_results: Lokal Rustfmt, gesperrte Offline-Metadatenauflösung, 44 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/62 Dokumente, git diff --check und Gitleaks erfolgreich. Codekopf ff9ac5e besteht Clippy, Rust-Tests/Build, Web-/Strukturprüfung und Sicherheitsprüfung. Sechs tatsächliche mTLS-Tests, zwei deterministische Zeitfehlerprüfungen und alle sechzehn SQLx-Gruppen vor/nach Neustart sind im nativen PR-Log bestätigt. Abschließender Dokumentationskopf erhält eigene CI; aktuelle Nachweise im PR prüfen.
-- test_commands: cargo fmt --all --check; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, sechzehn SQLx-Gruppen einschließlich Mitgliedschaften, Diensttokens und zusätzlicher Faktorprüfung sowie synthetische SQL-Speicherprüfungen vor/nach Neustart. Lokal 44 Node-Tests und Strukturprüfung erfolgreich; keine lokale PostgreSQL-Ausführung behaupten.
+- test_results: Lokal Rustfmt, gesperrte Offline-Metadatenauflösung, 50 Node-Tests einschließlich sechs statischer OAuth-Vertragsprüfungen, Struktur-/Verweisprüfung für 50 Issues/63 Dokumente und git diff --check erfolgreich. Statische Projektinvarianten sind kein vollständiger OpenAPI-Validator. Neue native Rust-/Datenbanktests noch nicht ausgeführt; Linux-CI folgt. Keine lokale PostgreSQL-Ausführung behaupten.
+- test_commands: cargo fmt --all --check; cargo metadata --locked --offline --no-deps --format-version 1; node --test scripts/*.test.mjs; node scripts/check-project.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, sechzehn SQLx-Gruppen einschließlich erweiterter aktiver OAuth-Darstellung im Diensttokentest vor/nach Neustart. Lokal 50 Node-Tests erfolgreich.
 - dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72 und #73 offen. PR #73 am Abschlusskopf vollständig grün. Keine ungefragte Integration.
 - security_notes: MFA-Pflicht, Offline-Wiederherstellung, Benachrichtigungsaufträge, WebAuthn-Testprofil, beide MFA-Kombinationen und Cookie-/CSRF-Schutz sind bestätigt. Fristen sind pro Einrichtung einstellbar; 900/28.800/300 Sekunden sind bestätigte Voreinstellungen und Obergrenzen. Diese Fragen nicht erneut stellen. Bestehende positive Faktor-Ergebnisse sind weiterhin keine einmaligen Sitzungsabschlussnachweise. Produktiver Schlüsselbetrieb, Domain, Versuchslimits und Rollen-/Poolbindung bleiben gesondert.
 
@@ -327,10 +327,10 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Nächste drei Aktionen
 
-Aktuelle HTTP-Verbindungsbindung nach PR #86:
+Aktueller OAuth-Protokollbaustein nach PR #87:
 
-1. Aktuellen Kopf von PR #87 und dessen CI prüfen. Verbindungstests, deterministische Zeitfehler und Datenbank-Neustartnachweise getrennt bestätigen. PR #86 und die 21 Sicherheits-Rückübernahmen sind erledigt; nichts davon erneut implementieren.
-2. Danach vollständigen OAuth-Endpunktvertrag mit OpenAPI, aktueller Registrierung, Formular-/Fehlerzuordnung und Anfragegrenzen vor Routercode versionieren. Verbindungsgebundenen Prüfzugang an Aussteller und Introspektion anschließen. Echten Organisationsadapter danach ergänzen; keine Fachrechte aus Diensttoken oder Mitgliedschaft ableiten.
+1. Aktuellen Folge-PR und native CI des Protokollmodells prüfen. Sieben Parser-/Darstellungstests und aktive Antwort im Diensttokentest vor/nach Neustart getrennt bestätigen. PR #87 und Sicherheits-Rückübernahmen sind erledigt; nicht wiederholen.
+2. Bestätigte DNS-Namenszuordnung und aktiven genauen Fingerabdruck nach getrenntem Vertrag an die tatsächliche mTLS-Verbindung binden. Keine Wildcards oder automatische Registrierung. Danach aktuelle Registrierung, Ausgaberestlaufzeit und tatsächliche Endpunkte ergänzen. Keine Fachrechte aus Diensttoken oder Mitgliedschaft ableiten.
 3. Antwort zum zusätzlichen HTTPS-Testprofil übernehmen, sobald sie vorliegt. Ohne Antwort dieses Profil nicht implementieren. Unabhängige Organisations-/Gateway-Vorbereitung gemäß WORK_QUEUE fortsetzen.
 
 Der lokale Adapterbranch wurde auf 5a4d5aa übernommen. Der eigene Zwischenstash ist vollständig angewendet und entfernt.

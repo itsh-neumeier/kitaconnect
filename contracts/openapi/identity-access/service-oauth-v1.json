@@ -1,0 +1,586 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "KitaConnect – interne OAuth-Dienstschnittstelle",
+    "version": "1.0.0",
+    "description": "Vertrag vor Routercode. Formularmodell und Darstellungen sind getrennt von tatsächlicher Clientauthentisierung. Keine Laufzeitfreigabe."
+  },
+  "x-implementation-status": "Protokollmodell; Registrierungsadapter und HTTP-Laufzeit folgen getrennt.",
+  "x-security-decision": "Bestätigt: genau ein registrierter DNS-Name je Dienst und zusätzlich aktiver genauer Zertifikatsfingerabdruck. Keine Wildcards oder automatische Registrierung. Produktive Namen bleiben offen.",
+  "x-request-limits": "Positive Body-, Parameter-, Zeit- und Parallelitätsgrenzen ausdrücklich konfigurieren; keine produktiven Vorgaben.",
+  "security": [
+    {
+      "serviceMTLS": []
+    }
+  ],
+  "paths": {
+    "/oauth/token": {
+      "post": {
+        "operationId": "issueServiceToken",
+        "summary": "Zertifikatsgebundenen Diensttoken ausstellen",
+        "description": "client_id ist eine Behauptung bis zur aktuellen Prüfung des tatsächlichen Zertifikats. Keine alternativen Anmeldemittel. Scope legt Ziel fest; aktuelle Freigabe bleibt verpflichtend.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "grant_type": {
+                    "type": "string",
+                    "const": "client_credentials"
+                  },
+                  "client_id": {
+                    "type": "string",
+                    "enum": [
+                      "identity-access",
+                      "organization-config",
+                      "gateway"
+                    ]
+                  },
+                  "scope": {
+                    "type": "string",
+                    "enum": [
+                      "membership:read",
+                      "login:local",
+                      "session:check"
+                    ]
+                  }
+                },
+                "required": [
+                  "grant_type",
+                  "client_id",
+                  "scope"
+                ],
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Erst nach bestätigter Ausgabe und Prüfung tatsächlicher Restlaufzeit.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ungültiges Formular oder OAuth-Protokollfehler.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Nur POST ist zulässig.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Konfigurierte Bodygrenze überschritten.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Nicht unterstütztes Inhaltsformat.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Konfigurierte Anfragegrenze erreicht.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Notwendige Prüfung nicht verfügbar. Zugriff verweigert.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/oauth/introspect": {
+      "post": {
+        "operationId": "introspectServiceToken",
+        "summary": "Aktuellen Diensttokenzustand prüfen",
+        "description": "Aufrufer über tatsächliches mTLS und aktuelle Registrierung authentisieren. Kein weiteres Diensttoken, keine rekursive Introspektion und kein positiver Cache. Token mit falschem Format ist nach berechtigter Abfrage inaktiv.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "client_id": {
+                    "type": "string",
+                    "enum": [
+                      "identity-access",
+                      "organization-config",
+                      "gateway"
+                    ]
+                  },
+                  "token": {
+                    "type": "string",
+                    "minLength": 1,
+                    "writeOnly": true
+                  },
+                  "token_type_hint": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "client_id",
+                  "token"
+                ],
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Minimale inaktive Antwort oder aktuell geprüfte Metadaten.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/InactiveToken"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ActiveToken"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ungültiges Formular oder OAuth-Protokollfehler.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Clientauthentisierung fehlgeschlagen.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthError"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Nur POST ist zulässig.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Konfigurierte Bodygrenze überschritten.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Nicht unterstütztes Inhaltsformat.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Konfigurierte Anfragegrenze erreicht.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Notwendige Prüfung nicht verfügbar. Zugriff verweigert.",
+            "headers": {
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                }
+              },
+              "Pragma": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-cache"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "serviceMTLS": {
+        "type": "mutualTLS",
+        "description": "Tatsächliche gegenseitige Zertifikatsprüfung und aktuelle Dienstregistrierung. Genau ein registrierter DNS-Name je Dienst und aktiver genauer Zertifikatsfingerabdruck sind bestätigt; behauptete Header genügen nicht."
+      }
+    },
+    "schemas": {
+      "OAuthError": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string",
+            "enum": [
+              "invalid_request",
+              "invalid_client",
+              "unsupported_grant_type",
+              "invalid_scope"
+            ]
+          }
+        }
+      },
+      "TokenResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "access_token",
+          "token_type",
+          "scope",
+          "expires_in"
+        ],
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "minLength": 43,
+            "maxLength": 43,
+            "pattern": "^[A-Za-z0-9_-]{42}[AEIMQUYcgkosw048]$"
+          },
+          "token_type": {
+            "type": "string",
+            "const": "Bearer"
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "membership:read",
+              "login:local",
+              "session:check"
+            ]
+          },
+          "expires_in": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 300
+          }
+        }
+      },
+      "InactiveToken": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "active"
+        ],
+        "properties": {
+          "active": {
+            "type": "boolean",
+            "const": false
+          }
+        }
+      },
+      "ActiveToken": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "active",
+          "client_id",
+          "scope",
+          "iss",
+          "aud",
+          "iat",
+          "exp",
+          "cnf"
+        ],
+        "properties": {
+          "active": {
+            "type": "boolean",
+            "const": true
+          },
+          "client_id": {
+            "type": "string",
+            "enum": [
+              "identity-access",
+              "organization-config",
+              "gateway"
+            ]
+          },
+          "scope": {
+            "type": "string",
+            "enum": [
+              "membership:read",
+              "login:local",
+              "session:check"
+            ]
+          },
+          "iss": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https://",
+            "maxLength": 2048
+          },
+          "aud": {
+            "type": "string",
+            "enum": [
+              "identity-access",
+              "organization-config"
+            ]
+          },
+          "iat": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "exp": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "cnf": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "x5t#S256"
+            ],
+            "properties": {
+              "x5t#S256": {
+                "type": "string",
+                "minLength": 43,
+                "maxLength": 43,
+                "pattern": "^[A-Za-z0-9_-]{42}[AEIMQUYcgkosw048]$"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

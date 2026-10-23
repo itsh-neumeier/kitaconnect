@@ -156,6 +156,27 @@ async fn service_tokens_are_current_and_bound() {
     assert_eq!(active.scope(), Scope::MembershipRead);
     assert_eq!(active.certificate(), identity.certificate());
     assert_eq!(active.expires_at() - active.created_at(), 300);
+    assert_eq!(active.issuer(), cfg.issuer());
+    let wire = kitaconnect_identity_access::service_oauth::introspection_response(Some(&active));
+    assert_eq!(wire.as_object().unwrap().len(), 8);
+    assert_eq!(wire["active"], true);
+    assert_eq!(wire["client_id"], active.client().text());
+    assert_eq!(wire["scope"], active.scope().text());
+    assert_eq!(wire["iss"], active.issuer());
+    assert_eq!(wire["aud"], active.target().text());
+    assert_eq!(wire["iat"], active.created_at());
+    assert_eq!(wire["exp"], active.expires_at());
+    use base64::{Engine as _, engine::general_purpose::URL_SAFE_NO_PAD};
+    assert_eq!(wire["cnf"].as_object().unwrap().len(), 1);
+    assert_eq!(
+        wire["cnf"]["x5t#S256"],
+        URL_SAFE_NO_PAD.encode(active.certificate())
+    );
+    assert!(
+        !wire
+            .to_string()
+            .contains(kitaconnect_identity_access::service_oauth::encode_token(&token).as_str())
+    );
     assert_ne!(fingerprint(&token).as_slice(), token.expose());
     let stored: Vec<u8> = sqlx::query_scalar(
         "SELECT fingerprint FROM identity_access.service_tokens WHERE fingerprint=$1",

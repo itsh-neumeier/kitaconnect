@@ -359,3 +359,10 @@ Die Klarstellung wird vor abhängigem HTTP-Code dokumentiert. Andere Antworten u
 [ADR-045](architecture/ADR-045_HTTP_Verbindungsbindung.md) dokumentiert den geteilten Prüfzugang vor Code.
 Handler und Datenstrom erhalten denselben Zeit- und Sperrzustand der tatsächlichen mTLS-Verbindung.
 Der vollständige OAuth-Endpunktvertrag, aktive Registrierung und Fachrechte folgen getrennt.
+
+## ADR-046 – OAuth-Protokollmodell
+
+[ADR-046](architecture/ADR-046_OAuth_Protokollvertrag.md) legt Formularprüfung und Tokendarstellung vor Code fest.
+Der Vertrag enthält eine OpenAPI-3.1-Beschreibung. Die Projektleitung bestätigt ausdrücklich genau einen registrierten DNS-Namen je Dienst und zusätzlich den aktiven genauen Zertifikatsfingerabdruck.
+Keine Wildcards oder automatische Registrierung. Produktive Namen bleiben offen. Diese Antwort wird vor abhängigem Code versioniert.
+Das Protokollmodell erteilt keine Berechtigung.

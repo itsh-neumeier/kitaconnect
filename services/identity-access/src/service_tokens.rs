@@ -38,7 +38,7 @@ impl ServiceName {
             Self::Gateway => "gateway",
         }
     }
-    fn parse(text: &str) -> Result<Self, ServiceTokenError> {
+    pub(crate) fn parse(text: &str) -> Result<Self, ServiceTokenError> {
         match text {
             "identity-access" => Ok(Self::IdentityAccess),
             "organization-config" => Ok(Self::OrganizationConfig),
@@ -61,7 +61,7 @@ impl ServiceScope {
             Self::SessionCheck => "session:check",
         }
     }
-    fn parse(text: &str) -> Result<Self, ServiceTokenError> {
+    pub(crate) fn parse(text: &str) -> Result<Self, ServiceTokenError> {
         match text {
             "membership:read" => Ok(Self::MembershipRead),
             "login:local" => Ok(Self::LocalLogin),
@@ -150,6 +150,7 @@ impl fmt::Debug for ServiceToken {
 }
 #[derive(Debug)]
 pub struct ActiveServiceToken {
+    issuer: String,
     client: ServiceName,
     target: ServiceName,
     scope: ServiceScope,
@@ -158,6 +159,9 @@ pub struct ActiveServiceToken {
     expires: u64,
 }
 impl ActiveServiceToken {
+    pub fn issuer(&self) -> &str {
+        &self.issuer
+    }
     pub fn client(&self) -> ServiceName {
         self.client
     }
@@ -375,6 +379,7 @@ async fn introspect_in_transaction(
         return Err(ServiceTokenError);
     }
     Ok(Some(ActiveServiceToken {
+        issuer: config.issuer.clone(),
         client,
         target: resource.service,
         scope,

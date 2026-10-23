@@ -11,7 +11,9 @@ KC-006F / #67: PR #76 bestätigt aktuelle Sitzungsprüfung und lokale Abmeldung 
 PR #77 / 5927631 bestätigt Rotation und deren Fehlerkorrektur mit zehn aktuellen grünen Prüfungen.
 PR #78 / ad150c9 und #79 / 088d24f korrigieren die eigenen Fehlertransaktionen in allen geprüften Adaptern; jeweils zehn aktuelle Prüfungen grün.
 PR #80 / 5a4d5aa bestätigt die Speichergrundlage nach Vertrag/ADR-039 mit zehn grünen Prüfungen.
-Der aktive Folgebranch codex/kc-006f-zusatzpruefung-adapter ergänzt getrennt die tatsächlichen Bibliotheksprüfungen und den atomaren Zusatzabschluss. Native CI und zusätzliche Fehlerfälle stehen noch aus.
+PR #81 / 7813bcb bestätigt die tatsächlichen Bibliotheksprüfungen und den atomaren Zusatzabschluss mit zehn grünen Prüfungen.
+Der aktive Folgebranch codex/kc-006f-mitgliedschaftsspeicher ergänzt ausschließlich aktuellen Mitgliedschafts-Lesebestand und Datenbanknachweise.
+Die konkrete MFA-Zuordnung ist ausdrücklich angefragt; Mitgliedschaft allein liefert keinen solchen Entscheid und keine Fachrechte.
 Die früheren SQL-Tests mit synthetischen Faktor-Markierungen bleiben als Speicherprüfungen getrennt ausgewiesen.
 Danach folgen zweckgebundene erneute Faktorprüfung und der echte Organisations-/Gateway-Vertrag.
 Die 17 ursprünglichen PRs sind technisch durchgesehen. Korrektur-PR #75 ist vollständig grün.

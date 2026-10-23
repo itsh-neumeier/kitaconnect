@@ -310,3 +310,9 @@ Der Vertrag wird vor Code versioniert. Es entsteht keine neue MFA-Variante oder 
 [ADR-040](architecture/ADR-040_Abschluss_eigener_Transaktionen.md) hält die Korrektur nach dem Rotationsnachweis fest.
 Eigene Fehlerpfade warten Rollback ab. Bereits bestätigte Versuchslimits und dauerhafte Ablaufzustände bleiben erhalten.
 Die weiteren Adapter werden in kleinen Paketen mit getrennten Datenbankzeugen geprüft.
+
+## ADR-041 – Interner Mitgliedschaftsbestand
+
+[ADR-041](architecture/ADR-041_Interner_Mitgliedschaftsbestand.md) konkretisiert die interne aktuelle Abfrage im Organisationsdienst.
+Aktive Zuordnung und Einrichtungseinstellungen werden gemeinsam gelesen. Die Laufzeit bleibt durch RLS gesperrt.
+Der Datenstand ersetzt weder MFA-/Rechteentscheidung noch geprüfte Dienstkommunikation.

@@ -172,3 +172,14 @@ Am 21.10.2026 wurde für kommende isolierte Gateway-/Browserprüfungen zusätzli
 Das bestehende HTTP-WebAuthn-Testprofil soll getrennt erhalten bleiben. Testzertifikate würden ausschließlich zur Laufzeit erzeugt und nicht versioniert.
 Die produktive Domain bleibt ausdrücklich offen. Eine Antwort steht aus; das zusätzliche Profil darf vorher nicht implementiert werden.
 Interne Sitzungs-, Rotations- und Vertragsarbeiten bleiben davon unabhängig.
+
+## KC-008 / KC-006F: Konkrete MFA-Zuordnung angefragt
+
+Am 21.10.2026 wurde folgende Zuordnung zur Entscheidung vorgelegt:
+Aktuelle zusätzliche MFA für Rollen-/Rechteverwaltung, sicherheitsrelevante Einstellungen,
+Gesundheitsdaten, Sorgerechtsbeschränkungen, Personalakten und interne Entwicklungsakten.
+Normale Anmeldung erteilt dafür keinen Zugriff. Unbekannte Einstufungen verweigern Zugriff.
+Veröffentlichte Portfolios und einfache Kontaktdaten behalten ihre gesonderten Objekt-/Feldrechte.
+Alternativen waren MFA für alle personenbezogenen Fachzugriffe oder ausdrückliches Offenlassen.
+Die Antwort steht aus. Keine dieser Varianten wird ohne Antwort implementiert.
+Die interne Mitgliedschaftsabfrage und bereits bestätigte Authentisierungsprotokolle bleiben davon unabhängig.

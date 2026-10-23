@@ -7,15 +7,15 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 ## Arbeitsstand
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
-- branch: codex/kc-006f-zusatzpruefung-adapter auf PR #80 / 5a4d5aa.
-- pull_request: Eigener Rust-Adapter-Folge-PR auf codex/kc-006f-zusatzauthentisierung; Nummer und aktuellen Kopf in GitHub prüfen.
-- head_commit: Zusatzprüfvertrag/ADR-039 in ebf2b35, Speicherteilvertrag 554e9c7 und Rust-Folgevertrag d715e53 vor Code versioniert. Aktueller Implementierungskopf steht im PR.
-- objective: Offenen Backlog nach ausdrücklichem Folgeauftrag automatisch in kleinen abhängigen Paketen weiterbearbeiten. Aktuell Rust-Adapter für zweckgebundene zusätzliche Authentisierung prüfen.
-- completed: PRs #77 bis #80 bestehen jeweils alle zehn aktuellen Prüfungen. Der Speicherstand 5a4d5aa bestätigt Migration, Datenbedingungen, RLS und Neustart. Der Folgeadapter ergänzt Beginn, aktuelle lokale Zielbindung bei tatsächlichen Faktorprüfungen, atomaren Zusatzabschluss mit Rotation und aktuelle Belegverwendung. Neue echte Passwort-/TOTP- und Passkey-Tests einschließlich Konkurrenz und Rücknahme sind ergänzt; deren native CI steht noch aus.
-- remaining: Native Datenbankprüfung des neuen Rust-Adapters bestätigen und Fehler beheben. 55745be besteht Typprüfung, Clippy, normale Rust-Tests und Build. Ergänzte Negativfälle prüfen tatsächliche neue Passkey-Registrierung nach Faktorvormerkung sowie Ablauf während einer beobachtbaren Schreibsperre im Beleg-INSERT. Deren native Ergebnisse stehen aus. Der zusätzliche HTTPS-Test-Ursprung ist angefragt und noch unbestätigt. Organisationsadapter, Gateway und Browser-/TLS-/mTLS-Nachweise bleiben offen. Alle 44 offenen Issues bleiben nach WORK_QUEUE geordnet. Keine KC-006F-Gesamtabnahme ableiten.
-- migration_state: Keine neue Migration oder Abhängigkeit im Rust-Folgeteil. Neue getrennte Datenbank kc_step_up_test verwendet Migrationen 0001 bis 0008; alle älteren Datenbankgruppen behalten ihren Versionsstand. Die neue Gruppe läuft ausdrücklich vor/nach Neustart.
-- known_failures: Rotationszeitlimit, ältere Fehlertransaktionen und falsche Runtime-Fehlercode-Erwartung sind nativ korrigiert. Der neue Rust-Adapter wartet auf erste native CI. Windows-Linker/Docker fehlen lokal; #47/#48 behalten die Ablehnungsempfehlung.
-- test_commands: cargo fmt --all --check; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, vierzehn SQLx-Datenbankgruppen einschließlich step_up/additional_proof_is_bound_and_rotated und synthetische SQL-Speicherprüfungen vor/nach Neustart. Lokal 44 Node-Tests und Strukturprüfung erfolgreich; keine lokale PostgreSQL-Ausführung behaupten.
+- branch: codex/kc-006f-mitgliedschaftsspeicher auf PR #81 / 7813bcb.
+- pull_request: Eigener interner Mitgliedschafts-Folge-PR auf codex/kc-006f-zusatzpruefung-adapter; Nummer und aktuellen Kopf in GitHub prüfen.
+- head_commit: Mitgliedschafts-Lesevertrag und ADR-041 in 1566ba3 vor Code versioniert. Aktueller Implementierungskopf steht im PR.
+- objective: Offenen Backlog nach ausdrücklichem Folgeauftrag automatisch in kleinen abhängigen Paketen weiterbearbeiten. Aktuell den internen aktuellen Mitgliedschafts-Lesebestand im Organisationsdienst prüfen.
+- completed: PRs #77 bis #81 bestehen jeweils alle zehn aktuellen Prüfungen. Zusatzprüfstand 7813bcb bestätigt beide tatsächlichen MFA-Wege, Faktorwechsel und Ablauf während einer wirklichen Beleg-Schreibsperre vor/nach Neustart. Der nächste Teil ergänzt nur Mitgliedschaftsbestand und aktuelle gemeinsame Abfrage mit Einrichtungseinstellungen. Öffentliche Rechtevergabe und vollständiger OrganizationAuthority-Adapter sind nicht enthalten.
+- remaining: Neue native Mitgliedschafts-CI bestätigen und Fehler beheben. Danach geprüften Organisations-/Dienstvertrag fortsetzen. Die konkrete MFA-Zuordnung für KC-008 ist ausdrücklich angefragt und unbestätigt; keine Einstufung ohne Antwort übernehmen. Auch das zusätzliche HTTPS-Testprofil ist weiterhin offen. Gateway und Browser-/TLS-/mTLS-Nachweise fehlen. Alle 44 offenen Issues bleiben nach WORK_QUEUE geordnet; keine KC-006F-Gesamtabnahme ableiten.
+- migration_state: Neue Organisationsmigration 0004_memberships.sql ergänzt Identitätsreferenz, Einrichtung, Version und aktiven Zustand. Keine Fremddatenbank-FKs. Laufzeit erhält nur SELECT und geschlossene FORCE RLS. Alte Organisations- und Identitätsmigrationen bleiben unverändert. Neue getrennte Datenbank kc_membership_test; ältere Gruppen behalten ihren Versionsstand. Keine neue Abhängigkeit.
+- known_failures: Frühere Rotations-, Transaktions- und Erwartungsfehler sind nativ korrigiert. Der neue Mitgliedschaftsteil wartet auf eigene native CI. Windows-Linker/Docker fehlen lokal; #47/#48 behalten die Ablehnungsempfehlung.
+- test_commands: cargo fmt --all --check; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI: Clippy, Rust-Tests/Build, fünfzehn SQLx-Gruppen einschließlich membership/memberships_are_current_and_read_only und synthetische SQL-Speicherprüfungen vor/nach Neustart. Lokal 44 Node-Tests und Strukturprüfung erfolgreich; keine lokale PostgreSQL-Ausführung behaupten.
 - dependencies: #53, #54, #55, #59, #60, #61, #68, #69, #70, #71, #72 und #73 offen. PR #73 am Abschlusskopf vollständig grün. Keine ungefragte Integration.
 - security_notes: MFA-Pflicht, Offline-Wiederherstellung, Benachrichtigungsaufträge, WebAuthn-Testprofil, beide MFA-Kombinationen und Cookie-/CSRF-Schutz sind bestätigt. Fristen sind pro Einrichtung einstellbar; 900/28.800/300 Sekunden sind bestätigte Voreinstellungen und Obergrenzen. Diese Fragen nicht erneut stellen. Bestehende positive Faktor-Ergebnisse sind weiterhin keine einmaligen Sitzungsabschlussnachweise. Produktiver Schlüsselbetrieb, Domain, Versuchslimits und Rollen-/Poolbindung bleiben gesondert.
 
@@ -292,10 +292,10 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Nächste drei Aktionen
 
-Aktueller Rust-Folgeteil nach PR #80:
+Aktueller Mitgliedschaftsteil nach PR #81:
 
-1. Rust-Adapter-Folge-PR und seine CI prüfen. Tatsächliche Faktorprüfungen und Einmaligkeit unter realen Wartenden vor/nach Neustart bestätigen. #78 bis #80 sind grün; nicht erneut implementieren.
-2. Die ergänzten Negativfälle für Bestandswechsel und Schreibwartezeit bestätigen. Ursprüngliche absolute Fristen, strengste Grenzen und endgültige Ablaufzustände erhalten. Erst danach den Organisations-/Gateway-Vertrag fortsetzen.
+1. Mitgliedschafts-Folge-PR und seine CI prüfen. Aktuelle Zuordnung, fehlende Einstellungen, Widerruf auf offener Verbindung, echte Parallelität, Nur-Lese-Rechte, RLS und Neustart müssen bestehen. #78 bis #81 sind grün; nicht erneut implementieren.
+2. Danach den echten Organisations-/Dienstvertrag vorbereiten. Mitgliedschaft allein bestimmt keine MFA und gewährt keine Fachrechte. Antwort zur konkreten MFA-Zuordnung übernehmen, sobald sie vorliegt. Ohne Antwort keine abhängige Rechtezuordnung implementieren.
 3. Antwort zum zusätzlichen HTTPS-Testprofil übernehmen, sobald sie vorliegt. Ohne Antwort dieses Profil nicht implementieren. Unabhängige Organisations-/Gateway-Vorbereitung gemäß WORK_QUEUE fortsetzen.
 
 Der lokale Adapterbranch wurde auf 5a4d5aa übernommen. Der eigene Zwischenstash ist vollständig angewendet und entfernt.

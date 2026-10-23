@@ -4,6 +4,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::num::NonZeroU128;
 
+pub mod membership;
 pub mod postgres;
 pub mod provisioning;
 pub mod session_policy;

@@ -8,6 +8,8 @@ use sqlx::postgres::{PgConnectOptions, PgSslMode};
 use sqlx::{Connection, PgConnection};
 use std::time::Duration;
 
+mod support;
+
 async fn connect(user: &str) -> PgConnection {
     PgConnection::connect_with(
         &PgConnectOptions::new()
@@ -102,6 +104,8 @@ async fn current_sessions_are_atomic_and_fail_closed() {
     assert!(matches!(phase.as_str(), "before" | "after"));
     let base = if phase == "before" { 1_000 } else { 2_000 };
     let mut admin = connect("postgres").await;
+    let admin_pid = pid(&mut admin).await;
+    let mut cleanup_witness = connect("postgres").await;
     if phase == "before" {
         postgres::register_identity(&mut admin, identity(1))
             .await
@@ -148,6 +152,7 @@ async fn current_sessions_are_atomic_and_fail_closed() {
         postgres::create_session(&mut admin, id(base + 88), identity(1), limits()).await,
         Err(StorageError::WriteNotConfirmed)
     ));
+    support::assert_idle(&mut cleanup_witness, admin_pid).await;
     let absent: bool = sqlx::query_scalar("SELECT NOT EXISTS(SELECT FROM identity_access.identities WHERE id=$1::text::numeric) AND NOT EXISTS(SELECT FROM identity_access.sessions WHERE id=$1::text::numeric)")
         .bind((base + 88).to_string()).fetch_one(&mut admin).await.unwrap();
     assert!(absent);
@@ -191,6 +196,7 @@ async fn current_sessions_are_atomic_and_fail_closed() {
             .unwrap_err(),
         "23503",
     );
+    support::assert_idle(&mut cleanup_witness, admin_pid).await;
 
     let token = postgres::create_session(&mut admin, id(base + 1), identity(1), limits())
         .await
@@ -304,6 +310,7 @@ async fn current_sessions_are_atomic_and_fail_closed() {
         .await,
         Err(StorageError::Model(SessionError::TimeOverflow))
     ));
+    support::assert_idle(&mut cleanup_witness, admin_pid).await;
 
     let time = seconds(&mut admin).await;
     for (key, times) in [
@@ -362,11 +369,13 @@ async fn current_sessions_are_atomic_and_fail_closed() {
         postgres::inspect(&mut admin, &future).await,
         Err(StorageError::Model(SessionError::ClockRegression))
     ));
+    support::assert_idle(&mut cleanup_witness, admin_pid).await;
     postgres::revoke(&mut admin, id(base + 5)).await.unwrap();
 
     // An unconfirmed database update cannot produce a positive session snapshot.
     execute(&mut admin, "CREATE FUNCTION identity_access.test_suppress_update() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RETURN NULL; END $$; CREATE TRIGGER z_test_suppress BEFORE UPDATE ON identity_access.sessions FOR EACH ROW EXECUTE FUNCTION identity_access.test_suppress_update()").await;
     let suppressed = postgres::record_activity(&mut admin, &activity).await;
+    support::assert_idle(&mut cleanup_witness, admin_pid).await;
     execute(&mut admin, "DROP TRIGGER z_test_suppress ON identity_access.sessions; DROP FUNCTION identity_access.test_suppress_update()").await;
     assert!(matches!(suppressed, Err(StorageError::WriteNotConfirmed)));
 

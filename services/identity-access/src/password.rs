@@ -169,19 +169,32 @@ impl PasswordChecker {
         let mut transaction = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
-        crate::login::lock_identity(&mut transaction, identity)
-            .await
-            .map_err(|_| PasswordError)?;
-        let result = sqlx::query("INSERT INTO identity_access.password_credentials (identity_id, phc, revision) VALUES ($1::text::numeric, $2, $3) ON CONFLICT (identity_id) DO UPDATE SET phc = EXCLUDED.phc, revision = EXCLUDED.revision")
-            .bind(identity.value().to_string()).bind(hash.0.as_str()).bind(revision.as_slice()).execute(&mut *transaction).await?;
-        if result.rows_affected() != 1 {
-            return Err(PasswordError);
+        let result: Result<(), PasswordError> = async {
+            crate::login::lock_identity(&mut transaction, identity)
+                .await
+                .map_err(|_| PasswordError)?;
+            let result = sqlx::query("INSERT INTO identity_access.password_credentials (identity_id, phc, revision) VALUES ($1::text::numeric, $2, $3) ON CONFLICT (identity_id) DO UPDATE SET phc = EXCLUDED.phc, revision = EXCLUDED.revision")
+                .bind(identity.value().to_string()).bind(hash.0.as_str()).bind(revision.as_slice()).execute(&mut *transaction).await?;
+            if result.rows_affected() != 1 {
+                return Err(PasswordError);
+            }
+            crate::login::revoke_sessions(&mut transaction, identity)
+                .await
+                .map_err(|_| PasswordError)?;
+
+            Ok(())
         }
-        crate::login::revoke_sessions(&mut transaction, identity)
-            .await
-            .map_err(|_| PasswordError)?;
-        transaction.commit().await?;
-        Ok(())
+        .await;
+        match result {
+            Ok(()) => {
+                transaction.commit().await?;
+                Ok(())
+            }
+            Err(error) => {
+                transaction.rollback().await?;
+                Err(error)
+            }
+        }
     }
 
     /// Always reserve first, including unknown accounts. Evidence is only a password factor.
@@ -271,40 +284,52 @@ impl PasswordChecker {
         let mut transaction = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
-        crate::login::lock_identity(&mut transaction, identity)
-            .await
-            .map_err(|_| PasswordError)?;
-        let current: Option<Vec<u8>> = sqlx::query_scalar("SELECT revision FROM identity_access.password_credentials WHERE identity_id = $1::text::numeric AND phc = $2 FOR UPDATE")
-            .bind(identity.value().to_string()).bind(old_hash.0.as_str()).fetch_optional(&mut *transaction).await?;
-        if current != Some(old_revision) {
-            return Err(PasswordError);
-        }
-        if let Some(hash) = upgrade {
-            let result = sqlx::query("UPDATE identity_access.password_credentials SET phc = $2, revision = $3 WHERE identity_id = $1::text::numeric")
-                .bind(identity.value().to_string()).bind(hash.0.as_str()).bind(revision()?.as_slice()).execute(&mut *transaction).await?;
-            if result.rows_affected() != 1 {
+        let result: Result<Option<PasswordEvidence>, PasswordError> = async {
+            crate::login::lock_identity(&mut transaction, identity)
+                .await
+                .map_err(|_| PasswordError)?;
+            let current: Option<Vec<u8>> = sqlx::query_scalar("SELECT revision FROM identity_access.password_credentials WHERE identity_id = $1::text::numeric AND phc = $2 FOR UPDATE")
+                .bind(identity.value().to_string()).bind(old_hash.0.as_str()).fetch_optional(&mut *transaction).await?;
+            if current != Some(old_revision) {
                 return Err(PasswordError);
             }
-        }
-        if let Some(flow) = flow {
-            let recorded = crate::login::record_factor(
-                &mut transaction,
-                identity,
-                flow,
-                crate::login::Factor::Password,
-            )
-            .await
-            .map_err(|_| PasswordError)?;
-            match recorded {
-                crate::login::FactorRecord::Recorded => {}
-                crate::login::FactorRecord::Expired => {
-                    transaction.commit().await?;
+            if let Some(hash) = upgrade {
+                let result = sqlx::query("UPDATE identity_access.password_credentials SET phc = $2, revision = $3 WHERE identity_id = $1::text::numeric")
+                    .bind(identity.value().to_string()).bind(hash.0.as_str()).bind(revision()?.as_slice()).execute(&mut *transaction).await?;
+                if result.rows_affected() != 1 {
                     return Err(PasswordError);
                 }
             }
+            if let Some(flow) = flow {
+                let recorded = crate::login::record_factor(
+                    &mut transaction,
+                    identity,
+                    flow,
+                    crate::login::Factor::Password,
+                )
+                .await
+                .map_err(|_| PasswordError)?;
+                match recorded {
+                    crate::login::FactorRecord::Recorded => {}
+                    crate::login::FactorRecord::Expired => {
+                        return Ok(None);
+                    }
+                }
+            }
+
+            Ok(Some(PasswordEvidence { identity }))
         }
-        transaction.commit().await?;
-        Ok(PasswordEvidence { identity })
+        .await;
+        match result {
+            Ok(value) => {
+                transaction.commit().await?;
+                value.ok_or(PasswordError)
+            }
+            Err(error) => {
+                transaction.rollback().await?;
+                Err(error)
+            }
+        }
     }
 }
 
@@ -387,89 +412,102 @@ pub(crate) async fn reserve(
     let mut transaction = connection
         .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
         .await?;
-    sqlx::query("INSERT INTO identity_access.password_budget (id, window_seconds, per_key, total_limit, key_limit, window_start, last_observed, used) VALUES (1, $1, $2, $3, $4, 0, 0, 0) ON CONFLICT (id) DO NOTHING")
-        .bind(i64::from(limits.window)).bind(i64::from(limits.per_key)).bind(i64::from(limits.total)).bind(i64::from(limits.keys)).execute(&mut *transaction).await?;
-    let row = sqlx::query("SELECT window_seconds, per_key, total_limit, key_limit, window_start::text, last_observed::text, used FROM identity_access.password_budget WHERE id = 1 FOR UPDATE")
-        .fetch_one(&mut *transaction).await?;
-    for (name, expected) in [
-        ("window_seconds", limits.window),
-        ("per_key", limits.per_key),
-        ("total_limit", limits.total),
-        ("key_limit", limits.keys),
-    ] {
-        if row.try_get::<i64, _>(name)? != i64::from(expected) {
+    let result: Result<(), PasswordError> = async {
+        sqlx::query("INSERT INTO identity_access.password_budget (id, window_seconds, per_key, total_limit, key_limit, window_start, last_observed, used) VALUES (1, $1, $2, $3, $4, 0, 0, 0) ON CONFLICT (id) DO NOTHING")
+            .bind(i64::from(limits.window)).bind(i64::from(limits.per_key)).bind(i64::from(limits.total)).bind(i64::from(limits.keys)).execute(&mut *transaction).await?;
+        let row = sqlx::query("SELECT window_seconds, per_key, total_limit, key_limit, window_start::text, last_observed::text, used FROM identity_access.password_budget WHERE id = 1 FOR UPDATE")
+            .fetch_one(&mut *transaction).await?;
+        for (name, expected) in [
+            ("window_seconds", limits.window),
+            ("per_key", limits.per_key),
+            ("total_limit", limits.total),
+            ("key_limit", limits.keys),
+        ] {
+            if row.try_get::<i64, _>(name)? != i64::from(expected) {
+                return Err(PasswordError);
+            }
+        }
+        let time: String = sqlx::query_scalar(
+            "SELECT pg_catalog.floor(EXTRACT(epoch FROM pg_catalog.clock_timestamp()))::text",
+        )
+        .fetch_one(&mut *transaction)
+        .await?;
+        let time: u64 = time.parse().map_err(|_| PasswordError)?;
+        let number = |name| -> Result<u64, PasswordError> {
+            row.try_get::<String, _>(name)?
+                .parse()
+                .map_err(|_| PasswordError)
+        };
+        if time < number("last_observed")? {
             return Err(PasswordError);
         }
-    }
-    let time: String = sqlx::query_scalar(
-        "SELECT pg_catalog.floor(EXTRACT(epoch FROM pg_catalog.clock_timestamp()))::text",
-    )
-    .fetch_one(&mut *transaction)
-    .await?;
-    let time: u64 = time.parse().map_err(|_| PasswordError)?;
-    let number = |name| -> Result<u64, PasswordError> {
-        row.try_get::<String, _>(name)?
-            .parse()
-            .map_err(|_| PasswordError)
-    };
-    if time < number("last_observed")? {
-        return Err(PasswordError);
-    }
-    let old_start = number("window_start")?;
-    let (start, used) = if time
-        >= old_start
-            .checked_add(u64::from(limits.window))
-            .ok_or(PasswordError)?
-    {
-        (time, 0)
-    } else {
-        (old_start, row.try_get::<i64, _>("used")?)
-    };
-    if used >= i64::from(limits.total) {
-        return Err(PasswordError);
-    }
-    sqlx::query("DELETE FROM identity_access.password_attempts WHERE window_start + $1 <= $2::text::numeric")
-        .bind(i64::from(limits.window)).bind(time.to_string()).execute(&mut *transaction).await?;
-    let attempts: Option<i64> = sqlx::query_scalar(
-        "SELECT used FROM identity_access.password_attempts WHERE subject_key = $1",
-    )
-    .bind(key.0.as_slice())
-    .fetch_optional(&mut *transaction)
-    .await?;
-    if let Some(attempts) = attempts {
-        if attempts >= i64::from(limits.per_key) {
+        let old_start = number("window_start")?;
+        let (start, used) = if time
+            >= old_start
+                .checked_add(u64::from(limits.window))
+                .ok_or(PasswordError)?
+        {
+            (time, 0)
+        } else {
+            (old_start, row.try_get::<i64, _>("used")?)
+        };
+        if used >= i64::from(limits.total) {
             return Err(PasswordError);
         }
-        let result = sqlx::query(
-            "UPDATE identity_access.password_attempts SET used = used + 1 WHERE subject_key = $1",
+        sqlx::query("DELETE FROM identity_access.password_attempts WHERE window_start + $1 <= $2::text::numeric")
+            .bind(i64::from(limits.window)).bind(time.to_string()).execute(&mut *transaction).await?;
+        let attempts: Option<i64> = sqlx::query_scalar(
+            "SELECT used FROM identity_access.password_attempts WHERE subject_key = $1",
         )
         .bind(key.0.as_slice())
-        .execute(&mut *transaction)
+        .fetch_optional(&mut *transaction)
         .await?;
+        if let Some(attempts) = attempts {
+            if attempts >= i64::from(limits.per_key) {
+                return Err(PasswordError);
+            }
+            let result = sqlx::query(
+                "UPDATE identity_access.password_attempts SET used = used + 1 WHERE subject_key = $1",
+            )
+            .bind(key.0.as_slice())
+            .execute(&mut *transaction)
+            .await?;
+            if result.rows_affected() != 1 {
+                return Err(PasswordError);
+            }
+        } else {
+            let count: i64 =
+                sqlx::query_scalar("SELECT count(*) FROM identity_access.password_attempts")
+                    .fetch_one(&mut *transaction)
+                    .await?;
+            if count >= i64::from(limits.keys) {
+                return Err(PasswordError);
+            }
+            let result = sqlx::query("INSERT INTO identity_access.password_attempts (subject_key, window_start, used) VALUES ($1, $2::text::numeric, 1)")
+                .bind(key.0.as_slice()).bind(time.to_string()).execute(&mut *transaction).await?;
+            if result.rows_affected() != 1 {
+                return Err(PasswordError);
+            }
+        }
+        let result = sqlx::query("UPDATE identity_access.password_budget SET window_start = $1::text::numeric, last_observed = $2::text::numeric, used = $3 WHERE id = 1")
+            .bind(start.to_string()).bind(time.to_string()).bind(used + 1).execute(&mut *transaction).await?;
         if result.rows_affected() != 1 {
             return Err(PasswordError);
         }
-    } else {
-        let count: i64 =
-            sqlx::query_scalar("SELECT count(*) FROM identity_access.password_attempts")
-                .fetch_one(&mut *transaction)
-                .await?;
-        if count >= i64::from(limits.keys) {
-            return Err(PasswordError);
+
+        Ok(())
+    }
+    .await;
+    match result {
+        Ok(()) => {
+            transaction.commit().await?;
+            Ok(())
         }
-        let result = sqlx::query("INSERT INTO identity_access.password_attempts (subject_key, window_start, used) VALUES ($1, $2::text::numeric, 1)")
-            .bind(key.0.as_slice()).bind(time.to_string()).execute(&mut *transaction).await?;
-        if result.rows_affected() != 1 {
-            return Err(PasswordError);
+        Err(error) => {
+            transaction.rollback().await?;
+            Err(error)
         }
     }
-    let result = sqlx::query("UPDATE identity_access.password_budget SET window_start = $1::text::numeric, last_observed = $2::text::numeric, used = $3 WHERE id = 1")
-        .bind(start.to_string()).bind(time.to_string()).bind(used + 1).execute(&mut *transaction).await?;
-    if result.rows_affected() != 1 {
-        return Err(PasswordError);
-    }
-    transaction.commit().await?;
-    Ok(())
 }
 
 #[cfg(test)]

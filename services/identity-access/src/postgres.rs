@@ -83,18 +83,31 @@ pub async fn create_session(
     let mut transaction = connection
         .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
         .await?;
-    let created = now(&mut transaction).await?;
-    let record = SessionRecord::new(id, identity, created, limits)?;
-    let result = sqlx::query("INSERT INTO identity_access.sessions (id, identity_id, fingerprint, created_at, absolute_expires_at, idle_seconds, last_activity_at, last_observed_at, state) \
-        VALUES ($1::text::numeric, $2::text::numeric, $3, $4::text::numeric, $5::text::numeric, $6::text::numeric, $4::text::numeric, $4::text::numeric, 'active')")
-        .bind(id.value().to_string()).bind(identity.value().to_string()).bind(token.fingerprint().as_slice())
-        .bind(created.to_string()).bind(record.absolute_expires_at().to_string()).bind(limits.idle_seconds.to_string())
-        .execute(&mut *transaction).await?;
-    if result.rows_affected() != 1 {
-        return Err(StorageError::WriteNotConfirmed);
+    let result: Result<SessionToken, StorageError> = async {
+        let created = now(&mut transaction).await?;
+        let record = SessionRecord::new(id, identity, created, limits)?;
+        let result = sqlx::query("INSERT INTO identity_access.sessions (id, identity_id, fingerprint, created_at, absolute_expires_at, idle_seconds, last_activity_at, last_observed_at, state) \
+            VALUES ($1::text::numeric, $2::text::numeric, $3, $4::text::numeric, $5::text::numeric, $6::text::numeric, $4::text::numeric, $4::text::numeric, 'active')")
+            .bind(id.value().to_string()).bind(identity.value().to_string()).bind(token.fingerprint().as_slice())
+            .bind(created.to_string()).bind(record.absolute_expires_at().to_string()).bind(limits.idle_seconds.to_string())
+            .execute(&mut *transaction).await?;
+        if result.rows_affected() != 1 {
+            return Err(StorageError::WriteNotConfirmed);
+        }
+
+        Ok(token)
     }
-    transaction.commit().await?;
-    Ok(token)
+    .await;
+    match result {
+        Ok(value) => {
+            transaction.commit().await?;
+            Ok(value)
+        }
+        Err(error) => {
+            transaction.rollback().await?;
+            Err(error)
+        }
+    }
 }
 
 pub(crate) fn decode(row: &sqlx::postgres::PgRow) -> Result<SessionRecord, StorageError> {
@@ -143,40 +156,53 @@ async fn current(
     let mut transaction = connection
         .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
         .await?;
-    let row = sqlx::query("SELECT pg_catalog.trim_scale(id)::text AS id, pg_catalog.trim_scale(identity_id)::text AS identity_id, \
-        pg_catalog.trim_scale(created_at)::text AS created_at, pg_catalog.trim_scale(absolute_expires_at)::text AS absolute_expires_at, \
-        pg_catalog.trim_scale(idle_seconds)::text AS idle_seconds, pg_catalog.trim_scale(last_activity_at)::text AS last_activity_at, \
-        pg_catalog.trim_scale(last_observed_at)::text AS last_observed_at, state \
-        FROM identity_access.sessions WHERE fingerprint = $1 FOR UPDATE")
-        .bind(token.fingerprint().as_slice()).fetch_optional(&mut *transaction).await?;
-    let Some(row) = row else {
-        transaction.commit().await?;
-        return Ok(None);
-    };
-    let mut record = decode(&row)?;
-    // Read after FOR UPDATE, not transaction start: a blocked query may cross an expiry boundary.
-    let time = now(&mut transaction).await?;
-    let state = record.observe(time)?;
-    if activity && state == SessionState::Active {
-        record.record_activity(time)?;
+    let result: Result<Option<SessionRecord>, StorageError> = async {
+        let row = sqlx::query("SELECT pg_catalog.trim_scale(id)::text AS id, pg_catalog.trim_scale(identity_id)::text AS identity_id, \
+            pg_catalog.trim_scale(created_at)::text AS created_at, pg_catalog.trim_scale(absolute_expires_at)::text AS absolute_expires_at, \
+            pg_catalog.trim_scale(idle_seconds)::text AS idle_seconds, pg_catalog.trim_scale(last_activity_at)::text AS last_activity_at, \
+            pg_catalog.trim_scale(last_observed_at)::text AS last_observed_at, state \
+            FROM identity_access.sessions WHERE fingerprint = $1 FOR UPDATE")
+            .bind(token.fingerprint().as_slice()).fetch_optional(&mut *transaction).await?;
+        let Some(row) = row else {
+
+            return Ok(None);
+        };
+        let mut record = decode(&row)?;
+        // Read after FOR UPDATE, not transaction start: a blocked query may cross an expiry boundary.
+        let time = now(&mut transaction).await?;
+        let state = record.observe(time)?;
+        if activity && state == SessionState::Active {
+            record.record_activity(time)?;
+        }
+        let state_name = match record.state {
+            SessionState::Active => "active",
+            SessionState::Expired => "expired",
+            SessionState::Revoked => "revoked",
+        };
+        let changed = sqlx::query("UPDATE identity_access.sessions SET last_activity_at = $2::text::numeric, last_observed_at = $3::text::numeric, state = $4 WHERE id = $1::text::numeric")
+            .bind(record.id.value().to_string()).bind(record.last_activity_at.to_string())
+            .bind(record.last_observed_at.to_string()).bind(state_name).execute(&mut *transaction).await?.rows_affected();
+        if changed != 1 {
+            return Err(StorageError::WriteNotConfirmed);
+        }
+
+        Ok(if state == SessionState::Active {
+            Some(record)
+        } else {
+            None
+        })
     }
-    let state_name = match record.state {
-        SessionState::Active => "active",
-        SessionState::Expired => "expired",
-        SessionState::Revoked => "revoked",
-    };
-    let changed = sqlx::query("UPDATE identity_access.sessions SET last_activity_at = $2::text::numeric, last_observed_at = $3::text::numeric, state = $4 WHERE id = $1::text::numeric")
-        .bind(record.id.value().to_string()).bind(record.last_activity_at.to_string())
-        .bind(record.last_observed_at.to_string()).bind(state_name).execute(&mut *transaction).await?.rows_affected();
-    if changed != 1 {
-        return Err(StorageError::WriteNotConfirmed);
+    .await;
+    match result {
+        Ok(value) => {
+            transaction.commit().await?;
+            Ok(value)
+        }
+        Err(error) => {
+            transaction.rollback().await?;
+            Err(error)
+        }
     }
-    transaction.commit().await?;
-    Ok(if state == SessionState::Active {
-        Some(record)
-    } else {
-        None
-    })
 }
 
 /// Current local snapshot only; every later protected action must read again.

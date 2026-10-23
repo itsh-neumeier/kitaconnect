@@ -154,17 +154,30 @@ pub async fn write(
     let mut tx = connection
         .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
         .await?;
-    let row = if let Some(expected) = expected {
-        sqlx::query("UPDATE organization_config.facility_session_policies SET version = $2::text::numeric, idle_seconds = $3::text::numeric, absolute_seconds = $4::text::numeric, step_up_seconds = $5::text::numeric WHERE facility_id = $1::text::numeric AND version = $6::text::numeric RETURNING facility_id::text, version::text, idle_seconds::text, absolute_seconds::text, step_up_seconds::text")
-            .bind(facility.value().to_string()).bind(next.to_string()).bind(limits.idle.to_string()).bind(limits.absolute.to_string()).bind(limits.step_up.to_string()).bind(expected.value().to_string()).fetch_optional(&mut *tx).await?
-    } else {
-        sqlx::query("INSERT INTO organization_config.facility_session_policies (facility_id, version, idle_seconds, absolute_seconds, step_up_seconds) VALUES ($1::text::numeric, 1, $2::text::numeric, $3::text::numeric, $4::text::numeric) ON CONFLICT (facility_id) DO NOTHING RETURNING facility_id::text, version::text, idle_seconds::text, absolute_seconds::text, step_up_seconds::text")
-            .bind(facility.value().to_string()).bind(limits.idle.to_string()).bind(limits.absolute.to_string()).bind(limits.step_up.to_string()).fetch_optional(&mut *tx).await?
-    }.ok_or(PolicyError)?;
-    let stored = decode(&row)?;
-    if stored.facility != facility || stored.version.value() != next || stored.limits != limits {
-        return Err(PolicyError);
+    let result: Result<FacilitySessionPolicy, PolicyError> = async {
+        let row = if let Some(expected) = expected {
+            sqlx::query("UPDATE organization_config.facility_session_policies SET version = $2::text::numeric, idle_seconds = $3::text::numeric, absolute_seconds = $4::text::numeric, step_up_seconds = $5::text::numeric WHERE facility_id = $1::text::numeric AND version = $6::text::numeric RETURNING facility_id::text, version::text, idle_seconds::text, absolute_seconds::text, step_up_seconds::text")
+                .bind(facility.value().to_string()).bind(next.to_string()).bind(limits.idle.to_string()).bind(limits.absolute.to_string()).bind(limits.step_up.to_string()).bind(expected.value().to_string()).fetch_optional(&mut *tx).await?
+        } else {
+            sqlx::query("INSERT INTO organization_config.facility_session_policies (facility_id, version, idle_seconds, absolute_seconds, step_up_seconds) VALUES ($1::text::numeric, 1, $2::text::numeric, $3::text::numeric, $4::text::numeric) ON CONFLICT (facility_id) DO NOTHING RETURNING facility_id::text, version::text, idle_seconds::text, absolute_seconds::text, step_up_seconds::text")
+                .bind(facility.value().to_string()).bind(limits.idle.to_string()).bind(limits.absolute.to_string()).bind(limits.step_up.to_string()).fetch_optional(&mut *tx).await?
+        }.ok_or(PolicyError)?;
+        let stored = decode(&row)?;
+        if stored.facility != facility || stored.version.value() != next || stored.limits != limits {
+            return Err(PolicyError);
+        }
+
+        Ok(stored)
     }
-    tx.commit().await?;
-    Ok(stored)
+    .await;
+    match result {
+        Ok(value) => {
+            tx.commit().await?;
+            Ok(value)
+        }
+        Err(error) => {
+            tx.rollback().await?;
+            Err(error)
+        }
+    }
 }

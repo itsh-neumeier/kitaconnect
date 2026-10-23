@@ -74,10 +74,23 @@ async fn pid(c: &mut PgConnection) -> i32 {
         .unwrap()
 }
 
+async fn assert_idle(witness: &mut PgConnection, target: i32) {
+    tokio::time::timeout(Duration::from_secs(3), async {
+        loop {
+            let idle: bool = sqlx::query_scalar("SELECT state = 'idle' AND xact_start IS NULL FROM pg_catalog.pg_stat_activity WHERE pid = $1")
+                .bind(target).fetch_one(&mut *witness).await.unwrap();
+            if idle { break; }
+            tokio::time::sleep(Duration::from_millis(10)).await;
+        }
+    }).await.expect("policy failure must finish its transaction before returning");
+}
+
 #[tokio::test]
 #[ignore = "requires scripts/test-organization-db.mjs isolated PostgreSQL fixture"]
 async fn facility_session_policies_are_versioned_and_restricted() {
     let mut c = connect("postgres").await;
+    let connection_pid = pid(&mut c).await;
+    let mut cleanup_witness = connect("postgres").await;
     let after = std::env::var("KC_ORG_TEST_PHASE").unwrap() == "after";
     if after {
         let old = session_policy::read(&mut c, facility(1))
@@ -124,6 +137,7 @@ async fn facility_session_policies_are_versioned_and_restricted() {
             .await
             .is_err()
     );
+    assert_idle(&mut cleanup_witness, connection_pid).await;
     assert!(
         session_policy::write(&mut c, a, PolicyVersion::new(1), defaults)
             .await
@@ -139,6 +153,7 @@ async fn facility_session_policies_are_versioned_and_restricted() {
             .await
             .is_err()
     );
+    assert_idle(&mut cleanup_witness, connection_pid).await;
     let changed =
         session_policy::write(&mut c, a, Some(original.version()), limits(300, 7200, 120))
             .await
@@ -149,6 +164,7 @@ async fn facility_session_policies_are_versioned_and_restricted() {
             .await
             .is_err()
     );
+    assert_idle(&mut cleanup_witness, connection_pid).await;
     session_policy::write(&mut c, b, None, defaults)
         .await
         .unwrap();
@@ -223,6 +239,7 @@ async fn facility_session_policies_are_versioned_and_restricted() {
             .await
             .is_err()
     );
+    assert_idle(&mut cleanup_witness, connection_pid).await;
     sql(&mut c,"DROP TRIGGER kc_policy_suppress ON organization_config.facility_session_policies; DROP FUNCTION public.kc_policy_suppress();").await;
     sql(&mut c,"CREATE FUNCTION public.kc_policy_fail() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'fixture commit failure' USING ERRCODE = '23514'; END $$; CREATE CONSTRAINT TRIGGER kc_policy_fail AFTER UPDATE ON organization_config.facility_session_policies DEFERRABLE INITIALLY DEFERRED FOR EACH ROW EXECUTE FUNCTION public.kc_policy_fail();").await;
     assert!(
@@ -230,6 +247,7 @@ async fn facility_session_policies_are_versioned_and_restricted() {
             .await
             .is_err()
     );
+    assert_idle(&mut cleanup_witness, connection_pid).await;
     sql(&mut c,"DROP TRIGGER kc_policy_fail ON organization_config.facility_session_policies; DROP FUNCTION public.kc_policy_fail();").await;
     let unchanged = session_policy::read(&mut c, b).await.unwrap().unwrap();
     assert_eq!(unchanged.version().value(), 1);

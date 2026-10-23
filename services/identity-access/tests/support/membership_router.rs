@@ -285,7 +285,10 @@ pub(super) async fn check(
         (
             "POST",
             PATH,
-            format!("{}Authorization: Bearer synthetic\r\n", running.headers.as_str()),
+            format!(
+                "{}Authorization: Bearer synthetic\r\n",
+                running.headers.as_str()
+            ),
             body(site),
             400,
         ),

@@ -202,3 +202,15 @@ Abmeldung widerruft auch Rotationsnachfolger derselben Anmeldung. Andere Anmeldu
 Migration 0007 erlaubt die dafür nötige Mehrfachbindung und erhält den einmaligen Anmeldevorgangsverbrauch. Alte Migrationen bleiben unverändert.
 Neue Datenbanktests prüfen insbesondere tatsächliche Rotationskonkurrenz, Abmeldung gegen Rotation, Fehlerrücknahme und Kandidatenrücknahme bei Ablauf während Schreibwartezeit.
 Die native CI des Folge-PRs muss diese Fälle bestätigen. Erneute Faktorprüfung, Organisation, Gateway und Browser-/TLS-/mTLS-Nachweise bleiben offen.
+
+## KC-006F: Interner Organisationsrouter
+
+[ADR-054](architecture/ADR-054_Interner_Organisationsrouter.md), [Dienstvertrag](../contracts/organization-config/membership-http-v1.md)
+und [OpenAPI](../contracts/openapi/organization-config/membership-v1.json) stehen in 1b9311c vor abhängigem Code in PR #95.
+Die einzelne interne Abfrage nutzt den vorhandenen authentisierten Leser aus PR #94.
+Jede Anfrage prüft tatsächlichen Aufrufer, frische Introspektion und eigenen Mitgliedschaftsbestand.
+Kennungen und Versionen werden verlustfrei als Zeichenketten übertragen. Fehler verwenden feste Problem Details.
+Der Router besitzt ausdrücklich konfigurierte Grenzen und öffnet keinen Listener.
+Die vorhandene tatsächliche HTTP-/Datenbankgruppe erhält eigene Routerfälle vor/nach Neustart.
+Der aktuelle CI-Nachweis wird im PR und Checkpoint geführt. Keine neue Migration oder erlaubende Policy entsteht.
+Der Datenstand enthält keine MFA-Entscheidung. Vollständiger Anmeldeadapter, Gateway, Browser und Gesamtabnahme bleiben offen.

@@ -28,3 +28,7 @@ Das interne Modell stellt keine Sitzungsnachweise aus und erteilt keine Anmeldun
 
 Der [Sitzungs-Speichervertrag](identity-access/session-storage-v1.md) ergänzt den internen SQLx-Adapter und abgeleitete Sitzungsnachweise.
 Die Anwendungsrolle bleibt durch RLS gesperrt. Die HTTP-Anmeldung und ihre offenen Sicherheitsregeln folgen gesondert.
+
+Die [interne Mitgliedschaftsabfrage über HTTP](organization-config/membership-http-v1.md)
+und ihr [OpenAPI-Vertrag](openapi/organization-config/membership-v1.json) verbinden den vorhandenen authentisierten Leser mit einer begrenzten internen Route.
+Die Antwort enthält ausschließlich Mitgliedschaft und Fristen. Sie erteilt keine Benutzer- oder MFA-Rechte.

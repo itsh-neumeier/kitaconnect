@@ -12,6 +12,8 @@ use webauthn_authenticator_rs::{
 };
 use webauthn_rs::prelude::*;
 
+mod support;
+
 async fn connect(user: &str) -> PgConnection {
     PgConnection::connect_with(
         &PgConnectOptions::new()
@@ -154,6 +156,8 @@ fn input_limits_and_reference_transport_are_strict() {
 #[ignore = "requires the isolated PostgreSQL fixture in scripts/test-organization-db.mjs"]
 async fn webauthn_ceremonies_are_current_and_single_use() {
     let mut connection = connect("postgres").await;
+    let connection_pid = pid(&mut connection).await;
+    let mut cleanup_witness = connect("postgres").await;
     let phase = std::env::var("KC_ORG_TEST_PHASE").unwrap();
     if phase == "after" {
         assert!(consumed(&mut connection, id(1)).await > 0);
@@ -183,8 +187,22 @@ async fn webauthn_ceremonies_are_current_and_single_use() {
     let identity = id(base + 1);
     let other = id(base + 2);
     let service = Arc::new(engine());
+    assert!(
+        service
+            .start_authentication(&mut connection, id(base + 5))
+            .await
+            .is_err()
+    );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     let mut device = auth();
     let key = registration(&service, &mut connection, identity, &mut device).await;
+    assert!(
+        service
+            .revoke(&mut connection, id(base + 5), &key)
+            .await
+            .is_err()
+    );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     let (token, response) = assertion(&service, &mut connection, identity, &mut device).await;
     let evidence = service
         .finish_authentication(&mut connection, identity, &token, &response)
@@ -198,6 +216,7 @@ async fn webauthn_ceremonies_are_current_and_single_use() {
             .await
             .unwrap_err(),
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     let passwords: i64 =
         sqlx::query_scalar("SELECT count(*) FROM identity_access.password_credentials")
             .fetch_one(&mut connection)
@@ -356,6 +375,7 @@ async fn webauthn_ceremonies_are_current_and_single_use() {
             .await
             .unwrap_err(),
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     let (token, options) = service
         .start_registration(&mut connection, id(base + 3))
         .await
@@ -375,6 +395,7 @@ async fn webauthn_ceremonies_are_current_and_single_use() {
             .unwrap_err(),
     );
 
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     // Mutations preserve the surrounding JSON but break each authenticated response component.
     for field in ["signature", "authenticatorData", "clientDataJSON"] {
         let (token, options) = service
@@ -408,6 +429,7 @@ async fn webauthn_ceremonies_are_current_and_single_use() {
                 .await
                 .unwrap_err(),
         );
+        support::assert_idle(&mut cleanup_witness, connection_pid).await;
     }
     let (token, response) = assertion(&service, &mut connection, identity, &mut device).await;
     error(
@@ -416,6 +438,7 @@ async fn webauthn_ceremonies_are_current_and_single_use() {
             .await
             .unwrap_err(),
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     error(
         service
             .finish_authentication(&mut connection, identity, &token, &response)
@@ -588,6 +611,7 @@ async fn webauthn_ceremonies_are_current_and_single_use() {
             .await
             .unwrap_err(),
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     let pending_limit = LocalhostWebauthn::new(CeremonyLimits::new(300, 1, 8).unwrap()).unwrap();
     error(
         pending_limit
@@ -595,6 +619,7 @@ async fn webauthn_ceremonies_are_current_and_single_use() {
             .await
             .unwrap_err(),
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     let mut transaction = connection.begin().await.unwrap();
     error(
         service

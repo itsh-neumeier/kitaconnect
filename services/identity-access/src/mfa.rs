@@ -444,25 +444,37 @@ impl MfaService {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
-        crate::login::lock_identity(&mut tx, identity)
-            .await
-            .map_err(|_| MfaError)?;
-        sqlx::query("INSERT INTO identity_access.mfa_accounts (identity_id, last_observed, recovery_required) VALUES ($1::text::numeric, 0, false) ON CONFLICT DO NOTHING")
-            .bind(identity.value().to_string()).execute(&mut *tx).await?;
-        let account = account(&mut tx, identity).await?;
-        let time = time(&mut tx, &account).await?;
-        permit(&account, time, proof)?;
-        sqlx::query("DELETE FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric AND state = 'pending'").bind(identity.value().to_string()).execute(&mut *tx).await?;
-        let written = sqlx::query("INSERT INTO identity_access.totp_factors (factor_id, identity_id, state, key_tag, nonce, ciphertext, created_at, expires_at) VALUES ($1, $2::text::numeric, 'pending', $3, $4, $5, $6::text::numeric, $7::text::numeric)")
-            .bind(factor.0.as_slice()).bind(identity.value().to_string()).bind(self.key.tag.as_slice()).bind(nonce.as_slice()).bind(ciphertext)
-            .bind(time.to_string()).bind(time.checked_add(u64::from(self.limits.enrollment)).ok_or(MfaError)?.to_string()).execute(&mut *tx).await?;
-        if written.rows_affected() != 1 {
-            return Err(MfaError);
+        let result: Result<Enrollment, MfaError> = async {
+            crate::login::lock_identity(&mut tx, identity)
+                .await
+                .map_err(|_| MfaError)?;
+            sqlx::query("INSERT INTO identity_access.mfa_accounts (identity_id, last_observed, recovery_required) VALUES ($1::text::numeric, 0, false) ON CONFLICT DO NOTHING")
+                .bind(identity.value().to_string()).execute(&mut *tx).await?;
+            let account = account(&mut tx, identity).await?;
+            let time = time(&mut tx, &account).await?;
+            permit(&account, time, proof)?;
+            sqlx::query("DELETE FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric AND state = 'pending'").bind(identity.value().to_string()).execute(&mut *tx).await?;
+            let written = sqlx::query("INSERT INTO identity_access.totp_factors (factor_id, identity_id, state, key_tag, nonce, ciphertext, created_at, expires_at) VALUES ($1, $2::text::numeric, 'pending', $3, $4, $5, $6::text::numeric, $7::text::numeric)")
+                .bind(factor.0.as_slice()).bind(identity.value().to_string()).bind(self.key.tag.as_slice()).bind(nonce.as_slice()).bind(ciphertext)
+                .bind(time.to_string()).bind(time.checked_add(u64::from(self.limits.enrollment)).ok_or(MfaError)?.to_string()).execute(&mut *tx).await?;
+            if written.rows_affected() != 1 {
+                return Err(MfaError);
+            }
+            observe(&mut tx, identity, time).await?;
+            event(&mut tx, identity, "enrollment", time).await?;
+
+            Ok(Enrollment { factor, secret })
+        }.await;
+        match result {
+            Ok(value) => {
+                tx.commit().await?;
+                Ok(value)
+            }
+            Err(error) => {
+                tx.rollback().await?;
+                Err(error)
+            }
         }
-        observe(&mut tx, identity, time).await?;
-        event(&mut tx, identity, "enrollment", time).await?;
-        tx.commit().await?;
-        Ok(Enrollment { factor, secret })
     }
     async fn issue_codes(
         &self,
@@ -507,45 +519,57 @@ impl MfaService {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
-        crate::login::lock_identity(&mut tx, identity)
-            .await
-            .map_err(|_| MfaError)?;
-        let account = account(&mut tx, identity).await?;
-        let time = time(&mut tx, &account).await?;
-        permit(&account, time, proof)?;
-        let active = sqlx::query("SELECT factor_id, key_tag, nonce, ciphertext, last_step::text FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric AND state = 'active'")
-            .bind(identity.value().to_string()).fetch_optional(&mut *tx).await?;
-        if let Some(row) = active {
-            self.check(identity, &row, previous.ok_or(MfaError)?, time)?;
-        } else if previous.is_some() {
-            return Err(MfaError);
+        let result: Result<RecoveryCodes, MfaError> = async {
+            crate::login::lock_identity(&mut tx, identity)
+                .await
+                .map_err(|_| MfaError)?;
+            let account = account(&mut tx, identity).await?;
+            let time = time(&mut tx, &account).await?;
+            permit(&account, time, proof)?;
+            let active = sqlx::query("SELECT factor_id, key_tag, nonce, ciphertext, last_step::text FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric AND state = 'active'")
+                .bind(identity.value().to_string()).fetch_optional(&mut *tx).await?;
+            if let Some(row) = active {
+                self.check(identity, &row, previous.ok_or(MfaError)?, time)?;
+            } else if previous.is_some() {
+                return Err(MfaError);
+            }
+            let row = sqlx::query("SELECT factor_id, key_tag, nonce, ciphertext, last_step::text, created_at::text, expires_at::text FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric AND factor_id = $2 AND state = 'pending'")
+                .bind(identity.value().to_string()).bind(enrollment.factor.0.as_slice()).fetch_one(&mut *tx).await?;
+            let created: u64 = row
+                .try_get::<String, _>("created_at")?
+                .parse()
+                .map_err(|_| MfaError)?;
+            let expires: u64 = row
+                .try_get::<String, _>("expires_at")?
+                .parse()
+                .map_err(|_| MfaError)?;
+            if time < created || time >= expires {
+                return Err(MfaError);
+            }
+            let step = self.check(identity, &row, code, time)?;
+            sqlx::query("DELETE FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric AND state = 'active'").bind(identity.value().to_string()).execute(&mut *tx).await?;
+            let written = sqlx::query("UPDATE identity_access.totp_factors SET state = 'active', last_step = $2::text::numeric WHERE factor_id = $1")
+                .bind(enrollment.factor.0.as_slice()).bind(step.to_string()).execute(&mut *tx).await?;
+            if written.rows_affected() != 1 {
+                return Err(MfaError);
+            }
+            let codes = self.issue_codes(&mut tx, identity).await?;
+            observe(&mut tx, identity, time).await?;
+            revoke_sessions(&mut tx, identity).await?;
+            event(&mut tx, identity, "activation", time).await?;
+
+            Ok(codes)
+        }.await;
+        match result {
+            Ok(value) => {
+                tx.commit().await?;
+                Ok(value)
+            }
+            Err(error) => {
+                tx.rollback().await?;
+                Err(error)
+            }
         }
-        let row = sqlx::query("SELECT factor_id, key_tag, nonce, ciphertext, last_step::text, created_at::text, expires_at::text FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric AND factor_id = $2 AND state = 'pending'")
-            .bind(identity.value().to_string()).bind(enrollment.factor.0.as_slice()).fetch_one(&mut *tx).await?;
-        let created: u64 = row
-            .try_get::<String, _>("created_at")?
-            .parse()
-            .map_err(|_| MfaError)?;
-        let expires: u64 = row
-            .try_get::<String, _>("expires_at")?
-            .parse()
-            .map_err(|_| MfaError)?;
-        if time < created || time >= expires {
-            return Err(MfaError);
-        }
-        let step = self.check(identity, &row, code, time)?;
-        sqlx::query("DELETE FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric AND state = 'active'").bind(identity.value().to_string()).execute(&mut *tx).await?;
-        let written = sqlx::query("UPDATE identity_access.totp_factors SET state = 'active', last_step = $2::text::numeric WHERE factor_id = $1")
-            .bind(enrollment.factor.0.as_slice()).bind(step.to_string()).execute(&mut *tx).await?;
-        if written.rows_affected() != 1 {
-            return Err(MfaError);
-        }
-        let codes = self.issue_codes(&mut tx, identity).await?;
-        observe(&mut tx, identity, time).await?;
-        revoke_sessions(&mut tx, identity).await?;
-        event(&mut tx, identity, "activation", time).await?;
-        tx.commit().await?;
-        Ok(codes)
     }
     pub async fn verify(
         &self,
@@ -577,38 +601,49 @@ impl MfaService {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
-        crate::login::lock_identity(&mut tx, identity)
-            .await
-            .map_err(|_| MfaError)?;
-        let account = account(&mut tx, identity).await?;
-        if account.recovery {
-            return Err(MfaError);
-        }
-        let time = time(&mut tx, &account).await?;
-        let row = sqlx::query("SELECT factor_id, key_tag, nonce, ciphertext, last_step::text FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric AND state = 'active'")
-            .bind(identity.value().to_string()).fetch_one(&mut *tx).await?;
-        let step = self.check(identity, &row, code, time)?;
-        let written = sqlx::query("UPDATE identity_access.totp_factors SET last_step = $2::text::numeric WHERE factor_id = $1")
-            .bind(row.try_get::<Vec<u8>, _>("factor_id")?).bind(step.to_string()).execute(&mut *tx).await?;
-        if written.rows_affected() != 1 {
-            return Err(MfaError);
-        }
-        observe(&mut tx, identity, time).await?;
-        if let Some(flow) = flow {
-            let recorded =
-                crate::login::record_factor(&mut tx, identity, flow, crate::login::Factor::Totp)
-                    .await
-                    .map_err(|_| MfaError)?;
-            match recorded {
-                crate::login::FactorRecord::Recorded => {}
-                crate::login::FactorRecord::Expired => {
-                    tx.commit().await?;
-                    return Err(MfaError);
+        let result: Result<Option<MfaEvidence>, MfaError> = async {
+            crate::login::lock_identity(&mut tx, identity)
+                .await
+                .map_err(|_| MfaError)?;
+            let account = account(&mut tx, identity).await?;
+            if account.recovery {
+                return Err(MfaError);
+            }
+            let time = time(&mut tx, &account).await?;
+            let row = sqlx::query("SELECT factor_id, key_tag, nonce, ciphertext, last_step::text FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric AND state = 'active'")
+                .bind(identity.value().to_string()).fetch_one(&mut *tx).await?;
+            let step = self.check(identity, &row, code, time)?;
+            let written = sqlx::query("UPDATE identity_access.totp_factors SET last_step = $2::text::numeric WHERE factor_id = $1")
+                .bind(row.try_get::<Vec<u8>, _>("factor_id")?).bind(step.to_string()).execute(&mut *tx).await?;
+            if written.rows_affected() != 1 {
+                return Err(MfaError);
+            }
+            observe(&mut tx, identity, time).await?;
+            if let Some(flow) = flow {
+                let recorded =
+                    crate::login::record_factor(&mut tx, identity, flow, crate::login::Factor::Totp)
+                        .await
+                        .map_err(|_| MfaError)?;
+                match recorded {
+                    crate::login::FactorRecord::Recorded => {}
+                    crate::login::FactorRecord::Expired => {
+                        return Ok(None);
+                    }
                 }
             }
+
+            Ok(Some(MfaEvidence(identity)))
+        }.await;
+        match result {
+            Ok(value) => {
+                tx.commit().await?;
+                value.ok_or(MfaError)
+            }
+            Err(error) => {
+                tx.rollback().await?;
+                Err(error)
+            }
         }
-        tx.commit().await?;
-        Ok(MfaEvidence(identity))
     }
     pub async fn recover(
         &self,
@@ -621,33 +656,45 @@ impl MfaService {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
-        crate::login::lock_identity(&mut tx, identity)
-            .await
-            .map_err(|_| MfaError)?;
-        let account = account(&mut tx, identity).await?;
-        let time = time(&mut tx, &account).await?;
-        let generation = account.generation.ok_or(MfaError)?;
-        let written = sqlx::query("UPDATE identity_access.mfa_recovery_codes SET consumed = true WHERE fingerprint = $1 AND identity_id = $2::text::numeric AND generation = $3 AND NOT consumed")
-            .bind(recovery_hash(identity, &generation, code).as_slice()).bind(identity.value().to_string()).bind(&generation).execute(&mut *tx).await?;
-        if written.rows_affected() != 1 {
-            return Err(MfaError);
+        let result: Result<RecoveryPermit, MfaError> = async {
+            crate::login::lock_identity(&mut tx, identity)
+                .await
+                .map_err(|_| MfaError)?;
+            let account = account(&mut tx, identity).await?;
+            let time = time(&mut tx, &account).await?;
+            let generation = account.generation.ok_or(MfaError)?;
+            let written = sqlx::query("UPDATE identity_access.mfa_recovery_codes SET consumed = true WHERE fingerprint = $1 AND identity_id = $2::text::numeric AND generation = $3 AND NOT consumed")
+                .bind(recovery_hash(identity, &generation, code).as_slice()).bind(identity.value().to_string()).bind(&generation).execute(&mut *tx).await?;
+            if written.rows_affected() != 1 {
+                return Err(MfaError);
+            }
+            sqlx::query(
+                "DELETE FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric",
+            )
+            .bind(identity.value().to_string())
+            .execute(&mut *tx)
+            .await?;
+            let written = sqlx::query("UPDATE identity_access.mfa_accounts SET recovery_required = true, permit_hash = $2, permit_expires = $3::text::numeric WHERE identity_id = $1::text::numeric")
+                .bind(identity.value().to_string()).bind(proof.0.fingerprint().as_slice()).bind(time.checked_add(u64::from(self.limits.recovery)).ok_or(MfaError)?.to_string()).execute(&mut *tx).await?;
+            if written.rows_affected() != 1 {
+                return Err(MfaError);
+            }
+            observe(&mut tx, identity, time).await?;
+            revoke_sessions(&mut tx, identity).await?;
+            event(&mut tx, identity, "recovery", time).await?;
+
+            Ok(proof)
+        }.await;
+        match result {
+            Ok(value) => {
+                tx.commit().await?;
+                Ok(value)
+            }
+            Err(error) => {
+                tx.rollback().await?;
+                Err(error)
+            }
         }
-        sqlx::query(
-            "DELETE FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric",
-        )
-        .bind(identity.value().to_string())
-        .execute(&mut *tx)
-        .await?;
-        let written = sqlx::query("UPDATE identity_access.mfa_accounts SET recovery_required = true, permit_hash = $2, permit_expires = $3::text::numeric WHERE identity_id = $1::text::numeric")
-            .bind(identity.value().to_string()).bind(proof.0.fingerprint().as_slice()).bind(time.checked_add(u64::from(self.limits.recovery)).ok_or(MfaError)?.to_string()).execute(&mut *tx).await?;
-        if written.rows_affected() != 1 {
-            return Err(MfaError);
-        }
-        observe(&mut tx, identity, time).await?;
-        revoke_sessions(&mut tx, identity).await?;
-        event(&mut tx, identity, "recovery", time).await?;
-        tx.commit().await?;
-        Ok(proof)
     }
     pub async fn revoke(
         &self,
@@ -659,39 +706,51 @@ impl MfaService {
         let mut tx = connection
             .begin_with("BEGIN ISOLATION LEVEL READ COMMITTED")
             .await?;
-        crate::login::lock_identity(&mut tx, identity)
-            .await
-            .map_err(|_| MfaError)?;
-        let account = account(&mut tx, identity).await?;
-        if account.recovery {
-            return Err(MfaError);
+        let result: Result<(), MfaError> = async {
+            crate::login::lock_identity(&mut tx, identity)
+                .await
+                .map_err(|_| MfaError)?;
+            let account = account(&mut tx, identity).await?;
+            if account.recovery {
+                return Err(MfaError);
+            }
+            let time = time(&mut tx, &account).await?;
+            let row = sqlx::query("SELECT factor_id, key_tag, nonce, ciphertext, last_step::text FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric AND state = 'active'")
+                .bind(identity.value().to_string()).fetch_one(&mut *tx).await?;
+            self.check(identity, &row, code, time)?;
+            sqlx::query(
+                "DELETE FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric",
+            )
+            .bind(identity.value().to_string())
+            .execute(&mut *tx)
+            .await?;
+            sqlx::query(
+                "DELETE FROM identity_access.mfa_recovery_codes WHERE identity_id = $1::text::numeric",
+            )
+            .bind(identity.value().to_string())
+            .execute(&mut *tx)
+            .await?;
+            let updated = sqlx::query("UPDATE identity_access.mfa_accounts SET generation = NULL, permit_hash = NULL, permit_expires = NULL WHERE identity_id = $1::text::numeric")
+                .bind(identity.value().to_string()).execute(&mut *tx).await?;
+            if updated.rows_affected() != 1 {
+                return Err(MfaError);
+            }
+            observe(&mut tx, identity, time).await?;
+            revoke_sessions(&mut tx, identity).await?;
+            event(&mut tx, identity, "revocation", time).await?;
+
+            Ok(())
+        }.await;
+        match result {
+            Ok(()) => {
+                tx.commit().await?;
+                Ok(())
+            }
+            Err(error) => {
+                tx.rollback().await?;
+                Err(error)
+            }
         }
-        let time = time(&mut tx, &account).await?;
-        let row = sqlx::query("SELECT factor_id, key_tag, nonce, ciphertext, last_step::text FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric AND state = 'active'")
-            .bind(identity.value().to_string()).fetch_one(&mut *tx).await?;
-        self.check(identity, &row, code, time)?;
-        sqlx::query(
-            "DELETE FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric",
-        )
-        .bind(identity.value().to_string())
-        .execute(&mut *tx)
-        .await?;
-        sqlx::query(
-            "DELETE FROM identity_access.mfa_recovery_codes WHERE identity_id = $1::text::numeric",
-        )
-        .bind(identity.value().to_string())
-        .execute(&mut *tx)
-        .await?;
-        let updated = sqlx::query("UPDATE identity_access.mfa_accounts SET generation = NULL, permit_hash = NULL, permit_expires = NULL WHERE identity_id = $1::text::numeric")
-            .bind(identity.value().to_string()).execute(&mut *tx).await?;
-        if updated.rows_affected() != 1 {
-            return Err(MfaError);
-        }
-        observe(&mut tx, identity, time).await?;
-        revoke_sessions(&mut tx, identity).await?;
-        event(&mut tx, identity, "revocation", time).await?;
-        tx.commit().await?;
-        Ok(())
     }
     pub async fn status(
         &self,

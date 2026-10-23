@@ -11,6 +11,8 @@ use std::{sync::Arc, time::Duration};
 use totp_rs::{Builder, Secret};
 use zeroize::Zeroizing;
 
+mod support;
+
 async fn connect(user: &str) -> PgConnection {
     PgConnection::connect_with(
         &PgConnectOptions::new()
@@ -96,6 +98,8 @@ async fn pid(c: &mut PgConnection) -> i32 {
 #[ignore = "requires isolated PostgreSQL fixture"]
 async fn totp_and_recovery_are_atomic_and_protected() {
     let mut c = connect("postgres").await;
+    let connection_pid = pid(&mut c).await;
+    let mut cleanup_witness = connect("postgres").await;
     let after = std::env::var("KC_ORG_TEST_PHASE").unwrap() == "after";
     if after {
         assert_eq!(count(&mut c, "SELECT count(*) FROM identity_access.mfa_accounts WHERE identity_id = 1 AND recovery_required").await, 1);
@@ -139,6 +143,7 @@ async fn totp_and_recovery_are_atomic_and_protected() {
             .await
             .is_err()
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     assert_eq!(
         count(
             &mut c,
@@ -165,6 +170,7 @@ async fn totp_and_recovery_are_atomic_and_protected() {
             .await
             .is_err()
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     let snapshot = sqlx::query("SELECT factor_id, ciphertext, nonce, key_tag FROM identity_access.totp_factors WHERE identity_id = $1::text::numeric")
         .bind(a.value().to_string()).fetch_one(&mut c).await.unwrap();
     let ciphertext: Vec<u8> = snapshot.get("ciphertext");
@@ -284,6 +290,7 @@ async fn totp_and_recovery_are_atomic_and_protected() {
             .await
             .is_err()
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     sqlx::query("UPDATE identity_access.totp_factors SET created_at = 0, expires_at = 1 WHERE identity_id = $1::text::numeric AND state = 'pending'")
         .bind(a.value().to_string()).execute(&mut c).await.unwrap();
     assert!(
@@ -317,6 +324,7 @@ async fn totp_and_recovery_are_atomic_and_protected() {
             .await
             .is_err()
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     // Foreign identities cannot consume the same raw recovery code.
     let second = service.begin_enrollment(&mut c, b, None).await.unwrap();
     let second_codes = service
@@ -347,6 +355,7 @@ async fn totp_and_recovery_are_atomic_and_protected() {
             .await
             .is_err()
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     assert!(!service.status(&mut c, a).await.unwrap().recovery_required);
     assert!(service.status(&mut c, a).await.unwrap().totp_active);
     assert_eq!(
@@ -477,6 +486,7 @@ async fn totp_and_recovery_are_atomic_and_protected() {
             .await
             .is_err()
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     assert!(service.status(&mut c, b).await.unwrap().totp_active);
     sql(&mut c,"DROP TRIGGER kc_mfa_suppress ON identity_access.sessions; DROP FUNCTION public.kc_mfa_suppress();").await;
     service

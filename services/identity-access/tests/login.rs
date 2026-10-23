@@ -393,6 +393,7 @@ async fn login_completion_is_atomic_and_current() {
             .await
             .is_err()
     ); // Old evidence is not promoted.
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     assert!(
         checker
             .check_for_login(
@@ -896,6 +897,7 @@ async fn login_completion_is_atomic_and_current() {
         .await
         .is_err()
     );
+    support::assert_idle(&mut cleanup_witness, connection_pid).await;
     sql(
         &mut c,
         "UPDATE identity_access.login_limits SET last_observed=0;",

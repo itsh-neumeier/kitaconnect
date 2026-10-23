@@ -1,0 +1,1095 @@
+{
+  "captured_at": "2026-10-21",
+  "repository": "itsh-neumeier/kitaconnect",
+  "scope": "17 zum Beginn des Auftrags offene Pull Requests; keine Merge-Freigabe",
+  "follow_up": {"captured_at":"2026-10-21","correction_pull_request":75,"correction_commit":"b9071bfab0c0a0fdaf7ff3377ef136ad410b6899","note":"Alle 17 ursprünglichen PR-Beschreibungen enthalten eine technische Empfehlung. Keine persönliche Durchsicht oder Integration behauptet.","updated_actions":[{"number":45,"head_sha":"1712c7a5ff42d999c99a24216a25190901c99439","base_sha":"eaca2cb56a0e54a732ec17986f7c3ccb854c3986","checks":[{"name":"dependencies","status":"completed","conclusion":"success","url":"https://github.com/itsh-neumeier/kitaconnect/actions/runs/39600343744/job/119222946078"},{"name":"structure","status":"completed","conclusion":"success","url":"https://github.com/itsh-neumeier/kitaconnect/actions/runs/39600343646/job/119222945994"},{"name":"web","status":"completed","conclusion":"success","url":"https://github.com/itsh-neumeier/kitaconnect/actions/runs/39600343646/job/119222945979"},{"name":"secrets","status":"completed","conclusion":"success","url":"https://github.com/itsh-neumeier/kitaconnect/actions/runs/39600343744/job/119222945534"},{"name":"rust","status":"completed","conclusion":"success","url":"https://github.com/itsh-neumeier/kitaconnect/actions/runs/39600343646/job/119222945488"}]},{"number":46,"head_sha":"8ccef99e87ea5bb443521ce3481d7ad964d0f2a9","base_sha":"eaca2cb56a0e54a732ec17986f7c3ccb854c3986","checks":[{"name":"structure","status":"completed","conclusion":"success","url":"https://github.com/itsh-neumeier/kitaconnect/actions/runs/39600356339/job/119222990548"},{"name":"web","status":"completed","conclusion":"success","url":"https://github.com/itsh-neumeier/kitaconnect/actions/runs/39600356339/job/119222990422"},{"name":"rust","status":"completed","conclusion":"success","url":"https://github.com/itsh-neumeier/kitaconnect/actions/runs/39600356339/job/119222990066"},{"name":"dependencies","status":"completed","conclusion":"success","url":"https://github.com/itsh-neumeier/kitaconnect/actions/runs/39600356345/job/119222990013"},{"name":"secrets","status":"completed","conclusion":"success","url":"https://github.com/itsh-neumeier/kitaconnect/actions/runs/39600356345/job/119222989636"}]}]},
+  "pull_requests": [
+    {
+      "number": 45,
+      "base": "main",
+      "base_sha": "68f39f19295b1c723e75b257b73d890dbbe5b9b6",
+      "head": "dependabot/github_actions/actions/checkout-7.0.1",
+      "head_sha": "87c8a17c0816efe9394855ff93e19b66272d1262",
+      "recommendation": "Nach aktualisierter Basis und grüner CI übernehmen",
+      "reason": "Feste Commit-ID bleibt erhalten; persist-credentials bleibt false. Nach P1-Integration alle Checkout-Verwendungen prüfen.",
+      "checks": [
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142332748/job/117719110753"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142332748/job/117719110721"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142332762/job/117719110673"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142332748/job/117719110616"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142332762/job/117719110430"
+        }
+      ]
+    },
+    {
+      "number": 46,
+      "base": "main",
+      "base_sha": "68f39f19295b1c723e75b257b73d890dbbe5b9b6",
+      "head": "dependabot/github_actions/actions/setup-node-7.1.0",
+      "head_sha": "356edaa7527946489488afb770dd6364ae40bd71",
+      "recommendation": "Nach aktualisierter Basis und grüner CI übernehmen",
+      "reason": "Feste Commit-ID und .node-version bleiben erhalten. PR #54 ergänzt eine weitere Setup-Node-Verwendung; beim späteren Zusammenführen ebenfalls aktualisieren.",
+      "checks": [
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142333979/job/117719115011"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142333979/job/117719114946"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142333979/job/117719114816"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142333827/job/117719113815"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142333827/job/117719113511"
+        }
+      ]
+    },
+    {
+      "number": 47,
+      "base": "main",
+      "base_sha": "68f39f19295b1c723e75b257b73d890dbbe5b9b6",
+      "head": "dependabot/npm_and_yarn/typescript-7.0.2",
+      "head_sha": "8e1a6cbf3e7312e5f153e1501c7f4b0b4a1a0f62",
+      "recommendation": "Nicht integrieren; TypeScript 7 gesondert migrieren",
+      "reason": "Web-CI scheitert in SvelteKit load_tsconfig an readFile. Kein Überspringen der Prüfung und keine Abschwächung des Tests.",
+      "checks": [
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142343237/job/117719142524"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142343237/job/117719142493"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "failure",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142343237/job/117719142359"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142343208/job/117719142149"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142343208/job/117719142013"
+        }
+      ]
+    },
+    {
+      "number": 48,
+      "base": "main",
+      "base_sha": "68f39f19295b1c723e75b257b73d890dbbe5b9b6",
+      "head": "dependabot/npm_and_yarn/types/node-26.6.5",
+      "head_sha": "f9ec1a03e9c5007995f2bb3207a79df45319390a",
+      "recommendation": "Nicht integrieren; Node-24-Typen beibehalten",
+      "reason": "Node.js ist durch .node-version und engines auf 24 festgelegt. Node-26-Typen können APIs zulassen, die diese Laufzeit nicht bereitstellt.",
+      "checks": [
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142334331/job/117719115430"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142334331/job/117719115405"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142334313/job/117719115366"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142334331/job/117719115178"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39142334313/job/117719115076"
+        }
+      ]
+    },
+    {
+      "number": 53,
+      "base": "main",
+      "base_sha": "eaca2cb56a0e54a732ec17986f7c3ccb854c3986",
+      "head": "codex/kc-004a-organisationsmodell",
+      "head_sha": "5d42ef81e9e77a7395ebdc07b54d3ce30ad5b1f4",
+      "recommendation": "Als begrenztes Modell übernehmen",
+      "reason": "Typtrennung, Nullgrenze, Duplikate und fehlgeschlagene Anlage geprüft. Keine Organisationsrechte oder vollständige KC-004-Abnahme.",
+      "checks": [
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39155835844/job/117758754627"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39155835844/job/117758754616"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39155835849/job/117758754566"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39155835844/job/117758754443"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39155835849/job/117758754277"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39155832531/job/117758745041"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39155832531/job/117758745027"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39155832531/job/117758744855"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39155832522/job/117758744835"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39155832522/job/117758744639"
+        }
+      ]
+    },
+    {
+      "number": 54,
+      "base": "codex/kc-004a-organisationsmodell",
+      "base_sha": "5d42ef81e9e77a7395ebdc07b54d3ce30ad5b1f4",
+      "head": "codex/kc-004b-postgres-persistenz",
+      "head_sha": "16cd295509aaf4091a7d41c82e0cc4d38acd21d9",
+      "recommendation": "Als geschlossene Persistenzgrundlage übernehmen",
+      "reason": "Rollen, numerische Grenzen, Migration und erzwungene RLS geprüft. Keine erlaubende Laufzeit-Policy.",
+      "checks": [
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39289554903/job/118186379928"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39289554903/job/118186379639"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39289554882/job/118186326161"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39289554882/job/118186326090"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39289554882/job/118186325695"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39289546112/job/118186303887"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39289546112/job/118186303841"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39289546112/job/118186303268"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39289546090/job/118186295709"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39289546090/job/118186295379"
+        }
+      ]
+    },
+    {
+      "number": 55,
+      "base": "codex/kc-004b-postgres-persistenz",
+      "base_sha": "16cd295509aaf4091a7d41c82e0cc4d38acd21d9",
+      "head": "codex/kc-004b-sqlx-adapter",
+      "head_sha": "a8db9ca587c9a03b469439d961812eacf95d9132",
+      "recommendation": "Mit Korrektur der Schreibbestätigung übernehmen",
+      "reason": "Unterdrückte INSERT-Anweisungen dürfen keinen Erfolg melden. Korrektur und Testnachweis liegen auf dem gesonderten Durchsichtsbranch.",
+      "checks": [
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39304277063/job/118237422252"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39304277063/job/118237422194"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39304277063/job/118237421535"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39304264143/job/118237330095"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39304264143/job/118237329808"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39304264143/job/118237329546"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39304277066/job/118237144103"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39304277066/job/118237143237"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39304264262/job/118237109528"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39304264262/job/118237108791"
+        }
+      ]
+    },
+    {
+      "number": 59,
+      "base": "codex/kc-004b-sqlx-adapter",
+      "base_sha": "a8db9ca587c9a03b469439d961812eacf95d9132",
+      "head": "codex/kc-005a-schema-provisionierung",
+      "head_sha": "87cebbb6d9c6382bcfb1e382a731e9f6b4d4645c",
+      "recommendation": "Als leere Schema-Provisionierung übernehmen",
+      "reason": "Kanonische Namen, Wartungsrechte, Konkurrenz und Rücknahme geprüft. Keine Fachtabellen oder produktive Laufzeitidentität.",
+      "checks": [
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368930687/job/118452121199"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368930687/job/118452121166"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368930802/job/118452121056"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368930687/job/118452120950"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368930802/job/118452120848"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368926355/job/118452107150"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368926437/job/118452107138"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368926355/job/118452107000"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368926437/job/118452106881"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39368926355/job/118452106795"
+        }
+      ]
+    },
+    {
+      "number": 60,
+      "base": "codex/kc-005a-schema-provisionierung",
+      "base_sha": "87cebbb6d9c6382bcfb1e382a731e9f6b4d4645c",
+      "head": "codex/kc-005b-dienstrechte-rls",
+      "head_sha": "3dcf78f87480245144e67a550051efa89f52e41e",
+      "recommendation": "Als Testnachweis übernehmen",
+      "reason": "Getrennte Dienst-/Einrichtungsproben, RLS und Namensverdeckung geprüft. Synthetische Loginrollen sind keine produktive Rollenentscheidung.",
+      "checks": [
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39389597452/job/118517650668"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39389597452/job/118517650619"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39389597452/job/118517650216"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39389597448/job/118517624874"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39389597448/job/118517624515"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39389592239/job/118517608302"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39389592239/job/118517608270"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39389592230/job/118517608163"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39389592239/job/118517607941"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39389592230/job/118517607785"
+        }
+      ]
+    },
+    {
+      "number": 61,
+      "base": "codex/kc-005b-dienstrechte-rls",
+      "base_sha": "3dcf78f87480245144e67a550051efa89f52e41e",
+      "head": "codex/kc-005c-pool-wartung",
+      "head_sha": "4fa55b0ea37bd9e359dd7ccd82a5dc11ed2a0c81",
+      "recommendation": "Als Testnachweis übernehmen",
+      "reason": "Gleicher Datenbankprozess nach Poolrückgabe, Widerruf und reale Wartungskonkurrenz geprüft. Keine allgemeine produktive Migrationssteuerung.",
+      "checks": [
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39406445523/job/118573417212"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39406445523/job/118573417204"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39406445523/job/118573416899"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39406445516/job/118573416626"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39406445516/job/118573416235"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39406440009/job/118573398957"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39406440009/job/118573398922"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39406440009/job/118573398593"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39406439828/job/118573397643"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39406439828/job/118573397397"
+        }
+      ]
+    },
+    {
+      "number": 68,
+      "base": "codex/kc-005c-pool-wartung",
+      "base_sha": "4fa55b0ea37bd9e359dd7ccd82a5dc11ed2a0c81",
+      "head": "codex/kc-006a-sitzungsmodell",
+      "head_sha": "c7711e8a7eba7941bdf270e5a5429e1b3059e29e",
+      "recommendation": "Als internes Sitzungsmodell übernehmen",
+      "reason": "Typgrenzen, Zeitüberlauf, rückläufige Zeit und endgültige Zustände geprüft. Modellzustand erteilt keine Berechtigung.",
+      "checks": [
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39411753094/job/118590993754"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39411753094/job/118590993618"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39411753094/job/118590993399"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39411753057/job/118590960482"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39411753057/job/118590960467"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39411746325/job/118590941304"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39411746325/job/118590941262"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39411746325/job/118590941041"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39411746289/job/118590940295"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39411746289/job/118590939948"
+        }
+      ]
+    },
+    {
+      "number": 69,
+      "base": "codex/kc-006a-sitzungsmodell",
+      "base_sha": "c7711e8a7eba7941bdf270e5a5429e1b3059e29e",
+      "head": "codex/kc-006b-sitzungsspeicher",
+      "head_sha": "e0e1214fd88e65ebc34c2db81286990388b59571",
+      "recommendation": "Als internen Sitzungsspeicher übernehmen",
+      "reason": "Zufallsnachweise, abgeleitete Speicherung, Ablauf, Widerruf, Fehler und Neustart geprüft. create_session bleibt interner Speicherzugang; spätere Browseranmeldung muss login::finish verwenden.",
+      "checks": [
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39421285147/job/118622566484"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39421285147/job/118622566389"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39421285242/job/118622566379"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39421285242/job/118622566046"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39421285147/job/118622566014"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39421279072/job/118622545127"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39421279072/job/118622545071"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39421279072/job/118622544713"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39421279053/job/118622544437"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39421279053/job/118622543963"
+        }
+      ]
+    },
+    {
+      "number": 70,
+      "base": "codex/kc-006b-sitzungsspeicher",
+      "base_sha": "e0e1214fd88e65ebc34c2db81286990388b59571",
+      "head": "codex/kc-006c-passwortpruefung",
+      "head_sha": "e003eb055f4137ee66184152ce660e96d838be44",
+      "recommendation": "Als begrenzten Passwortfaktor übernehmen",
+      "reason": "Argon2id-Profile, blockierende Arbeit, dauerhaft reservierte Versuche und Bestandswechsel geprüft. Produktive Limits und Referenzmessungen fehlen.",
+      "checks": [
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431773732/job/118658347191"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431773732/job/118658347053"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431773691/job/118658346663"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431773732/job/118658346567"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431773691/job/118658346151"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431765385/job/118658319322"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431765385/job/118658319211"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431765385/job/118658318765"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431765616/job/118658318538"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39431765616/job/118658318071"
+        }
+      ]
+    },
+    {
+      "number": 71,
+      "base": "codex/kc-006c-passwortpruefung",
+      "base_sha": "e003eb055f4137ee66184152ce660e96d838be44",
+      "head": "codex/kc-006d-webauthn-vertrag",
+      "head_sha": "74c5e1731be0db55f1ef8698d7119f8fcd5cce7c",
+      "recommendation": "Nur im bestätigten localhost-Testumfang übernehmen",
+      "reason": "Bibliotheksprüfung, Benutzerverifikation, Einmalverbrauch und Bestandsbindung geprüft. Kein produktiver Ursprung, Browser-/TLS- oder vollständiger Anmeldenachweis.",
+      "checks": [
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39491483136/job/118865492280"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39491483136/job/118865492001"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39491483136/job/118865491462"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39491483085/job/118865490806"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39491483085/job/118865490466"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39491474188/job/118865461053"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39491474154/job/118865460373"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39491474154/job/118865459777"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39491474188/job/118865459765"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39491474154/job/118865459667"
+        }
+      ]
+    },
+    {
+      "number": 72,
+      "base": "codex/kc-006d-webauthn-vertrag",
+      "base_sha": "74c5e1731be0db55f1ef8698d7119f8fcd5cce7c",
+      "head": "codex/kc-006e-mfa-vertrag",
+      "head_sha": "cb3d8f62d1fde50dcb67b96468534cf8876fbe1a",
+      "recommendation": "Nur im dokumentierten lokalen MFA-Umfang übernehmen",
+      "reason": "TOTP, Nonce-Zähler, einmalige Wiederherstellung, Sitzungswiderruf und atomare Ereignisaufträge geprüft. RAM-Schlüssel und Testkontakte sind keine produktive Schlüssel-/Kontaktverwaltung.",
+      "checks": [
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580909505/job/119157987515"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580909505/job/119157987254"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580909505/job/119157987065"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580909278/job/119157985628"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580909278/job/119157985373"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580901861/job/119157962146"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580901861/job/119157961805"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580901882/job/119157961800"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580901861/job/119157961722"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39580901882/job/119157961429"
+        }
+      ]
+    },
+    {
+      "number": 73,
+      "base": "codex/kc-006e-mfa-vertrag",
+      "base_sha": "cb3d8f62d1fde50dcb67b96468534cf8876fbe1a",
+      "head": "codex/kc-006f-anmeldevertrag",
+      "head_sha": "f5f0586d3802d37effc996bfee63478c51fffaa8",
+      "recommendation": "Als Einrichtungseinstellungsspeicher übernehmen",
+      "reason": "Wertebereiche, erwartete Version, reale Schreibkonkurrenz, Commitfehler und RLS geprüft. Keine Fristdurchsetzung für Browseranfragen.",
+      "checks": [
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39585474243/job/119173467240"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39585474243/job/119173467158"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39585474243/job/119173466895"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39585468423/job/119173425180"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39585468423/job/119173424919"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39585468423/job/119173424557"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39585474241/job/119173170805"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39585474241/job/119173170542"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39585468370/job/119173150795"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39585468370/job/119173150232"
+        }
+      ]
+    },
+    {
+      "number": 74,
+      "base": "codex/kc-006f-anmeldevertrag",
+      "base_sha": "f5f0586d3802d37effc996bfee63478c51fffaa8",
+      "head": "codex/kc-006f-anmeldeabschluss",
+      "head_sha": "58ea681667a0e788bdd5c26ab78e099d12f6e9cc",
+      "recommendation": "Als lokalen Anmeldeabschluss übernehmen",
+      "reason": "Echte Faktoren, Einmalverbrauch, Identitätssperre, Wiederherstellungs-Konkurrenz und dauerhafter Ablauf geprüft. SyntheticOrganization ersetzt keinen echten Mitgliedschafts-/mTLS-Adapter.",
+      "checks": [
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39591184836/job/119192409662"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39591184836/job/119192409500"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39591184836/job/119192409306"
+        },
+        {
+          "name": "structure",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39591176625/job/119192378869"
+        },
+        {
+          "name": "web",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39591176625/job/119192378717"
+        },
+        {
+          "name": "rust",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39591176625/job/119192378359"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39591184636/job/119192244635"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39591184636/job/119192244251"
+        },
+        {
+          "name": "dependencies",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39591176629/job/119192219108"
+        },
+        {
+          "name": "secrets",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/itsh-neumeier/kitaconnect/actions/runs/39591176629/job/119192219000"
+        }
+      ]
+    }
+  ]
+}

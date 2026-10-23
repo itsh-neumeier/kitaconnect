@@ -9,6 +9,7 @@ use std::fmt;
 pub enum StorageError {
     Model(ModelError),
     InvalidStoredIdentifier,
+    WriteNotConfirmed,
     Database(sqlx::Error),
 }
 
@@ -17,6 +18,7 @@ impl fmt::Display for StorageError {
         match self {
             Self::Model(_) => f.write_str("organization model constraint failed"),
             Self::InvalidStoredIdentifier => f.write_str("invalid stored organization identifier"),
+            Self::WriteNotConfirmed => f.write_str("organization write was not confirmed"),
             Self::Database(_) => f.write_str("organization storage operation failed"),
         }
     }
@@ -64,11 +66,15 @@ pub async fn register_carrier(
     connection: &mut PgConnection,
     id: CarrierId,
 ) -> Result<(), StorageError> {
-    sqlx::query("INSERT INTO organization_config.carriers (id) VALUES ($1::text::numeric)")
-        .bind(id.value().to_string())
-        .execute(connection)
-        .await
-        .map_err(constraint)?;
+    let result =
+        sqlx::query("INSERT INTO organization_config.carriers (id) VALUES ($1::text::numeric)")
+            .bind(id.value().to_string())
+            .execute(connection)
+            .await
+            .map_err(constraint)?;
+    if result.rows_affected() != 1 {
+        return Err(StorageError::WriteNotConfirmed);
+    }
     Ok(())
 }
 
@@ -77,7 +83,7 @@ pub async fn register_facility(
     id: FacilityId,
     carrier: Option<CarrierId>,
 ) -> Result<(), StorageError> {
-    sqlx::query(
+    let result = sqlx::query(
         "INSERT INTO organization_config.facilities (id, carrier_id) VALUES ($1::text::numeric, $2::text::numeric)",
     )
     .bind(id.value().to_string())
@@ -85,6 +91,9 @@ pub async fn register_facility(
     .execute(connection)
     .await
     .map_err(constraint)?;
+    if result.rows_affected() != 1 {
+        return Err(StorageError::WriteNotConfirmed);
+    }
     Ok(())
 }
 

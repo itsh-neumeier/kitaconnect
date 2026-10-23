@@ -138,6 +138,20 @@ async fn current_sessions_are_atomic_and_fail_closed() {
             );
         }
     }
+    // Suppressed INSERT commands must not report a registered identity or return a token.
+    execute(&mut admin, "CREATE FUNCTION identity_access.test_suppress_insert() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RETURN NULL; END $$; CREATE TRIGGER z_test_suppress_insert BEFORE INSERT ON identity_access.identities FOR EACH ROW EXECUTE FUNCTION identity_access.test_suppress_insert(); CREATE TRIGGER z_test_suppress_insert BEFORE INSERT ON identity_access.sessions FOR EACH ROW EXECUTE FUNCTION identity_access.test_suppress_insert();").await;
+    assert!(matches!(
+        postgres::register_identity(&mut admin, identity(base + 88)).await,
+        Err(StorageError::WriteNotConfirmed)
+    ));
+    assert!(matches!(
+        postgres::create_session(&mut admin, id(base + 88), identity(1), limits()).await,
+        Err(StorageError::WriteNotConfirmed)
+    ));
+    let absent: bool = sqlx::query_scalar("SELECT NOT EXISTS(SELECT FROM identity_access.identities WHERE id=$1::text::numeric) AND NOT EXISTS(SELECT FROM identity_access.sessions WHERE id=$1::text::numeric)")
+        .bind((base + 88).to_string()).fetch_one(&mut admin).await.unwrap();
+    assert!(absent);
+    execute(&mut admin, "DROP TRIGGER z_test_suppress_insert ON identity_access.identities; DROP TRIGGER z_test_suppress_insert ON identity_access.sessions; DROP FUNCTION identity_access.test_suppress_insert();").await;
     let version: Vec<i32> =
         sqlx::query_scalar("SELECT version FROM identity_access.schema_versions ORDER BY version")
             .fetch_all(&mut admin)

@@ -261,7 +261,7 @@ pub(super) async fn check(
         (
             "POST",
             PATH,
-            format!("{}Cookie: token=synthetic\r\n", &*running.headers),
+            format!("{}Cookie: token=synthetic\r\n", running.headers.as_str()),
             body(site),
             400,
         ),
@@ -270,7 +270,7 @@ pub(super) async fn check(
             PATH,
             format!(
                 "{}X-Forwarded-Client-Cert: synthetic\r\n",
-                &*running.headers
+                running.headers.as_str()
             ),
             body(site),
             400,
@@ -285,7 +285,7 @@ pub(super) async fn check(
         (
             "POST",
             PATH,
-            format!("{}Authorization: Bearer synthetic\r\n", &*running.headers),
+            format!("{}Authorization: Bearer synthetic\r\n", running.headers.as_str()),
             body(site),
             400,
         ),
@@ -358,7 +358,7 @@ pub(super) async fn check(
     let mut slow = org_wire(server.clone(), identity, f).await;
     let partial = zeroize::Zeroizing::new(format!(
         "POST {PATH} HTTP/1.1\r\nHost: organization.test\r\nContent-Length: 100\r\nExpect: 100-continue\r\n{}\r\n",
-        &*running.headers
+        running.headers.as_str()
     ));
     slow.stream
         .get_mut()

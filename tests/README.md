@@ -135,3 +135,17 @@ Ein absichtlich vorbereitetes Schattenschema zeigt die Wirkung des search_path. 
 Ein Zugang ohne Dienstzuordnung hat Schema-USAGE, jedoch weder Tabellenrechte noch Funktionsrechte; PUBLIC-Rechte dürfen ihn nicht freischalten.
 Ein eingespielter Transaktionsfehler muss auch neu angelegte Rollen, Objekte und Datenbankrechte zurücknehmen.
 Die produktive Provisionierung und bestehende Runtime bleiben unverändert. Benutzerrechte und produktive Identitätsbindung sind damit nicht abgenommen.
+
+## KC-005C: Poolrückgabe und konkurrierende Wartung
+
+Der [Testvertrag](../contracts/organization-config/pool-maintenance-test-v1.md) begrenzt die beiden zusätzlichen SQLx-Tests.
+Der Pflichtprüfschritt führt beide ausdrücklich vor und nach dem Server-Neustart aus.
+Ein Pool mit genau einer Verbindung prüft Rückgabe nach Erfolg, SQL-Fehler, verworfener Rust-Operation und PostgreSQL-Anweisungszeitlimit.
+Dieselbe Prozesskennung muss die Wiederverwendung belegen. Ein eingespielter Fehler im Rückgabe-Hook muss dagegen die Verbindung verwerfen.
+Rechte- und Policyentzug werden auf der bereits geöffneten Verbindung geprüft. Unbekannte und gelöschte Registryzuordnungen liefern keinen Wartungstreffer.
+
+Die Wartungsprüfung beobachtet zwei wartende Sperranforderungen vor Freigabe der gemeinsamen Wartungssperre.
+Sie prüft doppelte Provisionierung, doppelte Testmigration und gleichzeitige Provisionierung mit einer Migration.
+Eine fehlerhafte Testwelle muss nur den betroffenen Schritt zurücknehmen und vor der nächsten Einrichtung stoppen.
+Bestätigte Versionsstände sowie eine gezielte erfolgreiche Korrektur müssen nach Neustart erhalten bleiben.
+Die Testmigrationshilfe akzeptiert nur zwei feste technische Schritte. Sie ist kein produktiver Orchestrator und kein Wiederherstellungsnachweis.

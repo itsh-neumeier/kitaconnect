@@ -221,3 +221,9 @@ Die ursprünglichen Fach- und Abnahmekriterien bleiben bestehen.
 [ADR-027](architecture/ADR-027_Dienstisolation_Testaufbau.md) legt für KC-005B synthetische Proben mit getrennten Dienstrechten und erzwungener RLS fest.
 Die Bindung an Test-Loginrollen gilt nur im isolierten Container. Produktive Identitätsnachweise und erlaubende Policies bleiben gesondert zu entscheiden.
 Es werden keine Fachobjekte oder produktiven Zugänge angelegt.
+
+## ADR-028 – Pool- und Wartungsnachweise
+
+[ADR-028](architecture/ADR-028_Pool_und_Wartungstests.md) konkretisiert die technischen Tests aus KC-005C.
+Wiederverwendung wird anhand derselben Datenbankprozesskennung geprüft. Konkurrierende Wartung muss beobachtbar an PostgreSQL-Sperren warten.
+Testmigrationen bleiben von produktiver Provisionierung getrennt. Die produktive Identitäts-/Poolbindung bleibt offen.

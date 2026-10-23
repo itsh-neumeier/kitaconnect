@@ -6,17 +6,17 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 
 ## Arbeitsstand
 
-- issue_id: [KC-005B / #57](https://github.com/itsh-neumeier/kitaconnect/issues/57), Teil von KC-005 / #5.
-- branch: codex/kc-005b-dienstrechte-rls auf PR #59 / 87cebbb6d9c6382bcfb1e382a731e9f6b4d4645c.
-- pull_request: [PR #60](https://github.com/itsh-neumeier/kitaconnect/pull/60), Basis codex/kc-005a-schema-provisionierung.
-- head_commit: geprüfter Implementierungsstand aedb4a075e39bacde800ae7e80c8a336b28df711. Vertrag und ADR-027 zuvor in 8af2253 versioniert. Dieser reine Dokumentationscheckpoint folgt gesondert; aktuellen Kopf und zugehörige CI im PR prüfen.
-- objective: Dienstbezogene Objektrechte und FORCE RLS mit zwei Diensten und zwei Einrichtungen im Testcontainer nachweisen.
-- completed: Festes SQL-Testartefakt und Rust-/SQLx-Test eingebaut; explizite Ausführung vor und nach Server-Neustart im vorhandenen Pflichtprüfschritt.
-- remaining: Persönliche Durchsicht und gesonderter Integrationsauftrag. #57 bleibt bis Integration offen. Nächstes Arbeitspaket ist KC-005C / #58.
-- migration_state: Keine neue ausgelieferte Migration. Neues Artefakt liegt ausschließlich unter database/tests/.
-- known_failures: Keine bekannten Fehler; beide CI-Läufe von aedb4a0 haben fünf erfolgreiche Pflichtprüfungen. Docker und Windows-Linker fehlen lokal; ausführbare Datenbanknachweise stammen aus Linux-CI.
-- dependencies: #53, #54, #55 und #59 offen, grün und zur Durchsicht bereit. Keine ungefragte Integration.
-- security_notes: Test-Loginrollen und Testpolicies gelten nur im isolierten Container. Produktive Identitäts-/Poolbindung bleibt offen; vorhandene Runtime unverändert gesperrt.
+- issue_id: [KC-005C / #58](https://github.com/itsh-neumeier/kitaconnect/issues/58), Teil von KC-005 / #5.
+- branch: codex/kc-005c-pool-wartung auf PR #60 / 3dcf78f87480245144e67a550051efa89f52e41e.
+- pull_request: [PR #61](https://github.com/itsh-neumeier/kitaconnect/pull/61), Basis codex/kc-005b-dienstrechte-rls.
+- head_commit: geprüfte Implementierung e4c1e000d8e2b5ddf554e6eb52e99c87b27dde94. Vertrag und ADR-028 zuvor in d32879a versioniert. Dieser Dokumentationscheckpoint folgt gesondert; aktuellen Kopf und CI im PR prüfen.
+- objective: Poolrückgabe und konkurrierende Wartung ausschließlich im synthetischen Testaufbau nachweisen.
+- completed: Zwei neue SQLx-/PostgreSQL-Tests erfolgreich vor und nach Neustart; dieselbe Prozesskennung belegt Poolwiederverwendung. Wartungskonkurrenz ist anhand zweier real wartender Sperranforderungen nachgewiesen.
+- remaining: Persönliche/sprachliche Durchsicht und gesonderter Integrationsauftrag. #58 bleibt bis Integration offen. Produktive KC-005-Abnahme bleibt gesperrt; nächste unabhängige Vorbereitung ist KC-006 / #6.
+- migration_state: Keine neue ausgelieferte Migration. Zwei feste technische Migrationsschritte liegen ausschließlich in der Testhilfe.
+- known_failures: Keine bekannten Fehler; fünf Pflichtprüfungen des ersten vollständigen CI-Laufs erfolgreich. Docker und Windows-Linker fehlen lokal.
+- dependencies: #53, #54, #55, #59 und #60 offen, grün und zur Durchsicht bereit. Keine ungefragte Integration.
+- security_notes: Testpool und Testmigrationshilfe sind keine produktive Pool-/Migrationssteuerung. Produktive Identitäts-/Poolbindung bleibt angefragt und offen. Keine Benutzerrechtefreigabe oder Wiederherstellungsabnahme.
 
 ## P0-Abschluss
 
@@ -102,10 +102,25 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 - Die Frage nach eigener produktiver Identität und eigenem Pool je Dienst/Einrichtung wurde gestellt; Antwort noch offen.
   Keine solche Produktionsarchitektur ohne ausdrückliche Entscheidung implementieren. Technische Negativtests bleiben möglich.
 
+## KC-005C: Prüfstand und Gesamtabnahmegrenzen
+
+- Vertrag und ADR-028 wurden in d32879a vor dem Testcode versioniert.
+- Implementierung e4c1e00: fünf Pflichtprüfungen des ersten vollständigen CI-Laufs erfolgreich.
+  [Build und echte Datenbanktests](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39406137461),
+  [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/39406137330).
+- Poolnachweise: gleicher Datenbankprozess nach Erfolg, SQL-Fehler, verworfener Rust-Operation und Anweisungszeitlimit;
+  Rücknahme abgebrochener Schreiboperationen, Rechte-/Policyentzug auf offener Verbindung und Verwerfen bei fehlerhaftem Rückgabe-Hook.
+- Wartungsnachweise: doppelte Provisionierung, doppelte Testmigration und gemischte Wartung warten tatsächlich an derselben Sperre.
+  Die fehlerhafte Testwelle stoppt, nimmt nur den betroffenen Schritt zurück und bewahrt frühere bestätigte Änderungen.
+- Der folgende reine Dokumentationscheckpoint erhält eigene CI. Nachweise zum aktuellen Kopf im PR nachführen.
+- Lokal: 44 Node-Tests, Struktur-/Verweisprüfung, rustfmt, JavaScript-Syntax, git diff --check und Gitleaks erfolgreich.
+- Der [KC-005-Prüfstand](../23_KC-005_Pruefstand_und_Abnahmegrenzen.md) trennt technische Teilnachweise und offene Gesamtabnahme.
+  Produktive Identitätsbindung, erlaubter produktiver Einrichtungswechsel, allgemeine Migrationssteuerung, Benutzerrechte und Wiederherstellung sind nicht abgenommen.
+
 ## Nächste drei Aktionen
 
-1. KC-005C / #58 vorbereiten: Vertrag vor Implementierung, wiederverwendete Verbindungen nach Erfolg/Fehler/Abbruch und konkurrierende Wartungsabläufe prüfen.
-2. Offene Antwort zur produktiven Identitäts-/Poolbindung berücksichtigen. Keine produktive erlaubende RLS ohne freigegebenen Identitätsnachweis. Synthetische Tests können unabhängig fortgesetzt werden.
-3. PR #60 persönlich prüfen lassen. Integrationsfolge #53, #54, #55, #59, #60; nach Basisintegration neu prüfen. Keine ungefragte Integration.
+1. KC-006 / #6 lesen und in kleine Arbeitspakete mit Vertrag vor Implementierung zerlegen. Keine vollständige Authentisierung in einem PR.
+2. Offene Antwort zur produktiven Identitäts-/Poolbindung berücksichtigen. Keine produktive erlaubende RLS ohne ausdrückliche Entscheidung implementieren.
+3. PR #61 persönlich prüfen lassen. Integrationsfolge #53, #54, #55, #59, #60, #61; nach Basisintegration neu prüfen. Keine ungefragte Integration.
 
-Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/025/026/027, Testvertrag und aktuellen GitHub-Stand lesen.
+Vor Fortsetzung AGENTS, CLAUDE, ADR-014/019/025/026/027/028, Testverträge, KC-005-Prüfstand und aktuellen GitHub-Stand lesen.

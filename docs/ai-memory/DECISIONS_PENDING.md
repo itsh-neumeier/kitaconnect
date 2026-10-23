@@ -91,3 +91,18 @@ Die Gateway-Anbindung muss außerdem die vertrauenswürdige Bildung dieser Schl�
 Diese Punkte wurden noch nicht als Interviewentscheidung bestätigt. Synthetische Testwerte sind keine Vorgabewerte.
 Vor produktiver Nutzung muss das Argon2id-Profil auf der bestätigten Referenzhardware gemessen werden.
 Keine Antwort zu diesen Punkten aus der allgemeinen Aufforderung zur Weiterarbeit ableiten.
+
+## KC-006D: Bestätigtes WebAuthn-Testprofil
+
+Stand: 20.10.2026. Die Projektleitung hat „Alle drei Vorschläge bestätigen“ geantwortet.
+Bestätigt sind zunächst ausschließlich localhost im isolierten Test, erforderliche Benutzerverifikation und erlaubte synchronisierte Passkeys.
+Die bisherigen Sperren für dieses Testprofil sind durch die ausdrückliche Antwort aufgehoben.
+
+| Thema | Bestätigter Stand | Verbleibende Grenze |
+|---|---|---|
+| Anmeldedomain | Zunächst nur localhost im isolierten Test. | Produktive RP-ID und HTTPS-Ursprung offen. |
+| Benutzerverifikation | Bei jedem Passkey-Vorgang erforderlich. | Allgemeine MFA-Regeln anderer Anmeldewege bleiben offen. |
+| Synchronisierte Passkeys | Mit Benutzerverifikation erlaubt. | Kompatibilität konkreter Geräte und Passwortmanager bleibt gesondert zu prüfen. |
+
+[ADR-032](../architecture/ADR-032_WebAuthn_Vorbereitung.md) und der [Vertrag](../../contracts/identity-access/webauthn-v1.md) wurden nach der Antwort in ae85a5f vor Code aktualisiert und versioniert.
+Die produktive Domain und die übrigen MFA-/Wiederherstellungs-/Rollenentscheidungen bleiben offen.

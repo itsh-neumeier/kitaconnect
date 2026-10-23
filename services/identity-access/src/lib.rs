@@ -7,6 +7,7 @@ use std::num::NonZeroU128;
 pub mod password;
 pub mod postgres;
 pub mod token;
+pub mod webauthn;
 
 /// Internal identity key. Not a credential, token, organization key or proof of authentication.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

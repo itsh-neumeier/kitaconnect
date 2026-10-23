@@ -11,6 +11,9 @@ use kitaconnect_service_transport::ConnectionPeer;
 use sqlx::Executor;
 use std::net::SocketAddr;
 
+#[path = "membership_router.rs"]
+mod router;
+
 struct Fixture<'a, 'issuer> {
     http: &'a Arc<OAuthServer>,
     organization: &'a Leaf,
@@ -420,7 +423,9 @@ pub(super) async fn check(
         );
         finish(server).await;
     }
+    let mut routed = router::check(&f, identity, gateway, &token, site, other).await;
     sqlx::query("UPDATE organization_config.memberships SET active=false,version=version+1 WHERE identity_ref=1 AND facility_id=$1::text::numeric").bind(site.value().to_string()).execute(&mut admin).await.unwrap();
+    routed.absent(site).await;
     assert!(
         f.read(
             &peer,
@@ -437,6 +442,8 @@ pub(super) async fn check(
         .await
         .unwrap();
     sqlx::query("UPDATE identity_access.service_grants SET active=false,version=version+1 WHERE client='identity-access' AND target='organization-config' AND scope='membership:read'").execute(&mut identity_admin).await.unwrap();
+    routed.rejected(site).await;
+    routed.finish().await;
     assert_eq!(
         f.read(
             &peer,

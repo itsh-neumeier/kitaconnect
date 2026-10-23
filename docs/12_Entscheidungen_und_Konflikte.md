@@ -403,3 +403,19 @@ Produktiver Zertifikatsbetrieb, Registrierung und nachfolgende Organisationsrech
 [ADR-052](architecture/ADR-052_OAuth_Antwortpruefung.md) trennt die Prüfung empfangener OAuth-Nachrichten von Transport und Datenbank.
 Bekannte Felder müssen eindeutig sein. Aktive Metadaten werden an ausdrückliche Erwartungen und frische Zeit gebunden.
 Eine Protokollprüfung ersetzt keine aktuelle Registrierung oder Fachberechtigung. Vertrag steht vor Code.
+
+## ADR-053 – Authentisierte Mitgliedschaftsabfrage
+
+[ADR-053](architecture/ADR-053_Authentisierte_Mitgliedschaftsabfrage.md) verbindet aktuelle Introspektion und eigenen Mitgliedschaftsbestand vor Code.
+Tatsächlicher Aufrufer, genaue Tokenbindung und frische Organisationszeit sind verpflichtend.
+Ein Datenstand erteilt keine Fachberechtigung. Produktive Zertifikatsverteilung und vollständiger Anmeldeadapter bleiben gesondert.
+
+## Sicherheitskorrektur: ctutils / RUSTSEC-2026-0385
+
+Am 23.10.2026 meldet die verpflichtende Prüfung in PR #94 die neu veröffentlichte Schwachstelle RUSTSEC-2026-0385.
+Betroffen ist das bereits vorhandene transitive Paket ctutils 0.4.3. Der Befund betrifft zeitabhängige Maskenerzeugung und u128-Vergleiche.
+Die Abhängigkeit wird gezielt auf die korrigierte Version 0.4.4 aktualisiert. Andere Paketversionen bleiben erhalten.
+Diese Entscheidung steht vor der Lockfile-Änderung. Keine Warnung wird unterdrückt.
+Betroffene ältere eigene PRs benötigen vor Integration ebenfalls die Korrektur und aktuelle grüne Prüfungen.
+Frühere erfolgreiche Prüfungen belegen keinen Abschluss nach der neuen Veröffentlichung.
+Quelle: [RustSec RUSTSEC-2026-0385](https://rustsec.org/advisories/RUSTSEC-2026-0385.html).

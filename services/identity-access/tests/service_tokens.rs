@@ -137,7 +137,7 @@ async fn service_tokens_are_current_and_bound() {
             .bind(peer.certificate().as_slice()).bind(peer.service().text())
             .bind((start-1).to_string()).bind((start+600).to_string()).execute(&mut c).await.unwrap();
     }
-    let token = service_tokens::issue(
+    let mut issued = service_tokens::issue_with_metadata(
         &mut c,
         &cfg,
         identity,
@@ -147,6 +147,16 @@ async fn service_tokens_are_current_and_bound() {
     )
     .await
     .unwrap();
+    assert_eq!(issued.scope(), Scope::MembershipRead);
+    assert_eq!(issued.expires_at() - issued.created_at(), 300);
+    let before_response = clock(&mut c).await;
+    let remaining = service_tokens::remaining_lifetime(&mut c, &mut issued)
+        .await
+        .unwrap();
+    let after_response = clock(&mut c).await;
+    assert!(u64::from(remaining) <= issued.expires_at() - before_response);
+    assert!(u64::from(remaining) >= issued.expires_at() - after_response);
+    let token = ServiceToken::from_bytes(issued.token().expose()).unwrap();
     let active = service_tokens::introspect(&mut c, &cfg, organization, &token)
         .await
         .unwrap()
@@ -480,7 +490,7 @@ async fn service_tokens_are_current_and_bound() {
     let short_peer = PeerReference::new(Name::IdentityAccess, [14 + offset; 32]);
     sqlx::query("INSERT INTO identity_access.service_certificates VALUES($1,'identity-access',$2::text::numeric,$3::text::numeric,false)")
         .bind(short_peer.certificate().as_slice()).bind((time-1).to_string()).bind((time+30).to_string()).execute(&mut c).await.unwrap();
-    let capped = service_tokens::issue(
+    let mut capped = service_tokens::issue_with_metadata(
         &mut c,
         &cfg,
         short_peer,
@@ -490,15 +500,78 @@ async fn service_tokens_are_current_and_bound() {
     )
     .await
     .unwrap();
+    assert_eq!(capped.expires_at(), time + 30);
+    assert!(
+        service_tokens::remaining_lifetime(&mut c, &mut capped)
+            .await
+            .unwrap()
+            <= 30
+    );
     assert_eq!(
-        service_tokens::introspect(&mut c, &cfg, organization, &capped)
+        service_tokens::introspect(&mut c, &cfg, organization, capped.token())
             .await
             .unwrap()
             .unwrap()
             .expires_at(),
         time + 30
     );
+    let mut late = service_tokens::issue_with_metadata(
+        &mut c,
+        &cfg,
+        identity,
+        Name::OrganizationConfig,
+        Scope::MembershipRead,
+        2,
+    )
+    .await
+    .unwrap();
+    tokio::time::sleep(Duration::from_secs(3)).await;
+    assert!(
+        service_tokens::remaining_lifetime(&mut c, &mut late)
+            .await
+            .is_err()
+    );
+    assert!(
+        service_tokens::remaining_lifetime(&mut c, &mut late)
+            .await
+            .is_err()
+    );
+    let mut tx = c.begin().await.unwrap();
+    assert!(
+        service_tokens::remaining_lifetime(&mut tx, &mut issued)
+            .await
+            .is_err()
+    );
+    tx.rollback().await.unwrap();
     let future_peer = PeerReference::new(Name::IdentityAccess, [15 + offset; 32]);
+    let mut interrupted = service_tokens::issue_with_metadata(
+        &mut c,
+        &cfg,
+        identity,
+        Name::OrganizationConfig,
+        Scope::MembershipRead,
+        30,
+    )
+    .await
+    .unwrap();
+    let mut unavailable = connect("postgres").await;
+    let unavailable_pid = pid(&mut unavailable).await;
+    let terminated: bool = sqlx::query_scalar("SELECT pg_terminate_backend($1)")
+        .bind(unavailable_pid)
+        .fetch_one(&mut witness)
+        .await
+        .unwrap();
+    assert!(terminated);
+    assert!(
+        service_tokens::remaining_lifetime(&mut unavailable, &mut interrupted)
+            .await
+            .is_err()
+    );
+    assert!(
+        service_tokens::remaining_lifetime(&mut c, &mut interrupted)
+            .await
+            .is_err()
+    );
     sqlx::query("INSERT INTO identity_access.service_certificates VALUES($1,'identity-access',$2::text::numeric,$3::text::numeric,false)")
         .bind(future_peer.certificate().as_slice()).bind((time+600).to_string()).bind((time+900).to_string()).execute(&mut c).await.unwrap();
     assert!(

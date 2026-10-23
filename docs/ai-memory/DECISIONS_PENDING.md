@@ -221,3 +221,12 @@ Zusätzlich muss der genaue Zertifikatsfingerabdruck aktiv registriert sein.
 Keine Wildcards oder automatische Registrierung; produktive Namen bleiben offen.
 Diese Antwort ersetzt den vorherigen offenen Fragezustand. Nicht erneut fragen.
 ADR-046 und Dienstvertrag werden vor dem abhängigen Code aktualisiert.
+
+## KC-006F: Zusätzliches HTTPS-Browserprofil bestätigt
+
+Am 22.10.2026 bestätigt die Projektleitung ausdrücklich „Isoliertes HTTPS-Testprofil bestätigen“.
+Das zusätzliche Profil `https://localhost:3443` mit ausschließlich zur Laufzeit erzeugten Testzertifikaten ist damit verbindlich erlaubt.
+Das bestehende WebAuthn-Profil `http://localhost:3000` bleibt getrennt erhalten.
+Produktive Domain und Zertifikatsbetrieb bleiben offen. Keine produktive Ausweichkonfiguration ableiten.
+Diese Antwort ersetzt die früheren offenen Fragezustände zum zusätzlichen Profil. Nicht erneut fragen.
+ADR-049 und Testprofilvertrag stehen vor der abhängigen Implementierung. Browser-/Gateway-Nachweise folgen getrennt.

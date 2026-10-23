@@ -23,7 +23,8 @@ Die Bibliothek enthält keine fachlichen Modelle oder dienstübergreifenden Tabe
 
 Die 24-Stunden-Obergrenze stammt aus ADR-019. Es entsteht keine neue fachliche Berechtigung.
 rcgen wird nur als Testabhängigkeit verwendet und trifft keine produktive Ausstellerentscheidung.
-Die freie TCP-Portwahl im isolierten Test entscheidet nicht das offene Browserprofil.
+Die freie TCP-Portwahl im isolierten Test trifft keine Browserprofilentscheidung.
+Die spätere ausdrückliche Bestätigung des zusätzlichen HTTPS-Testprofils steht in [ADR-049](ADR-049_Isoliertes_HTTPS_Browserprofil.md).
 Eine gültige Zertifikatskette ersetzt weder aktuelle Registrierung noch Tokenintrospektion oder Benutzerrechte.
 Diese Nachweise und der Axum-HTTP-Vertrag folgen in getrennten Paketen.
 

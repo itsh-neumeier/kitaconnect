@@ -4,6 +4,8 @@ Stand: 21.10.2026. KC-006F / #67. Grundlage: Spezifikation v5.9 und ADR-015/019/
 Status: bestätigte Sicherheitsregeln; technische Umsetzung folgt in kleinen Schritten.
 Die Projektleitung bestätigt Einstellbarkeit pro Einrichtung sowie die vorgeschlagenen Voreinstellungen und Obergrenzen.
 Die beiden MFA-Varianten und der Cookie-/CSRF-Vorschlag sind ausdrücklich bestätigt.
+Am 22.10.2026 bestätigt die Projektleitung zusätzlich das getrennte [HTTPS-Browserprofil](browser-https-test-v1.md).
+Dies ist eine Testprofilentscheidung und noch kein Browsernachweis.
 
 ## Zuständigkeit und bestehender Stand
 

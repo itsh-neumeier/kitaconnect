@@ -148,6 +148,64 @@ impl fmt::Debug for ServiceToken {
         f.write_str("ServiceToken([REDACTED])")
     }
 }
+
+/// Only confirmed issuance constructs these metadata. Not an authorization receipt.
+#[derive(Debug)]
+pub struct IssuedServiceToken {
+    token: ServiceToken,
+    scope: ServiceScope,
+    created: u64,
+    expires: u64,
+    last_observed: u64,
+    blocked: bool,
+}
+impl IssuedServiceToken {
+    pub fn token(&self) -> &ServiceToken {
+        &self.token
+    }
+    pub fn scope(&self) -> ServiceScope {
+        self.scope
+    }
+    pub fn created_at(&self) -> u64 {
+        self.created
+    }
+    pub fn expires_at(&self) -> u64 {
+        self.expires
+    }
+    fn remaining_at(&mut self, time: u64) -> Result<u16, ServiceTokenError> {
+        if self.blocked || time < self.created || time < self.last_observed || time >= self.expires
+        {
+            self.blocked = true;
+            return Err(ServiceTokenError);
+        }
+        self.last_observed = time;
+        let remaining = self.expires - time;
+        if !(1..=300).contains(&remaining) {
+            self.blocked = true;
+            return Err(ServiceTokenError);
+        }
+        u16::try_from(remaining).map_err(|_| ServiceTokenError)
+    }
+}
+
+/// Fresh database-time snapshot for response generation, not a current grant/peer check.
+pub async fn remaining_lifetime(
+    c: &mut PgConnection,
+    issued: &mut IssuedServiceToken,
+) -> Result<u16, ServiceTokenError> {
+    autocommit(c)?;
+    if issued.blocked {
+        return Err(ServiceTokenError);
+    }
+    let time = match now(c).await {
+        Ok(time) => time,
+        Err(error) => {
+            issued.blocked = true;
+            return Err(error);
+        }
+    };
+    issued.remaining_at(time)
+}
 #[derive(Debug)]
 pub struct ActiveServiceToken {
     issuer: String,
@@ -249,12 +307,25 @@ pub async fn issue(
     scope: ServiceScope,
     lifetime_seconds: u16,
 ) -> Result<ServiceToken, ServiceTokenError> {
+    issue_with_metadata(c, config, caller, target, scope, lifetime_seconds)
+        .await
+        .map(|issued| issued.token)
+}
+/// Confirmed internal issuance with actual immutable deadline metadata; still no HTTP endpoint.
+pub async fn issue_with_metadata(
+    c: &mut PgConnection,
+    config: &AuthorityConfiguration,
+    caller: PeerReference,
+    target: ServiceName,
+    scope: ServiceScope,
+    lifetime_seconds: u16,
+) -> Result<IssuedServiceToken, ServiceTokenError> {
     autocommit(c)?;
     if !(1..=300).contains(&lifetime_seconds) {
         return Err(ServiceTokenError);
     }
     let mut tx = c.begin_with("BEGIN ISOLATION LEVEL READ COMMITTED").await?;
-    let result:Result<ServiceToken,ServiceTokenError>=async{
+    let result:Result<IssuedServiceToken,ServiceTokenError>=async{
         authority(&mut tx,config).await?;
         let row=sqlx::query("SELECT trim_scale(c.version)::text AS client_version,trim_scale(t.version)::text AS target_version,trim_scale(g.version)::text AS grant_version,trim_scale(cert.not_before)::text AS not_before,trim_scale(cert.not_after)::text AS not_after FROM identity_access.service_clients c JOIN identity_access.service_clients t ON t.name=$2 JOIN identity_access.service_grants g ON g.client=c.name AND g.target=t.name AND g.scope=$3 JOIN identity_access.service_certificates cert ON cert.client=c.name AND cert.fingerprint=$4 WHERE c.name=$1 AND c.active AND t.active AND g.active AND NOT cert.revoked")
             .bind(caller.service.text()).bind(target.text()).bind(scope.text()).bind(caller.certificate.as_slice()).fetch_one(&mut *tx).await?;
@@ -273,7 +344,7 @@ pub async fn issue(
         peer(&mut tx,caller,final_time).await?;
         let after_peer=now(&mut tx).await?;
         if after_peer<final_time || after_peer>=expires{return Err(ServiceTokenError);}
-        Ok(token)
+        Ok(IssuedServiceToken { token, scope, created: time, expires, last_observed: after_peer, blocked: false })
     }.await;
     match result {
         Ok(value) => {
@@ -394,4 +465,37 @@ pub async fn revoke(c: &mut PgConnection, token: &ServiceToken) -> Result<bool, 
     let changed=sqlx::query("UPDATE identity_access.service_tokens SET state='revoked' WHERE fingerprint=$1 AND state='active'")
         .bind(token.fingerprint().as_slice()).execute(c).await?;
     Ok(changed.rows_affected() == 1)
+}
+
+#[cfg(test)]
+mod output_tests {
+    use super::*;
+    fn issued() -> IssuedServiceToken {
+        IssuedServiceToken {
+            token: ServiceToken::from_bytes(&[9; 32]).unwrap(),
+            scope: ServiceScope::MembershipRead,
+            created: 100,
+            expires: 400,
+            last_observed: 100,
+            blocked: false,
+        }
+    }
+    // Deterministic metadata state; no real system or database clock is changed.
+    #[test]
+    fn output_deadline_rejects_regression_permanently() {
+        let mut value = issued();
+        assert_eq!(value.remaining_at(200).unwrap(), 200);
+        assert!(value.remaining_at(199).is_err());
+        assert!(value.remaining_at(201).is_err());
+    }
+    #[test]
+    fn output_deadline_cannot_be_revived_after_observed_expiry() {
+        let mut value = issued();
+        assert!(value.remaining_at(400).is_err());
+        assert!(value.remaining_at(200).is_err());
+        assert!(
+            !format!("{value:?}")
+                .contains(crate::service_oauth::encode_token(value.token()).as_str())
+        );
+    }
 }

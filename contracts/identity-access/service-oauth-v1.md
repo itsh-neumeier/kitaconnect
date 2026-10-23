@@ -103,4 +103,5 @@ Die Implementierung verwendet ausschließlich bereits vorhandene Paketversionen:
 [base64 0.22.1](https://docs.rs/base64/0.22.1/base64/) erhalten direkte Abhängigkeitseinträge.
 Keine Migration, Datenbankrechte oder Laufzeitpolicy wird geändert.
 Die Zertifikatszuordnung ist bestätigt. Der nächste Schritt benötigt den getrennten Registrierungs-/Routervertrag und dessen Nachweise.
-Das zusätzliche HTTPS-Browserprofil bleibt weiterhin offen und gesperrt.
+Das zusätzliche HTTPS-Browserprofil ist inzwischen ausdrücklich bestätigt und folgt dem getrennten [Testprofilvertrag](browser-https-test-v1.md).
+Dieser Protokollbaustein implementiert keinen Browsernachweis.

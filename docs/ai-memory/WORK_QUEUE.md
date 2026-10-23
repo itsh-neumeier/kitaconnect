@@ -1,11 +1,13 @@
 # Arbeitsfolge für den offenen Backlog
 
-Stand: 21.10.2026. Quelle: aktuelle offene GitHub-Issues und versionierter Abhängigkeitsplan.
+Stand: 23.10.2026. Quelle: aktuelle offene GitHub-Issues und versionierter Abhängigkeitsplan.
 Die Projektleitung beauftragt ausdrücklich die automatische weitere Bearbeitung aller offenen Issues und PRs.
 Die Arbeit erfolgt weiter in kleinen abhängigen Paketen. Erledigte Implementierungen werden nicht wiederholt.
 Diese Liste ist eine Momentaufnahme und kein Abschlussnachweis. GitHub bleibt verbindlich.
 
 ## Aktueller Schritt
+
+Aktiv: PR #93 / codex/kc-006f-oauth-antwortpruefung auf #92 / 434f7fe. Vertrag/ADR-052 a10e821 steht vor Code. Gemeinsame reine Antwortprüfung bindet Tokenformat beziehungsweise aktive Metadaten an ausdrückliche Erwartungen und frische Zeit. Sechs deterministische Testgruppen und die erweiterte bestehende tatsächliche HTTP-Datenbankgruppe erhalten native CI; verbindlichen aktuellen Prüfstatus im PR prüfen. Keine Migration, Rechte oder externe Paketversion geändert. Danach aktueller Organisationsvertrag und Adapter. PR #92 / 434f7fe besteht alle zehn aktuellen Prüfungen einschließlich achtzehn SQLx-Gruppen vor/nach Neustart; dessen HTTP-Implementierung nicht wiederholen. Ältere Absätze sind Verlauf.
 
 Aktiv: PR #92 / codex/kc-006f-http-client auf #91 / 6967eba. #91 ist vollständig grün und zur gesammelten Durchsicht bereit. Client-Codekopf 63bcd03 besteht native CI mit vier tatsächlichen Netzwerkgruppen und achtzehn SQLx-Gruppen vor/nach Neustart. Vertrag/ADR-051 fd45e30 und Paketprüfung ea8cd8f stehen vor Code. Zusätzlicher Vertrag aa6c2a5 steht vor dem abschließenden Client-Server-/Datenbanknachweis und EOF-Test. Aktuellen Abschlusskopf und CI im PR prüfen; danach aktuellen Organisationsvertrag vorbereiten.
 

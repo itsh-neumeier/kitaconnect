@@ -1,22 +1,22 @@
 # Projektstatus und Fortsetzung
 
-Aktualisiert: 22.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
+Aktualisiert: 23.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
 Ausdrückliche Antwort der Projektleitung: „P0 abnehmen, und P1 freigeben“.
 P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nicht erneut abfragen.
 
 ## Arbeitsstand
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
-- branch: codex/kc-006f-http-client auf PR #91 / 6967eba.
-- pull_request: [PR #92](https://github.com/itsh-neumeier/kitaconnect/pull/92) auf codex/kc-006f-oauth-http / PR #91.
-- head_commit: Clientvertrag/ADR-051 fd45e30 und Paketprüfung ea8cd8f vor Codekopf 63bcd030034f4d1dc6c3539cb315f782d7f61819. Zusätzlicher Client-Server-Vertrag aa6c2a5 steht vor Testcode. Aktuellen Abschlusskopf im PR prüfen.
-- objective: Begrenzten tatsächlichen OAuth-HTTP-Client ohne losgelösten Hintergrundauftrag bereitstellen; Antwortbytes bleiben von Berechtigungsentscheidungen getrennt.
-- completed: PR #91 / 6967eba besteht alle zehn aktuellen Prüfungen und achtzehn SQLx-Gruppen vor/nach Neustart; zur gesammelten Durchsicht bereit. Client-Codekopf 63bcd03 besteht native Push-CI mit vier tatsächlichen TCP-/mTLS-/HTTP-Testgruppen, Clippy, Tests/Build und ebenfalls allen achtzehn SQLx-Gruppen vor/nach Neustart. Erweiterte Testfälle verbinden nun zusätzlich den tatsächlichen Client, Axum-Server und PostgreSQL und prüfen einen abgeschnittenen Body.
-- remaining: Vor Fortsetzung aktuellen Abschlusskopf und CI von PR #92 abgleichen. Danach aktuellen Organisationsvertrag und zuständigen Adapter vorbereiten. Gateway, Browser und ursprüngliche Gesamtabnahme bleiben offen. Keine erneute Implementierung der geprüften HTTP-Bausteine.
-- migration_state: Client ergänzt keine Datenbankabhängigkeit, Migration, Rolle, Policy oder neue Datenbankgruppe. Die bestehende achtzehnte Testgruppe verbindet beide tatsächlichen HTTP-Bausteine mit vorhandenen Migrationen 1 bis 9.
-- dependencies: Neue direkte Einträge verwenden bereits gesperrte Versionen von Hyper, Hyper-Util, http-body-util, Mime und Zeroize. Hyper-Client ergänzt ausschließlich want 0.3.2 und try-lock 0.2.5, beide MIT. Keine bestehende Version geändert. Beide Sicherheitsläufe für 63bcd03 erfolgreich; abschließender Kopf erhält eigene Prüfung.
-- known_failures: Windows-Linker und Docker fehlen lokal; native Prüfung in Linux-CI. Keine lokale Rust-/PostgreSQL-Ausführung behaupten. Die bisherigen Serverfehler sind in PR #91 behoben und vollständig geprüft. Keine bekannte ungeklärte Fehlermeldung am Client-Codekopf 63bcd03.
-- test_results: Lokal Rustfmt, gesperrte Offline-Auflösung, 50 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/68 Dokumente, git diff --check und Gitleaks erfolgreich. Native Client-CI 39833010935 / Job 120013845496 bestätigt alle vier neuen tatsächlichen Netzwerkgruppen und achtzehn SQLx-Gruppen vor/nach Neustart. Sicherheitslauf 39833010948 erfolgreich. Aktueller Abschlusskopf ergänzt den direkten Client-Server-/Datenbanknachweis und abgeschnittene Antworten; dessen verbindlichen Prüfstatus im PR nachführen.
+- branch: codex/kc-006f-oauth-antwortpruefung auf PR #92 / 434f7fe.
+- pull_request: [PR #93](https://github.com/itsh-neumeier/kitaconnect/pull/93) auf codex/kc-006f-http-client / PR #92.
+- head_commit: Vertrag/ADR-052 a10e82136bc3d80f0724b5e13cbb5d808cf7c419 steht vor Implementierung. Aktuellen Codekopf und verbindlichen Prüfstatus im PR prüfen.
+- objective: Token- und Introspektionsantworten in einem gemeinsamen reinen Protokollpaket prüfen, bevor ein Dienst deren Daten verwendet.
+- completed: PR #92 / 434f7fe besteht alle zehn aktuellen Prüfungen einschließlich vier tatsächlicher Netzwerkgruppen und achtzehn SQLx-Gruppen vor/nach Neustart. PR #91 ist ebenfalls vollständig grün. PR #93 ergänzt strenge bekannte Felder, kanonische Darstellung, genaue Bindungen und Zeitgrenzen sowie sechs deterministische Testgruppen. Die bestehende tatsächliche Client-/Server-/Datenbankgruppe verwendet beide Parser.
+- remaining: Native Prüfung und Sicherheitsprüfung des aktuellen PR-#93-Kopfs abschließen; Ergebnisse im PR nachführen. Danach aktuellen Organisationsvertrag und zuständigen Adapter vorbereiten. Gateway, Browser und ursprüngliche Gesamtabnahme bleiben offen. Geprüfte HTTP-Bausteine nicht erneut implementieren.
+- migration_state: Keine Migration, Rolle, Policy oder neue Datenbankgruppe. Bestehende achtzehnte Testgruppe verwendet vorhandene Identitätsmigrationen 1 bis 9 und frische Datenbankzeit.
+- dependencies: Neues internes Paket service-oauth nutzt ausschließlich bereits gesperrte externe Versionen Serde 1.0.229, Serde JSON 1.0.154, Base64 0.22.1 und Zeroize 1.9.1. Keine bestehende Version geändert. Keine Datenbank- oder Transportabhängigkeit im Protokollpaket.
+- known_failures: Windows-Linker und Docker fehlen lokal; native Prüfung in Linux-CI. Keine lokale Rust-/PostgreSQL-Ausführung behaupten. Aktueller Prüfstatus von PR #93 wird im PR nachgeführt.
+- test_results: Lokal Rustfmt, gesperrte Offline-Auflösung, 50 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/69 Dokumente und git diff --check erfolgreich. Gitleaks vor jedem Commit. Native Abschlussnachweise der Basis: CI 39834694059 / Job 120019796765 und Sicherheitslauf 39834694029. Aktueller PR-#93-Kopf erhält eigene native und Sicherheitsprüfungen; deren verbindliche Ergebnisse im PR nachführen.
 - test_commands: cargo fmt --all --check; cargo metadata --locked --offline --format-version 1; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks. Linux-CI führt Clippy, Workspace-Tests/Build und achtzehn SQLx-Gruppen vor/nach Neustart aus.
 - security_notes: Der Client übernimmt ausschließlich einen ausdrücklich übergebenen Socket und die vorhandene tatsächliche mTLS-Prüfung. Nur POST zu zwei vorhandenen OAuth-Pfaden; kein Cookie, alternativer Authentisierungsheader oder Redirect. Antwortbytes sind keine Registrierung oder Tokenfreigabe. Produktiver Zertifikatsbetrieb, Domain, Rollen-/Poolbindung und ursprüngliche Gesamtabnahme bleiben getrennt.
 
@@ -352,8 +352,8 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Nächste drei Aktionen
 
-1. Aktuellen Abschlusskopf von PR #92 und dessen CI abgleichen. Grundstand 63bcd03 mit vier tatsächlichen Netzwerkgruppen und achtzehn SQLx-Gruppen vor/nach Neustart ist bestätigt. Der aktuelle Kopf ergänzt den tatsächlichen Client-Server-/Datenbanknachweis und abgeschnittene Antworten. PR #91 ist vollständig grün und zur gesammelten Durchsicht bereit.
-2. Danach den aktuellen Organisationsvertrag erstellen. Organisation fragt Tokenzustand beim Identitätsdienst ab und vergleicht die tatsächliche Zertifikatsbindung, Aussteller, Empfänger, Zweck und Zeit. Keine fremden Datenbanktabellen oder positiven Berechtigungscaches.
+1. Aktuellen Kopf und CI von PR #93 abgleichen. Vertrag/ADR-052 a10e821 steht vor Code. Sechs neue Parsergruppen und die bestehende tatsächliche Client-/Server-/Datenbankgruppe müssen einschließlich Neustart bestehen. Verbindlichen Prüfstatus im PR nachführen. PR #92 / 434f7fe und PR #91 sind vollständig grün; deren Implementierung nicht wiederholen.
+2. Danach den aktuellen Organisationsvertrag erstellen. Organisation fragt Tokenzustand beim Identitätsdienst ab und verwendet das gemeinsame Protokollpaket für die tatsächliche Zertifikatsbindung, Aussteller, Empfänger, Zweck und Zeit. Aktuelle Registrierung und vertrauenswürdige Zeit müssen zusätzlich nachgewiesen werden. Keine fremden Datenbanktabellen oder positiven Berechtigungscaches.
 3. Organisation, Gateway und getrennte Browsernachweise nach ADR-049 ergänzen. Bereits bestätigte Fragen nicht wiederholen. Unbekannte notwendige Rechte-/MFA-Daten verweigern Zugriff. Persönliche/sprachliche Durchsicht gesammelt; kein Merge ohne Auftrag.
 
 ## OAuth-HTTP-Abschluss und GitHub-Fortsetzung

@@ -1,5 +1,5 @@
 [workspace]
-members = ["services/bootstrap", "services/organization-config", "services/identity-access", "crates/service-transport"]
+members = ["services/bootstrap", "services/organization-config", "services/identity-access", "crates/service-transport", "crates/service-oauth"]
 resolver = "3"
 
 [workspace.package]

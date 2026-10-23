@@ -1,0 +1,62 @@
+# ADR-034 – Browseranmeldung und atomare Nachweisübergabe vorbereiten
+
+Datum: 21.10.2026. Status: Sicherheitsregeln bestätigt; technischer Entwurf für KC-006F / #67.
+Grundlage: Spezifikation v5.9, ADR-014/015/019 und ADR-029 bis ADR-033.
+
+## Ausgangszustand
+
+PR #72 ist offen und zur Durchsicht bereit. Abschlusskopf cb3d8f62d1fde50dcb67b96468534cf8876fbe1a besteht alle zehn Prüfungen von Push und PR.
+Passwort-, Passkey- und TOTP-Adapter besitzen echte positive und negative Tests, erzeugen aber keine vollständige Anmeldung.
+Ihre positiven Ergebnistypen enthalten nur die Identitätszuordnung. Die Sitzungsanlage setzt ausdrücklich einen bereits vollständig geprüften Zweck voraus.
+Ein Gateway-Dienst und eine Browseranmeldung sind noch nicht implementiert.
+Die Mitgliedschaft besitzt noch keinen aktuellen Speicheradapter.
+
+## Technische Richtung
+
+Der [Vertragsentwurf](../../contracts/identity-access/browser-auth-v1.md) konkretisiert die noch fehlende Übergabe.
+Eine atomare, einmalige und versionierte Nachweisübergabe soll den Zwischenraum zwischen Faktorprüfung und Sitzungserzeugung schließen.
+Sie muss im Identitätsdienst an den tatsächlich geprüften Bestand gebunden werden.
+Das Gateway darf keinen alten positiven Ergebniswert in einen neuen Anmeldenachweis umwandeln.
+
+Alle schutzrelevanten Identitätsschreibvorgänge benötigen vor Sitzungsabschluss eine gemeinsame Serialisierungsgrenze.
+Die bestehende Versuchszählung bleibt vor teurer Arbeit dauerhaft bestätigt.
+Ein zusammengesetzter Sitzungsabschluss benötigt einen eigenen Transaktionsvertrag; er darf bestehende Eigen-Transaktionen nicht verschachteln.
+Neue Migrationen ergänzen den Bestand. Alte Migrationen und produktive RLS-Sperren bleiben erhalten.
+
+Das Gateway erhält keine Datenbankrolle. Identitätsbestand bleibt bei identity-access, Mitgliedschaften bleiben gemäß Dienstmatrix bei organization-config.
+Die lokale Identitätstransaktion kann keine fremde Mitgliedschaft atomar einschließen. Der aktuelle Organisationsaufruf bleibt für geschützte Prüfungen erforderlich.
+Prüfzeitpunkte und konkurrierender dienstübergreifender Widerruf benötigen vor Code einen konkreten Vertrag; eine alte positive Antwort ist keine dauerhafte Freigabe.
+Fachliche Rechteverwaltung, Föderation und produktiver Schlüsselbetrieb werden nicht in diesen Vorbereitungsschritt vorgezogen.
+Die Entscheidungen über Fristen, MFA-Kombination und Browser-Schutz sind ausdrücklich bestätigt.
+
+## Bestätigte Antworten
+
+| Thema | Vorgelegter Vorschlag | Grenze |
+|---|---|---|
+| Fristen | 15 Minuten Inaktivität, 8 Stunden absolut, zusätzliche Authentisierung höchstens 5 Minuten. | Pro Einrichtung einstellbar; diese Voreinstellungen und Obergrenzen sind in der Folgeantwort ausdrücklich bestätigt. |
+| MFA-Kombination | Passwort plus TOTP oder Passkey mit zwingender Benutzerverifikation erfüllt die MFA-Pflicht. | Beide Varianten ausdrücklich bestätigt. |
+| Browser-Schutz | Secure, HttpOnly, SameSite=Strict, keine Domain-Freigabe; serverseitig gebundener CSRF-Nachweis und genaue Origin-Prüfung. | Vorschlag ausdrücklich bestätigt. Externe SSO-Abläufe folgen KC-007. |
+
+Die Antworten werden vor abhängiger Implementierung versioniert. Diese Fragen nicht erneut stellen.
+Der [Speichervertrag für Einrichtungseinstellungen](../../contracts/organization-config/session-policy-v1.md) konkretisiert den ersten begrenzten Umsetzungsschritt.
+
+Produktive Domain, Rollen-/Poolbindung, Versuchslimits und Schlüsselbetrieb bleiben gesondert offen.
+Die Spezifikation verlangt aktuelle Mitgliedschaftsprüfung, legt aber keine neue öffentliche Vergabe- oder Transferregel in KC-006F fest.
+Solche Fachregeln werden nicht aus synthetischen Testzuordnungen abgeleitet.
+
+## Entwicklungsreihenfolge und Nachweise
+
+1. Antworten dokumentieren und Vertrag sowie diese ADR vor abhängigen Codeänderungen versionieren.
+2. Den konkreten Speicher- und Sperrvertrag für einmalige Nachweisübergabe und aktuelle Mitgliedschaft ausarbeiten.
+3. Den Identitätsdienst mit positiven und negativen echten Datenbanktests einschließlich Konkurrenz und Neustart erweitern.
+4. Das Rust-Gateway nach ADR-015 mit dem bestätigten Cookie-/CSRF-Vertrag anbinden.
+5. Browser-, TLS- und Dienstidentitätsnachweise getrennt prüfen; ursprüngliche Gesamtkriterien vollständig nachführen.
+
+Reine Routertests erfüllen keinen mTLS-, Browser- oder produktiven RLS-Nachweis.
+Der ursprüngliche Vorbereitungsschritt 20a88bf ergänzte keine Abhängigkeit, Migration oder Laufzeitfunktion.
+ADR-035 konkretisiert danach den ersten Einstellungsspeicher. Die Gesamtkriterien von #67 bleiben bis zur weiteren Integration offen.
+
+## Quellen
+
+Der Vertragsentwurf verlinkt die geprüften OWASP- und NIST-Primärquellen.
+Die Quellen liefern die fachliche Begründung der Vorschläge; sie ersetzen keine Projektentscheidung oder unabhängige Sicherheitsprüfung.

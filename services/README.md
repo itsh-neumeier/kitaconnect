@@ -26,3 +26,7 @@ Die [KC-006-Planung](../docs/24_KC-006_Authentisierung.md) trennt die späteren 
 KC-006B ergänzt den [internen Sitzungsbestand](../contracts/identity-access/session-storage-v1.md) mit SQLx und gespeicherten Ableitungen zufälliger Nachweise.
 Der Adapter öffnet keine Verbindungen und vergibt keine Rechte. Positive Speicherprüfungen verwenden nur den Test-Betriebszugang.
 Die produktive Anwendungsrolle bleibt ohne erlaubende RLS-Policy gesperrt; eine Anmeldung ist noch nicht implementiert.
+
+KC-006F ergänzt einen [versionierten Einstellungsspeicher](../contracts/organization-config/session-policy-v1.md) in organization-config.
+Er speichert die bestätigten Sitzungsfristen pro Einrichtung und schützt Änderungen mit einem erwarteten Versionsstand.
+Die spätere Browseranmeldung muss diese Einstellungen über den geprüften Dienstvertrag anwenden; der Speicheradapter selbst gewährt keinen Zugriff.

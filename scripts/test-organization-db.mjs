@@ -218,6 +218,21 @@ try {
   sql(mfaMigration, { database: 'kc_mfa_test', transaction: true, expectedState: '42P07' });
   testAdapter('before', 'mfa', 'totp_and_recovery_are_atomic_and_protected', 'kitaconnect-identity-access');
 
+  sql('CREATE DATABASE kc_session_policy_test;');
+  sql(file('provision/002_schema.sql'), { database: 'kc_session_policy_test', transaction: true });
+  migrate('kc_session_policy_test');
+  sql(registryMigration, { database: 'kc_session_policy_test', transaction: true });
+  const policyMigration = `SET SESSION AUTHORIZATION kc_org_migrator;\n${file('migrations/0003_facility_session_policies.sql')}`;
+  sql(`${policyMigration}\nSELECT 1 / 0;`, { database: 'kc_session_policy_test', transaction: true, expectedState: '22012' });
+  sql(`DO $$ BEGIN
+    ASSERT pg_catalog.to_regclass('organization_config.facility_session_policies') IS NULL;
+    ASSERT pg_catalog.to_regprocedure('organization_config.guard_session_policy()') IS NULL;
+    ASSERT (SELECT pg_catalog.array_agg(version ORDER BY version) = ARRAY[1,2] FROM organization_config.schema_versions);
+  END $$;`, { database: 'kc_session_policy_test' });
+  sql(policyMigration, { database: 'kc_session_policy_test', transaction: true });
+  sql(policyMigration, { database: 'kc_session_policy_test', transaction: true, expectedState: 'P0001' });
+  testAdapter('before', 'session_policy', 'facility_session_policies_are_versioned_and_restricted');
+
   requireSuccess(docker(['restart', container]), 'Restart same test database');
   await waitUntilReady();
   sql(file('tests/persisted.sql'));
@@ -231,6 +246,7 @@ try {
   testAdapter('after', 'password', 'passwords_and_durable_attempts_fail_closed', 'kitaconnect-identity-access');
   testAdapter('after', 'webauthn', 'webauthn_ceremonies_are_current_and_single_use', 'kitaconnect-identity-access');
   testAdapter('after', 'mfa', 'totp_and_recovery_are_atomic_and_protected', 'kitaconnect-identity-access');
+  testAdapter('after', 'session_policy', 'facility_session_policies_are_versioned_and_restricted');
   console.log('PASS: two carriers and an independent facility, version and role boundaries survive server restart');
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {

@@ -241,7 +241,7 @@ fn token(request: &Request) -> Result<Option<Zeroizing<[u8; 32]>>, HttpError> {
         .decode_slice(encoded, token.as_mut())
         .map_err(|_| HttpError)?
         != 32
-        || URL_SAFE_NO_PAD.encode(token.as_ref()) != encoded
+        || Zeroizing::new(URL_SAFE_NO_PAD.encode(token.as_ref())).as_str() != encoded
     {
         return Err(HttpError);
     }
@@ -335,6 +335,83 @@ async fn dispatch(state: &BoundConnection, request: Request) -> Response {
 mod tests {
     use super::*;
     #[test]
+    fn explicit_limits_cannot_panic_or_disable_deadlines() {
+        fn limits() -> Limits {
+            Limits {
+                connections: 1,
+                requests: 1,
+                body_bytes: 128,
+                headers: 16,
+                header_bytes: 8192,
+                handshake_time: Duration::from_secs(1),
+                header_time: Duration::from_secs(1),
+                request_time: Duration::from_secs(1),
+                connection_time: Duration::from_secs(1),
+            }
+        }
+        assert!(limits().validate().is_ok());
+        for value in [0, Semaphore::MAX_PERMITS + 1] {
+            let mut l = limits();
+            l.connections = value;
+            assert!(l.validate().is_err());
+            let mut l = limits();
+            l.requests = value;
+            assert!(l.validate().is_err());
+        }
+        let mut l = limits();
+        l.header_bytes = 8191;
+        assert!(l.validate().is_err());
+        let mut l = limits();
+        l.body_bytes = 0;
+        assert!(l.validate().is_err());
+        let mut l = limits();
+        l.headers = 0;
+        assert!(l.validate().is_err());
+        for value in [Duration::ZERO, Duration::MAX] {
+            let mut l = limits();
+            l.request_time = value;
+            assert!(l.validate().is_err());
+            let mut l = limits();
+            l.connection_time = value;
+            assert!(l.validate().is_err());
+            let mut l = limits();
+            l.handshake_time = value;
+            assert!(l.validate().is_err());
+            let mut l = limits();
+            l.header_time = value;
+            assert!(l.validate().is_err());
+        }
+    }
+    #[test]
+    fn json_media_type_cannot_hide_other_encodings_or_duplicate_fields() {
+        for valid in ["application/json", "application/json; charset=utf-8"] {
+            let r = Request::builder()
+                .header(header::CONTENT_TYPE, valid)
+                .body(axum::body::Body::empty())
+                .unwrap();
+            assert!(json_content(&r));
+        }
+        for invalid in [
+            "text/json",
+            "application/problem+json",
+            "application/json; charset=latin1",
+            "application/json; charset=utf-8; charset=utf-8",
+            "application/json; extra=true",
+        ] {
+            let r = Request::builder()
+                .header(header::CONTENT_TYPE, invalid)
+                .body(axum::body::Body::empty())
+                .unwrap();
+            assert!(!json_content(&r));
+        }
+        let r = Request::builder()
+            .header(header::CONTENT_TYPE, "application/json")
+            .header(header::CONTENT_TYPE, "application/json")
+            .body(axum::body::Body::empty())
+            .unwrap();
+        assert!(!json_content(&r));
+    }
+    #[test]
     fn identifiers_and_object_fields_are_unambiguous() {
         let valid =
             br#"{"identity_ref":"340282366920938463463374607431768211455","facility_id":"1"}"#;
@@ -374,7 +451,7 @@ mod tests {
             .header(header::AUTHORIZATION, format!("bEaReR {encoded}"))
             .body(axum::body::Body::empty())
             .unwrap();
-        assert!(token(&request).unwrap().unwrap().as_ref() == &[42; 32]);
+        assert!(token(&request).unwrap().unwrap().as_ref() == [42; 32]);
         for value in [
             format!("Bearer  {encoded}"),
             format!("Bearer {encoded}="),

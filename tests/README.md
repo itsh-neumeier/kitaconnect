@@ -220,12 +220,15 @@ Job 121135506585 bestätigt die vier reinen und vier tatsächlichen Transportgru
 ## Aktuelle Rollen-/MFA-Grundlage KC-008A
 
 Der [Bestandsvertrag](../contracts/identity-access/rights-assurance-v1.md) und ADR-057 stehen vor Code.
-Drei reine Rust-Testgruppen prüfen die bestätigten Klassen, strenge Dokumente, Arbeitsgrenzen und verdeckte Diagnosen.
+Vier reine Rust-Testgruppen prüfen die bestätigten Klassen, strenge Dokumente, Arbeitsgrenzen, Verbindungsgrenzen und verdeckte Diagnosen.
 Die neue tatsächliche SQLx-Gruppe `rights_assurance/current_roles_are_complete_versioned_and_restricted`
 verwendet ausschließlich die eigene isolierte Datenbank `kc_role_assurance_test` und synthetische Rollenschlüssel.
 Sie prüft genaue Bindung, aktuelle Version, unbekannte Klassen, Widerruf, unveränderliche Kennungen,
 verbotene Schreibzugriffe und geschlossene RLS. Zwei tatsächliche Schreiber prüfen einen konkurrierenden Versionsvergleich.
 Ein unabhängiger Backend-Zeuge bestätigt den Sperrkonflikt. Ein Leser sieht jeweils den vollständigen bestätigten Stand.
+Der Leser verwendet ausschließlich eigene frische begrenzte Verbindungen. Eine alte rohe Transaktionssicht bleibt im Gegenversuch offen.
+Sie darf den aktuellen Rollenleser nicht veralten lassen. Weitere Proben prüfen Datenbankfrist, Budget, Abbruch und Wiederverwendung.
+Ein unabhängiger Backend-Zeuge verlangt das Ende wartender Serverarbeit bei weiterhin gehaltener Testsperre.
 Vor dem Neuaufbau der Testdaten nach Neustart prüft die Gruppe den tatsächlich erhaltenen Bestand und Widerruf.
 Migration 0010 wird zunächst mit absichtlichem Fehler zurückgerollt, danach angewendet und gegen Wiederholung geprüft.
 Der isolierte Prüflauf umfasst damit neunzehn SQLx-Gruppen vor und nach Neustart.

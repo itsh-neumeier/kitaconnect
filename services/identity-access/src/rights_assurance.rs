@@ -4,8 +4,13 @@ use crate::{
     session_check::Requirement,
 };
 use serde::Deserialize;
-use sqlx::{Connection, PgConnection, Row};
-use std::{collections::HashSet, fmt};
+use sqlx::{Connection, PgConnection, Row, postgres::PgConnectOptions};
+use std::{
+    collections::HashSet,
+    fmt,
+    time::{Duration, Instant},
+};
+use tokio::{sync::Semaphore, time::timeout};
 
 const DOCUMENT_BYTES: usize = 65_536;
 
@@ -22,6 +27,72 @@ impl fmt::Display for ReadError {
     }
 }
 impl std::error::Error for ReadError {}
+
+#[derive(Clone, Copy)]
+pub struct ReadLimits {
+    pub parallel: usize,
+    pub connect_time: Duration,
+    pub database_time: Duration,
+    pub total_time: Duration,
+}
+pub struct Reader {
+    database: PgConnectOptions,
+    limits: ReadLimits,
+    budget: Semaphore,
+}
+fn database_timeout(duration: Duration) -> Result<String, ReadError> {
+    let ms = duration.as_nanos().div_ceil(1_000_000);
+    if ms == 0 || ms > i32::MAX as u128 {
+        return Err(ReadError);
+    }
+    Ok(ms.to_string())
+}
+impl Reader {
+    /// Own fresh connections only: never borrows a caller's transaction snapshot.
+    pub fn new(database: PgConnectOptions, limits: ReadLimits) -> Result<Self, ReadError> {
+        if limits.parallel == 0
+            || limits.parallel > Semaphore::MAX_PERMITS
+            || limits.connect_time > limits.total_time
+            || [limits.connect_time, limits.database_time, limits.total_time]
+                .iter()
+                .any(|d| d.is_zero() || Instant::now().checked_add(*d).is_none())
+        {
+            return Err(ReadError);
+        }
+        let ms = database_timeout(limits.database_time)?;
+        let database = database
+            .application_name("kc_role_assurance_request")
+            .options([
+                ("statement_timeout", ms.as_str()),
+                ("transaction_timeout", ms.as_str()),
+                ("idle_in_transaction_session_timeout", ms.as_str()),
+            ]);
+        Ok(Self {
+            database,
+            limits,
+            budget: Semaphore::new(limits.parallel),
+        })
+    }
+    pub async fn read(
+        &self,
+        identity: IdentityId,
+        facility: LoginFacilityId,
+    ) -> Result<CurrentAssurance, ReadError> {
+        let _permit = self.budget.try_acquire().map_err(|_| ReadError)?;
+        timeout(self.limits.total_time, async {
+            let mut connection = timeout(
+                self.limits.connect_time,
+                PgConnection::connect_with(&self.database),
+            )
+            .await
+            .map_err(|_| ReadError)?
+            .map_err(|_| ReadError)?;
+            read_current(&mut connection, identity, facility).await
+        })
+        .await
+        .map_err(|_| ReadError)?
+    }
+}
 
 pub struct CurrentAssurance {
     identity: IdentityId,
@@ -145,8 +216,8 @@ fn derive(document: &str) -> Result<bool, ReadError> {
 }
 
 /// One current statement snapshot. No default on absent, hidden or revoked scope.
-/// The caller supplies its already bounded connection; no connection/role is created.
-pub async fn read_current(
+/// Only Reader's owned fresh connection can reach this internal operation.
+async fn read_current(
     connection: &mut PgConnection,
     identity: IdentityId,
     facility: LoginFacilityId,
@@ -257,5 +328,41 @@ mod tests {
             mfa_required: true,
         };
         assert_eq!(format!("{value:?}"), "CurrentAssurance(REDACTED)");
+    }
+
+    #[test]
+    fn connection_and_server_limits_are_explicit_and_representable() {
+        let limits = ReadLimits {
+            parallel: 1,
+            connect_time: Duration::from_secs(1),
+            database_time: Duration::from_secs(1),
+            total_time: Duration::from_secs(2),
+        };
+        let valid = |limits| Reader::new(PgConnectOptions::new(), limits).is_ok();
+        assert!(valid(limits));
+        for parallel in [0, Semaphore::MAX_PERMITS + 1] {
+            assert!(!valid(ReadLimits { parallel, ..limits }));
+        }
+        for value in [Duration::ZERO, Duration::MAX] {
+            assert!(!valid(ReadLimits {
+                connect_time: value,
+                ..limits
+            }));
+            assert!(!valid(ReadLimits {
+                database_time: value,
+                ..limits
+            }));
+            assert!(!valid(ReadLimits {
+                total_time: value,
+                ..limits
+            }));
+        }
+        assert!(!valid(ReadLimits {
+            connect_time: Duration::from_secs(3),
+            ..limits
+        }));
+        assert_eq!(database_timeout(Duration::from_nanos(1)).unwrap(), "1");
+        assert_eq!(database_timeout(Duration::from_micros(1001)).unwrap(), "2");
+        assert!(database_timeout(Duration::from_millis(i32::MAX as u64 + 1)).is_err());
     }
 }

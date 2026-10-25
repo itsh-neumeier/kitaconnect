@@ -40,3 +40,11 @@ Der Identitätsdienst darf keine fremden Organisationstabellen lesen.
 Öffentliche Rollenvergabe, produktiver Betrieb und vollständige Objekt-/Feldrechte sind keine Ergebnisse dieses Planungs-PRs.
 Ungeklärte Fachregeln müssen vor abhängigem Code dokumentiert und entschieden werden.
 Persönliche und sprachliche Durchsicht erfolgt gesammelt. Es liegt kein Merge-Auftrag vor.
+
+## Technischer Vorlauf KC-008A
+
+Der [Bestandsvertrag](../contracts/identity-access/rights-assurance-v1.md) und ADR-057 konkretisieren den nächsten Schritt.
+Ein atomarer eingestufter Rollenbestand bindet Identität, Einrichtung und aktuelle Version.
+Migration 0010 ergänzt ausschließlich diesen eigenen Bestand. Es gibt keine vorgegebenen Rollen und keine erlaubende Laufzeitpolicy.
+Die aktuelle Ableitung verwendet die bestehende MFA-Zuordnung aus ADR-043.
+Anmeldeeinbindung und vollständige Rechteabnahme bleiben die folgenden Schritte.

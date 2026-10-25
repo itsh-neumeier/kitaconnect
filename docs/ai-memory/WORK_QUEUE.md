@@ -7,6 +7,9 @@ Diese Liste ist eine Momentaufnahme und kein Abschlussnachweis. GitHub bleibt ve
 
 ## Aktueller Schritt
 
+Aktiv: PR #101 / codex/kc-008a-rechte-mfa-grundlage auf #100 / e420270. Vertrag/ADR-057 673f071 stehen vor Code 3df01e9; Testhilfe 4104303, strenge Klassenform 7b60d2b und SQL-Blockbegrenzung a8225fa sind gesichert. 6f80591 prüft die neue Gruppe zuerst vor/nach Neustart. Die tatsächliche Probe 8914758 weist eine nicht erkannte rohe Transaktionssicht nach; Vertragsergänzung c567aa8 legt vor Korrekturcode ausschließlich eigene frische begrenzte Verbindungen fest. KC-008A / #98 ergänzt den eigenen vollständigen atomaren Rollenbestand, aktuelle Ableitung und Migration 0010. Vier reine Gruppen und eine neue tatsächliche SQLx-Gruppe prüfen auch Versionskonkurrenz, Widerruf und Neustart. Lokal 54 Node-Tests und Strukturprüfung für 52 Issues/76 Dokumente erfolgreich. Verbindliche Abschluss-CI im PR prüfen; neunzehn SQLx-Gruppen vor/nach Neustart gesondert nachweisen. Laufzeit-RLS bleibt geschlossen; keine Fachfreigabe oder Standardrolle. Danach #67 mit vollständigem aktuellem Anmeldeadapter, dann #99. PR #97 und #100 an unveränderten Köpfen jeweils zehnmal grün. Ältere Absätze sind Verlauf.
+
+
 Aktiv: PR #100 / codex/kc-008-rechtegrundlage-plan auf #97 / 7e8c537. Plan und ADR-056 fc62dba trennen den Rechte-/MFA-Vorlauf KC-008A / #98 von der ursprünglichen Gesamtabnahme KC-008B / #99. KC-006F erhält die konkrete Voraussetzung KC-008A. Alle ursprünglichen Kriterien bleiben erhalten. Lokal 54 Node-Tests und Strukturprüfung für 52 Issues/75 Dokumente erfolgreich; Regressionstest verweigert einen erneuten Kreis. Aktuelle CI von PR #97 und #100 prüfen, danach KC-008A mit konkretem Bestandsvertrag vor Code bearbeiten. Keine Anwendungs-, Migrations- oder Policyänderung in diesem Plan. Ältere Absätze sind Verlauf.
 
 

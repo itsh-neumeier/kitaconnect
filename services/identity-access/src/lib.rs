@@ -10,6 +10,7 @@ pub mod operation_assurance;
 pub mod organization_http;
 pub mod password;
 pub mod postgres;
+pub mod rights_assurance;
 pub mod service_auth;
 pub mod service_http;
 pub mod service_oauth;

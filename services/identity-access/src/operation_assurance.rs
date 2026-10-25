@@ -20,7 +20,7 @@ pub enum OperationClass {
     Unknown,
 }
 impl OperationClass {
-    fn requirement(self) -> Result<Requirement, CheckError> {
+    pub(crate) fn requirement(self) -> Result<Requirement, CheckError> {
         match self {
             Self::RoleAdministration
             | Self::SecuritySettings

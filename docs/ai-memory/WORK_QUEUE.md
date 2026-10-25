@@ -7,6 +7,9 @@ Diese Liste ist eine Momentaufnahme und kein Abschlussnachweis. GitHub bleibt ve
 
 ## Aktueller Schritt
 
+Aktiv: PR #100 / codex/kc-008-rechtegrundlage-plan auf #97 / 7e8c537. Plan und ADR-056 fc62dba trennen den Rechte-/MFA-Vorlauf KC-008A / #98 von der ursprünglichen Gesamtabnahme KC-008B / #99. KC-006F erhält die konkrete Voraussetzung KC-008A. Alle ursprünglichen Kriterien bleiben erhalten. Lokal 54 Node-Tests und Strukturprüfung für 52 Issues/75 Dokumente erfolgreich; Regressionstest verweigert einen erneuten Kreis. Aktuelle CI von PR #97 und #100 prüfen, danach KC-008A mit konkretem Bestandsvertrag vor Code bearbeiten. Keine Anwendungs-, Migrations- oder Policyänderung in diesem Plan. Ältere Absätze sind Verlauf.
+
+
 Aktiv: PR #97 / codex/kc-006f-mitgliedschaftsclient auf #95 / 3252ef3. Vertrag/ADR-055 34af65c und Budgetpräzisierung b3e4697 stehen vor Code. Präzisierung ef9fbf4 steht vor Korrektur 383dbfd. Dieser Codekopf besteht native CI 40182231332 / Job 121135506585 und Sicherheitslauf 40182231345. Vier reine und vier tatsächliche Transportgruppen sowie alle achtzehn SQLx-Gruppen vor/nach Neustart erfolgreich. Entzug, vollständige Fehlerantworten, positiver Abschluss, äußere Frist und Abbruch mit unabhängigem TCP-Zeugen geprüft. Lokal 53 Node-Tests erfolgreich. Alle zehn aktuellen Codeprüfungen einschließlich separater PR-CI sind erfolgreich. Abschließenden Kopf im PR prüfen. Danach Rechte-/MFA-Grundlage von KC-008-Gesamtabnahme trennen und vollständigen Anmeldeadapter vorbereiten. Keine frühere Arbeit wiederholen. Ältere Absätze sind Verlauf.
 
 PR #96 / a605e2ccab00d9aa56f7fa3b1c89371ccfec5abb: Vite-Patch 8.3.4 auf 8.3.5 technisch geprüft und mit positiver Empfehlung im PR versehen. Nur Webmanifest und Lockfile ändern sich; gesperrte PostCSS 8.5.30 und Rolldown 1.2.14 erfüllen die neuen Bereiche. Alle fünf aktuellen Prüfungen erfolgreich. Keine Integration; nach Basisaktualisierung sind die P1-Prüfungen erneut maßgeblich.

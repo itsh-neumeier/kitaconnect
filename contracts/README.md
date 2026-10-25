@@ -36,3 +36,7 @@ Die Antwort enthält ausschließlich Mitgliedschaft und Fristen. Sie erteilt kei
 Der [begrenzte Mitgliedschaftsverbraucher](identity-access/membership-consumer-v1.md)
 beschreibt den tatsächlichen festen HTTP-Client und die strenge Antwortprüfung im Identitätsdienst.
 Sein Datenstand enthält keine MFA-Entscheidung. Der vollständige Anmeldeadapter bleibt gesondert.
+
+Die [aktuelle Rollen-/MFA-Grundlage](identity-access/rights-assurance-v1.md)
+beschreibt den eigenen atomaren Rollenbestand und die strenge aktuelle Ableitung für KC-008A.
+Die Grundlage erteilt keine Fachberechtigung.

@@ -437,3 +437,9 @@ Der Datenstand enthält keine erfundene Rechte-/MFA-Entscheidung. Vollständiger
 [ADR-056](architecture/ADR-056_Rechtegrundlage_vor_Anmeldegesamtabnahme.md) trennt den technischen KC-008-Vorlauf von der ursprünglichen Gesamtabnahme.
 KC-006F verwendet KC-008A; KC-008B und KC-008 insgesamt behalten KC-006 als Voraussetzung.
 Alle ursprünglichen Kriterien, Datenhoheit und bestätigten MFA-Regeln bleiben erhalten. Konkreter Bestandsvertrag folgt vor Code.
+
+## ADR-057 – Atomarer Rollenbestand für MFA
+
+[ADR-057](architecture/ADR-057_Atomarer_Rollenbestand_fuer_MFA.md) legt den eigenen versionierten Gesamtbestand je Identität und Einrichtung fest.
+Die MFA-Anforderung folgt aus vollständig eingestuften Rollen. Fehlende oder unbekannte Daten verweigern die Prüfung.
+Laufzeit-RLS bleibt geschlossen. Fachrechte, Rollenvergabe und vollständige Anmeldeeinbindung bleiben gesondert.

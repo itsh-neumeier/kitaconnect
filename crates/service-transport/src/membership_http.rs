@@ -159,6 +159,17 @@ impl MembershipHttpClient {
                     .map_err(|_| HttpError)?;
                 let status = response.status().as_u16();
                 if response.status().is_redirection()
+                    || (status == 200
+                        && response
+                            .headers()
+                            .get_all(header::CONNECTION)
+                            .iter()
+                            .any(|value| {
+                                value.to_str().map_or(true, |text| {
+                                    text.split(',')
+                                        .any(|part| part.trim().eq_ignore_ascii_case("close"))
+                                })
+                            }))
                     || !single(response.headers(), header::CACHE_CONTROL, "no-store")
                     || !single(response.headers(), header::PRAGMA, "no-cache")
                     || response.headers().contains_key(header::CONTENT_ENCODING)
@@ -174,7 +185,9 @@ impl MembershipHttpClient {
                 {
                     return Err(HttpError);
                 }
-                peer.certificate().map_err(|_| HttpError)?;
+                if status == 200 {
+                    peer.certificate().map_err(|_| HttpError)?;
+                }
                 let body = timeout(
                     self.limits.body_time,
                     Limited::new(response.into_body(), self.limits.response_bytes).collect(),
@@ -186,14 +199,25 @@ impl MembershipHttpClient {
                 if body.is_empty() {
                     return Err(HttpError);
                 }
-                peer.certificate().map_err(|_| HttpError)?;
+                if status == 200 {
+                    peer.certificate().map_err(|_| HttpError)?;
+                }
                 Ok(MembershipReply {
                     status,
                     body: Zeroizing::new(body.to_vec()),
                 })
             };
             // No detached driver, retries, redirects or reusable positive results.
-            tokio::select! { result = receive => result, _ = connection => Err(HttpError) }
+            tokio::pin!(receive);
+            tokio::pin!(connection);
+            tokio::select! {
+                result = &mut receive => result,
+                _ = &mut connection => match receive.await {
+                    // A complete denial remains a denial after the router's deliberate close.
+                    Ok(reply) if reply.status != 200 => Ok(reply),
+                    _ => Err(HttpError),
+                }
+            }
         })
         .await
         .map_err(|_| HttpError)?

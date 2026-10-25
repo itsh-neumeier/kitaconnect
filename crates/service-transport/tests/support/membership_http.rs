@@ -89,6 +89,9 @@ async fn respond(server: Server, socket: TcpStream, spec: ResponseSpec) {
         }
         let _ = r.get_mut().write_all(&spec.body).await;
     }
+    if spec.headers.contains("Connection: close\r\n") {
+        return;
+    }
     let mut byte = [0];
     let result = timeout(Duration::from_secs(2), r.read(&mut byte))
         .await
@@ -126,6 +129,7 @@ async fn fixed_membership_request_and_problem_response_use_actual_tls() {
         .headers
         .replace("application/json", "application/problem+json");
     spec.body = br#"{"type":"about:blank","title":"Unauthorized","status":401}"#.to_vec();
+    spec.headers.push_str("Connection: close\r\n");
     assert_eq!(call(&f, &c, spec).await.unwrap().status(), 401);
     for parallel in [0, tokio::sync::Semaphore::MAX_PERMITS + 1] {
         assert!(
@@ -187,7 +191,7 @@ async fn changed_server_pin_and_invalid_request_send_no_application_bytes() {
 async fn headers_bodies_and_phase_deadlines_are_bounded() {
     let f = Fixture::new();
     let c = client(&f, limits(), pin(&f));
-    for case in 0..13 {
+    for case in 0..15 {
         let mut s = response();
         match case {
             0 => s.headers = s.headers.replace("no-store", "public"),
@@ -209,6 +213,14 @@ async fn headers_bodies_and_phase_deadlines_are_bounded() {
             10 => s.headers.push_str("Content-Encoding: gzip\r\n"),
             11 => s.headers.push_str("Set-Cookie: synthetic=true\r\n"),
             12 => s.body.clear(),
+            13 => s.headers.push_str("Connection: close\r\n"),
+            14 => {
+                s.status = 503;
+                s.headers = s
+                    .headers
+                    .replace("application/json", "application/problem+json");
+                s.truncate = true;
+            }
             _ => unreachable!(),
         }
         assert!(

@@ -486,7 +486,7 @@ pub(super) async fn check(
         .await
         .unwrap()
         .unwrap();
-    running.wire = org_wire(server, identity, f).await;
+    running.wire = org_wire(server.clone(), identity, f).await;
     assert_eq!(
         running
             .wire

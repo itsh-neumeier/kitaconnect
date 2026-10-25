@@ -26,7 +26,11 @@ Der Headerpuffer beträgt technisch mindestens 8.192 Bytes.
 Ein Aufruf besitzt genau eine neue Verbindung. Es gibt keinen Pool und keine automatische Wiederholung.
 Die Verbindung wird im selben Future wie die HTTP-Verarbeitung angetrieben.
 Erfolg, Fehler, Abbruch oder Fristende verwirft den eigenen Datenstrom und gibt das Budget frei.
-Nach Headern und Body werden Zertifikatszeit und gemeinsamer Sperrzustand erneut geprüft.
+Vor einem positiven Ergebnis werden nach Headern und Body Zertifikatszeit und gemeinsamer Sperrzustand erneut geprüft.
+Eine vollständig und begrenzt empfangene Fehlerantwort darf auch nach dem vorgesehenen HTTP-Verbindungsabschluss
+als Fehler zurückgegeben werden. Ein abgebrochener Body bleibt ein Prüfausfall.
+Ein bereits abgeschlossener Verbindungsbetrieb darf keine positive Antwort liefern.
+Eine positive Antwort mit angekündigtem `Connection: close` wird abgewiesen.
 
 Antworten benötigen jeweils genau einmal `Cache-Control: no-store` und `Pragma: no-cache`.
 Status 200 verlangt `application/json`. Fehler verlangen `application/problem+json`.

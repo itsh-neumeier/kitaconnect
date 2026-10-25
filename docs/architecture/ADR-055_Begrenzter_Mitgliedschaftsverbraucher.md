@@ -23,3 +23,12 @@ Ein Ergebnis bleibt ein Datenstand. Fehlende Mitgliedschaft wird nicht durch Vor
 Fehlende Rechte-/MFA-Daten werden nicht erfunden. OrganizationAuthority folgt gesondert.
 Es entstehen keine Migration, produktive Rolle oder erlaubende Policy.
 Der Vertrag steht vor abhängigem Code. Produktiver Zertifikatsbetrieb und Gesamtabnahme bleiben offen.
+
+## Präzisierung vor Korrektur des Fehlertransports
+
+Der Router schließt Fehlerantworten ausdrücklich. Eine vollständig empfangene begrenzte Fehlerantwort
+darf nach diesem Abschluss ihre feste Ablehnungsklasse behalten.
+Ein vorzeitig abgebrochener Body ist weiterhin ein Prüfausfall.
+Positive Antworten verlangen erneut den offenen Prüfzugang; ein abgeschlossener Verbindungsbetrieb
+oder angekündigter Abschluss darf kein positives Transportergebnis erzeugen.
+Diese Präzisierung steht vor der abhängigen Transportkorrektur und erteilt keine Berechtigung.

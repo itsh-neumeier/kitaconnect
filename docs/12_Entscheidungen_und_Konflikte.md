@@ -443,3 +443,8 @@ Alle ursprünglichen Kriterien, Datenhoheit und bestätigten MFA-Regeln bleiben 
 [ADR-057](architecture/ADR-057_Atomarer_Rollenbestand_fuer_MFA.md) legt den eigenen versionierten Gesamtbestand je Identität und Einrichtung fest.
 Die MFA-Anforderung folgt aus vollständig eingestuften Rollen. Fehlende oder unbekannte Daten verweigern die Prüfung.
 Laufzeit-RLS bleibt geschlossen. Fachrechte, Rollenvergabe und vollständige Anmeldeeinbindung bleiben gesondert.
+
+## ADR-058 – Getrennte Aktualitätsquellen der Anmeldung
+
+[ADR-058](architecture/ADR-058_Getrennte_Aktualitaetsquellen_der_Anmeldung.md) verbindet tatsächliche Dienstanmeldung, aktuelle Mitgliedschaft und eigene Rollenquelle.
+Das Ergebnis erhält drei getrennte Versionen. Dauerhafte Anmeldebindung und ursprüngliche Gesamtnachweise folgen gesondert.

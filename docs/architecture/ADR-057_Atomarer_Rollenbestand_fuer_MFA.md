@@ -30,3 +30,13 @@ Diese Entscheidung erfindet dafür keine Fachregel. Unbekannte Zuordnungen bleib
 Eine spätere Rechteverwaltung muss Bestand und Änderungsversion gemeinsam pflegen oder diesen Vertrag durch eine geprüfte Migration ersetzen.
 Die spätere atomare Einbindung in Anmeldung und Sitzungsprüfung bleibt KC-006F vorbehalten.
 Der Leser behauptet nur Aktualität seines Anweisungssnapshots.
+
+## Nachgewiesene Transaktionsgrenze vor Korrektur
+
+Die tatsächliche SQLx-Probe am Kopf 8914758 zeigt: `is_in_transaction()` erkennt ein rohes SQL-`BEGIN` nicht.
+Eine bloße Prüfung des SQLx-Zählers kann die behauptete Autocommit-Grenze deshalb nicht sichern.
+Der öffentliche Leser erstellt künftig nur eigene frische begrenzte Verbindungen.
+Er nimmt keine vorhandene Verbindung an. Der unveränderte aktuelle SQL-Snapshot bleibt erhalten.
+Eine tatsächliche Gegenprobe hält eine alte rohe Transaktionssicht offen und verlangt vom eigenen Leser trotzdem die neue bestätigte Version.
+Zeit- und Mengenbudgets sowie Datenbankgrenzen werden vor dem Korrekturcode im Vertrag festgelegt.
+Die erlaubten Datenklassen und fachlichen Rechte bleiben unverändert.

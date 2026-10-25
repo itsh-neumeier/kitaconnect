@@ -39,8 +39,16 @@ Das Dokument wird vollständig in einer Zeile ersetzt. RLS kann keine einzelne R
 Ein unvollständiger Zwischenstand darf nicht aktiv veröffentlicht werden.
 Schreibzugriffe bleiben privilegierte, ausdrücklich geprüfte Wartung. Es gibt keine öffentliche Vergabe oder Laufzeitschreibberechtigung.
 
-Der Leser verwendet eine einzige aktuelle SQL-Anweisung im Autocommit-Modus.
-Er verweigert fremde offene Transaktionen, damit alte Transaktionssichten keine aktuelle Prüfung ersetzen.
+Der Leser erstellt ausschließlich eigene frische Verbindungen und verwendet eine einzige aktuelle SQL-Anweisung im Autocommit-Modus.
+Seine öffentliche Schnittstelle nimmt keine vorhandene Verbindung oder Transaktion an.
+`is_in_transaction()` allein genügt nicht: SQLx zählt nur selbst verwaltete Transaktionen und erkennt ein rohes SQL-`BEGIN` damit nicht.
+Die eigene Verbindung verhindert deshalb auch die Übernahme alter roher Transaktionssichten.
+Verbindungsziel, Parallelitätsgrenze, Verbindungsfrist, Datenbankfrist und Gesamtfrist werden ausdrücklich konfiguriert.
+Alle Grenzen sind positiv und darstellbar. Die Verbindungsfrist überschreitet die Gesamtfrist nicht.
+Ein gemeinsames Mengenbudget gilt vor Verbindungsaufbau. Die Gesamtfrist umfasst Aufbau und vollständige Abfrage.
+Die Datenbank erhält beim Verbindungsaufbau Anweisungs-, Transaktions- und Transaktionsleerlaufgrenzen.
+Die Datenbankfrist wird auf volle Millisekunden aufgerundet und überschreitet `i32::MAX` Millisekunden nicht.
+Die Grenzen enthalten keine produktiven Vorgabewerte. Abbruch gibt das lokale Budget frei; die Datenbankfrist begrenzt verbleibende Serverarbeit.
 Die Anweisung liest Zustand, Version und das gesamte Dokument für die genau angefragten Kennungen.
 Fehlender, verdeckter, widerrufener, ungültiger oder nicht verfügbarer Bestand liefert ausschließlich einen Fehler.
 Eine erfolgreiche Antwort enthält genaue Kennungen, aktuelle Version und die abgeleitete MFA-Anforderung.

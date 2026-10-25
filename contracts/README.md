@@ -40,3 +40,6 @@ Sein Datenstand enthält keine MFA-Entscheidung. Der vollständige Anmeldeadapte
 Die [aktuelle Rollen-/MFA-Grundlage](identity-access/rights-assurance-v1.md)
 beschreibt den eigenen atomaren Rollenbestand und die strenge aktuelle Ableitung für KC-008A.
 Die Grundlage erteilt keine Fachberechtigung.
+
+Die [zusammengesetzte aktuelle Anmeldegrundlage](identity-access/current-login-source-v1.md)
+verbindet tatsächliche Dienstanmeldung, Mitgliedschaft und Rollenquelle. Die drei Versionen bleiben getrennt.

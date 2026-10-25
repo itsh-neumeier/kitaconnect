@@ -234,6 +234,21 @@ Migration 0010 wird zunächst mit absichtlichem Fehler zurückgerollt, danach an
 Der isolierte Prüflauf umfasst damit neunzehn SQLx-Gruppen vor und nach Neustart.
 Diese Beschreibung nennt den Prüfumfang. Erfolgreiche native Ausführung muss der jeweilige PR gesondert belegen.
 Windows ohne Linker und Docker ersetzt diesen Nachweis nicht.
+
+## Zusammengesetzte aktuelle Anmeldegrundlage KC-006F
+
+Der [Integrationsvertrag](../contracts/identity-access/current-login-source-v1.md) und ADR-058 stehen vor Code.
+Drei neue reine Gruppen prüfen äußere Grenzen, konservative Tokenfrist und verdeckte Ausgaben mit getrennten Versionen.
+Die bestehende tatsächliche HTTP-/SQLx-Gruppe verbindet zusätzliche neue Tokenausgaben über mTLS mit Organisationsrouter
+und eigenem Rollenbestand in einer getrennten Datenbank. Sie prüft beide MFA-Ergebnisse, drei getrennte Versionen,
+Friständerung, unbekannte Einstufung, Rollenentzug, fehlende Mitgliedschaft, fremde Kennungen,
+falschen Ausstellerfingerabdruck, geschlossene Rollen-RLS und eine fehlende Datenbank.
+Der nach Neustart erhaltene Rollenwiderruf wird vor Anlage des zweiten synthetischen Einrichtungsbestands geprüft.
+Die spätere Mitgliedschafts- und Dienstfreigabeaufhebung wird auch mit dem zusammengesetzten Leser geprüft.
+Migration 0010 wird zusätzlich in dessen isoliertem Identitätsbestand angewendet. Es gibt keine neue Anwendungsmigration.
+Die Gesamtzahl bleibt neunzehn tatsächliche SQLx-Gruppen vor/nach Neustart. Erfolg muss die aktuelle native CI belegen.
+Der Ergebnisdatentyp stellt keine Sitzung aus und verliert keine Version durch Umwandlung in den alten Anmeldeport.
+Die dauerhafte getrennte Versionsbindung und der vollständige Anmeldeadapter folgen als eigener Schritt.
 Vollständige Fehlerantworten mit HTTP-Abschluss bleiben Fehler. Abgeschnittene Fehlerbodies und positive Antworten mit angekündigtem Abschluss werden abgewiesen.
 Die ursprünglichen Testhilfe-Compilerfehler und die Fehlerklassenzuordnung sind ohne Prüfausnahme korrigiert.
 Der abschließende Nachweiskopf erhält eigene Prüfungen.

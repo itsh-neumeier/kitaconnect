@@ -216,6 +216,21 @@ Die Datenbanken bleiben getrennt. Aktuellen Ausführungsnachweis in PR #97 prüf
 
 Codekopf 383dbfd besteht [native CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/40182231332).
 Job 121135506585 bestätigt die vier reinen und vier tatsächlichen Transportgruppen sowie achtzehn SQLx-Gruppen vor/nach Neustart.
+
+## Aktuelle Rollen-/MFA-Grundlage KC-008A
+
+Der [Bestandsvertrag](../contracts/identity-access/rights-assurance-v1.md) und ADR-057 stehen vor Code.
+Drei reine Rust-Testgruppen prüfen die bestätigten Klassen, strenge Dokumente, Arbeitsgrenzen und verdeckte Diagnosen.
+Die neue tatsächliche SQLx-Gruppe `rights_assurance/current_roles_are_complete_versioned_and_restricted`
+verwendet ausschließlich die eigene isolierte Datenbank `kc_role_assurance_test` und synthetische Rollenschlüssel.
+Sie prüft genaue Bindung, aktuelle Version, unbekannte Klassen, Widerruf, unveränderliche Kennungen,
+verbotene Schreibzugriffe und geschlossene RLS. Zwei tatsächliche Schreiber prüfen einen konkurrierenden Versionsvergleich.
+Ein unabhängiger Backend-Zeuge bestätigt den Sperrkonflikt. Ein Leser sieht jeweils den vollständigen bestätigten Stand.
+Vor dem Neuaufbau der Testdaten nach Neustart prüft die Gruppe den tatsächlich erhaltenen Bestand und Widerruf.
+Migration 0010 wird zunächst mit absichtlichem Fehler zurückgerollt, danach angewendet und gegen Wiederholung geprüft.
+Der isolierte Prüflauf umfasst damit neunzehn SQLx-Gruppen vor und nach Neustart.
+Diese Beschreibung nennt den Prüfumfang. Erfolgreiche native Ausführung muss der jeweilige PR gesondert belegen.
+Windows ohne Linker und Docker ersetzt diesen Nachweis nicht.
 Vollständige Fehlerantworten mit HTTP-Abschluss bleiben Fehler. Abgeschnittene Fehlerbodies und positive Antworten mit angekündigtem Abschluss werden abgewiesen.
 Die ursprünglichen Testhilfe-Compilerfehler und die Fehlerklassenzuordnung sind ohne Prüfausnahme korrigiert.
 Der abschließende Nachweiskopf erhält eigene Prüfungen.

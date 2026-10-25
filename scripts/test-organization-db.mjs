@@ -390,6 +390,23 @@ try {
   testAdapter('before', 'service_auth', 'actual_peer_authentication_is_current', 'kitaconnect-identity-access');
 
 
+  sql('CREATE DATABASE kc_role_assurance_test;');
+  sql(file('provision/002_schema.sql', identityRoot), { database: 'kc_role_assurance_test', transaction: true });
+  for (const migration of [identityMigration, passwordMigration, webauthnMigration, mfaMigration, loginMigration, observationMigration, rotationMigration, stepUpMigration, serviceTokenMigration]) {
+    sql(migration, { database: 'kc_role_assurance_test', transaction: true });
+  }
+  const roleAssuranceMigration = `SET SESSION AUTHORIZATION kc_identity_migrator;\n${file('migrations/0010_role_assurance.sql', identityRoot)}`;
+  sql(`${roleAssuranceMigration}\nSELECT 1 / 0;`, { database: 'kc_role_assurance_test', transaction: true, expectedState: '22012' });
+  sql(`DO $ BEGIN
+    ASSERT to_regclass('identity_access.role_assurance_scopes') IS NULL;
+    ASSERT to_regprocedure('identity_access.guard_role_assurance()') IS NULL;
+    ASSERT (SELECT array_agg(version ORDER BY version)=ARRAY[1,2,3,4,5,6,7,8,9] FROM identity_access.schema_versions);
+  END $;`, { database: 'kc_role_assurance_test' });
+  sql(roleAssuranceMigration, { database: 'kc_role_assurance_test', transaction: true });
+  sql(roleAssuranceMigration, { database: 'kc_role_assurance_test', transaction: true, expectedState: 'P0001' });
+  sql('CREATE ROLE kc_role_assurance_runtime LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_identity_runtime TO kc_role_assurance_runtime WITH INHERIT TRUE, SET FALSE;', { database: 'kc_role_assurance_test', transaction: true });
+  testAdapter('before', 'rights_assurance', 'current_roles_are_complete_versioned_and_restricted', 'kitaconnect-identity-access');
+
   requireSuccess(docker(['restart', container]), 'Restart same test database');
   await waitUntilReady();
   sql(file('tests/persisted.sql'));
@@ -415,6 +432,7 @@ try {
   testAdapter('after', 'service_tokens', 'service_tokens_are_current_and_bound', 'kitaconnect-identity-access');
   testAdapter('after', 'service_auth', 'actual_peer_authentication_is_current', 'kitaconnect-identity-access');
   testAdapter('after', 'service_http', 'actual_http_is_bound_current_and_bounded', 'kitaconnect-identity-access');
+  testAdapter('after', 'rights_assurance', 'current_roles_are_complete_versioned_and_restricted', 'kitaconnect-identity-access');
   console.log('PASS: two carriers and an independent facility, version and role boundaries survive server restart');
 } finally {
   if (container && /^[a-f0-9]{64}$/.test(container)) {

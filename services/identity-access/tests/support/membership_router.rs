@@ -246,11 +246,11 @@ pub(super) async fn check(
         f.organization.digest,
         consumer_limits(),
     );
-    let org_server = server.clone();
+    let serving_organization = server.clone();
     let organization = tokio::spawn(async move {
         loop {
             let (socket, _) = listener.accept().await.unwrap();
-            let _ = org_server.clone().serve(socket).await;
+            let _ = serving_organization.clone().serve(socket).await;
         }
     });
     let headers = zeroize::Zeroizing::new(format!(
@@ -563,12 +563,7 @@ async fn outer_budget_and_cancellation(
             let (mut socket, _) = l.accept().await.unwrap();
             started_tx.send(()).unwrap();
             let mut bytes = [0; 2048];
-            loop {
-                match socket.read(&mut bytes).await {
-                    Ok(0) | Err(_) => break,
-                    Ok(_) => {}
-                }
-            }
+            while matches!(socket.read(&mut bytes).await,Ok(n) if n>0) {}
         });
         let r = reader.clone();
         let secret = zeroize::Zeroizing::new(*token);

@@ -37,10 +37,10 @@ async fn read(
     )
     .await
 }
-async fn sql(c: &mut PgConnection, text: &str) {
+async fn sql(c: &mut PgConnection, text: &'static str) {
     sqlx::raw_sql(text).execute(c).await.unwrap();
 }
-async fn rejected(c: &mut PgConnection, text: &str, code: &str) {
+async fn rejected(c: &mut PgConnection, text: &'static str, code: &str) {
     let error = sqlx::raw_sql(text).execute(c).await.unwrap_err();
     assert_eq!(
         error.as_database_error().unwrap().code().as_deref(),

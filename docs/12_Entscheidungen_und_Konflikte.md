@@ -431,3 +431,9 @@ Die HTTP-Antwort erteilt keine Benutzer- oder MFA-Rechte. Produktiver Betrieb un
 [ADR-055](architecture/ADR-055_Begrenzter_Mitgliedschaftsverbraucher.md) beschreibt den festen HTTP-Client und die strenge Antwortprüfung vor Code.
 Der Serverfingerabdruck wird vor dem geheimen Header geprüft. Kennungen und Fristen bleiben an die genaue Anfrage gebunden.
 Der Datenstand enthält keine erfundene Rechte-/MFA-Entscheidung. Vollständiger Anmeldeadapter und produktiver Betrieb bleiben gesondert.
+
+## ADR-056 – Rechtegrundlage vor Anmeldegesamtabnahme
+
+[ADR-056](architecture/ADR-056_Rechtegrundlage_vor_Anmeldegesamtabnahme.md) trennt den technischen KC-008-Vorlauf von der ursprünglichen Gesamtabnahme.
+KC-006F verwendet KC-008A; KC-008B und KC-008 insgesamt behalten KC-006 als Voraussetzung.
+Alle ursprünglichen Kriterien, Datenhoheit und bestätigten MFA-Regeln bleiben erhalten. Konkreter Bestandsvertrag folgt vor Code.

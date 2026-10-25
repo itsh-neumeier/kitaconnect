@@ -164,7 +164,11 @@
       "Objekt-, Feld-, Einrichtungs- und Trägergrenzen haben negative Tests; Rollenentzug wirkt sofort."
     ],
     "security_scope": "Einrichtungs- und Trägerrechte sowie betroffene Datenklassen vor Implementierung benennen. Positive und negative Berechtigungstests verwenden nur synthetische Daten.",
-    "status": "planned"
+    "status": "planned",
+    "work_packages": [
+      "KC-008A",
+      "KC-008B"
+    ]
   },
   {
     "id": "KC-009",
@@ -930,7 +934,8 @@
     "depends_on": [
       "KC-006C",
       "KC-006D",
-      "KC-006E"
+      "KC-006E",
+      "KC-008A"
     ],
     "specification": [
       "docs/02_Technische_Architektur.md",
@@ -944,6 +949,50 @@
       "Sitzungsfristen, MFA-Kombination und Cookie-/CSRF-Regeln sind vor abhängiger Implementierung ausdrücklich bestätigt; Router-, Browser-, TLS- und Dienstidentitätsnachweise werden getrennt ausgewiesen."
     ],
     "security_scope": "Nur synthetische Daten. Keine produktiven Konten, Secrets oder fachlichen Rechte. Offene Sicherheitsentscheidungen vor abhängiger Implementierung bestätigen lassen.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-008A",
+    "phase": "P1",
+    "title": "Aktuelle Rechte-/MFA-Grundlage für Anmeldeadapter",
+    "depends_on": [
+      "KC-005",
+      "KC-006C",
+      "KC-006D",
+      "KC-006E"
+    ],
+    "specification": [
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md",
+      "docs/28_P1_Rechtegrundlage_und_Anmeldeadapter.md"
+    ],
+    "acceptance": [
+      "Eigener aktueller Rollen-/Policy-Bestand und konkrete Bestandsableitung sind vor Code versioniert; bekannte vollständige Einstufung, genaue Bindung und aktuelle Version sind nachweisbar.",
+      "Fehlender, unbekannter, entzogener oder ausgefallener Bestand verweigert Zugriff; keine falsche MFA-Behauptung ersetzt fehlende Rechteinformationen.",
+      "Tatsächliche Persistenz-, Entzugs-, Fehler-, Konkurrenz-, RLS- und Neustarttests sind getrennt von Modellfällen nachgewiesen; ursprüngliche KC-008-Gesamtkriterien bleiben offen."
+    ],
+    "security_scope": "Nur synthetische Daten. Aktuelle Rollen-/Policy- und MFA-Grundlage ist keine Fachfreigabe. Fehlende oder unbekannte Einstufung verweigert Zugriff. Keine produktiven Zugangsdaten oder erlaubenden Laufzeitpolicies.",
+    "status": "planned"
+  },
+  {
+    "id": "KC-008B",
+    "phase": "P1",
+    "title": "Rollen-, Objekt- und Feldrechte vollständig nachweisen",
+    "depends_on": [
+      "KC-005",
+      "KC-006",
+      "KC-008A"
+    ],
+    "specification": [
+      "docs/03_Datenmodell_und_Berechtigungen.md",
+      "docs/10_Datenschutz_und_Sicherheit.md",
+      "docs/28_P1_Rechtegrundlage_und_Anmeldeadapter.md"
+    ],
+    "acceptance": [
+      "Alle ursprünglichen Kriterien von KC-008 besitzen tatsächliche positive und negative Rollen-, Objekt-, Feld-, Einrichtungs- und Trägernachweise.",
+      "Aktueller Entzug und Ausfall verweigern Zugriff; bestätigte MFA-Regeln ersetzen keine Fachrechte und Systemadministration erteilt keinen pauschalen Inhaltszugriff."
+    ],
+    "security_scope": "Nur synthetische Daten. Aktuelle Rollen-/Policy- und MFA-Grundlage ist keine Fachfreigabe. Fehlende oder unbekannte Einstufung verweigert Zugriff. Keine produktiven Zugangsdaten oder erlaubenden Laufzeitpolicies.",
     "status": "planned"
   }
 ]

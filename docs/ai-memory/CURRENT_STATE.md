@@ -6,19 +6,30 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 
 ## Arbeitsstand
 
-- issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
-- branch: codex/kc-006f-mitgliedschaftsclient auf PR #95 / 3252ef3db22c16ce992a660b183a667916a30bc5.
-- pull_request: [PR #97](https://github.com/itsh-neumeier/kitaconnect/pull/97) auf codex/kc-006f-organisationsrouter / PR #95.
-- head_commit: Vertrag/ADR-055 34af65c und Budgetpräzisierung b3e4697 stehen vor Code. Fehlertransportpräzisierung ef9fbf4 steht vor geprüftem Codekopf 383dbfdb1da4a79926f3c970c0cc86cfeaee6801. Folgender Nachweiskopf erhält eigene CI; aktuellen Abschluss im PR prüfen.
-- objective: Begrenzten tatsächlichen Mitgliedschaftsclient und strenge Antwortprüfung im Identitätsdienst ergänzen.
-- completed: Fester mTLS-/HTTP-Client, frühe Serverfingerabdruckprüfung und genaue Antwortbindung implementiert und nativ geprüft. Vier neue reine Parser-/Grenzgruppen und vier tatsächliche Transportgruppen erfolgreich. Alle achtzehn SQLx-Gruppen bestehen vor/nach Neustart einschließlich vollständigem Verbraucher, Entzug und unabhängigen TCP-Abbruchzeugen. PR #95 / 3252ef3 bleibt vollständig grün und konfliktfrei. Keine frühere Implementierung oder Sicherheitskorrektur wiederholen.
-- remaining: Aktuellen abschließenden Kopf und CI von PR #97 abgleichen. Danach vollständigen Anmeldeadapter mit aktueller Rechte-/MFA-Quelle nach vorherigem Vertrag ergänzen. Dazu den Vorlauf der Rechtegrundlage aus KC-008 von dessen Gesamtabnahme trennen, damit der Bedarf aus KC-006F keinen Abhängigkeitszyklus erzeugt. Unbekannte Rechte-/MFA-Daten verweigern Zugriff. Gateway, Browser und ursprüngliche Gesamtabnahme bleiben offen.
-- migration_state: Keine neue Migration, Rolle oder Policy. Die bestehende tatsächliche HTTP-Gruppe verwendet weiterhin getrennte Datenbanken mit unveränderten Organisationsmigrationen 1 bis 4 und Identitätsmigrationen 1 bis 9. Laufzeit-RLS bleibt geschlossen.
-- dependencies: Nur Base64 0.22.1 als direkte Transportabhängigkeit und Serde 1.0.229 als direkte Identitätsabhängigkeit ergänzt. Beide Versionen waren gesperrt. Keine externe Version, kein fremder Tabellenzugriff und keine normale Abhängigkeit vom Organisationsdienst.
-- known_failures: Kein ungeklärter Fehler am geprüften Codekopf 383dbfd. Testhilfe-Compilerfehler und Transport vollständiger 401-Antworten nach absichtlichem HTTP-Abschluss sind ohne Prüfausnahme korrigiert. Positive Antworten bleiben an offenen Prüfzugang gebunden. Windows-Linker und Docker fehlen lokal.
-- test_results: Lokal Rustfmt, vollständige gesperrte Offline-Metadaten, 53 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/73 Dokumente, git diff --check und Gitleaks erfolgreich. Native Code-CI 40182231332 / Job 121135506585 bestätigt Clippy, Workspace-Tests/Build, vier neue reine Gruppen, vier tatsächliche Transportgruppen und achtzehn SQLx-Gruppen vor/nach Neustart. Sicherheitslauf 40182231345 erfolgreich. Separate PR-Läufe 40182234986 / 40182235037 ebenfalls erfolgreich. Alle zehn aktuellen Codeprüfungen sind grün. Abschließenden Nachweiskopf im PR abgleichen.
-- test_commands: cargo fmt --all --check; cargo metadata --locked --offline --format-version 1; node --test scripts/*.test.mjs; node scripts/check-project.mjs; git diff --check; Gitleaks. Linux-CI führt Clippy, Workspace-Tests/Build und achtzehn SQLx-Gruppen vor/nach Neustart aus.
-- security_notes: Früher vertrauenswürdiger Serverfingerabdruckvergleich vor geheimem Header; feste Route und ausdrückliche Grenzen. Jeder Treffer muss zur genauen Anfrage passen. Datenstand enthält keine MFA-Entscheidung und implementiert allein noch nicht OrganizationAuthority. Produktiver Zertifikatsbetrieb und Rollen-/Poolbindung bleiben gesondert.
+- issue_id: [KC-008 / #8](https://github.com/itsh-neumeier/kitaconnect/issues/8), technischer Abhängigkeitsplan; nächster Umsetzungsschritt [KC-008A / #98](https://github.com/itsh-neumeier/kitaconnect/issues/98).
+- branch: codex/kc-008-rechtegrundlage-plan auf PR #97 / 7e8c5374a369fa421d90d77f68c6082a1e3c56f2.
+- pull_request: [PR #100](https://github.com/itsh-neumeier/kitaconnect/pull/100) auf codex/kc-006f-mitgliedschaftsclient / PR #97.
+- head_commit: Plan, ADR-056, Backlog und Regressionstest stehen in fc62dba0fbb6ba6632dc109cc092071d026c4eb8. Folgender Checkpoint erhält eigene CI; aktuellen Kopf im PR prüfen.
+- objective: Rechte-/MFA-Vorlauf von Anmelde- und Rechtegesamtabnahme trennen, ohne fachliche Kriterien zu ändern.
+- completed: KC-008A / #98 und KC-008B / #99 mit Akzeptanzkriterien angelegt. Backlog und Zuordnung enthalten beide Pakete; KC-006F benötigt KC-008A. Ein Regressionstest verweigert die Rückkehr zur zyklischen Gesamtabnahmeabhängigkeit. Alle bisherigen Akzeptanzkriterien sind beim Bearbeiten bytegleich verglichen und erhalten. Konkrete Rollen-/Policy-Implementierung wurde nicht begonnen.
+- remaining: Aktuelle CI von PR #97 und #100 abgleichen. Danach KC-008A mit eigenem Bestandsvertrag und konkreter aktueller Ableitung vorbereiten. Nach dessen Nachweisen vollständigen Anmeldeadapter in KC-006F ergänzen; KC-008B behält die gesamte ursprüngliche Rechteabnahme. Gateway, Browser und Gesamtabnahmen bleiben offen.
+- migration_state: Dieser Plan enthält keine Anwendungscode-, Migrations-, Rollen- oder Policyänderung. Identitätsmigrationen bleiben 1 bis 9 und Organisationsmigrationen 1 bis 4. Laufzeit-RLS bleibt geschlossen.
+- dependencies: Keine neue Paketabhängigkeit oder Version. KC-008A benötigt KC-005 und KC-006C/D/E; KC-006F benötigt KC-008A; KC-008B benötigt KC-005, KC-006 und KC-008A. KC-008 insgesamt behält seine ursprünglichen Voraussetzungen und Kriterien.
+- known_failures: Kein lokaler Planungsfehler. Aktuelle Pflichtprüfungen laufen. Windows-Linker und Docker fehlen lokal; native Nachweise stammen aus Linux-CI. Keine erfolgreichen nativen Prüfungen dieses Planungsabschlusses vorwegnehmen.
+- test_results: Lokal 54 Node-Tests, Struktur-/Verweisprüfung für 52 Issues/75 Dokumente, git diff --check und Gitleaks erfolgreich. Der neue Test verwirft die Abhängigkeit von KC-008A zum vollständigen KC-006 als Kreis. Parent-Clientcode 383dbfd besteht alle zehn Prüfungen mit vier neuen reinen und vier tatsächlichen Transportgruppen sowie achtzehn SQLx-Gruppen vor/nach Neustart; CI 40182231332 / Job 121135506585. Aktuelle Abschlussköpfe von PR #97 und #100 im PR abgleichen.
+- test_commands: node --test scripts/*.test.mjs; node scripts/check-project.mjs; git diff --check; Gitleaks. Pflicht-CI führt zusätzlich Rustfmt, Clippy, Workspace-Tests/Build, Webprüfungen, Sicherheitsprüfungen und achtzehn SQLx-Gruppen vor/nach Neustart aus.
+- security_notes: Keine neue Fachregel, Standardrolle oder Berechtigung. Fehlende Rechte-/MFA-Daten verweigern Zugriff. KC-008A muss vor Code den eigenen aktuellen Rollen-/Policy-Bestand und konkrete Ableitung versionieren. Mitgliedschaft bleibt beim Organisationsdienst; MFA ersetzt keine Objekt-/Feldrechte. Persönliche/sprachliche Durchsicht gesammelt; kein Merge-Auftrag.
+
+## Bereits geprüfter Mitgliedschaftsverbraucher
+
+[PR #97](https://github.com/itsh-neumeier/kitaconnect/pull/97) ergänzt nach ADR-055 den festen mTLS-/HTTP-Client und die strenge Antwortprüfung.
+Vertrag 34af65c und Budgetpräzisierung b3e4697 stehen vor Code. Fehlertransportpräzisierung ef9fbf4 steht vor Korrektur 383dbfd.
+Codekopf 383dbfd besteht alle zehn aktuellen Prüfungen. [Native CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/40182231332)
+und [Sicherheitsprüfung](https://github.com/itsh-neumeier/kitaconnect/actions/runs/40182231345) bestätigen den Stand.
+Vier neue reine Gruppen, vier tatsächliche Transportgruppen und alle achtzehn SQLx-Gruppen bestehen vor/nach Neustart.
+Vollständige Fehlerantworten nach HTTP-Abschluss bleiben Ablehnungen; positive Antworten verlangen den offenen Prüfzugang.
+Abschlusskopf 7e8c537 sichert dessen Checkpoint und erhält eigene CI. Verbindlichen Abschlussstatus im PR prüfen.
+Client, Organisationsrouter und frühere Sicherheitskorrekturen nicht erneut implementieren.
 
 Aktuelle bestätigte Testprofile: `http://localhost:3000` und zusätzlich das getrennte `https://localhost:3443` gemäß ADR-049.
 Die zusätzliche Profilfrage ist beantwortet. Nicht erneut fragen. Produktive Domain und Zertifikatsbetrieb bleiben offen.
@@ -352,9 +363,9 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Nächste drei Aktionen
 
-1. Aktuellen Abschlusskopf und native/Sicherheits-CI von PR #97 prüfen. Codekopf 383dbfd besitzt den vollständigen nativen Nachweis einschließlich achtzehn SQLx-Gruppen vor/nach Neustart. Client und frühere Bausteine nicht erneut schreiben.
-2. Vorlauf der Rechte-/MFA-Quelle aus KC-008 von dessen Gesamtabnahme trennen und Abhängigkeiten vor Code sichern. Danach vollständigen Anmeldeadapter mit dieser aktuellen Quelle ergänzen. Fehlende Einstufung verweigert Zugriff. Mitgliedschaft allein ersetzt keine MFA-Entscheidung. PR #95 und frühere Bausteine nicht erneut schreiben.
-3. Gateway und getrennte Browsernachweise nach ADR-049 ergänzen. PR #96 enthält eine positive technische Empfehlung für Vite 8.3.5 am exakt geprüften Kopf; Integration und erneute P1-Basisprüfung bleiben gesondert. Persönliche/sprachliche Durchsicht erfolgt gesammelt; kein Merge ohne Auftrag.
+1. Aktuelle Abschlussköpfe und CI von PR #97 und #100 prüfen. Den Mitgliedschaftsclient, Router und frühere Sicherheitskorrekturen nicht erneut schreiben. Originale Gesamtkriterien bleiben offen.
+2. KC-008A / #98 bearbeiten: eigenen Dienstvertrag und ADR vor Code sichern. Konkreten aktuellen Rollen-/Policy-Bestand, vollständige bekannte Einstufung, genaue Bindung und Bestandsversion nachweisen. Keine falsche MFA-Behauptung als Ersatz fehlender Information.
+3. Mit dieser Grundlage KC-006F / #67 und danach KC-008B / #99 fortsetzen. Gateway und getrennte Browsernachweise nach ADR-049 bleiben enthalten. PR #96 besitzt eine positive technische Empfehlung; gesammelte persönliche/sprachliche Durchsicht und gesonderter Merge-Auftrag bleiben nötig.
 
 ## OAuth-HTTP-Abschluss und GitHub-Fortsetzung
 

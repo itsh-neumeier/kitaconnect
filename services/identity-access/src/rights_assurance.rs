@@ -99,7 +99,15 @@ fn derive(document: &str) -> Result<bool, ReadError> {
         || !shape
             .get("roles")
             .and_then(|v| v.as_array())
-            .is_some_and(|roles| roles.iter().all(|r| r.is_object()))
+            .is_some_and(|roles| {
+                roles.iter().all(|role| {
+                    role.is_object()
+                        && role
+                            .get("operations")
+                            .and_then(|v| v.as_array())
+                            .is_some_and(|operations| operations.iter().all(|v| v.is_string()))
+                })
+            })
     {
         return Err(ReadError);
     }
@@ -205,6 +213,7 @@ mod tests {
             r#"{"format":1,"roles":[],"\u0072oles":[]}"#,
             r#"{"format":1,"roles":[{"key":"a","operations":[]}] }"#,
             r#"{"format":1,"roles":[{"key":"a","operations":["unknown"]}]}"#,
+            r#"{"format":1,"roles":[{"key":"a","operations":[{"health_data":null}]}]}"#,
             r#"{"format":1,"roles":[{"key":"a","operations":["basic_contact_data","basic_contact_data"]}]}"#,
             r#"{"format":1,"roles":[{"key":"a","key":"b","operations":["health_data"]}]}"#,
             r#"{"format":1,"roles":[{"key":"a","operations":["health_data"],"scope":"carrier"}]}"#,

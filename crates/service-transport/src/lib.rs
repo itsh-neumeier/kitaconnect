@@ -1,5 +1,6 @@
 //! Actual mTLS transport only: no registration, token or user authorization.
 //! Call `peer_certificate` before every protected action, including reused connections.
+pub mod membership_http;
 pub mod oauth_http;
 use rustls::{
     ClientConfig, RootCertStore, ServerConfig,

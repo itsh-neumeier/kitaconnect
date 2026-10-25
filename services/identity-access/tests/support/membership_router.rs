@@ -1,8 +1,18 @@
 //! Actual organization HTTP -> identity HTTP -> separate organization DB, synthetic only.
 use super::*;
 use base64::Engine as _;
+use kitaconnect_identity_access::{
+    IdentityId,
+    login::LoginFacilityId,
+    organization_http::{
+        MembershipReader as Consumer, ReadError as ConsumerError, ReadLimits as ConsumerLimits,
+    },
+};
 use kitaconnect_organization_config::service_http::{
     HttpError as OrgHttpError, Limits as OrgLimits, MembershipServer,
+};
+use kitaconnect_service_transport::membership_http::{
+    ClientLimits as MemberLimits, MembershipHttpClient,
 };
 
 const PATH: &str = "/internal/v1/membership/read";
@@ -147,10 +157,14 @@ pub(super) struct Running {
     wire: OrgWire,
     headers: zeroize::Zeroizing<String>,
     authority: JoinHandle<()>,
+    organization: JoinHandle<()>,
+    reader: Consumer,
+    token: zeroize::Zeroizing<[u8; 32]>,
 }
 impl Drop for Running {
     fn drop(&mut self) {
         self.authority.abort();
+        self.organization.abort();
     }
 }
 impl Running {
@@ -161,6 +175,17 @@ impl Running {
             .await;
         assert_eq!(reply.status, 200);
         assert_eq!(reply.json(), json!({"membership":null}));
+        assert!(
+            self.reader
+                .read(
+                    &self.token,
+                    IdentityId::new(1).unwrap(),
+                    LoginFacilityId::new(site.value()).unwrap()
+                )
+                .await
+                .unwrap()
+                .is_none()
+        );
     }
     pub(super) async fn rejected(&mut self, site: FacilityId) {
         let reply = self
@@ -173,6 +198,16 @@ impl Running {
                 "www-authenticate: bearer realm=\"service\", error=\"invalid_token\"\r\n"
             )
         );
+        assert_eq!(
+            self.reader
+                .read(
+                    &self.token,
+                    IdentityId::new(1).unwrap(),
+                    LoginFacilityId::new(site.value()).unwrap()
+                )
+                .await,
+            Err(ConsumerError::Rejected)
+        );
     }
     pub(super) async fn finish(mut self) {
         let _ = timeout(Duration::from_secs(1), &mut self.wire.task)
@@ -181,6 +216,8 @@ impl Running {
             .unwrap();
         self.authority.abort();
         let _ = (&mut self.authority).await;
+        self.organization.abort();
+        let _ = (&mut self.organization).await;
     }
 }
 pub(super) async fn check(
@@ -201,6 +238,21 @@ pub(super) async fn check(
         }
     });
     let server = org_server(f, address, identity.digest, org_options("postgres"));
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let reader = consumer(
+        f,
+        identity,
+        listener.local_addr().unwrap(),
+        f.organization.digest,
+        consumer_limits(),
+    );
+    let org_server = server.clone();
+    let organization = tokio::spawn(async move {
+        loop {
+            let (socket, _) = listener.accept().await.unwrap();
+            let _ = org_server.clone().serve(socket).await;
+        }
+    });
     let headers = zeroize::Zeroizing::new(format!(
         "{JSON}Authorization: Bearer {}\r\n",
         base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(token)
@@ -209,6 +261,9 @@ pub(super) async fn check(
         wire: org_wire(server.clone(), identity, f).await,
         headers,
         authority: task,
+        organization,
+        reader,
+        token: zeroize::Zeroizing::new(*token),
     };
     let reply = running
         .wire
@@ -222,6 +277,32 @@ pub(super) async fn check(
             "identity_ref":"1", "facility_id":site.value().to_string(), "membership_version":"1", "policy_version":"1",
             "idle_seconds":900, "absolute_seconds":28800, "step_up_seconds":300
         }})
+    );
+    let snapshot = running
+        .reader
+        .read(
+            token,
+            IdentityId::new(1).unwrap(),
+            LoginFacilityId::new(site.value()).unwrap(),
+        )
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(
+        (snapshot.identity().value(), snapshot.facility().value()),
+        (1, site.value())
+    );
+    assert_eq!(
+        (snapshot.membership_version(), snapshot.policy_version()),
+        (1, 1)
+    );
+    assert_eq!(
+        (
+            snapshot.idle_seconds(),
+            snapshot.absolute_seconds(),
+            snapshot.step_up_seconds()
+        ),
+        (900, 28800, 300)
     );
     running.absent(other).await;
 
@@ -414,5 +495,124 @@ pub(super) async fn check(
             .status,
         200
     );
+    outer_budget_and_cancellation(f, identity, &server, token, site).await;
     running
+}
+
+fn consumer_limits() -> ConsumerLimits {
+    ConsumerLimits {
+        parallel: 1,
+        connect_time: Duration::from_secs(1),
+        total_time: Duration::from_secs(3),
+    }
+}
+fn consumer(
+    f: &Fixture<'_, '_>,
+    identity: &Leaf,
+    address: SocketAddr,
+    pin: [u8; 32],
+    limits: ConsumerLimits,
+) -> Consumer {
+    let client = MembershipHttpClient::new(
+        Client::new(
+            identity.chain.clone(),
+            identity.key.clone_key(),
+            vec![f.ca.der().clone()],
+        )
+        .unwrap(),
+        RegisteredDnsName::new("organization.test").unwrap(),
+        pin,
+        MemberLimits {
+            parallel: 1,
+            request_bytes: 128,
+            response_bytes: 2048,
+            headers: 16,
+            header_bytes: 8192,
+            handshake_time: Duration::from_secs(1),
+            header_time: Duration::from_secs(2),
+            body_time: Duration::from_secs(2),
+            total_time: Duration::from_secs(3),
+        },
+    )
+    .unwrap();
+    Consumer::new(client, address, limits).unwrap()
+}
+async fn outer_budget_and_cancellation(
+    f: &Fixture<'_, '_>,
+    identity: &Leaf,
+    server: &Arc<MembershipServer>,
+    token: &[u8; 32],
+    site: FacilityId,
+) {
+    for cancel in [false, true] {
+        let listener = Arc::new(TcpListener::bind("127.0.0.1:0").await.unwrap());
+        let reader = Arc::new(consumer(
+            f,
+            identity,
+            listener.local_addr().unwrap(),
+            f.organization.digest,
+            ConsumerLimits {
+                parallel: 1,
+                connect_time: Duration::from_millis(100),
+                total_time: Duration::from_millis(500),
+            },
+        ));
+        let (started_tx, started) = tokio::sync::oneshot::channel();
+        let l = listener.clone();
+        let silent = tokio::spawn(async move {
+            let (mut socket, _) = l.accept().await.unwrap();
+            started_tx.send(()).unwrap();
+            let mut bytes = [0; 2048];
+            loop {
+                match socket.read(&mut bytes).await {
+                    Ok(0) | Err(_) => break,
+                    Ok(_) => {}
+                }
+            }
+        });
+        let r = reader.clone();
+        let secret = zeroize::Zeroizing::new(*token);
+        let facility = LoginFacilityId::new(site.value()).unwrap();
+        let caller =
+            tokio::spawn(
+                async move { r.read(&secret, IdentityId::new(1).unwrap(), facility).await },
+            );
+        timeout(Duration::from_secs(1), started)
+            .await
+            .unwrap()
+            .unwrap();
+        assert_eq!(
+            reader
+                .read(token, IdentityId::new(1).unwrap(), facility)
+                .await,
+            Err(ConsumerError::Unavailable)
+        );
+        if cancel {
+            caller.abort();
+            assert!(caller.await.unwrap_err().is_cancelled());
+        } else {
+            assert_eq!(caller.await.unwrap(), Err(ConsumerError::Unavailable));
+        }
+        timeout(Duration::from_secs(1), silent)
+            .await
+            .expect("outer abort closes the actual TCP socket")
+            .unwrap();
+        let http = server.clone();
+        let l = listener.clone();
+        let service = tokio::spawn(async move {
+            let (socket, _) = l.accept().await.unwrap();
+            http.serve(socket).await
+        });
+        assert!(
+            reader
+                .read(token, IdentityId::new(1).unwrap(), facility)
+                .await
+                .unwrap()
+                .is_some()
+        );
+        let _ = timeout(Duration::from_secs(1), service)
+            .await
+            .unwrap()
+            .unwrap();
+    }
 }

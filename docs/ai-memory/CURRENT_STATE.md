@@ -1,24 +1,24 @@
 # Projektstatus und Fortsetzung
 
-Aktualisiert: 23.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
+Aktualisiert: 25.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
 Ausdrückliche Antwort der Projektleitung: „P0 abnehmen, und P1 freigeben“.
 P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nicht erneut abfragen.
 
 ## Arbeitsstand
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), Teil von KC-006 / #6.
-- branch: codex/kc-006f-organisationsrouter auf PR #94 / b1d7ff16bf44d369987b6913915d9a85928eecba.
-- pull_request: [PR #95](https://github.com/itsh-neumeier/kitaconnect/pull/95) auf codex/kc-006f-organisationsadapter / PR #94.
-- head_commit: Vertrag/OpenAPI/ADR-054 1b9311c steht vor Routercode 9a8ab06. Geprüfter Codekopf 0b8de61d2ff6f082bd165dd5e2145eb643b931c3 korrigiert anfängliche Testbeanstandungen und präzisiert bestehende Antwortbindungsfehler. Folgender Nachweiskopf erhält eigene CI; aktuellen Abschluss im PR prüfen.
-- objective: Einzelne interne HTTP-Mitgliedschaftsabfrage an den bestehenden authentisierten Leser anbinden.
-- completed: Begrenzter tatsächlicher Organisationsrouter, eindeutige JSON-/Tokenprüfung und feste Problem Details implementiert und nativ geprüft. Alle achtzehn SQLx-Gruppen bestehen vor/nach Neustart einschließlich tatsächlicher Routerfälle und Entzug auf derselben Verbindung. Vier neue Rust-Prüfgruppen und drei Vertragsprüfungen erfolgreich. PR #94 / b1d7ff1 und alle dreißig ctutils-Rückübernahmen sind abgeschlossen geprüft; keine dieser Arbeiten wiederholen.
-- remaining: Aktuellen abschließenden Kopf und CI von PR #95 abgleichen. Danach begrenzten HTTP-Verbraucher und vollständigen Anmeldeadapter nach vorherigem Vertrag ergänzen. Unbekannte Rechte-/MFA-Daten verweigern Zugriff. Gateway, Browser und ursprüngliche Gesamtabnahme bleiben offen.
-- migration_state: Keine neue Migration, Rolle oder Policy. Getrennte vorhandene Testdatenbanken behalten Organisationsmigrationen 1 bis 4 und Identitätsmigrationen 1 bis 9. Laufzeit-RLS bleibt geschlossen.
-- dependencies: Sechs direkte HTTP-/JSON-Pakete verwenden vorhandene gesperrte Versionen. Cargo.lock ergänzt ausschließlich die Abhängigkeitsliste des Organisationspakets. Keine externe Version oder Identitätsdienst-Abhängigkeit ergänzt.
-- known_failures: Kein ungeklärter Fehler im geprüften Codekopf 0b8de61. Ursprüngliche Testassertion, Trait-Import und Formatierungen sind ohne Prüfausnahme korrigiert. Ein Token-Zertifikatsfehler des bestehenden Antwortparsers ergibt Prüfausfall 503; die genaue negative Routerprobe ist erfolgreich. Windows-Linker und Docker fehlen lokal; keine lokale Rust-/PostgreSQL-Ausführung behaupten.
-- test_results: Lokal Rustfmt, vollständige gesperrte Offline-Metadaten, 53 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/72 Dokumente, git diff --check und Gitleaks erfolgreich. Native Code-CI 40001499722 / Job 120578459573 bestätigt Clippy, Workspace-Tests/Build und alle achtzehn SQLx-Gruppen vor/nach Neustart. Tatsächliche HTTP-Gruppe besteht um 18:15:06 UTC vor und 18:19:35 UTC nach Neustart. Sicherheitslauf 40001499710 erfolgreich. Separate PR-Läufe 40001505768 / 40001505880 ebenfalls erfolgreich. Alle zehn aktuellen Prüfungen des Codekopfs sind grün. Abschließenden Nachweiskopf im PR abgleichen.
+- branch: codex/kc-006f-mitgliedschaftsclient auf PR #95 / 3252ef3db22c16ce992a660b183a667916a30bc5.
+- pull_request: [PR #97](https://github.com/itsh-neumeier/kitaconnect/pull/97) auf codex/kc-006f-organisationsrouter / PR #95.
+- head_commit: Vertrag/ADR-055 34af65c und Budgetpräzisierung b3e4697 stehen vor Code. Fehlertransportpräzisierung ef9fbf4 steht vor geprüftem Codekopf 383dbfdb1da4a79926f3c970c0cc86cfeaee6801. Folgender Nachweiskopf erhält eigene CI; aktuellen Abschluss im PR prüfen.
+- objective: Begrenzten tatsächlichen Mitgliedschaftsclient und strenge Antwortprüfung im Identitätsdienst ergänzen.
+- completed: Fester mTLS-/HTTP-Client, frühe Serverfingerabdruckprüfung und genaue Antwortbindung implementiert und nativ geprüft. Vier neue reine Parser-/Grenzgruppen und vier tatsächliche Transportgruppen erfolgreich. Alle achtzehn SQLx-Gruppen bestehen vor/nach Neustart einschließlich vollständigem Verbraucher, Entzug und unabhängigen TCP-Abbruchzeugen. PR #95 / 3252ef3 bleibt vollständig grün und konfliktfrei. Keine frühere Implementierung oder Sicherheitskorrektur wiederholen.
+- remaining: Aktuellen abschließenden Kopf und CI von PR #97 abgleichen. Danach vollständigen Anmeldeadapter mit aktueller Rechte-/MFA-Quelle nach vorherigem Vertrag ergänzen. Dazu den Vorlauf der Rechtegrundlage aus KC-008 von dessen Gesamtabnahme trennen, damit der Bedarf aus KC-006F keinen Abhängigkeitszyklus erzeugt. Unbekannte Rechte-/MFA-Daten verweigern Zugriff. Gateway, Browser und ursprüngliche Gesamtabnahme bleiben offen.
+- migration_state: Keine neue Migration, Rolle oder Policy. Die bestehende tatsächliche HTTP-Gruppe verwendet weiterhin getrennte Datenbanken mit unveränderten Organisationsmigrationen 1 bis 4 und Identitätsmigrationen 1 bis 9. Laufzeit-RLS bleibt geschlossen.
+- dependencies: Nur Base64 0.22.1 als direkte Transportabhängigkeit und Serde 1.0.229 als direkte Identitätsabhängigkeit ergänzt. Beide Versionen waren gesperrt. Keine externe Version, kein fremder Tabellenzugriff und keine normale Abhängigkeit vom Organisationsdienst.
+- known_failures: Kein ungeklärter Fehler am geprüften Codekopf 383dbfd. Testhilfe-Compilerfehler und Transport vollständiger 401-Antworten nach absichtlichem HTTP-Abschluss sind ohne Prüfausnahme korrigiert. Positive Antworten bleiben an offenen Prüfzugang gebunden. Windows-Linker und Docker fehlen lokal.
+- test_results: Lokal Rustfmt, vollständige gesperrte Offline-Metadaten, 53 Node-Tests, Struktur-/Verweisprüfung für 50 Issues/73 Dokumente, git diff --check und Gitleaks erfolgreich. Native Code-CI 40182231332 / Job 121135506585 bestätigt Clippy, Workspace-Tests/Build, vier neue reine Gruppen, vier tatsächliche Transportgruppen und achtzehn SQLx-Gruppen vor/nach Neustart. Sicherheitslauf 40182231345 erfolgreich. Separate PR-Läufe 40182234986 / 40182235037 ebenfalls erfolgreich. Alle zehn aktuellen Codeprüfungen sind grün. Abschließenden Nachweiskopf im PR abgleichen.
 - test_commands: cargo fmt --all --check; cargo metadata --locked --offline --format-version 1; node --test scripts/*.test.mjs; node scripts/check-project.mjs; git diff --check; Gitleaks. Linux-CI führt Clippy, Workspace-Tests/Build und achtzehn SQLx-Gruppen vor/nach Neustart aus.
-- security_notes: Nur identity-access mit aktuellem membership:read und tatsächlich gebundenem Zertifikat darf lesen. Fehler schließen die Verbindung. Keine Benutzer-/MFA-/Fachfreigabe aus dem Datenstand ableiten. Produktiver Zertifikatsbetrieb und Rollen-/Poolbindung bleiben gesondert.
+- security_notes: Früher vertrauenswürdiger Serverfingerabdruckvergleich vor geheimem Header; feste Route und ausdrückliche Grenzen. Jeder Treffer muss zur genauen Anfrage passen. Datenstand enthält keine MFA-Entscheidung und implementiert allein noch nicht OrganizationAuthority. Produktiver Zertifikatsbetrieb und Rollen-/Poolbindung bleiben gesondert.
 
 Aktuelle bestätigte Testprofile: `http://localhost:3000` und zusätzlich das getrennte `https://localhost:3443` gemäß ADR-049.
 Die zusätzliche Profilfrage ist beantwortet. Nicht erneut fragen. Produktive Domain und Zertifikatsbetrieb bleiben offen.
@@ -352,9 +352,9 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Nächste drei Aktionen
 
-1. Aktuellen Abschlusskopf und native/Sicherheits-CI von PR #95 prüfen. Codekopf 0b8de61 besitzt den vollständigen nativen Nachweis mit achtzehn SQLx-Gruppen vor/nach Neustart. Bestehenden Router und Leser nicht erneut schreiben.
-2. Nach grünem Abschluss begrenzten HTTP-Verbraucher und vollständigen Anmeldeadapter nach vorherigem Vertrag ergänzen. Unbekannte Rechte-/MFA-Daten verweigern Zugriff; keine fremden Tabellen. PR #94 und alle dreißig ctutils-Korrekturen sind vollständig geprüft; diese Arbeit nicht wiederholen.
-3. Gateway und getrennte Browsernachweise nach ADR-049 ergänzen. Bestätigte Fragen nicht wiederholen. Persönliche/sprachliche Durchsicht erfolgt gesammelt; kein Merge ohne gesonderten Auftrag.
+1. Aktuellen Abschlusskopf und native/Sicherheits-CI von PR #97 prüfen. Codekopf 383dbfd besitzt den vollständigen nativen Nachweis einschließlich achtzehn SQLx-Gruppen vor/nach Neustart. Client und frühere Bausteine nicht erneut schreiben.
+2. Vorlauf der Rechte-/MFA-Quelle aus KC-008 von dessen Gesamtabnahme trennen und Abhängigkeiten vor Code sichern. Danach vollständigen Anmeldeadapter mit dieser aktuellen Quelle ergänzen. Fehlende Einstufung verweigert Zugriff. Mitgliedschaft allein ersetzt keine MFA-Entscheidung. PR #95 und frühere Bausteine nicht erneut schreiben.
+3. Gateway und getrennte Browsernachweise nach ADR-049 ergänzen. PR #96 enthält eine positive technische Empfehlung für Vite 8.3.5 am exakt geprüften Kopf; Integration und erneute P1-Basisprüfung bleiben gesondert. Persönliche/sprachliche Durchsicht erfolgt gesammelt; kein Merge ohne Auftrag.
 
 ## OAuth-HTTP-Abschluss und GitHub-Fortsetzung
 

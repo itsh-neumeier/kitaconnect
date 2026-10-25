@@ -1,11 +1,16 @@
 # Arbeitsfolge für den offenen Backlog
 
-Stand: 23.10.2026. Quelle: aktuelle offene GitHub-Issues und versionierter Abhängigkeitsplan.
+Stand: 25.10.2026. Quelle: aktuelle offene GitHub-Issues und versionierter Abhängigkeitsplan.
 Die Projektleitung beauftragt ausdrücklich die automatische weitere Bearbeitung aller offenen Issues und PRs.
 Die Arbeit erfolgt weiter in kleinen abhängigen Paketen. Erledigte Implementierungen werden nicht wiederholt.
 Diese Liste ist eine Momentaufnahme und kein Abschlussnachweis. GitHub bleibt verbindlich.
 
 ## Aktueller Schritt
+
+Aktiv: PR #97 / codex/kc-006f-mitgliedschaftsclient auf #95 / 3252ef3. Vertrag/ADR-055 34af65c und Budgetpräzisierung b3e4697 stehen vor Code. Präzisierung ef9fbf4 steht vor Korrektur 383dbfd. Dieser Codekopf besteht native CI 40182231332 / Job 121135506585 und Sicherheitslauf 40182231345. Vier reine und vier tatsächliche Transportgruppen sowie alle achtzehn SQLx-Gruppen vor/nach Neustart erfolgreich. Entzug, vollständige Fehlerantworten, positiver Abschluss, äußere Frist und Abbruch mit unabhängigem TCP-Zeugen geprüft. Lokal 53 Node-Tests erfolgreich. Alle zehn aktuellen Codeprüfungen einschließlich separater PR-CI sind erfolgreich. Abschließenden Kopf im PR prüfen. Danach Rechte-/MFA-Grundlage von KC-008-Gesamtabnahme trennen und vollständigen Anmeldeadapter vorbereiten. Keine frühere Arbeit wiederholen. Ältere Absätze sind Verlauf.
+
+PR #96 / a605e2ccab00d9aa56f7fa3b1c89371ccfec5abb: Vite-Patch 8.3.4 auf 8.3.5 technisch geprüft und mit positiver Empfehlung im PR versehen. Nur Webmanifest und Lockfile ändern sich; gesperrte PostCSS 8.5.30 und Rolldown 1.2.14 erfüllen die neuen Bereiche. Alle fünf aktuellen Prüfungen erfolgreich. Keine Integration; nach Basisaktualisierung sind die P1-Prüfungen erneut maßgeblich.
+
 
 Aktiv: PR #95 / codex/kc-006f-organisationsrouter auf #94 / b1d7ff1. Vertrag/OpenAPI/ADR-054 1b9311c steht vor Routercode. Geprüfter Kopf 0b8de61 besteht native CI 40001499722 / Job 120578459573 und Sicherheitslauf 40001499710. Vier neue Rust-Prüfgruppen und alle achtzehn SQLx-Gruppen vor/nach Neustart erfolgreich; tatsächlicher Router, frische Introspektion, getrennter Organisationsbestand, Entzug auf derselben Verbindung sowie Budgets geprüft. Lokal 53 Node-Tests und Struktur-/Verweisprüfung erfolgreich. Alle zehn aktuellen Codeprüfungen einschließlich separater PR-CI erfolgreich. Abschließenden Kopf im PR prüfen; danach begrenzten HTTP-Verbraucher und vollständigen Anmeldeadapter vorbereiten. Keine frühere Implementierung oder Sicherheitskorrektur wiederholen. Persönliche/sprachliche Durchsicht gesammelt, kein Merge-Auftrag. Ältere Absätze sind Verlauf.
 

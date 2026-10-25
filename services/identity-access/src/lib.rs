@@ -7,6 +7,7 @@ use std::num::NonZeroU128;
 pub mod login;
 pub mod mfa;
 pub mod operation_assurance;
+pub mod organization_http;
 pub mod password;
 pub mod postgres;
 pub mod service_auth;

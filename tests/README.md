@@ -203,6 +203,23 @@ Job 120578459573 bestätigt vier neue Rust-Prüfgruppen und jeweils achtzehn SQL
 Die tatsächliche HTTP-Gruppe besteht um 18:15:06 UTC und 18:19:35 UTC am 23.10.2026.
 Die früheren Testbeanstandungen sind korrigiert. Der abschließende Kopf erhält eigene Prüfungen.
 
+## KC-006F: Mitgliedschaftsverbraucher
+
+Der [Verbrauchervertrag](../contracts/identity-access/membership-consumer-v1.md) trennt drei Nachweisarten.
+Vier reine Rust-Gruppen prüfen Zuordnung, Nullantwort, fehlende/doppelte Felder, Typen, Versionen und Fristen.
+Vier tatsächliche Transportgruppen prüfen den festen Anfragepfad, Header, frühen Serverfingerabdruckvergleich,
+Antwortgrenzen, Medientypen, Weiterleitungen, Zeitlimits und Budgetfreigabe nach Abbruch.
+Die vorhandene tatsächliche HTTP-/Datenbankgruppe nutzt zusätzlich den neuen Verbraucher vor/nach Neustart.
+Sie prüft positive und fremde Mitgliedschaft, Mitgliedschafts-/Dienstentzug sowie äußere Frist und Abbruch.
+Ein unabhängiger TCP-Zeuge muss die tatsächliche Verbindungsfreigabe vor der erfolgreichen Wiederverwendung bestätigen.
+Die Datenbanken bleiben getrennt. Aktuellen Ausführungsnachweis in PR #97 prüfen; die Gesamtabnahme bleibt offen.
+
+Codekopf 383dbfd besteht [native CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/40182231332).
+Job 121135506585 bestätigt die vier reinen und vier tatsächlichen Transportgruppen sowie achtzehn SQLx-Gruppen vor/nach Neustart.
+Vollständige Fehlerantworten mit HTTP-Abschluss bleiben Fehler. Abgeschnittene Fehlerbodies und positive Antworten mit angekündigtem Abschluss werden abgewiesen.
+Die ursprünglichen Testhilfe-Compilerfehler und die Fehlerklassenzuordnung sind ohne Prüfausnahme korrigiert.
+Der abschließende Nachweiskopf erhält eigene Prüfungen.
+
 ## KC-006F: Bestätigte MFA-Zuordnung
 
 Der [Aktionsvertrag](../contracts/identity-access/operation-assurance-v1.md) benennt die sechs bestätigten sensiblen Bereiche.

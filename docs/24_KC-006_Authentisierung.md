@@ -221,3 +221,22 @@ Job 120578459573 bestätigt alle achtzehn SQLx-Gruppen vor/nach Neustart einschl
 Die vier neuen Rust-Prüfgruppen und 53 Node-Tests bestehen ebenfalls.
 Ein falscher Token-Zertifikatsbezug ergibt gemäß bestehendem Antwortparser Prüfausfall 503 und keinen Datenzugriff.
 Der folgende Nachweiskopf erhält eigene CI. Dessen verbindlichen Status im PR prüfen.
+
+## KC-006F: Begrenzter Mitgliedschaftsverbraucher
+
+[ADR-055](architecture/ADR-055_Begrenzter_Mitgliedschaftsverbraucher.md) und
+[Dienstvertrag](../contracts/identity-access/membership-consumer-v1.md) stehen vor Clientcode in PR #97.
+Der feste Transport prüft den konfigurierten Serverfingerabdruck vor dem geheimen Header.
+Der Identitätsdienst prüft die genaue Zuordnung, eindeutige Felder, Versionen und Fristen der Antwort.
+Ein eigener äußerer Aufruf begrenzt bereits den TCP-Verbindungsaufbau und dessen Parallelität.
+Es gibt keinen positiven Berechtigungscache und keine erfundene MFA-Entscheidung.
+Reine Parserfälle, tatsächliche Transportfälle und vollständige HTTP-/Datenbankfälle erhalten getrennte Nachweise.
+Der aktuelle Ausführungsnachweis steht im PR und Checkpoint. Keine Migration oder erlaubende Policy entsteht.
+Der vollständige Anmeldeadapter, aktuelle Rechte-/MFA-Quelle, Gateway und Browser bleiben gesondert.
+
+Codekopf 383dbfd besteht [native CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/40182231332)
+und [Sicherheitsprüfungen](https://github.com/itsh-neumeier/kitaconnect/actions/runs/40182231345).
+Job 121135506585 bestätigt vier neue reine Gruppen, vier tatsächliche Transportgruppen und alle achtzehn SQLx-Gruppen vor/nach Neustart.
+Die tatsächliche HTTP-Gruppe besteht um 09:51:24 UTC und 09:55:58 UTC am 25.10.2026.
+Vollständige begrenzte Fehlerantworten bleiben nach HTTP-Abschluss Ablehnungen.
+Positive Antworten verlangen weiterhin den offenen Prüfzugang. Der folgende Nachweiskopf erhält eigene CI.

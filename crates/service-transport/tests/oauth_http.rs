@@ -1,4 +1,6 @@
 //! Actual TCP/mTLS/HTTP; all certificates and synthetic request bytes stay in RAM.
+#[path = "support/membership_http.rs"]
+mod membership_http;
 use kitaconnect_service_transport::{
     Client, RegisteredDnsName, Server, VerifiedConnection,
     oauth_http::{ClientLimits, OAuthEndpoint, OAuthHttpClient},

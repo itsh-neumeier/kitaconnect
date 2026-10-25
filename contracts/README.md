@@ -32,3 +32,7 @@ Die Anwendungsrolle bleibt durch RLS gesperrt. Die HTTP-Anmeldung und ihre offen
 Die [interne Mitgliedschaftsabfrage über HTTP](organization-config/membership-http-v1.md)
 und ihr [OpenAPI-Vertrag](openapi/organization-config/membership-v1.json) verbinden den vorhandenen authentisierten Leser mit einer begrenzten internen Route.
 Die Antwort enthält ausschließlich Mitgliedschaft und Fristen. Sie erteilt keine Benutzer- oder MFA-Rechte.
+
+Der [begrenzte Mitgliedschaftsverbraucher](identity-access/membership-consumer-v1.md)
+beschreibt den tatsächlichen festen HTTP-Client und die strenge Antwortprüfung im Identitätsdienst.
+Sein Datenstand enthält keine MFA-Entscheidung. Der vollständige Anmeldeadapter bleibt gesondert.

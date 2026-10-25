@@ -1,4 +1,5 @@
 import { test } from 'node:test';
+import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import { validateBacklog } from './check-project.mjs';
 
@@ -42,4 +43,11 @@ test('Nicht zugeordnete, fremde und phasenfremde Teilpakete werden abgewiesen', 
   assert.throws(() => validateBacklog([
     { ...item('KC-004'), work_packages: ['KC-004A'] }, { ...item('KC-004A'), phase: 'P1' },
   ]), /Falsche Teilpaketzuordnung/);
+});
+
+test('Aktueller MFA-Vorlauf darf nicht von der Anmeldegesamtabnahme abhängen', () => {
+  const backlog = JSON.parse(readFileSync(new URL('../backlog/refined-issues.json', import.meta.url), 'utf8'));
+  assert.doesNotThrow(() => validateBacklog(backlog));
+  backlog.find(item => item.id === 'KC-008A').depends_on.push('KC-006');
+  assert.throws(() => validateBacklog(backlog), /Zyklische/);
 });

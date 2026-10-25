@@ -397,11 +397,11 @@ try {
   }
   const roleAssuranceMigration = `SET SESSION AUTHORIZATION kc_identity_migrator;\n${file('migrations/0010_role_assurance.sql', identityRoot)}`;
   sql(`${roleAssuranceMigration}\nSELECT 1 / 0;`, { database: 'kc_role_assurance_test', transaction: true, expectedState: '22012' });
-  sql(`DO $ BEGIN
+  sql(`DO $$ BEGIN
     ASSERT to_regclass('identity_access.role_assurance_scopes') IS NULL;
     ASSERT to_regprocedure('identity_access.guard_role_assurance()') IS NULL;
     ASSERT (SELECT array_agg(version ORDER BY version)=ARRAY[1,2,3,4,5,6,7,8,9] FROM identity_access.schema_versions);
-  END $;`, { database: 'kc_role_assurance_test' });
+  END $$;`, { database: 'kc_role_assurance_test' });
   sql(roleAssuranceMigration, { database: 'kc_role_assurance_test', transaction: true });
   sql(roleAssuranceMigration, { database: 'kc_role_assurance_test', transaction: true, expectedState: 'P0001' });
   sql('CREATE ROLE kc_role_assurance_runtime LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_identity_runtime TO kc_role_assurance_runtime WITH INHERIT TRUE, SET FALSE;', { database: 'kc_role_assurance_test', transaction: true });

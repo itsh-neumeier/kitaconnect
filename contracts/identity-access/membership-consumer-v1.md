@@ -40,6 +40,7 @@ Debug- und Fehlerausgaben enthalten keine Tokens, Header, Antwortbytes oder Diag
 ## Verbraucher im Identitätsdienst
 
 Der Identitätsdienst erhält ausdrücklich Zieladresse, positive Verbindungsfrist und positive Gesamtdauer.
+Ein eigenes ausdrücklich positives Parallelitätsbudget begrenzt bereits den TCP-Verbindungsaufbau.
 Die Verbindungsfrist darf die Gesamtdauer nicht überschreiten.
 Der äußere Aufruf begrenzt auch den TCP-Verbindungsaufbau. Er gibt nur nach vollständiger Antwortprüfung einen Datenstand zurück.
 Ein erfolgreicher HTTP-Transport ist selbst kein Mitgliedschafts- oder Anmeldenachweis.

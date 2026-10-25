@@ -17,6 +17,8 @@ use kitaconnect_service_transport::membership_http::{
 
 const PATH: &str = "/internal/v1/membership/read";
 const JSON: &str = "Content-Type: application/json\r\n";
+#[path = "current_login_source.rs"]
+mod current_login_source;
 struct OrgWire {
     stream: BufReader<VerifiedConnection>,
     task: JoinHandle<Result<(), OrgHttpError>>,
@@ -160,6 +162,7 @@ pub(super) struct Running {
     organization: JoinHandle<()>,
     reader: Consumer,
     token: zeroize::Zeroizing<[u8; 32]>,
+    joined: Option<kitaconnect_identity_access::current_login_source::Reader>,
 }
 impl Drop for Running {
     fn drop(&mut self) {
@@ -169,6 +172,17 @@ impl Drop for Running {
 }
 impl Running {
     pub(super) async fn absent(&mut self, site: FacilityId) {
+        if let Some(joined) = &self.joined {
+            assert!(
+                joined
+                    .read(
+                        IdentityId::new(1).unwrap(),
+                        LoginFacilityId::new(site.value()).unwrap()
+                    )
+                    .await
+                    .is_err()
+            );
+        }
         let reply = self
             .wire
             .request("POST", PATH, &self.headers, &body(site))
@@ -188,6 +202,17 @@ impl Running {
         );
     }
     pub(super) async fn rejected(&mut self, site: FacilityId) {
+        if let Some(joined) = &self.joined {
+            assert!(
+                joined
+                    .read(
+                        IdentityId::new(1).unwrap(),
+                        LoginFacilityId::new(site.value()).unwrap()
+                    )
+                    .await
+                    .is_err()
+            );
+        }
         let reply = self
             .wire
             .request("POST", PATH, &self.headers, &body(site))
@@ -239,6 +264,7 @@ pub(super) async fn check(
     });
     let server = org_server(f, address, identity.digest, org_options("postgres"));
     let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let organization_address = listener.local_addr().unwrap();
     let reader = consumer(
         f,
         identity,
@@ -264,6 +290,7 @@ pub(super) async fn check(
         organization,
         reader,
         token: zeroize::Zeroizing::new(*token),
+        joined: None,
     };
     let reply = running
         .wire
@@ -496,6 +523,9 @@ pub(super) async fn check(
         200
     );
     outer_budget_and_cancellation(f, identity, &server, token, site).await;
+    running.joined = Some(
+        current_login_source::check(f, identity, address, organization_address, site, other).await,
+    );
     running
 }
 

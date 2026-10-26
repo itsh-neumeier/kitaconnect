@@ -448,3 +448,8 @@ Laufzeit-RLS bleibt geschlossen. Fachrechte, Rollenvergabe und vollständige Anm
 
 [ADR-058](architecture/ADR-058_Getrennte_Aktualitaetsquellen_der_Anmeldung.md) verbindet tatsächliche Dienstanmeldung, aktuelle Mitgliedschaft und eigene Rollenquelle.
 Das Ergebnis erhält drei getrennte Versionen. Dauerhafte Anmeldebindung und ursprüngliche Gesamtnachweise folgen gesondert.
+
+## ADR-059 – Dauerhafte Quellenversionen der Anmeldung
+
+[ADR-059](architecture/ADR-059_Dauerhafte_Quellenversionen_der_Anmeldung.md) bindet vollständige Versionen atomar an Vorgänge und Sitzungen.
+Feste Mitgliedschaftsversion und getrennte monotone Einstellungen/Rollen schützen Entzug und Aktualität. Unvollständiger Bestand verweigert die Prüfung.

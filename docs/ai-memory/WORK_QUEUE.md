@@ -7,6 +7,8 @@ Diese Liste ist eine Momentaufnahme und kein Abschlussnachweis. GitHub bleibt ve
 
 ## Aktueller Schritt
 
+Aktiv: codex/kc-006f-lokale-anmeldekennung auf PR #105 / 08a3879. Vertrag/ADR-062 e9023d6 stehen vor Code 4a7c8c6. Bestätigte eigene Kennung erhält internen exakten Leser ohne E-Mail-/Aliasnormalisierung und ohne positiven Cache. Migration 0012 und eine neue tatsächliche SQLx-Gruppe ergänzen geschlossene RLS, aktuelle Sicht, Konkurrenz, Rollback, Widerruf, Rechte, Fristen, Abbruch und Neustart. Zwei reine Gruppen; native Abschluss-CI mit einundzwanzig Gruppen vor/nach Neustart vollständig prüfen. PR #105 behält zwanzig Gruppen und sechs reine Gatewaygruppen; dessen Abschluss ebenfalls prüfen. Danach serverseitige Browser-/CSRF-Bindung und tatsächliches HTTPS-/Browserverhalten. Keine öffentliche Kontoabfrage, Fachfreigabe oder Integration. Ältere Absätze sind Verlauf.
+
 Aktiv: PR #105 / codex/kc-006f-browsergrenze auf #104 / b7c2847. Vertrag/ADR-061 31f322e stehen vor Code 9c5b7f0. Gateway prüft feste Browserprofile, genaue Origin/Host, eindeutige Geheimnisdarstellung und Cookieattribute ohne Datenbankrolle. Sechs reine Gruppen vorbereitet; aktuelle native CI vollständig prüfen. Eigene Anmeldekennung je Installation unabhängig von E-Mail ist ausdrücklich bestätigt (207acdb); nicht erneut fragen. Danach deren Kontenauflösungsvertrag vor Code, dann serverseitige CSRF-Bindung und tatsächliche Browsernachweise. PR #104 besteht am Abschlusskopf alle zehn Prüfungen und zwanzig SQLx-Gruppen vor/nach Neustart. Keine ursprüngliche Gesamtabnahme und kein Merge. Ältere Absätze sind Verlauf.
 
 

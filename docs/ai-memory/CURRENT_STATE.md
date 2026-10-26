@@ -7,18 +7,25 @@ P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nic
 ## Arbeitsstand
 
 - issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67).
-- branch: codex/kc-006f-browsergrenze auf PR #104 / b7c28472f774a2119603c29144daeb5cf51362e7.
-- pull_request: [PR #105](https://github.com/itsh-neumeier/kitaconnect/pull/105).
-- head_commit: Vertrag und ADR-061 31f322e stehen vor Code 9c5b7f0. Bestätigung der eigenen Anmeldekennung 207acdb steht ebenfalls vor Code. Dieser Checkpoint erhält eigene CI; Abschlusskopf im PR prüfen.
-- objective: Feste Browser-Anfrageprofile im Gateway ohne Datenbankrolle prüfen.
-- completed: Genaue HTTPS-Origin und Host, feste POST-Pfade, eindeutige Cookie-/CSRF-Darstellung, ausdrückliche Headergrenzen, kanonische Geheimnisse und sichere Cookieattribute ergänzt. Sechs reine Prüfgruppen trennen die Fälle. Eigene eindeutige Anmeldekennung je Installation unabhängig von E-Mail ausdrücklich bestätigt; nicht erneut fragen.
-- remaining: Native Abschluss-CI vollständig prüfen. Danach Vertrag und Kontenauflösung der bestätigten Anmeldekennung vor Code ergänzen. Serverseitige CSRF-Bindung, tatsächlicher Listener und Browser-/TLS-Nachweise bleiben offen.
-- migration_state: Keine neue Migration. Identität 1 bis 11, Organisation 1 bis 4. Keine produktive Rolle oder erlaubende Laufzeitpolicy.
-- dependencies: Neues Workspace-Paket kitaconnect-gateway verwendet ausschließlich vorhandene gesperrte externe Versionen. Kein Datenbanktreiber im Gateway.
-- known_failures: Windows-Linker und Docker fehlen lokal. Native Nachweise stammen aus Linux-CI. Der frühere Stacküberlauf in PR #104 ist korrigiert und an dessen Abschlusskopf erfolgreich geprüft.
-- test_results: Lokal Rustfmt, gesperrte Offline-Metadaten, 54 Node-Tests, Struktur-/Verweisprüfung für 52 Issues/80 Dokumente, Diff- und Secret-Prüfung erfolgreich. Aktuellen nativen Abschluss im PR prüfen; keinen Browsernachweis daraus ableiten.
-- test_commands: cargo fmt --all --check; cargo metadata --locked --offline --no-deps --format-version 1; node --test scripts/*.test.mjs; node scripts/check-project.mjs; git diff --check; Gitleaks.
-- security_notes: Vorgelegte Geheimnisse erteilen keine Anmeldung oder CSRF-Freigabe. Identitätsdienst muss die aktuelle Bindung prüfen. Keine Echtdaten, öffentliche Freischaltung oder produktive Konfiguration. Persönliche/sprachliche Durchsicht gesammelt; kein Merge-Auftrag.
+- branch: codex/kc-006f-lokale-anmeldekennung auf PR #105 / 08a3879c414d16d3ddbe5043a3cecb7e73c489bb.
+- pull_request: Folge-PR auf [PR #105](https://github.com/itsh-neumeier/kitaconnect/pull/105); verbindlichen Link anhand des Branches in GitHub prüfen.
+- head_commit: Vertrag und ADR-062 e9023d6 stehen vor Code 4a7c8c6. Dieser Checkpoint erhält eigene CI; verbindlichen Abschlusskopf im PR prüfen.
+- objective: Bestätigte eigene Anmeldekennung im Identitätsdienst intern und aktuell auflösen.
+- completed: Exakte UTF-8-Bytezuordnung ohne E-Mail-/Aliasnormalisierung, begrenzter Leser mit eigenen frischen Verbindungen, Migration 0012 und geschlossene RLS ergänzt. Zwei reine Gruppen und eine neue tatsächliche SQLx-Gruppe prüfen Eindeutigkeit, Konkurrenz, Rollback, aktuellen Widerruf, unveränderliche Zuordnung, Rechte, Ausfall, Zeitablauf, Abbruch und Neustart. Die eigene Kennungswahl ist bestätigt und wird nicht erneut gefragt.
+- remaining: Native Abschluss-CI von PR #105 und Folgepaket vollständig auswerten. Vorher keine technische Gesamtabnahme behaupten. Danach serverseitige CSRF-/Browserbindung und tatsächliche HTTPS-/Browsernachweise ergänzen.
+- migration_state: Neue Identitätsmigration 0012 verlangt Versionen 1 bis 11. Frühere Migrationen unverändert; Organisation 1 bis 4. Neue eigene isolierte Testdatenbank, keine produktive Migration oder erlaubende Laufzeitpolicy.
+- dependencies: Keine neue externe Abhängigkeit oder Cargo.lock-Änderung. Gateway behält keine Datenbankrolle.
+- known_failures: Windows-Linker und Docker fehlen lokal. Native Nachweise stammen aus Linux-CI. Früherer Stacküberlauf in PR #104 erfolgreich korrigiert.
+- test_results: Lokal Rustfmt, gesperrte Offline-Metadaten, 54 Node-Tests, JavaScript-Syntax, Struktur-/Verweisprüfung für 52 Issues/81 Dokumente, Diff- und Secret-Prüfung erfolgreich. Native Abschlussnachweise mit einundzwanzig SQLx-Gruppen vor/nach Neustart stehen noch aus.
+- test_commands: cargo fmt --all --check; cargo metadata --locked --offline --no-deps --format-version 1; node --test scripts/*.test.mjs; node scripts/check-project.mjs; node --check scripts/test-organization-db.mjs; git diff --check; Gitleaks.
+- security_notes: Interne Auflösung ist kein Faktor-, Sitzungs-, Mitgliedschafts- oder öffentlicher Kontoabfragenachweis. Kennungswiderruf allein widerruft keine vorhandenen Sitzungen. Servergebundener CSRF-Nachweis bleibt offen. Keine Echtdaten, produktiven Konten oder öffentliche Freischaltung. Persönliche/sprachliche Durchsicht gesammelt; kein Merge-Auftrag.
+
+## Gateway-Browsergrenze im Prüfverfahren
+
+[PR #105](https://github.com/itsh-neumeier/kitaconnect/pull/105) / 08a3879 ergänzt nach Vertrag/ADR-061 31f322e die reine Gateway-Bibliothek.
+Sechs reine Gruppen prüfen feste Profile, genaue Origin/Host, eindeutige Cookie-/CSRF-Darstellung, ausdrückliche Headergrenzen und sichere Ausgabeattribute.
+Aktuelle native Abschluss-CI im PR prüfen. Die Bibliothek beweist keine serverseitige CSRF-Bindung und kein tatsächliches Browser-/TLS-Verhalten.
+Die bestätigte eigene Kennungswahl ist vor abhängigem Code in 207acdb versioniert.
 
 ## Bestätigte tatsächliche Anmeldekette
 
@@ -394,9 +401,9 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Nächste drei Aktionen
 
-1. Abschlusskopf von PR #105 vollständig prüfen. Alle zehn Prüfungen sowie zwanzig SQLx-Gruppen vor/nach Neustart belegen. Sechs reine Gatewaygruppen separat ausweisen.
-2. Eigene bestätigte Anmeldekennung mit Vertrag und ADR vor Code im Identitätsdienst ergänzen. Keine E-Mail-Zuordnung, Mitgliedschaft oder öffentliche Registrierung ableiten. Vorhandene Anmeldequellen nicht erneut implementieren.
-3. Serverseitige Browser-/CSRF-Bindung und tatsächliche HTTPS-/Browsernachweise anschließen. KC-006F-Gesamtabnahme bleibt offen; danach KC-008B / #99. Persönliche/sprachliche Durchsicht und Merge-Auftrag bleiben gesondert.
+1. PR #105 und Folge-PR der lokalen Anmeldekennung am aktuellen Kopf vollständig prüfen. Alle zehn Prüfungen und Rust-Protokolle belegen; Browsergrenze hat zwanzig, Kennungsfolge einundzwanzig SQLx-Gruppen vor/nach Neustart. Vorhandene Grundlagen nicht erneut implementieren.
+2. Servergebundene anonyme Browserkontexte sowie CSRF-Bindung an Vorgang/Sitzung mit Vertrag vor Code ergänzen. Gateway bleibt ohne Datenbankrolle. Öffentliche Anmeldung muss unbekannte Konten verdecken und vorhandene Faktorprüfung verwenden.
+3. Tatsächliche HTTPS-/Browsernachweise für Cookieattribute, genaue Origin, CSRF, Abmeldung und Rotation ergänzen. KC-006F-Gesamtabnahme bleibt offen; danach KC-008B / #99. Persönliche/sprachliche Durchsicht und Merge-Auftrag bleiben gesondert.
 
 ## OAuth-HTTP-Abschluss und GitHub-Fortsetzung
 

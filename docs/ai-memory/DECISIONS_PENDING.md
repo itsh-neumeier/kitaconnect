@@ -1,5 +1,15 @@
 # Ausstehende Entscheidungen
 
+## Lokale öffentliche Anmeldekennung – offen am 26.10.2026
+
+Die vorhandenen internen Adapter verwenden unveränderliche Identitätskennungen.
+Ein öffentlicher Kontenauflösungsvertrag und eine lokale Anmeldekennung sind bisher nicht festgelegt.
+Dies betrifft den Beginn der Benutzeranmeldung. Eine E-Mail-Adresse darf keine automatische Identitätszusammenführung oder Mitgliedschaft erzeugen.
+Vorschlag zur Entscheidung: eigene eindeutige Anmeldekennung je Installation, unabhängig von einer E-Mail-Adresse.
+Alternative: bestätigte eindeutige E-Mail-Adresse als lokaler Anmeldename bei unveränderlicher interner Identität.
+Bis zur Antwort entstehen keine produktive Kontenauflösung und keine Registrierung oder Aliasnormalisierung.
+Unabhängige Umsetzung der bestätigten Origin-, Cookie- und CSRF-Grenzen kann fortgesetzt werden.
+
 Stand: 18.10.2026. Grundlage: Spezifikation v5.9.
 
 Die vollständige Liste O-001 bis O-008 steht im [P0-Plan](../15_P0_Initialisierung.md).

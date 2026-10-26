@@ -458,3 +458,8 @@ Feste Mitgliedschaftsversion und getrennte monotone Einstellungen/Rollen schütz
 
 [ADR-060](architecture/ADR-060_Tatsaechliche_Anmeldekette_im_isolierten_Test.md) verbindet tatsächliche Faktor-, Speicher- und mTLS-Quellenpfade ohne positives Anmeldeport-Testdoppel.
 Der isolierte Endnachweis ersetzt weder Gateway noch Browser oder produktive Rollenfreigaben.
+
+## ADR-061 – Browsergrenze ohne Datenbankrolle
+
+[ADR-061](architecture/ADR-061_Browsergrenze_ohne_Datenbankrolle.md) trennt Browserdarstellung von serverseitiger Nachweisprüfung.
+Das Gateway erhält feste Anfrageprofile und keine Datenbankrolle. Die öffentliche Kontokennung bleibt bis zur Entscheidung offen.

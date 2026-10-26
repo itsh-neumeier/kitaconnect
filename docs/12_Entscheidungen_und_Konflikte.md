@@ -463,3 +463,8 @@ Der isolierte Endnachweis ersetzt weder Gateway noch Browser oder produktive Rol
 
 [ADR-061](architecture/ADR-061_Browsergrenze_ohne_Datenbankrolle.md) trennt Browserdarstellung von serverseitiger Nachweisprüfung.
 Das Gateway erhält feste Anfrageprofile und keine Datenbankrolle. Eigene eindeutige Anmeldekennung unabhängig von E-Mail ist ausdrücklich bestätigt; der Kontenauflösungsvertrag folgt vor Code.
+
+## ADR-062 – Eigene lokale Anmeldekennung
+
+[ADR-062](architecture/ADR-062_Eigene_lokale_Anmeldekennung.md) konkretisiert die bestätigte eigene Kennung mit einem geschlossenen internen Zuordnungsbestand.
+Exakter Bytevergleich und aktuelle begrenzte Leseverbindungen ersetzen weder Faktorprüfung noch Mitgliedschaft.

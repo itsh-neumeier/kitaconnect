@@ -48,3 +48,6 @@ Die [dauerhafte Quellenbindung](identity-access/source-bindings-v1.md) erhält d
 
 Der [Prüfvertrag der tatsächlichen Anmeldekette](identity-access/login-chain-test-v1.md)
 verbindet Faktor-Bibliotheken und Sitzungsabschluss mit den tatsächlichen aktuellen Dienstquellen.
+
+Die [Browsergrenze des Gateways](gateway/browser-boundary-v1.md) prüft feste Origin-, Header- und Cookie-Profile.
+Sie erteilt allein weder Anmeldung noch CSRF- oder Sitzungsfreigabe.

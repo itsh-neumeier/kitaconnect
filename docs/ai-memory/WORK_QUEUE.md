@@ -1,11 +1,14 @@
 # Arbeitsfolge für den offenen Backlog
 
-Stand: 25.10.2026. Quelle: aktuelle offene GitHub-Issues und versionierter Abhängigkeitsplan.
+Stand: 26.10.2026. Quelle: aktuelle offene GitHub-Issues und versionierter Abhängigkeitsplan.
 Die Projektleitung beauftragt ausdrücklich die automatische weitere Bearbeitung aller offenen Issues und PRs.
 Die Arbeit erfolgt weiter in kleinen abhängigen Paketen. Erledigte Implementierungen werden nicht wiederholt.
 Diese Liste ist eine Momentaufnahme und kein Abschlussnachweis. GitHub bleibt verbindlich.
 
 ## Aktueller Schritt
+
+Aktiv: PR #103 / codex/kc-006f-dauerhafte-quellenversionen auf #102 / 7a67eb2. Vertrag/ADR-059 7e7d536 stehen vor Migration/Code 2001002; Gegenproben 22256cb ergänzen Zusatzbelegverlust und endgültigen Vorgangsentzug. Vollständiger Port und Migration 0011 binden drei Versionen atomar an Vorgänge/Sitzungen und erhalten sie in Rotation/Zusatzprüfung. Mitgliedschaftswechsel invalidiert Vorgang oder widerruft Sitzung dauerhaft. Keine Rückbefüllung unbekannter Daten, kein Rückfall auf alte Kontexte nach Migration. Neue reine und tatsächliche Gruppe mit tatsächlichen Faktor-Bibliotheken und ausdrücklich synthetischem Port; nun zwanzig SQLx-Gruppen vor/nach Neustart. Lokal 54 Node-Tests und Strukturprüfung für 52 Issues/78 Dokumente erfolgreich. Verbindliche Abschluss-CI im PR prüfen. Danach tatsächlichen Quellen-/Anmelde-Endnachweis und Gateway/Browser ergänzen. PR #102 ist an unverändertem Kopf mit zehn Prüfungen und neunzehn SQLx-Gruppen vor/nach Neustart bestätigt. Keine Fachfreigabe oder erlaubende Laufzeitpolicy. Ältere Absätze sind Verlauf.
+
 
 Aktiv: PR #102 / codex/kc-006f-aktuelle-anmeldegrundlage auf #101 / ea673a7. Vertrag/ADR-058 a09beef stehen vor Code 8261bca. Neuer begrenzter Leser verbindet tatsächliche neue Dienstanmeldung, aktuelle Mitgliedschaft und eigene Rollenquelle. Drei Versionen bleiben getrennt; keine Umwandlung in den alten einversionigen Port. Drei neue reine Gruppen und erweiterte tatsächliche HTTP-/SQLx-Gruppe prüfen beide MFA-Ergebnisse, Versionen, Entzug, RLS und Ausfall. Lokal 54 Node-Tests und Strukturprüfung für 52 Issues/77 Dokumente erfolgreich. Aktuelle Abschluss-CI mit neunzehn Gruppen vor/nach Neustart im PR prüfen. Danach dauerhafte getrennte Versionsbindung und Anmeldeport, anschließend Gateway/Browser. PR #101 ist an ea673a7 mit allen zehn Prüfungen und neunzehn SQLx-Gruppen vor/nach Neustart bestätigt. Keine neue Migration, Paketversion, Standardrolle oder erlaubende Laufzeitpolicy. Ältere Absätze sind Verlauf.
 

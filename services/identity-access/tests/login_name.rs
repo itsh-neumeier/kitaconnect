@@ -26,7 +26,7 @@ fn reader(user: &str) -> Reader {
 async fn connect(user: &str) -> PgConnection {
     PgConnection::connect_with(&options(user)).await.unwrap()
 }
-async fn sql(c: &mut PgConnection, text: &str) {
+async fn sql(c: &mut PgConnection, text: &'static str) {
     sqlx::raw_sql(text).execute(c).await.unwrap();
 }
 async fn resolved(r: &Reader, name: &str) -> Option<u128> {
@@ -43,7 +43,7 @@ async fn insert(c: &mut PgConnection, name: &str, identity: i32) -> Result<(), s
         .await
         .map(|_| ())
 }
-async fn rejected(c: &mut PgConnection, text: &str, state: &str) {
+async fn rejected(c: &mut PgConnection, text: &'static str, state: &str) {
     let error = sqlx::raw_sql(text).execute(c).await.unwrap_err();
     assert_eq!(
         error.as_database_error().unwrap().code().as_deref(),

@@ -39,6 +39,14 @@ Die Gesamtzahl bleibt zwanzig SQLx-Gruppen. Der aktuelle CI-Lauf muss deren tats
 Während längerer Faktorprüfungen gehaltene reine Testverbindungen werden vor späteren Protokollprüfungen erneuert.
 Die vorhandenen produktiven Transportregeln und Zeitgrenzen werden nicht gelockert.
 
+## Speichergrenze der zusammengesetzten Test-Futures
+
+Die erste native Ausführung am Kopf dcee0ab endet mit einem Stacküberlauf des erweiterten asynchronen Tests.
+Die zusätzliche Zusammensetzung wird deshalb an ihren Testgrenzen mit `Box::pin` auf dem Heap gehalten.
+Die betroffenen Futures bleiben im selben besitzenden Aufruf und werden vollständig abgewartet.
+Es entstehen keine abgelösten Aufgaben. Stack-Vorgaben, Prüfkriterien und Laufzeitgrenzen werden nicht erhöht.
+Diese Änderung betrifft ausschließlich den Testaufbau.
+
 ## Grenzen
 
 Die Bibliotheksprüfungen verwenden den Soft-Passkey der bestehenden Testbibliothek. Sie beweisen keine physische Gerätebiometrie.

@@ -18,3 +18,9 @@ Der Endnachweis prüft deshalb aktuelle Quellen bei Beginn, Abschluss und Sitzun
 Alte positive Datenstände dürfen Ausfall oder Entzug nicht ersetzen.
 Es gibt keine neue Fachfreigabe, Anwendungsmigration oder erlaubende Laufzeitpolicy.
 Gateway, Benutzeranmeldung über HTTP, Browser und ursprüngliche Gesamtabnahmen bleiben ausdrücklich offen.
+
+## Native Speicherprobe vor Testkorrektur
+
+Der erste tatsächliche Lauf dcee0ab scheitert mit einem Stacküberlauf des erweiterten asynchronen Tests.
+Der ergänzte Prüfvertrag legt vor Korrektur gezielte Heap-Allokation der zusammengesetzten Test-Futures fest.
+Die Ausführung bleibt besitzend und abgewartet. Es gibt keine Erhöhung der Stack-Vorgabe und keine gelockerte Gegenprobe.

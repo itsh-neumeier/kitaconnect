@@ -257,6 +257,48 @@ async fn complete_sources_bind_flows_sessions_and_rotation() {
     assert_eq!(visible, 0);
     assert!(!check(&mut runtime, &strong, &mut authority).await);
 
+    // The proof's own receipt is mandatory even after a successful MFA rotation.
+    let proof_fingerprint = fingerprint_of(&mut c, &proof).await;
+    sqlx::query("DELETE FROM identity_access.flow_source_bindings WHERE flow_fingerprint=$1")
+        .bind(&proof_fingerprint)
+        .execute(&mut c)
+        .await
+        .unwrap();
+    assert!(!check(&mut c, &strong, &mut authority).await);
+    sqlx::query(
+        "INSERT INTO identity_access.flow_source_bindings VALUES($1,1,2,4,600,14400,180,false)",
+    )
+    .bind(&proof_fingerprint)
+    .execute(&mut c)
+    .await
+    .unwrap();
+    assert!(check(&mut c, &strong, &mut authority).await);
+
+    // A changed membership also terminally invalidates an unfinished proven flow.
+    let stale = login::begin(
+        &mut c,
+        identity,
+        facility(1),
+        LoginRoute::Password,
+        limits(),
+        &mut authority,
+    )
+    .await
+    .unwrap();
+    prove_password(&checker, &mut c, identity, &password, &stale).await;
+    authority.member = 2;
+    assert!(
+        login::finish(&mut c, &stale, session(base + 7), &mut authority)
+            .await
+            .is_err()
+    );
+    authority.member = 1;
+    assert!(
+        login::finish(&mut c, &stale, session(base + 7), &mut authority)
+            .await
+            .is_err()
+    );
+
     // A raw insert cannot commit a new flow without its deferred source receipt.
     rejected(&mut c,"WITH t AS (SELECT floor(EXTRACT(epoch FROM clock_timestamp())) AS n) INSERT INTO identity_access.login_flows(fingerprint,identity_id,facility_id,route,policy_version,idle_seconds,absolute_seconds,step_up_seconds,mfa_required,created_at,expires_at,last_observed) SELECT decode(repeat('ab',32),'hex'),1,1,'password',1,900,28800,300,false,n,n+60,n FROM t").await;
     support::assert_idle(&mut witness, connection_pid).await;

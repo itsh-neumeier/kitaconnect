@@ -248,7 +248,7 @@ Die spätere Mitgliedschafts- und Dienstfreigabeaufhebung wird auch mit dem zusa
 Migration 0010 wird zusätzlich in dessen isoliertem Identitätsbestand angewendet. Es gibt keine neue Anwendungsmigration.
 Die Gesamtzahl bleibt neunzehn tatsächliche SQLx-Gruppen vor/nach Neustart. Erfolg muss die aktuelle native CI belegen.
 Der Ergebnisdatentyp stellt keine Sitzung aus und verliert keine Version durch Umwandlung in den alten Anmeldeport.
-Die dauerhafte getrennte Versionsbindung und der vollständige Anmeldeadapter folgen als eigener Schritt.
+Die dauerhafte getrennte Versionsbindung ergänzt der folgende Schritt nach ADR-059. Gateway und Browser bleiben gesondert.
 
 ## Dauerhafte Quellenversionen KC-006F
 

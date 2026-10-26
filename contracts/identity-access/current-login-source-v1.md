@@ -54,3 +54,9 @@ Sie prüft genaue Bindung, drei getrennte Versionen, beide MFA-Ergebnisse, Rolle
 falschen Ausstellerfingerabdruck, geschlossene Rollen-RLS und Ausfall vor/nach PostgreSQL-Neustart.
 Die bestehenden tatsächlichen Transport- und Abbruchnachweise bleiben erhalten.
 Die ursprünglichen Akzeptanzkriterien von KC-006F und KC-008 bleiben offen.
+
+## Ergänzung durch dauerhafte Bindung
+
+Der [Bindungsvertrag](source-bindings-v1.md) und ADR-059 ergänzen die hier beschriebene Quellenstufe.
+Der Quellenleser übergibt die drei Versionen inzwischen vollständig in den erweiterten Anmeldeport.
+Es entsteht weiterhin keine verlustbehaftete Umwandlung in einen einversionigen Kontext.

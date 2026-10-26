@@ -330,6 +330,11 @@ fn cookie_output_and_secret_diagnostics_preserve_confirmed_attributes() {
             )
         );
     }
+}
+
+#[test]
+fn configuration_requires_a_canonical_https_origin() {
+    assert!(BrowserBoundary::new("https://localhost:3443", limits()).is_ok());
     for origin in [
         "http://localhost:3000",
         "https://localhost:3443/",

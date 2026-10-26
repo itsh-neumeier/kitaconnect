@@ -7,6 +7,9 @@ Diese Liste ist eine Momentaufnahme und kein Abschlussnachweis. GitHub bleibt ve
 
 ## Aktueller Schritt
 
+Aktiv: PR #105 / codex/kc-006f-browsergrenze auf #104 / b7c2847. Vertrag/ADR-061 31f322e stehen vor Code 9c5b7f0. Gateway prüft feste Browserprofile, genaue Origin/Host, eindeutige Geheimnisdarstellung und Cookieattribute ohne Datenbankrolle. Sechs reine Gruppen vorbereitet; aktuelle native CI vollständig prüfen. Eigene Anmeldekennung je Installation unabhängig von E-Mail ist ausdrücklich bestätigt (207acdb); nicht erneut fragen. Danach deren Kontenauflösungsvertrag vor Code, dann serverseitige CSRF-Bindung und tatsächliche Browsernachweise. PR #104 besteht am Abschlusskopf alle zehn Prüfungen und zwanzig SQLx-Gruppen vor/nach Neustart. Keine ursprüngliche Gesamtabnahme und kein Merge. Ältere Absätze sind Verlauf.
+
+
 Aktiv: PR #104 / codex/kc-006f-tatsaechliche-anmeldekette auf #103 / cbdd5e3. Prüfvertrag/ADR-060 0d54482 stehen vor Testcode dcee0ab. Erster nativer Lauf findet Stacküberlauf im erweiterten Test; Präzisierung de5cf42 legt vor Korrektur besitzende Heap-Grenzen fest. Gemeinsamer tatsächlicher Endnachweis ohne positives Anmeldeport-Testdoppel: Passwort, Passwort plus TOTP, Passkey, eingeschränkte Offline-Wiederherstellung und Faktorneueinrichtung; dazu Rotation, Zusatzprüfung, Versionen, Entzug, Neuzuordnung, RLS und Ausfall. Eigene weiterhin aktive Identität prüft Dienstfreigabeentzug und Erholung. Vorhandene Migration 0011 zusätzlich im tatsächlichen HTTP-Testbestand; keine neue Anwendungsmigration, Paketversion oder erlaubende Laufzeitpolicy. Lokal 54 Node-Tests und Strukturprüfung für 52 Issues/79 Dokumente erfolgreich. Aktuelle Abschluss-CI mit zwanzig Gruppen vor/nach Neustart im PR prüfen. Danach Benutzer-Anmelde-HTTP-Vertrag, Gateway und Browser ergänzen. PR #103 ist an unverändertem Kopf mit allen zehn Prüfungen und zwanzig Gruppen vor/nach Neustart bestätigt. Ältere Absätze sind Verlauf.
 
 

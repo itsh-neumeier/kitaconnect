@@ -6,6 +6,8 @@ use kitaconnect_identity_access::{
     },
     rights_assurance::{ReadLimits as RightsLimits, Reader as RightsReader},
 };
+#[path = "login_chain.rs"]
+pub(super) mod login_chain;
 
 fn joined(
     f: &Fixture<'_, '_>,
@@ -91,7 +93,7 @@ pub(super) async fn check(
     organization_address: SocketAddr,
     site: FacilityId,
     other: FacilityId,
-) -> JoinedReader {
+) -> (JoinedReader, login_chain::LiveSession) {
     let mut admin = PgConnection::connect_with(&options("postgres"))
         .await
         .unwrap();
@@ -259,5 +261,11 @@ pub(super) async fn check(
     sqlx::query("UPDATE identity_access.role_assurance_scopes SET state='revoked',version=5 WHERE identity_id=1 AND facility_id=$1::text::numeric")
         .bind(site.value().to_string()).execute(&mut admin).await.unwrap();
     assert!(read(&reader, site).await.is_err());
-    reader
+    let chain = login_chain::check(f, identity, issuer_address, organization_address, site);
+    println!(
+        "actual login chain future: {} bytes",
+        std::mem::size_of_val(&chain)
+    );
+    let live = Box::pin(chain).await;
+    (reader, live)
 }

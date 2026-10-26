@@ -443,7 +443,6 @@ pub(super) async fn check(
         .unwrap();
     sqlx::query("UPDATE identity_access.service_grants SET active=false,version=version+1 WHERE client='identity-access' AND target='organization-config' AND scope='membership:read'").execute(&mut identity_admin).await.unwrap();
     routed.rejected(site).await;
-    routed.finish().await;
     assert_eq!(
         f.read(
             &peer,
@@ -456,4 +455,6 @@ pub(super) async fn check(
         Err(ReadError::Rejected)
     );
     sqlx::query("UPDATE identity_access.service_grants SET active=true,version=version+1 WHERE client='identity-access' AND target='organization-config' AND scope='membership:read'").execute(&mut identity_admin).await.unwrap();
+    routed.recovered().await;
+    routed.finish().await;
 }

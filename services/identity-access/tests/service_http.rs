@@ -35,6 +35,8 @@ const FORM: &str = "Content-Type: application/x-www-form-urlencoded\r\n";
 const TOKEN: &str = "client_id=gateway&grant_type=client_credentials&scope=session%3Acheck";
 #[path = "support/authenticated_membership.rs"]
 mod authenticated_membership;
+#[path = "support/mod.rs"]
+mod database_witness;
 fn options(user: &str) -> PgConnectOptions {
     PgConnectOptions::new()
         .socket(std::env::var("KC_ORG_TEST_SOCKET").unwrap())

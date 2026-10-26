@@ -453,3 +453,8 @@ Das Ergebnis erhält drei getrennte Versionen. Dauerhafte Anmeldebindung und urs
 
 [ADR-059](architecture/ADR-059_Dauerhafte_Quellenversionen_der_Anmeldung.md) bindet vollständige Versionen atomar an Vorgänge und Sitzungen.
 Feste Mitgliedschaftsversion und getrennte monotone Einstellungen/Rollen schützen Entzug und Aktualität. Unvollständiger Bestand verweigert die Prüfung.
+
+## ADR-060 – Tatsächliche Anmeldekette im isolierten Test
+
+[ADR-060](architecture/ADR-060_Tatsaechliche_Anmeldekette_im_isolierten_Test.md) verbindet tatsächliche Faktor-, Speicher- und mTLS-Quellenpfade ohne positives Anmeldeport-Testdoppel.
+Der isolierte Endnachweis ersetzt weder Gateway noch Browser oder produktive Rollenfreigaben.

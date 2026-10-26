@@ -142,7 +142,7 @@ try {
   for (const name of [
     '0001_session_records.sql', '0002_password_checks.sql', '0003_webauthn.sql',
     '0004_mfa_recovery.sql', '0005_login_flows.sql', '0006_session_policy_observations.sql',
-    '0007_session_rotation.sql', '0008_step_up_storage.sql', '0009_service_tokens.sql', '0010_role_assurance.sql',
+    '0007_session_rotation.sql', '0008_step_up_storage.sql', '0009_service_tokens.sql', '0010_role_assurance.sql', '0011_source_bindings.sql',
   ]) {
     sql(`SET SESSION AUTHORIZATION kc_identity_migrator;\n${file('migrations/' + name, identityRoot)}`, { database: 'kc_service_http_test', transaction: true });
   }

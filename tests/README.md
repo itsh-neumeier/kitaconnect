@@ -264,6 +264,22 @@ Migrationstests prüfen vollständigen Rollback, saubere Anwendung und verbotene
 Eine reine Gruppe prüft die Versionsregeln. Die vorhandene tatsächliche mTLS-Quellenkette prüft zusätzlich den vollständigen Portkontext.
 Der isolierte Prüflauf umfasst damit zwanzig SQLx-Gruppen vor/nach Neustart. Erfolg muss die aktuelle native CI belegen.
 Das synthetische Portdoppel beweist keine produktive Rollenvergabe oder Dienstidentität. Gateway und Browser bleiben gesondert.
+
+## Tatsächliche Anmeldekette KC-006F
+
+Der [Prüfvertrag](../contracts/identity-access/login-chain-test-v1.md) und ADR-060 stehen vor dem Testcode.
+Die tatsächliche HTTP-/SQLx-Gruppe verbindet jetzt Faktor-Bibliotheken und Sitzungsfunktionen mit dem vollständigen mTLS-Quellenleser.
+Es gibt in diesen positiven Anmeldefällen kein Anmeldeport-Testdoppel.
+Eigene synthetische Identitäten prüfen Passwort, Passwort plus TOTP, Passkey mit Benutzerverifikation,
+einmalige Offline-Wiederherstellung und Faktorneueinrichtung. Weitere Fälle prüfen Rotation, Zusatzprüfung,
+Rollen-/Friständerung, unbekannte Einstufung, Mitgliedschaftsentzug und neue Zuordnung mit gesperrter alter Sitzung.
+Eine unabhängige weiterhin aktive Identität prüft Dienstfreigabeentzug und anschließende erneute aktuelle Freigabe.
+Eine andere Identität prüft Rollenentzug gegen eine zuvor gültige Sitzung.
+Ausgewählte Ausfälle prüfen lokalen Rollback mit einem unabhängigen Datenbankzeugen.
+Der Neustartlauf prüft erhaltene Sitzungszustände und drei getrennte Quellenversionen vor neuer Vorbereitung.
+Migration 0011 gilt zusätzlich im isolierten tatsächlichen HTTP-Identitätsbestand. Die Gesamtzahl bleibt zwanzig SQLx-Gruppen vor/nach Neustart.
+Erfolg muss die aktuelle native CI belegen. Es gibt keine neue Anwendungsmigration, Paketversion oder erlaubende Laufzeitpolicy.
+Rust-Aufrufe mit tatsächlichen Dienstquellen ersetzen keine Gateway-, Browser-, Cookie- oder CSRF-Nachweise.
 Vollständige Fehlerantworten mit HTTP-Abschluss bleiben Fehler. Abgeschnittene Fehlerbodies und positive Antworten mit angekündigtem Abschluss werden abgewiesen.
 Die ursprünglichen Testhilfe-Compilerfehler und die Fehlerklassenzuordnung sind ohne Prüfausnahme korrigiert.
 Der abschließende Nachweiskopf erhält eigene Prüfungen.

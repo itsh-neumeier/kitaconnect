@@ -9,7 +9,7 @@ Sie prüft Transportdarstellung, genaue Origin und benötigte Nachweisfelder. Si
 Das Ergebnis enthält ausschließlich ungeprüft vorgelegte Geheimnisse. Es ist kein positiver Benutzer-, CSRF- oder Sitzungsnachweis.
 Der Identitätsdienst muss den CSRF-Nachweis noch gegen seinen aktuellen Vorgangs- oder Sitzungsbestand prüfen.
 Die Prüfung muss auch vor Anmeldung und Abmeldung erfolgen. SameSite ersetzt diesen Nachweis nicht.
-Öffentliche Kontenauflösung bleibt bis zur Entscheidung über die Anmeldekennung offen.
+Die eigene Anmeldekennung unabhängig von E-Mail ist ausdrücklich bestätigt. Ihr Kontenauflösungsvertrag folgt gesondert vor Code.
 
 ## Feste Anfrageprofile
 
@@ -25,7 +25,7 @@ Die Route wählt das Profil serverseitig; kein Clientfeld bestimmt den Prüfmodu
 | Sitzungsnachweis wechseln | `/api/v1/auth/session/rotate` | `__Host-kc_session` | `X-KC-CSRF` |
 
 Die Kontextvorbereitung verlangt bereits die genaue Origin. Sie erteilt keine Anmeldung und ersetzt keine spätere CSRF-Prüfung.
-Anmeldekennung und Nutzlast des Beginns folgen erst nach Entscheidung. Weitere Faktorendpunkte erhalten eigene Verträge.
+Die konkrete Nutzlast mit bestätigter eigener Anmeldekennung folgt im Kontenauflösungsvertrag. Weitere Faktorendpunkte erhalten eigene Verträge.
 Die Sitzungsprüfung ist hier POST, weil der bestehende Prüfer Zeiten, Fristen und Widerruf dauerhaft beobachten kann.
 
 ## Origin und Header

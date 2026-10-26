@@ -18,5 +18,6 @@ Frühe Trennung verhindert, dass Cookie-Vorhandensein oder Clientheader als Benu
 Feste Profile schließen frei wählbare Zielpfade und Prüfmodi aus.
 Der bestätigte Schutz vor Login-CSRF benötigt eine anonyme Vorbereitung und danach einen serverseitig gebundenen Nachweis.
 Die Vorbereitung erteilt keine Benutzerrechte. Die konkrete Bindung folgt als eigener Schritt.
-Die noch offene lokale Anmeldekennung wird vor Kontenauflösung entschieden. Unabhängige bestätigte Browserregeln werden bereits umgesetzt.
+Die Projektleitung bestätigt am 26.10.2026 ausdrücklich die eigene eindeutige Anmeldekennung je Installation, unabhängig von E-Mail.
+Ihr konkreter Kontenauflösungsvertrag folgt gesondert vor Code. Unabhängige bestätigte Browserregeln werden bereits umgesetzt.
 Alle verwendeten externen Bibliotheksversionen stehen bereits im gesperrten Workspace. Es gibt keine externe Versionsänderung.

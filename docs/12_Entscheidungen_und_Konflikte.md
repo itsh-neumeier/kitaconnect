@@ -462,4 +462,4 @@ Der isolierte Endnachweis ersetzt weder Gateway noch Browser oder produktive Rol
 ## ADR-061 – Browsergrenze ohne Datenbankrolle
 
 [ADR-061](architecture/ADR-061_Browsergrenze_ohne_Datenbankrolle.md) trennt Browserdarstellung von serverseitiger Nachweisprüfung.
-Das Gateway erhält feste Anfrageprofile und keine Datenbankrolle. Die öffentliche Kontokennung bleibt bis zur Entscheidung offen.
+Das Gateway erhält feste Anfrageprofile und keine Datenbankrolle. Eigene eindeutige Anmeldekennung unabhängig von E-Mail ist ausdrücklich bestätigt; der Kontenauflösungsvertrag folgt vor Code.

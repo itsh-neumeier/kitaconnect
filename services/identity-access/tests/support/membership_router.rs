@@ -163,6 +163,7 @@ pub(super) struct Running {
     reader: Consumer,
     token: zeroize::Zeroizing<[u8; 32]>,
     joined: Option<kitaconnect_identity_access::current_login_source::Reader>,
+    live: Option<current_login_source::login_chain::LiveSession>,
 }
 impl Drop for Running {
     fn drop(&mut self) {
@@ -172,6 +173,9 @@ impl Drop for Running {
 }
 impl Running {
     pub(super) async fn absent(&mut self, site: FacilityId) {
+        if let Some(live) = &mut self.live {
+            assert!(live.valid().await);
+        }
         if let Some(joined) = &self.joined {
             assert!(
                 joined
@@ -202,6 +206,9 @@ impl Running {
         );
     }
     pub(super) async fn rejected(&mut self, site: FacilityId) {
+        if let Some(live) = &mut self.live {
+            assert!(!live.valid().await);
+        }
         if let Some(joined) = &self.joined {
             assert!(
                 joined
@@ -233,6 +240,11 @@ impl Running {
                 .await,
             Err(ConsumerError::Rejected)
         );
+    }
+    pub(super) async fn recovered(&mut self) {
+        if let Some(live) = &mut self.live {
+            assert!(live.valid().await);
+        }
     }
     pub(super) async fn finish(mut self) {
         let _ = timeout(Duration::from_secs(1), &mut self.wire.task)
@@ -291,6 +303,7 @@ pub(super) async fn check(
         reader,
         token: zeroize::Zeroizing::new(*token),
         joined: None,
+        live: None,
     };
     let reply = running
         .wire
@@ -523,9 +536,14 @@ pub(super) async fn check(
         200
     );
     outer_budget_and_cancellation(f, identity, &server, token, site).await;
-    running.joined = Some(
-        current_login_source::check(f, identity, address, organization_address, site, other).await,
-    );
+    let (joined, live) =
+        current_login_source::check(f, identity, address, organization_address, site, other).await;
+    running.joined = Some(joined);
+    running.live = Some(live);
+    // Renew only the idle test connection; retain all existing transport limits.
+    running.wire.task.abort();
+    let _ = (&mut running.wire.task).await;
+    running.wire = org_wire(server, identity, f).await;
     running
 }
 

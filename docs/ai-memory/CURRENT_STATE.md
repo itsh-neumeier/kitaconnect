@@ -1,24 +1,32 @@
 # Projektstatus und Fortsetzung
 
-Aktualisiert: 25.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
+Aktualisiert: 26.10.2026, Europe/Berlin. Grundlage: Spezifikation v5.9.
 Ausdrückliche Antwort der Projektleitung: „P0 abnehmen, und P1 freigeben“.
 P0 ist abgenommen und abgeschlossen. P1 ist beauftragt. Diese Entscheidungen nicht erneut abfragen.
 
 ## Arbeitsstand
 
-- issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), tatsächliche Zusammensetzung aktueller Anmeldequellen.
-- branch: codex/kc-006f-aktuelle-anmeldegrundlage auf PR #101 / ea673a7125f9d0d3b922ee09d8fe049d9b5f46fd.
-- pull_request: [PR #102](https://github.com/itsh-neumeier/kitaconnect/pull/102) auf codex/kc-008a-rechte-mfa-grundlage / PR #101.
-- head_commit: Vertrag und ADR-058 a09beef stehen vor Code 8261bca36920c7a5f461017201e12d5f3224f091. Folgender Checkpoint erhält eigene CI; verbindlichen Abschlusskopf im PR prüfen.
-- objective: Neue tatsächliche Dienstanmeldung, aktuelle Mitgliedschaft und eigene Rollen-/MFA-Quelle verbinden. Drei getrennte Versionen erhalten.
-- completed: Eigener begrenzter Leser fordert je Aufruf einen neuen Diensttoken über mTLS an, prüft Ausstellerfingerabdruck und bestehende strenge Tokenantwort und liest aktuelle Mitgliedschaft sowie eigenen Rollenbestand. Das interne Ergebnis erhält genaue Kennungen, drei getrennte Versionen, Fristen und abgeleitete MFA-Anforderung. Unbekannter oder fehlender Bestand verweigert die Prüfung. Keine verlustbehaftete Umwandlung in den alten einversionigen Anmeldeport. Drei neue reine Testgruppen und tatsächliche Quellengesamtkette mit beiden MFA-Ergebnissen, Versionsänderung, Entzug, RLS und Ausfall ergänzt.
-- remaining: Aktuellen Abschlusskopf und vollständige native CI von PR #102 prüfen. Danach getrennte dauerhafte Versionsbindung und tatsächliche Einbindung in den Anmeldeport vor Code vertraglich festlegen. Gateway, Browser und ursprüngliche Gesamtabnahmen bleiben offen.
-- migration_state: Keine neue Anwendungsmigration. Vorhandene Identitätsmigration 0010 wird zusätzlich im isolierten tatsächlichen HTTP-Identitätsbestand angewendet. Identitätsmigrationen bleiben 1 bis 10, Organisation 1 bis 4. Bestehende Laufzeit-RLS bleibt geschlossen; keine produktive Migration.
-- dependencies: Gemeinsame reine OAuth-Antwortprüfung ist nun normale statt ausschließliche Testabhängigkeit des Identitätsdienstes. Cargo.lock und sämtliche externen Paketversionen bleiben unverändert. Keine neue Standardrolle oder Fachregel.
-- known_failures: Bisher kein neuer nachgewiesener Codefehler dieses Pakets. Die aktuelle native Gesamtprüfung bleibt im PR maßgeblich. Windows-Linker und Docker fehlen lokal; keine lokalen nativen Laufzeittests behaupten. Die rohe Transaktionssicht aus KC-008A ist durch ausschließlich eigene frische begrenzte Rollenverbindungen korrigiert und geprüft.
-- test_results: Lokal Rustfmt, gesperrte Offline-Metadaten, 54 Node-Tests, Strukturprüfung für 52 Issues/77 Dokumente, git diff --check und Gitleaks erfolgreich. Native Kompilierung, Clippy, Workspace-Tests und Build am Codekopf 8261bca bestehen; vollständige SQLx-Abschlüsse stehen noch aus. Aktuellen Kopf mit neunzehn Gruppen vor/nach Neustart anhand abgeschlossener Protokolle im PR prüfen. Keine native Datenbankgesamtabnahme vorwegnehmen.
-- test_commands: cargo fmt --all --check; cargo metadata --locked --offline --no-deps --format-version 1; node --test scripts/*.test.mjs; node scripts/check-project.mjs; git diff --check; Gitleaks. Pflicht-CI führt zusätzlich Clippy, Workspace-Tests/Build, Web- und Sicherheitsprüfungen sowie neunzehn SQLx-Gruppen vor/nach Neustart aus.
-- security_notes: Jeder Aufruf verwendet neue tatsächliche Dienstanmeldung und aktuelle Quellen. Die konservative monotone Tokenfrist umfasst die gesamte Zusammensetzung. Kein positiver Cache und keine fremden Transaktionen. Quellen bleiben unabhängig; keine dienstübergreifende Atomarität. Es entsteht keine Sitzung oder Fachberechtigung. Persönliche/sprachliche Durchsicht gesammelt; kein Merge-Auftrag.
+- issue_id: [KC-006F / #67](https://github.com/itsh-neumeier/kitaconnect/issues/67), dauerhafte vollständige Quellenversionen.
+- branch: codex/kc-006f-dauerhafte-quellenversionen auf PR #102 / 7a67eb2fbed4ce3df89ee9e836cce853ce1fa039.
+- pull_request: [PR #103](https://github.com/itsh-neumeier/kitaconnect/pull/103) auf codex/kc-006f-aktuelle-anmeldegrundlage / PR #102.
+- head_commit: Vertrag und ADR-059 7e7d536 stehen vor Migration/Code 20010021091b5f9407943ecbcfd05d77faa13b9e. 22256cb ergänzt fehlende Zusatzbelege und endgültigen Vorgangsentzug als tatsächliche Gegenproben. Folgender Checkpoint erhält eigene CI; aktuellen Abschlusskopf im PR prüfen.
+- objective: Drei vollständige Quellenversionen atomar an Vorgänge, Sitzungsprüfung, Rotation und Zusatzprüfung binden.
+- completed: Vollständiger Port des tatsächlichen Quellenlesers; eigener Vorgangs- und Sitzungsbestand mit getrennten Versionen, Rohfristen und roher Rollen-MFA. Feste Mitgliedschaftsversion verhindert Wiederverwendung nach Entzug/Neuzuordnung. Änderungen invalidieren einen geprüften offenen Vorgang oder widerrufen die geprüfte Sitzung dauerhaft. Einstellungs-/Rollenversionen und gleiche Rohwerte werden getrennt geprüft. Rotation und Zusatzprüfung erhalten die Quellen ohne Verlust. Neue SQLx-Gruppe verwendet tatsächliche Passwort-/Passkey-Bibliotheken mit ausdrücklich synthetischem Port, Sperrzeuge, Schreibunterdrückung, Rollback, RLS und Neustart. PR #102 an unverändertem Kopf mit zehn grünen Prüfungen abgeglichen.
+- remaining: Aktuelle native CI von PR #103 vollständig auswerten. Zwanzig Gruppen vor/nach Neustart ausdrücklich belegen. Danach vollständigen Endnachweis der tatsächlichen Quellenkette mit Anmeldeabschluss vorbereiten; vorhandenen Port und Speicher nicht erneut schreiben. Gateway, Browser und ursprüngliche Gesamtabnahmen bleiben offen.
+- migration_state: Neue Identitätsmigration 0011_source_bindings.sql nach 1 bis 10. Eigene Tabellen mit FORCE RLS ohne erlaubende Policy, unveränderliche Vorgangsbindung, monotone Sitzungsbeobachtung, Rotations-/Zusatzprüfungsbelege und aufgeschobene Vollständigkeitsprüfungen beim Commit. Keine erfundene Rückbefüllung alter Daten. Alte unvollständige Bestände verweigern nach Migration die aktuelle Anmeldung/Sitzung. Organisationsmigrationen bleiben 1 bis 4. Nur isolierter Testbestand; keine produktive Migration.
+- dependencies: Keine neue Paketabhängigkeit, externe Version oder Änderung von Cargo.lock. Frühere isolierte Teilnachweise ohne Migration 0011 bleiben ausführbar; nach Migration ist der vollständige Kontext Pflicht.
+- known_failures: Aktuelle native Gesamtprüfung läuft. Noch keinen vollständigen Erfolg dieses Kopfes behaupten. Windows-Linker und Docker fehlen lokal; native Nachweise stammen aus Linux-CI.
+- test_results: Lokal Rustfmt, gesperrte Offline-Metadaten, 54 Node-Tests, Struktur-/Verweisprüfung für 52 Issues/78 Dokumente, git diff --check und Gitleaks erfolgreich. Eine neue reine Versionsgruppe und eine neue tatsächliche SQLx-Gruppe vorbereitet. Aktuellen Abschluss im PR prüfen.
+- test_commands: cargo fmt --all --check; cargo metadata --locked --offline --no-deps --format-version 1; node --test scripts/*.test.mjs; node scripts/check-project.mjs; git diff --check; Gitleaks. Pflicht-CI führt zusätzlich Clippy, Workspace-Tests/Build, Web-/Sicherheitsprüfungen und zwanzig SQLx-Gruppen vor/nach Neustart aus.
+- security_notes: Keine neue Fachberechtigung oder erlaubende Laufzeitpolicy. Vollständiger Kontext enthält rohe Rollen-MFA getrennt von erhaltener Sitzungs-MFA. Fehlende oder widersprüchliche Daten verweigern Zugriff. Synthetischer Port im neuen Speichertest beweist keine produktive Dienstidentität. Tatsächliche mTLS-Quellenkette prüft getrennt die vollständige Übergabe in den Port. Keine dienstübergreifende Atomaritätszusage. Persönliche/sprachliche Durchsicht gesammelt; kein Merge-Auftrag.
+
+## Bestätigte tatsächliche Quellenkette
+
+[PR #102](https://github.com/itsh-neumeier/kitaconnect/pull/102) / 7a67eb2 ist zur gesammelten Durchsicht bereit und besteht alle zehn aktuellen Prüfungen.
+[Native PR-CI](https://github.com/itsh-neumeier/kitaconnect/actions/runs/40210288954) und
+[Sicherheitsprüfung](https://github.com/itsh-neumeier/kitaconnect/actions/runs/40210288941) bestätigen drei neue reine Gruppen und neunzehn tatsächliche SQLx-Gruppen vor/nach Neustart.
+Rust-Job 121220098238 prüft die neue Dienstanmeldung, aktuelle Mitgliedschaft und eigene Rollenquelle mit drei getrennten Versionen.
+Vertrag/ADR-058 a09beef stehen vor Code 8261bca. Quellenleser nicht erneut implementieren.
 
 ## Bestätigte aktuelle Rollenquelle
 
@@ -371,8 +379,8 @@ Vor weiteren Organisationshierarchien oder Transferregeln Fachumfang klären.
 
 ## Nächste drei Aktionen
 
-1. Aktuellen Abschlusskopf und CI von PR #102 prüfen. Drei neue reine Gruppen und neunzehn tatsächliche SQLx-Gruppen vor/nach Neustart einschließlich vollständiger Quellenkette anhand abgeschlossener Rust-Protokolle nachweisen. PR #101 ist vollständig grün; geprüfte Quellen nicht erneut implementieren.
-2. KC-006F / #67 fortsetzen: Vertrag und ADR für getrennte dauerhafte Mitgliedschafts-, Einstellungs- und Rollenversion vor Migration/Code sichern. Den neuen Ergebnisdatentyp ohne Versionsverlust in Anmeldevorgänge, Abschluss und laufende Sitzungsprüfung einbinden. Rückläufige und widersprüchliche Versionen, Entzug, Identitätssperre, Fehlertransaktionen und tatsächliche Konkurrenz prüfen. Keine Standard-MFA bei fehlenden Quellen.
+1. Aktuellen Abschlusskopf und CI von PR #103 prüfen. Neue reine Versionsgruppe sowie zwanzig tatsächliche SQLx-Gruppen vor/nach Neustart anhand abgeschlossener Rust-Protokolle belegen. Bei Fehlern konkrete Ursache korrigieren; keine Gegenprobe abschwächen.
+2. KC-006F / #67 mit dem vollständigen Endnachweis tatsächlicher Quellen und Anmeldeabschluss fortsetzen. Neue dauerhafte Portbindung verwenden; Migration 0011, Vorgänge, Sitzungsprüfung, normale Rotation und Zusatzprüfung nicht erneut implementieren. Native synthetische Porttests und tatsächliche mTLS-Endnachweise getrennt ausweisen.
 3. Gateway und getrennte Browser-/TLS-Nachweise nach ADR-049 sowie ursprüngliche KC-006F-Kriterien ergänzen. Danach KC-008B / #99 vollständig nachweisen. Gesammelte persönliche/sprachliche Durchsicht und gesonderter Merge-Auftrag bleiben erforderlich.
 
 ## OAuth-HTTP-Abschluss und GitHub-Fortsetzung

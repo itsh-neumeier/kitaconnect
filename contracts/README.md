@@ -43,3 +43,5 @@ Die Grundlage erteilt keine Fachberechtigung.
 
 Die [zusammengesetzte aktuelle Anmeldegrundlage](identity-access/current-login-source-v1.md)
 verbindet tatsächliche Dienstanmeldung, Mitgliedschaft und Rollenquelle. Die drei Versionen bleiben getrennt.
+
+Die [dauerhafte Quellenbindung](identity-access/source-bindings-v1.md) erhält diese Versionen in Vorgängen, Sitzungsprüfung und Rotation.

@@ -93,6 +93,7 @@ pub struct OrganizationContext {
     pub(crate) absolute: u64,
     pub(crate) step_up: u64,
     pub(crate) mfa_required: bool,
+    pub(crate) sources: Option<crate::source_bindings::SourceVersions>,
 }
 impl OrganizationContext {
     /// Trusted adapter must establish current membership before constructing a context.
@@ -122,7 +123,28 @@ impl OrganizationContext {
             absolute: absolute_seconds,
             step_up: step_up_seconds,
             mfa_required,
+            sources: None,
         })
+    }
+    /// Trusted integration/test port only; these numbers never prove membership on their own.
+    pub fn with_source_versions(
+        mut self,
+        membership: u64,
+        rights: u64,
+    ) -> Result<Self, LoginError> {
+        if membership == 0 || rights == 0 {
+            return Err(LoginError);
+        }
+        self.sources = Some(crate::source_bindings::SourceVersions {
+            membership,
+            policy: self.version,
+            rights,
+            raw_mfa: self.mfa_required,
+        });
+        Ok(self)
+    }
+    pub fn source_versions(&self) -> Option<crate::source_bindings::SourceVersions> {
+        self.sources
     }
     pub(crate) fn bound(
         self,
@@ -350,8 +372,15 @@ impl Flow {
 }
 async fn flow(connection: &mut PgConnection, token: &LoginToken) -> Result<Flow, LoginError> {
     let row=sqlx::query("SELECT identity_id::text, facility_id::text, route, policy_version::text, idle_seconds::text, absolute_seconds::text, step_up_seconds::text, mfa_required, created_at::text, expires_at::text, last_observed::text, consumed, invalidated, proof_digest, password_ok, totp_ok, passkey_ok, proven_at::text FROM identity_access.login_flows WHERE fingerprint=$1 FOR UPDATE")
-        .bind(token.0.fingerprint().as_slice()).fetch_one(connection).await?;
-    Flow::decode(&row)
+        .bind(token.0.fingerprint().as_slice()).fetch_one(&mut *connection).await?;
+    let mut flow = Flow::decode(&row)?;
+    crate::source_bindings::load_flow(
+        connection,
+        token.0.fingerprint().as_slice(),
+        &mut flow.context,
+    )
+    .await?;
+    Ok(flow)
 }
 #[derive(Clone, Copy)]
 pub(crate) enum Factor {
@@ -527,6 +556,8 @@ async fn insert_flow(
         return Err(LoginError);
     }
 
+    crate::source_bindings::insert_flow(connection, token.0.fingerprint().as_slice(), &context)
+        .await?;
     Ok(token)
 }
 
@@ -581,6 +612,15 @@ pub async fn finish(
             return Err(LoginError);
         }
         let strong = flow.passkey || (flow.password && flow.totp);
+        if crate::source_bindings::membership_changed(&flow.context, &current) {
+            let time=now(&mut tx).await?;
+            if time<flow.observed { return Err(LoginError); }
+            let invalidated:bool=sqlx::query_scalar("UPDATE identity_access.login_flows SET invalidated=true,last_observed=$2::text::numeric WHERE fingerprint=$1 RETURNING invalidated")
+                .bind(token.0.fingerprint().as_slice()).bind(time.to_string()).fetch_one(&mut *tx).await?;
+            if !invalidated { return Err(LoginError); }
+            return Ok(None);
+        }
+        crate::source_bindings::successor(&flow.context, &current)?;
         if !(flow.passkey || flow.password)
             || ((flow.context.mfa_required || current.mfa_required || material.totp) && !strong)
         {
@@ -613,6 +653,7 @@ pub async fn finish(
             return Err(LoginError);
         }
 
+        crate::source_bindings::insert_session(&mut tx, session, &current).await?;
         Ok(Some(session_token))
     }.await;
     match result {
@@ -751,6 +792,7 @@ pub async fn finish_step_up(
         if material.recovery || flow.digest.as_deref()!=Some(material.digest.as_slice())
             || !(flow.passkey || (flow.password && flow.totp)) { return Err(LoginError); }
         let current=checked.policy();
+        crate::source_bindings::successor(&flow.context, &current)?;
         if current.version<flow.context.version || (current.version==flow.context.version &&
             (current.idle,current.absolute,current.step_up)!=(flow.context.idle,flow.context.absolute,flow.context.step_up)) { return Err(LoginError); }
         let authenticated=flow.proven.ok_or(LoginError)?;

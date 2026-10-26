@@ -18,6 +18,8 @@ use webauthn_authenticator_rs::{AuthenticatorBackend, softpasskey::SoftPasskey};
 use webauthn_rs::prelude::*;
 use zeroize::Zeroizing;
 
+#[path = "support/source_bindings.rs"]
+mod source_bindings;
 mod support;
 
 // Explicit service test double: no production membership, network or mTLS claim.

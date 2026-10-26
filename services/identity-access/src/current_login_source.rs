@@ -112,6 +112,28 @@ pub struct Reader {
     response_limits: ResponseLimits,
     active: Semaphore,
 }
+impl crate::login::OrganizationAuthority for Reader {
+    async fn current(
+        &mut self,
+        identity: IdentityId,
+        facility: LoginFacilityId,
+    ) -> Result<crate::login::OrganizationContext, crate::login::LoginError> {
+        let current = self
+            .read(identity, facility)
+            .await
+            .map_err(|_| crate::login::LoginError)?;
+        crate::login::OrganizationContext::new(
+            identity,
+            facility,
+            current.policy_version,
+            current.idle_seconds,
+            current.absolute_seconds,
+            current.step_up_seconds,
+            current.mfa_required,
+        )?
+        .with_source_versions(current.membership_version, current.rights_version)
+    }
+}
 fn timely(elapsed: Duration, seconds: u64) -> Result<(), ReadError> {
     if !(1..=300).contains(&seconds) || elapsed >= Duration::from_secs(seconds) {
         return Err(ReadError);

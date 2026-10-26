@@ -18,6 +18,7 @@ pub mod service_oauth;
 pub mod service_tokens;
 pub mod session_check;
 pub mod session_rotation;
+pub mod source_bindings;
 pub mod token;
 pub mod webauthn;
 

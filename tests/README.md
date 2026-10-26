@@ -248,7 +248,22 @@ Die spätere Mitgliedschafts- und Dienstfreigabeaufhebung wird auch mit dem zusa
 Migration 0010 wird zusätzlich in dessen isoliertem Identitätsbestand angewendet. Es gibt keine neue Anwendungsmigration.
 Die Gesamtzahl bleibt neunzehn tatsächliche SQLx-Gruppen vor/nach Neustart. Erfolg muss die aktuelle native CI belegen.
 Der Ergebnisdatentyp stellt keine Sitzung aus und verliert keine Version durch Umwandlung in den alten Anmeldeport.
-Die dauerhafte getrennte Versionsbindung und der vollständige Anmeldeadapter folgen als eigener Schritt.
+Die dauerhafte getrennte Versionsbindung ergänzt der folgende Schritt nach ADR-059. Gateway und Browser bleiben gesondert.
+
+## Dauerhafte Quellenversionen KC-006F
+
+Der [Bindungsvertrag](../contracts/identity-access/source-bindings-v1.md) und ADR-059 stehen vor Migration 0011 und Code.
+Die neue tatsächliche Gruppe `login/source_bindings::complete_sources_bind_flows_sessions_and_rotation`
+verwendet ausschließlich die eigene Datenbank `kc_source_bindings_test` mit synthetischem vertrauenswürdigem Port.
+Sie prüft tatsächliche Passwort- und Passkey-Bibliotheken, atomare Bindung, drei getrennte Versionen,
+Widersprüche, Frist-/MFA-Erhaltung, normale Rotation, Zusatzprüfung mit Rotation, fehlenden Bestand,
+unterdrücktes Schreiben, abgewarteten Rollback und konkurrierende Abschlüsse mit unabhängigem Sperrzeugen.
+Eine geänderte Mitgliedschaftsversion widerruft die geprüfte Sitzung dauerhaft. Ein alter positiver Datenstand erlaubt sie danach nicht erneut.
+Der Neustartlauf prüft zuerst erhaltene Versionen und den dauerhaften Widerruf. Laufzeit-RLS bleibt geschlossen.
+Migrationstests prüfen vollständigen Rollback, saubere Anwendung und verbotene Wiederholung.
+Eine reine Gruppe prüft die Versionsregeln. Die vorhandene tatsächliche mTLS-Quellenkette prüft zusätzlich den vollständigen Portkontext.
+Der isolierte Prüflauf umfasst damit zwanzig SQLx-Gruppen vor/nach Neustart. Erfolg muss die aktuelle native CI belegen.
+Das synthetische Portdoppel beweist keine produktive Rollenvergabe oder Dienstidentität. Gateway und Browser bleiben gesondert.
 Vollständige Fehlerantworten mit HTTP-Abschluss bleiben Fehler. Abgeschnittene Fehlerbodies und positive Antworten mit angekündigtem Abschluss werden abgewiesen.
 Die ursprünglichen Testhilfe-Compilerfehler und die Fehlerklassenzuordnung sind ohne Prüfausnahme korrigiert.
 Der abschließende Nachweiskopf erhält eigene Prüfungen.

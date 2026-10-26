@@ -289,6 +289,18 @@ mehrdeutige oder vertauschte Cookies, kanonische Geheimnisse, Headergrenzen, Coo
 Die Bibliothek hat keine Datenbankabhängigkeit und öffnet keinen Netzwerkport.
 Ein erfolgreich gelesenes Geheimnis bleibt ein ungeprüft vorgelegter Nachweis. Die serverseitige CSRF-Bindung bleibt gesondert.
 Diese reinen Tests sind kein HTTPS- oder Browsernachweis. Die bestehenden zwanzig SQLx-Gruppen bleiben unverändert Pflicht.
+
+## Eigene lokale Anmeldekennung
+
+Der [Kennungsvertrag](../contracts/identity-access/login-name-v1.md) und ADR-062 stehen vor Migration 0012 und Code.
+Zwei reine Gruppen prüfen Arbeitsgrenzen, UTF-8-Bytegrenzen und verdeckte Diagnosen.
+Eine neue tatsächliche SQLx-Gruppe prüft genaue Zuordnung ohne Normalisierung, unbekannte und widerrufene Namen,
+unveränderliche Identitätsbindung, eindeutige Namen unter beobachteter Schreibkonkurrenz, Rollback und aktuelle Sicht trotz fremder alter Transaktion.
+Sie prüft geschlossene Laufzeit-/Eigentümer-RLS, Rechteentzug, fehlende Datenbank und unabhängige Zeugen bei Zeitablauf und Abbruch.
+Migrationstests verlangen atomare Rücknahme neuer Objekte/Version sowie verweigerte Wiederholung.
+Nach Neustart werden erhaltene Zuordnung und Widerruf vor neuer Vorbereitung geprüft.
+Der isolierte Lauf umfasst damit einundzwanzig SQLx-Gruppen vor/nach Neustart. Erfolg muss die aktuelle native CI belegen.
+Die interne Zuordnung ist kein öffentlicher Kontoabfrage-, Faktor-, Browser- oder Berechtigungsnachweis.
 Vollständige Fehlerantworten mit HTTP-Abschluss bleiben Fehler. Abgeschnittene Fehlerbodies und positive Antworten mit angekündigtem Abschluss werden abgewiesen.
 Die ursprünglichen Testhilfe-Compilerfehler und die Fehlerklassenzuordnung sind ohne Prüfausnahme korrigiert.
 Der abschließende Nachweiskopf erhält eigene Prüfungen.

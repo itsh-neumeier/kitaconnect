@@ -51,3 +51,6 @@ verbindet Faktor-Bibliotheken und Sitzungsabschluss mit den tatsächlichen aktue
 
 Die [Browsergrenze des Gateways](gateway/browser-boundary-v1.md) prüft feste Origin-, Header- und Cookie-Profile.
 Sie erteilt allein weder Anmeldung noch CSRF- oder Sitzungsfreigabe.
+
+Die [eigene lokale Anmeldekennung](identity-access/login-name-v1.md) ordnet einen genauen Namen einer internen Identität zu.
+Die interne Zuordnung ersetzt weder Faktorprüfung noch Mitgliedschaft und veröffentlicht keinen Kontoabfrage-Endpunkt.

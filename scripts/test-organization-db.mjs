@@ -94,6 +94,27 @@ try {
 
   // Run the new HTTP boundary first so failures do not wait for unrelated hashing tests.
   sql(file('provision/001_roles.sql', identityRoot), { transaction: true });
+  sql('CREATE DATABASE kc_login_name_test;');
+  sql(file('provision/002_schema.sql', identityRoot), { database: 'kc_login_name_test', transaction: true });
+  for (const name of [
+    '0001_session_records.sql', '0002_password_checks.sql', '0003_webauthn.sql',
+    '0004_mfa_recovery.sql', '0005_login_flows.sql', '0006_session_policy_observations.sql',
+    '0007_session_rotation.sql', '0008_step_up_storage.sql', '0009_service_tokens.sql',
+    '0010_role_assurance.sql', '0011_source_bindings.sql',
+  ]) {
+    sql(`SET SESSION AUTHORIZATION kc_identity_migrator;\n${file('migrations/' + name, identityRoot)}`, { database: 'kc_login_name_test', transaction: true });
+  }
+  const loginNameMigration = `SET SESSION AUTHORIZATION kc_identity_migrator;\n${file('migrations/0012_login_names.sql', identityRoot)}`;
+  sql(`${loginNameMigration}\nSELECT 1 / 0;`, { database: 'kc_login_name_test', transaction: true, expectedState: '22012' });
+  sql(`DO $$ BEGIN
+    ASSERT to_regclass('identity_access.login_names') IS NULL;
+    ASSERT to_regprocedure('identity_access.guard_login_name()') IS NULL;
+    ASSERT (SELECT array_agg(version ORDER BY version)=ARRAY[1,2,3,4,5,6,7,8,9,10,11] FROM identity_access.schema_versions);
+  END $$;`, { database: 'kc_login_name_test' });
+  sql(loginNameMigration, { database: 'kc_login_name_test', transaction: true });
+  sql(loginNameMigration, { database: 'kc_login_name_test', transaction: true, expectedState: 'P0001' });
+  sql('CREATE ROLE kc_login_name_runtime LOGIN NOINHERIT NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS; GRANT kc_identity_runtime TO kc_login_name_runtime WITH INHERIT TRUE, SET FALSE;', { database: 'kc_login_name_test', transaction: true });
+  testAdapter('before', 'login_name', 'exact_local_names_are_current_closed_and_persistent', 'kitaconnect-identity-access');
   sql('CREATE DATABASE kc_role_assurance_test;');
   sql(file('provision/002_schema.sql', identityRoot), { database: 'kc_role_assurance_test', transaction: true });
   for (const name of [
@@ -435,6 +456,7 @@ try {
 
   requireSuccess(docker(['restart', container]), 'Restart same test database');
   await waitUntilReady();
+  testAdapter('after', 'login_name', 'exact_local_names_are_current_closed_and_persistent', 'kitaconnect-identity-access');
   testAdapter('after', 'login', 'source_bindings::complete_sources_bind_flows_sessions_and_rotation', 'kitaconnect-identity-access');
   testAdapter('after', 'rights_assurance', 'current_roles_are_complete_versioned_and_restricted', 'kitaconnect-identity-access');
   sql(file('tests/persisted.sql'));

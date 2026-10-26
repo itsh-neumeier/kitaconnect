@@ -108,7 +108,7 @@ pub(super) async fn check(
     let sensitive = r#"{"format":1,"roles":[{"key":"synthetic","operations":["health_data"]}]}"#;
     sqlx::query("INSERT INTO identity_access.role_assurance_scopes VALUES(1,$1::text::numeric,1,'active',$2)")
         .bind(site.value().to_string()).bind(basic).execute(&mut admin).await.unwrap();
-    let reader = joined(
+    let mut reader = joined(
         f,
         identity,
         issuer_address,
@@ -138,6 +138,23 @@ pub(super) async fn check(
         (900, 28800, 300)
     );
     assert!(!current.mfa_required());
+    {
+        use kitaconnect_identity_access::login::OrganizationAuthority;
+        let context = reader
+            .current(
+                IdentityId::new(1).unwrap(),
+                LoginFacilityId::new(site.value()).unwrap(),
+            )
+            .await
+            .unwrap();
+        let versions = context
+            .source_versions()
+            .expect("actual port must preserve all sources");
+        assert_eq!(
+            (versions.membership(), versions.policy(), versions.rights()),
+            (1, 1, 1)
+        );
+    }
     assert_eq!(format!("{current:?}"), "CurrentLogin(REDACTED)");
     assert!(read(&reader, other).await.is_err());
     assert!(

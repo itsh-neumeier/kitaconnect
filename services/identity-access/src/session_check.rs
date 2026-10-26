@@ -163,7 +163,7 @@ async fn binding(c: &mut PgConnection, r: &SessionRecord) -> Result<Binding, Che
     .fetch_one(&mut *c)
     .await?;
     if installed {
-        let receipt=sqlx::query("SELECT r.authenticated_at::text,f.route,f.consumed,f.invalidated,f.password_ok,f.totp_ok,f.passkey_ok,f.proven_at::text,f.identity_id::text,f.facility_id::text FROM identity_access.step_up_receipts r JOIN identity_access.login_flows f ON f.fingerprint=r.proof_fingerprint WHERE r.origin_flow=$1 ORDER BY r.authenticated_at DESC LIMIT 1")
+        let receipt=sqlx::query("SELECT f.fingerprint AS proof_fingerprint,r.authenticated_at::text,f.route,f.consumed,f.invalidated,f.password_ok,f.totp_ok,f.passkey_ok,f.proven_at::text,f.identity_id::text,f.facility_id::text FROM identity_access.step_up_receipts r JOIN identity_access.login_flows f ON f.fingerprint=r.proof_fingerprint WHERE r.origin_flow=$1 ORDER BY r.authenticated_at DESC LIMIT 1")
             .bind(row.try_get::<Vec<u8>, _>("flow_fingerprint")?).fetch_optional(&mut *c).await?;
         if let Some(receipt) = receipt {
             let time = number(&receipt, "authenticated_at")?;
@@ -183,6 +183,12 @@ async fn binding(c: &mut PgConnection, r: &SessionRecord) -> Result<Binding, Che
             {
                 return Err(CheckError);
             }
+            crate::source_bindings::require_proof(
+                &mut *c,
+                &receipt.try_get::<Vec<u8>, _>("proof_fingerprint")?,
+            )
+            .await
+            .map_err(|_| CheckError)?;
             binding.authenticated = time;
             binding.mfa = true;
         }
@@ -360,6 +366,7 @@ pub(crate) struct CheckedSession {
     pub(crate) record: SessionRecord,
     pub(crate) observed: Observation,
     context: CurrentSession,
+    sources: Option<crate::source_bindings::SourceVersions>,
 }
 impl CheckedSession {
     pub(crate) fn policy(&self) -> OrganizationContext {
@@ -371,6 +378,7 @@ impl CheckedSession {
             absolute: self.observed.raw[1],
             step_up: self.observed.raw[2],
             mfa_required: self.observed.required,
+            sources: self.sources,
         }
     }
     pub(crate) fn step_up_seconds(&self) -> u64 {
@@ -480,6 +488,14 @@ async fn checked_for_purpose(
         .bound(identity, facility)
         .map_err(|_| CheckError)?;
     let observed = combine(&record, &b, old.as_ref(), &current, totp)?;
+    let same_membership = crate::source_bindings::observe(&mut *c, record.id, &current)
+        .await
+        .map_err(|_| CheckError)?;
+    if !same_membership {
+        record.state = SessionState::Revoked;
+        save_record(&mut *c, &record).await?;
+        return Ok(None);
+    }
     let time = now(&mut *c).await?;
     record.observe(time).map_err(|_| CheckError)?;
     let absolute = record
@@ -514,6 +530,7 @@ async fn checked_for_purpose(
             record,
             observed,
             context: result,
+            sources: current.sources,
         })
     } else {
         None

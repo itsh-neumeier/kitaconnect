@@ -76,6 +76,9 @@ pub(crate) async fn rotate_checked(
         return Err(CheckError);
     }
     session_check::save_observation(&mut candidate, successor, &checked.observed, false).await?;
+    crate::source_bindings::copy_session(&mut candidate, checked.record.id, successor)
+        .await
+        .map_err(|_| CheckError)?;
     let written=sqlx::query("INSERT INTO identity_access.session_rotation_links (successor,predecessor) VALUES ($1::text::numeric,$2::text::numeric)")
         .bind(successor.value().to_string()).bind(checked.record.id.value().to_string()).execute(&mut *candidate).await?;
     if written.rows_affected() != 1 {

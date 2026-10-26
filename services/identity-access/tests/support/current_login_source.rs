@@ -261,6 +261,11 @@ pub(super) async fn check(
     sqlx::query("UPDATE identity_access.role_assurance_scopes SET state='revoked',version=5 WHERE identity_id=1 AND facility_id=$1::text::numeric")
         .bind(site.value().to_string()).execute(&mut admin).await.unwrap();
     assert!(read(&reader, site).await.is_err());
-    let live = login_chain::check(f, identity, issuer_address, organization_address, site).await;
+    let chain = login_chain::check(f, identity, issuer_address, organization_address, site);
+    println!(
+        "actual login chain future: {} bytes",
+        std::mem::size_of_val(&chain)
+    );
+    let live = Box::pin(chain).await;
     (reader, live)
 }

@@ -29,13 +29,13 @@ impl LiveSession {
         let mut connection = PgConnection::connect_with(&options("postgres"))
             .await
             .unwrap();
-        session_check::check(
+        Box::pin(session_check::check(
             &mut connection,
             &self.token,
             self.facility,
             Requirement::Standard,
             &mut self.reader,
-        )
+        ))
         .await
         .is_ok()
     }
@@ -80,14 +80,14 @@ async fn begin(
     route: LoginRoute,
     reader: &mut JoinedReader,
 ) -> LoginToken {
-    login::begin(
+    Box::pin(login::begin(
         c,
         identity,
         LoginFacilityId::new(site.value()).unwrap(),
         route,
         login_limits(),
         reader,
-    )
+    ))
     .await
     .unwrap()
 }
@@ -98,17 +98,16 @@ async fn prove_password(
     identity: IdentityId,
     flow: &LoginToken,
 ) {
-    checker
-        .check_for_login(
-            c,
-            attempt_key(identity),
-            attempt_limits(),
-            Some(identity),
-            Password::new(password.expose()).unwrap(),
-            flow,
-        )
-        .await
-        .unwrap();
+    Box::pin(checker.check_for_login(
+        c,
+        attempt_key(identity),
+        attempt_limits(),
+        Some(identity),
+        Password::new(password.expose()).unwrap(),
+        flow,
+    ))
+    .await
+    .unwrap();
 }
 async fn prove_passkey(
     c: &mut PgConnection,
@@ -117,7 +116,9 @@ async fn prove_passkey(
     identity: IdentityId,
     flow: &LoginToken,
 ) {
-    let (challenge, options) = engine.start_authentication(c, identity).await.unwrap();
+    let (challenge, options) = Box::pin(engine.start_authentication(c, identity))
+        .await
+        .unwrap();
     let response = client
         .perform_auth(
             Url::parse("http://localhost:3000").unwrap(),
@@ -125,16 +126,15 @@ async fn prove_passkey(
             300_000,
         )
         .unwrap();
-    engine
-        .finish_authentication_for_login(
-            c,
-            identity,
-            &challenge,
-            &serde_json::to_vec(&response).unwrap(),
-            flow,
-        )
-        .await
-        .unwrap();
+    Box::pin(engine.finish_authentication_for_login(
+        c,
+        identity,
+        &challenge,
+        &serde_json::to_vec(&response).unwrap(),
+        flow,
+    ))
+    .await
+    .unwrap();
 }
 async fn checked(
     c: &mut PgConnection,
@@ -142,13 +142,13 @@ async fn checked(
     site: FacilityId,
     reader: &mut JoinedReader,
 ) -> bool {
-    session_check::check(
+    Box::pin(session_check::check(
         c,
         token,
         LoginFacilityId::new(site.value()).unwrap(),
         Requirement::Standard,
         reader,
-    )
+    ))
     .await
     .is_ok()
 }
@@ -193,7 +193,9 @@ async fn password_session(
         .unwrap();
     let flow = begin(c, identity, site, LoginRoute::Password, reader).await;
     prove_password(c, checker, password, identity, &flow).await;
-    login::finish(c, &flow, record(id), reader).await.unwrap()
+    Box::pin(login::finish(c, &flow, record(id), reader))
+        .await
+        .unwrap()
 }
 
 pub(super) async fn check(
@@ -254,7 +256,9 @@ pub(super) async fn check(
         .unwrap();
     let engine = LocalhostWebauthn::new(CeremonyLimits::new(300, 100, 16).unwrap()).unwrap();
     let mut authenticator = SoftPasskey::new(true);
-    let (challenge, registration) = engine.start_registration(&mut c, uid).await.unwrap();
+    let (challenge, registration) = Box::pin(engine.start_registration(&mut c, uid))
+        .await
+        .unwrap();
     let response = authenticator
         .perform_register(
             Url::parse("http://localhost:3000").unwrap(),
@@ -262,44 +266,42 @@ pub(super) async fn check(
             300_000,
         )
         .unwrap();
-    engine
-        .finish_registration(
-            &mut c,
-            uid,
-            &challenge,
-            &serde_json::to_vec(&response).unwrap(),
-        )
-        .await
-        .unwrap();
+    Box::pin(engine.finish_registration(
+        &mut c,
+        uid,
+        &challenge,
+        &serde_json::to_vec(&response).unwrap(),
+    ))
+    .await
+    .unwrap();
 
     // Wrong password cannot create a proof. The correct proof finishes exactly once.
     let flow = begin(&mut c, uid, site, LoginRoute::Password, &mut reader).await;
     let wrong = SessionToken::generate().unwrap();
     assert!(
-        checker
-            .check_for_login(
-                &mut c,
-                attempt_key(uid),
-                attempt_limits(),
-                Some(uid),
-                Password::new(wrong.expose()).unwrap(),
-                &flow
-            )
-            .await
-            .is_err()
+        Box::pin(checker.check_for_login(
+            &mut c,
+            attempt_key(uid),
+            attempt_limits(),
+            Some(uid),
+            Password::new(wrong.expose()).unwrap(),
+            &flow
+        ))
+        .await
+        .is_err()
     );
     assert!(
-        login::finish(&mut c, &flow, record(base), &mut reader)
+        Box::pin(login::finish(&mut c, &flow, record(base), &mut reader))
             .await
             .is_err()
     );
     crate::database_witness::assert_idle(&mut witness, pid).await;
     prove_password(&mut c, &checker, &password, uid, &flow).await;
-    let initial = login::finish(&mut c, &flow, record(base), &mut reader)
+    let initial = Box::pin(login::finish(&mut c, &flow, record(base), &mut reader))
         .await
         .unwrap();
     assert!(
-        login::finish(&mut c, &flow, record(base + 99), &mut reader)
+        Box::pin(login::finish(&mut c, &flow, record(base + 99), &mut reader))
             .await
             .is_err()
     );
@@ -308,36 +310,36 @@ pub(super) async fn check(
         versions(&mut c, base).await,
         ("1".into(), "1".into(), "1".into())
     );
-    let rotated = session_rotation::rotate(
+    let rotated = Box::pin(session_rotation::rotate(
         &mut c,
         &initial,
         record(base + 1),
         LoginFacilityId::new(site.value()).unwrap(),
         &mut reader,
-    )
+    ))
     .await
     .unwrap();
     assert!(!checked(&mut c, &initial, site, &mut reader).await);
     assert!(checked(&mut c, &rotated, site, &mut reader).await);
-    let proof = login::begin_step_up(
+    let proof = Box::pin(login::begin_step_up(
         &mut c,
         &rotated,
         LoginFacilityId::new(site.value()).unwrap(),
         LoginRoute::Passkey,
         login_limits(),
         &mut reader,
-    )
+    ))
     .await
     .unwrap();
     prove_passkey(&mut c, &engine, &mut authenticator, uid, &proof).await;
-    let strong = login::finish_step_up(
+    let strong = Box::pin(login::finish_step_up(
         &mut c,
         &rotated,
         &proof,
         record(base + 2),
         LoginFacilityId::new(site.value()).unwrap(),
         &mut reader,
-    )
+    ))
     .await
     .unwrap();
     assert!(!checked(&mut c, &rotated, site, &mut reader).await);
@@ -355,29 +357,39 @@ pub(super) async fn check(
     let weak = begin(&mut c, uid, site, LoginRoute::Password, &mut reader).await;
     prove_password(&mut c, &checker, &password, uid, &weak).await;
     assert!(
-        login::finish(&mut c, &weak, record(base + 99), &mut reader)
+        Box::pin(login::finish(&mut c, &weak, record(base + 99), &mut reader))
             .await
             .is_err()
     );
     let passkey_flow = begin(&mut c, uid, site, LoginRoute::Passkey, &mut reader).await;
     assert!(
-        login::finish(&mut c, &passkey_flow, record(base + 3), &mut reader)
-            .await
-            .is_err()
+        Box::pin(login::finish(
+            &mut c,
+            &passkey_flow,
+            record(base + 3),
+            &mut reader
+        ))
+        .await
+        .is_err()
     );
     prove_passkey(&mut c, &engine, &mut authenticator, uid, &passkey_flow).await;
-    let passkey_session = login::finish(&mut c, &passkey_flow, record(base + 3), &mut reader)
-        .await
-        .unwrap();
+    let passkey_session = Box::pin(login::finish(
+        &mut c,
+        &passkey_flow,
+        record(base + 3),
+        &mut reader,
+    ))
+    .await
+    .unwrap();
     assert!(checked(&mut c, &passkey_session, site, &mut reader).await);
     assert!(
-        session_check::check(
+        Box::pin(session_check::check(
             &mut c,
             &passkey_session,
             LoginFacilityId::new(site.value() + 1).unwrap(),
             Requirement::Standard,
             &mut reader
-        )
+        ))
         .await
         .is_err()
     );
@@ -398,7 +410,7 @@ pub(super) async fn check(
     assert_eq!(state(&mut c, base + 3).await, "revoked");
     let fresh = begin(&mut c, uid, site, LoginRoute::Passkey, &mut reader).await;
     prove_passkey(&mut c, &engine, &mut authenticator, uid, &fresh).await;
-    let rejoined = login::finish(&mut c, &fresh, record(base + 5), &mut reader)
+    let rejoined = Box::pin(login::finish(&mut c, &fresh, record(base + 5), &mut reader))
         .await
         .unwrap();
     assert!(checked(&mut c, &rejoined, site, &mut reader).await);
@@ -433,75 +445,101 @@ pub(super) async fn check(
         Arc::new(EphemeralMfaKey::generate().unwrap()),
         MfaLimits::new(300, 300, 4, 1, attempt_limits()).unwrap(),
     );
-    let enrollment = mfa.begin_enrollment(&mut c, uid, None).await.unwrap();
-    let at = seconds(&mut c).await;
-    let codes = mfa
-        .activate(&mut c, uid, &enrollment, &code(&enrollment, at), None, None)
+    let enrollment = Box::pin(mfa.begin_enrollment(&mut c, uid, None))
         .await
         .unwrap();
+    let at = seconds(&mut c).await;
+    let codes =
+        Box::pin(mfa.activate(&mut c, uid, &enrollment, &code(&enrollment, at), None, None))
+            .await
+            .unwrap();
     let two_factor = begin(&mut c, uid, site, LoginRoute::Password, &mut reader).await;
     prove_password(&mut c, &checker, &password, uid, &two_factor).await;
     assert!(
-        login::finish(&mut c, &two_factor, record(base + 6), &mut reader)
-            .await
-            .is_err()
+        Box::pin(login::finish(
+            &mut c,
+            &two_factor,
+            record(base + 6),
+            &mut reader
+        ))
+        .await
+        .is_err()
     );
     let at = seconds(&mut c).await + 30;
     let totp = code(&enrollment, at);
-    mfa.verify_for_login(&mut c, uid, &totp, &two_factor)
+    Box::pin(mfa.verify_for_login(&mut c, uid, &totp, &two_factor))
         .await
         .unwrap();
-    let totp_session = login::finish(&mut c, &two_factor, record(base + 6), &mut reader)
-        .await
-        .unwrap();
+    let totp_session = Box::pin(login::finish(
+        &mut c,
+        &two_factor,
+        record(base + 6),
+        &mut reader,
+    ))
+    .await
+    .unwrap();
     assert!(checked(&mut c, &totp_session, site, &mut reader).await);
-    assert!(mfa.verify(&mut c, uid, &totp).await.is_err());
-    let permit = mfa.recover(&mut c, uid, &codes.codes()[0]).await.unwrap();
-    assert!(mfa.recover(&mut c, uid, &codes.codes()[0]).await.is_err());
+    assert!(Box::pin(mfa.verify(&mut c, uid, &totp)).await.is_err());
+    let permit = Box::pin(mfa.recover(&mut c, uid, &codes.codes()[0]))
+        .await
+        .unwrap();
+    assert!(
+        Box::pin(mfa.recover(&mut c, uid, &codes.codes()[0]))
+            .await
+            .is_err()
+    );
     assert!(!checked(&mut c, &totp_session, site, &mut reader).await);
     assert_eq!(state(&mut c, base + 6).await, "revoked");
     assert!(
-        login::begin(
+        Box::pin(login::begin(
             &mut c,
             uid,
             LoginFacilityId::new(site.value()).unwrap(),
             LoginRoute::Password,
             login_limits(),
             &mut reader
-        )
+        ))
         .await
         .is_err()
     );
-    assert!(mfa.begin_enrollment(&mut c, uid, None).await.is_err());
-    let replacement = mfa
-        .begin_enrollment(&mut c, uid, Some(&permit))
+    assert!(
+        Box::pin(mfa.begin_enrollment(&mut c, uid, None))
+            .await
+            .is_err()
+    );
+    let replacement = Box::pin(mfa.begin_enrollment(&mut c, uid, Some(&permit)))
         .await
         .unwrap();
     let at = seconds(&mut c).await;
-    mfa.activate(
+    Box::pin(mfa.activate(
         &mut c,
         uid,
         &replacement,
         &code(&replacement, at),
         None,
         Some(&permit),
-    )
+    ))
     .await
     .unwrap();
     assert!(
-        mfa.begin_enrollment(&mut c, uid, Some(&permit))
+        Box::pin(mfa.begin_enrollment(&mut c, uid, Some(&permit)))
             .await
             .is_err()
     );
     let restored = begin(&mut c, uid, site, LoginRoute::Password, &mut reader).await;
     prove_password(&mut c, &checker, &password, uid, &restored).await;
     let at = seconds(&mut c).await + 30;
-    mfa.verify_for_login(&mut c, uid, &code(&replacement, at), &restored)
+    Box::pin(mfa.verify_for_login(&mut c, uid, &code(&replacement, at), &restored))
         .await
         .unwrap();
-    let restored_session = login::finish(&mut c, &restored, record(base + 7), &mut reader)
-        .await
-        .unwrap();
+    let restored_session = Box::pin(login::finish(
+        &mut c,
+        &restored,
+        record(base + 7),
+        &mut reader,
+    ))
+    .await
+    .unwrap();
     assert!(checked(&mut c, &restored_session, site, &mut reader).await);
     assert_eq!(
         versions(&mut c, base + 7).await,

@@ -280,6 +280,15 @@ Der Neustartlauf prüft erhaltene Sitzungszustände und drei getrennte Quellenve
 Migration 0011 gilt zusätzlich im isolierten tatsächlichen HTTP-Identitätsbestand. Die Gesamtzahl bleibt zwanzig SQLx-Gruppen vor/nach Neustart.
 Erfolg muss die aktuelle native CI belegen. Es gibt keine neue Anwendungsmigration, Paketversion oder erlaubende Laufzeitpolicy.
 Rust-Aufrufe mit tatsächlichen Dienstquellen ersetzen keine Gateway-, Browser-, Cookie- oder CSRF-Nachweise.
+
+## Reine Browsergrenze des Gateways
+
+Der [Browservertrag](../contracts/gateway/browser-boundary-v1.md) und ADR-061 stehen vor Code.
+Sechs Rust-Gruppen in `kitaconnect-gateway` prüfen feste Operationen, genaue Origin und Host,
+mehrdeutige oder vertauschte Cookies, kanonische Geheimnisse, Headergrenzen, Cookie-Attribute und verdeckte Diagnosen.
+Die Bibliothek hat keine Datenbankabhängigkeit und öffnet keinen Netzwerkport.
+Ein erfolgreich gelesenes Geheimnis bleibt ein ungeprüft vorgelegter Nachweis. Die serverseitige CSRF-Bindung bleibt gesondert.
+Diese reinen Tests sind kein HTTPS- oder Browsernachweis. Die bestehenden zwanzig SQLx-Gruppen bleiben unverändert Pflicht.
 Vollständige Fehlerantworten mit HTTP-Abschluss bleiben Fehler. Abgeschnittene Fehlerbodies und positive Antworten mit angekündigtem Abschluss werden abgewiesen.
 Die ursprünglichen Testhilfe-Compilerfehler und die Fehlerklassenzuordnung sind ohne Prüfausnahme korrigiert.
 Der abschließende Nachweiskopf erhält eigene Prüfungen.

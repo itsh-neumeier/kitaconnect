@@ -1073,6 +1073,16 @@ name = "kitaconnect-bootstrap"
 version = "0.0.0"
 
 [[package]]
+name = "kitaconnect-gateway"
+version = "0.0.0"
+dependencies = [
+ "base64 0.22.1",
+ "hyper",
+ "url",
+ "zeroize",
+]
+
+[[package]]
 name = "kitaconnect-identity-access"
 version = "0.0.0"
 dependencies = [

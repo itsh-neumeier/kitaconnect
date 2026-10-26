@@ -1,5 +1,8 @@
 # Rust-Dienste
 
+`gateway` beginnt die bestätigte eigene Gateway-Grenze als reine [Browser-Bibliothek](gateway/README.md).
+Sie prüft feste Origin-/Header-/Cookie-Profile. Sie hat keine Datenbankrolle, keinen Netzwerklistener und keine positive Benutzerfreigabe.
+
 `bootstrap` prüft nur die Rust-Werkzeugkette. Das Programm öffnet keinen Netzwerkport.
 Die geplanten Dienstgrenzen stehen im [P0-Plan](../docs/15_P0_Initialisierung.md).
 Axum, Tokio und SQLx sind durch v5.9 vorgegeben. Ihre Einbindung erfolgt je Arbeitspaket

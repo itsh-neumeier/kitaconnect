@@ -45,3 +45,6 @@ Die [zusammengesetzte aktuelle Anmeldegrundlage](identity-access/current-login-s
 verbindet tatsächliche Dienstanmeldung, Mitgliedschaft und Rollenquelle. Die drei Versionen bleiben getrennt.
 
 Die [dauerhafte Quellenbindung](identity-access/source-bindings-v1.md) erhält diese Versionen in Vorgängen, Sitzungsprüfung und Rotation.
+
+Der [Prüfvertrag der tatsächlichen Anmeldekette](identity-access/login-chain-test-v1.md)
+verbindet Faktor-Bibliotheken und Sitzungsabschluss mit den tatsächlichen aktuellen Dienstquellen.
